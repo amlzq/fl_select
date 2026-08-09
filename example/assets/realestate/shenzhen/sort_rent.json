@@ -1,0 +1,30 @@
+[
+  {
+    "id": "comprehensive_sort",
+    "name": "综合排序"
+  },
+  {
+    "id": "newest_sort",
+    "name": "最新排序"
+  },
+  {
+    "id": "rent_desc",
+    "name": "租金由高到低"
+  },
+  {
+    "id": "rent_asc",
+    "name": "租金由低到高"
+  },
+  {
+    "id": "area_desc",
+    "name": "面积由高到低"
+  },
+  {
+    "id": "area_asc",
+    "name": "面积由低到高"
+  },
+  {
+    "id": "distance",
+    "name": "距离从近到远"
+  }
+]

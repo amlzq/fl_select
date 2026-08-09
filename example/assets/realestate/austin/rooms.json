@@ -1,0 +1,58 @@
+[
+    {
+        "id": "bedrooms",
+        "name": "Bedrooms",
+        "data": [
+            {
+                "id": "br_studio",
+                "name": "Studio"
+            },
+            {
+                "id": "br_1",
+                "name": "1+"
+            },
+            {
+                "id": "br_2",
+                "name": "2+"
+            },
+            {
+                "id": "br_3",
+                "name": "3+"
+            },
+            {
+                "id": "br_4",
+                "name": "4+"
+            },
+            {
+                "id": "br_5",
+                "name": "5+"
+            }
+        ]
+    },
+    {
+        "id": "bathrooms",
+        "name": "Bathrooms",
+        "data": [
+            {
+                "id": "ba_1",
+                "name": "1+"
+            },
+            {
+                "id": "ba_15",
+                "name": "1.5+"
+            },
+            {
+                "id": "ba_2",
+                "name": "2+"
+            },
+            {
+                "id": "ba_3",
+                "name": "3+"
+            },
+            {
+                "id": "ba_4",
+                "name": "4+"
+            }
+        ]
+    }
+]

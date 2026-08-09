@@ -1,0 +1,26 @@
+[
+  {
+    "id": "default_sort",
+    "name": "默认排序"
+  },
+  {
+    "id": "sale_time_asc",
+    "name": "开盘时间顺序"
+  },
+  {
+    "id": "sale_time_desc",
+    "name": "开盘时间倒序"
+  },
+  {
+    "id": "ave_price_desc",
+    "name": "均价由高到低"
+  },
+  {
+    "id": "ave_time_asc",
+    "name": "均价由低到高"
+  },
+  {
+    "id": "distance",
+    "name": "距离从近到远"
+  }
+]
