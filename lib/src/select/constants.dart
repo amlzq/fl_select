@@ -21,28 +21,29 @@ enum SelectionMode {
 typedef SkeletonBuilder = Widget Function(BuildContext context);
 
 /// Returns true if the entry is a multi-selection category.
-bool testMultipleElement(e) =>
+bool testMultipleElement(SelectEntry e) =>
     e is SelectCategoryEntry && e.selectionMode == SelectionMode.multiple;
 
 /// Returns true if the entry is an "Any" child entry.
-bool testAnyElement(e) => e is SelectChildEntry && e.isAny;
+bool testAnyElement(SelectEntry e) => e is SelectChildEntry && e.isAny;
 
 /// Returns true if the entry is a custom range entry.
-bool testCustomElement(e) => e is SelectRangeEntry && e.isCustom;
+bool testCustomElement(SelectEntry e) => e is SelectRangeEntry && e.isCustom;
 
 /// Returns true if the entry is not a custom range entry.
-bool testNotCustomItem(e) => e is! SelectRangeEntry || (!e.isCustom);
+bool testNotCustomItem(SelectEntry e) =>
+    e is! SelectRangeEntry || (!e.isCustom);
 
 /// Returns true if the entry has the same parent as the given [parentId].
-bool testSameParentElement(e, parentId) =>
+bool testSameParentElement(SelectEntry e, String parentId) =>
     (e as SelectChildEntry).parentId == parentId;
 
 /// Returns true if the entry has the same parent as the given [parentId] and is an "Any" or a custom range entry.
-bool testSameParentAnyOrCustomElement(e, parentId) =>
+bool testSameParentAnyOrCustomElement(SelectEntry e, String parentId) =>
     (e as SelectChildEntry).parentId == parentId &&
     (e.isAny || (e is SelectRangeEntry && e.isCustom));
 
-extension IterableExtension<SelectEntry> on Iterable<SelectEntry> {
+extension IterableExtension on Iterable<SelectEntry> {
   /// Whether this iterable contains an "Any" child entry.
   bool get hasAnyItem => any(testAnyElement);
 
