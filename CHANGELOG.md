@@ -1,3 +1,7 @@
+## 0.7.1
+
+- **FEATURE** `showSelect` now accepts optional `leading`, `trailing` and `centerTitle` widgets to attach to the header row, mirroring `showModalBottomSelect`. Both entries now share a common `SelectHeader` widget that lays the title out with an outer `Stack` so the title stays truly centered across the full header width even when `leading` / `trailing` are asymmetrical.
+
 ## 0.7.0
 
 - **BREAKING** make `PopupSelectBar.selectDelegates` required — it is now a non-nullable `List<SelectDelegate>` and must be provided to `PopupSelectBar`. `PopupSelectBar.onApplied` is likewise now required (`PopupSelectBarResultCallback`, non-nullable). Update call sites that previously omitted either parameter to pass them explicitly.
