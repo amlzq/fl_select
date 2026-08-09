@@ -5,6 +5,7 @@ import 'constants.dart';
 import 'field_tile.dart';
 import 'field_tile_theme.dart';
 import 'range_slider.dart';
+import 'skeleton_view.dart';
 
 /// A composite view that renders a [SelectRangeSlider] above a
 /// [SelectFieldTile], keeping both in sync with a single source of truth.
@@ -430,6 +431,7 @@ class _SelectRangeViewState extends State<SelectRangeView> {
     if (!_initialized) {
       return const SizedBox.shrink();
     }
+
     final entry = _findEntry();
     final showTitle = widget.showTitle && widget.category?.name != null;
     return Padding(
@@ -488,6 +490,147 @@ class _SelectRangeViewState extends State<SelectRangeView> {
             )
           else
             const SizedBox.shrink(),
+        ],
+      ),
+    );
+  }
+}
+
+/// Loading skeleton for [SelectRangeView].
+///
+/// Mirrors the [SelectRangeView] layout: an optional title bar, a dual-thumb
+/// range slider (track, two circular thumbs and two corner labels) and a
+/// two-field input tile below it.
+class SelectRangeSkeleton extends StatelessWidget {
+  const SelectRangeSkeleton({
+    super.key,
+    this.padding,
+    this.showTitle = true,
+    this.fieldHeight = 34,
+  });
+
+  /// Padding around the whole skeleton.
+  ///
+  /// Defaults to the same padding [SelectRangeView] applies by default
+  /// (`EdgeInsets.symmetric(vertical: 4)`).
+  final EdgeInsetsGeometry? padding;
+
+  /// Whether to reserve a title placeholder bar above the slider.
+  ///
+  /// Defaults to true, matching [SelectRangeView.showTitle].
+  final bool showTitle;
+
+  /// The height of the two input-field placeholder tiles.
+  ///
+  /// Defaults to 34, matching the height of [SelectFieldTile]'s text fields.
+  final double fieldHeight;
+
+  @override
+  Widget build(BuildContext context) {
+    return SkeletonView(
+      child: Padding(
+        padding:
+            padding ?? const EdgeInsets.symmetric(horizontal: 15, vertical: 4),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Title placeholder (category name).
+            if (showTitle)
+              const Padding(
+                padding: EdgeInsets.only(bottom: 8),
+                child: SkeletonTile(height: 16, width: 96),
+              ),
+            // A full-width range-slider placeholder: track + two thumbs.
+            const _RangeSliderSkeleton(),
+            const SizedBox(height: 4),
+            // Two corner labels for the slider extremes.
+            const Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                SkeletonTile(
+                  height: 12,
+                  width: 28,
+                  borderRadius: BorderRadius.all(Radius.circular(2)),
+                ),
+                SkeletonTile(
+                  height: 12,
+                  width: 28,
+                  borderRadius: BorderRadius.all(Radius.circular(2)),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            // Two-field input tile: min | separator | max.
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Expanded(
+                  child: SkeletonTile(
+                    height: fieldHeight,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10),
+                  child: SkeletonTile(height: 12, width: 12),
+                ),
+                Expanded(
+                  child: SkeletonTile(
+                    height: fieldHeight,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// A placeholder that resembles the [SelectRangeSlider]: a full-width track
+/// with two circular thumbs inset from the ends.
+class _RangeSliderSkeleton extends StatelessWidget {
+  const _RangeSliderSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 28,
+      child: Stack(
+        children: [
+          // Full-width inactive track.
+          Positioned(
+            left: 0,
+            right: 0,
+            top: 11,
+            child: SkeletonTile(
+              height: 6,
+              borderRadius: BorderRadius.circular(3),
+            ),
+          ),
+          // Start thumb.
+          Positioned(
+            left: 8,
+            top: 2,
+            child: SkeletonTile(
+              height: 24,
+              width: 24,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          // End thumb.
+          Positioned(
+            right: 8,
+            top: 2,
+            child: SkeletonTile(
+              height: 24,
+              width: 24,
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
         ],
       ),
     );

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../select_entry.dart';
 import '../select_theme.dart';
 import 'constants.dart';
+import 'skeleton_view.dart';
 
 /// A spin-box counter for a single-valued [SelectCategoryEntry].
 ///
@@ -225,6 +226,80 @@ class _SpinBox extends StatelessWidget {
           tooltip: 'Increase',
         ),
       ],
+    );
+  }
+}
+
+/// Loading skeleton for [SelectCounter].
+///
+/// Mirrors the [SelectCounter] layout: an optional title placeholder on the
+/// first row and a spin-box placeholder on the second row. The spin box
+/// placeholder is a circular decrement tile on the left, a centered value tile
+/// in the middle and a circular increment tile on the right.
+class SelectCounterSkeleton extends StatelessWidget {
+  const SelectCounterSkeleton({
+    super.key,
+    this.padding,
+    this.showTitle = true,
+    this.buttonSize = 40,
+  });
+
+  /// Padding around the whole skeleton.
+  ///
+  /// Defaults to the same padding [SelectCounter] applies by default
+  /// (`EdgeInsets.symmetric(vertical: 4)`).
+  final EdgeInsetsGeometry? padding;
+
+  /// Whether to reserve a title placeholder bar above the spin box.
+  ///
+  /// Defaults to true, matching [SelectCounter.showTitle].
+  final bool showTitle;
+
+  /// The size of the two circular `-` / `+` button placeholders.
+  ///
+  /// Defaults to 40, matching the default size of an [IconButton.filled].
+  final double buttonSize;
+
+  @override
+  Widget build(BuildContext context) {
+    return SkeletonView(
+      child: Padding(
+        padding: padding ?? const EdgeInsets.symmetric(vertical: 4),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Title placeholder (category name).
+            if (showTitle)
+              const Padding(
+                padding: EdgeInsets.only(bottom: 8),
+                child: SkeletonTile(height: 16, width: 96),
+              ),
+            // Spin-box placeholder: [-] value [+].
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                SkeletonTile(
+                  height: buttonSize,
+                  width: buttonSize,
+                  borderRadius: BorderRadius.circular(buttonSize / 2),
+                ),
+                const Expanded(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 12),
+                    child: SkeletonTile(height: 18, width: 40),
+                  ),
+                ),
+                SkeletonTile(
+                  height: buttonSize,
+                  width: buttonSize,
+                  borderRadius: BorderRadius.circular(buttonSize / 2),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
