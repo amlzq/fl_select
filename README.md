@@ -1,4 +1,8 @@
-A highly customizable Flutter select library. Supports SelectView, PopupSelectBar, PopupSelectButton, dialog, and bottom-sheet selects.
+A customizable Flutter select widget for building filter bars, cascading menus, and pickers with single/multiple selection, async loading, theming, and i18n.
+
+![Highlights](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/highlights.gif)
+
+**`[Multiple Selection]` `[Async Loading]` `[5 Entry Points]` `[4 Delegate Layouts]` `[i18n ×10]`**
 
 [Playground](https://flselect.zeaon.dev/)
 
