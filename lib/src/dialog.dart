@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'select/select_delegate.dart';
 import 'select/select_entry.dart';
 import 'select/select_panel.dart';
+import 'select_header.dart';
 
 /// Shows a select in a modal dialog.
 ///
@@ -20,7 +21,11 @@ import 'select/select_panel.dart';
 /// - In multi-selection mode, the action bar's "Apply" button must be tapped
 ///   to confirm; "Reset" only clears the current selection without closing.
 ///
-/// The optional [title] is rendered above the select panel.
+/// The optional [title] is rendered above the select panel. A leading and/or
+/// trailing widget may be attached to the title row via [leading] /
+/// [trailing] to mimic a [ListTile] header. Set [centerTitle] to `true` to
+/// center the [title] (like [AppBar.centerTitle]); when `null` the default is
+/// platform-dependent (`true` on Android, `false` elsewhere).
 ///
 /// The [elevation], [shape] and [clipBehavior] parameters are forwarded to the
 /// outer [Dialog] decoration. These are independent of
@@ -33,6 +38,9 @@ Future<SelectEntries?> showSelect({
   bool barrierDismissible = true,
   bool useRootNavigator = true,
   Widget? title,
+  Widget? leading,
+  Widget? trailing,
+  bool? centerTitle,
   double? elevation,
   ShapeBorder? shape,
   Clip? clipBehavior,
@@ -45,6 +53,9 @@ Future<SelectEntries?> showSelect({
     pageBuilder: (innerContext) => _SelectDialog(
       delegate: delegate,
       title: title,
+      leading: leading,
+      trailing: trailing,
+      centerTitle: centerTitle,
       elevation: elevation,
       shape: shape,
       clipBehavior: clipBehavior,
@@ -111,6 +122,9 @@ class _SelectDialog extends StatefulWidget {
   const _SelectDialog({
     required this.delegate,
     this.title,
+    this.leading,
+    this.trailing,
+    this.centerTitle,
     this.elevation,
     this.shape,
     this.clipBehavior,
@@ -118,6 +132,9 @@ class _SelectDialog extends StatefulWidget {
 
   final SelectDelegate delegate;
   final Widget? title;
+  final Widget? leading;
+  final Widget? trailing;
+  final bool? centerTitle;
   final double? elevation;
   final ShapeBorder? shape;
   final Clip? clipBehavior;
@@ -164,7 +181,13 @@ class _SelectDialogState extends State<_SelectDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (widget.title != null) _SelectDialogHeader(title: widget.title!),
+            if (widget.title != null)
+              SelectHeader(
+                title: widget.title!,
+                leading: widget.leading,
+                trailing: widget.trailing,
+                centerTitle: widget.centerTitle,
+              ),
             // `loose` lets the panel take only as much height as it needs when
             // content is small, but never exceed the free space (0.7 screen
             // height minus the header) when content is large, so the select
@@ -175,27 +198,6 @@ class _SelectDialogState extends State<_SelectDialog> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-/// Optional header shown above the select panel inside [_SelectDialog].
-class _SelectDialogHeader extends StatelessWidget {
-  const _SelectDialogHeader({required this.title});
-
-  final Widget title;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textStyle = theme.textTheme.titleLarge ?? theme.textTheme.titleMedium;
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-      alignment: Alignment.centerLeft,
-      child: DefaultTextStyle(
-        style: textStyle!,
-        child: title,
       ),
     );
   }

@@ -85,6 +85,7 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                     ),
                   ),
                   title: const Text('Price'),
+                  centerTitle: false,
                 );
                 if (result == null) return;
                 _filtersRepo.priceResult = result;
@@ -119,6 +120,7 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                     ),
                   ),
                   title: const Text('Rooms'),
+                  leading: const Icon(Icons.room),
                 );
                 if (result == null) return;
                 _filtersRepo.roomsResult = result;
@@ -152,6 +154,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   ),
                   clipBehavior: Clip.antiAlias,
                   title: const Text('More'),
+                  trailing: CloseButton(
+                    onPressed: () => Navigator.pop(context),
+                  ),
                 );
                 if (result == null) return;
                 _filtersRepo.moreResult = result;
@@ -186,6 +191,10 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   ),
                   clipBehavior: Clip.antiAlias,
                   title: const Text('Sort'),
+                  leading: const Icon(Icons.sort),
+                  trailing: CloseButton(
+                    onPressed: () => Navigator.pop(context),
+                  ),
                 );
 
                 if (result == null) return;
@@ -250,6 +259,7 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                     ),
                   ),
                   title: const Text('Price'),
+                  centerTitle: false,
                 );
                 if (result == null) return;
                 _filtersRepo.priceResult = result;
@@ -282,6 +292,7 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   ),
                   clipBehavior: Clip.antiAlias,
                   title: const Text('Rooms'),
+                  leading: const Icon(Icons.room),
                 );
                 if (result == null) return;
                 _filtersRepo.roomsResult = result;
@@ -310,6 +321,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                     ),
                   ),
                   title: const Text('More'),
+                  trailing: CloseButton(
+                    onPressed: () => Navigator.pop(context),
+                  ),
                 );
                 if (result == null) return;
                 _filtersRepo.moreResult = result;
@@ -332,6 +346,10 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                     },
                   ),
                   title: const Text('Sort'),
+                  leading: const Icon(Icons.sort),
+                  trailing: CloseButton(
+                    onPressed: () => Navigator.pop(context),
+                  ),
                 );
                 if (result == null) return;
                 _filtersRepo.sortResult = result;

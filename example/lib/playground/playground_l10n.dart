@@ -88,7 +88,7 @@ class PlaygroundL10n {
   String get phoneDialogTitle => _t('Dialog', '对话框');
   String get phoneBottomSheetTitle => _t('Bottom Sheet', '底部弹层');
 
-  String get tapBarHint => _t('Tap the bar to open the select', '点击筛选栏打开选择器');
+  String get tapBarHint => _t('Tap the bar to open the select', '点击顶栏打开选择器');
   String get openSelect => _t('Open Select', '打开选择器');
 
   // Per-delegate open buttons (Dialog / Bottom Sheet entry points).

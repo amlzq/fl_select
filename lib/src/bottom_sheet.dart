@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'select/select_delegate.dart';
 import 'select/select_entry.dart';
 import 'select/select_panel.dart';
+import 'select_header.dart';
 
 /// Shows a select in a modal bottom sheet built with Flutter's
 /// [showModalBottomSheet].
@@ -22,7 +23,11 @@ import 'select/select_panel.dart';
 /// - In multi-selection mode, the action bar's "Apply" button must be tapped
 ///   to confirm; "Reset" only clears the current selection without closing.
 ///
-/// The optional [title] is rendered above the select panel.
+/// The optional [title] is rendered above the select panel. A leading and/or
+/// trailing widget may be attached to the title row via [leading] /
+/// [trailing] to mimic a [ListTile] header. Set [centerTitle] to `true` to
+/// center the [title] (like [AppBar.centerTitle]); when `null` the default is
+/// platform-dependent (`true` on Android, `false` elsewhere).
 ///
 /// Most of the remaining parameters ([backgroundColor], [elevation], [shape],
 /// [clipBehavior], [constraints], [barrierColor], [isScrollControlled],
@@ -45,6 +50,9 @@ Future<SelectEntries?> showModalBottomSelect({
   bool isDismissible = true,
   bool useSafeArea = false,
   Widget? title,
+  Widget? leading,
+  Widget? trailing,
+  bool? centerTitle,
   Color? backgroundColor,
   double? elevation,
   ShapeBorder? shape,
@@ -83,6 +91,9 @@ Future<SelectEntries?> showModalBottomSelect({
     builder: (sheetContext) => _ModalBottomSheetContent(
       delegate: delegate,
       title: title,
+      leading: leading,
+      trailing: trailing,
+      centerTitle: centerTitle,
     ),
   );
 }
@@ -95,10 +106,16 @@ class _ModalBottomSheetContent extends StatefulWidget {
   const _ModalBottomSheetContent({
     required this.delegate,
     this.title,
+    this.leading,
+    this.trailing,
+    this.centerTitle,
   });
 
   final SelectDelegate delegate;
   final Widget? title;
+  final Widget? leading;
+  final Widget? trailing;
+  final bool? centerTitle;
 
   @override
   State<_ModalBottomSheetContent> createState() =>
@@ -143,33 +160,18 @@ class _ModalBottomSheetContentState extends State<_ModalBottomSheetContent> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (widget.title != null) _BottomSheetHeader(title: widget.title!),
+          if (widget.title != null)
+            SelectHeader(
+              title: widget.title!,
+              leading: widget.leading,
+              trailing: widget.trailing,
+              centerTitle: widget.centerTitle,
+            ),
           Flexible(
             fit: FlexFit.loose,
             child: panel,
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// Optional header shown above the select panel inside the bottom sheet.
-class _BottomSheetHeader extends StatelessWidget {
-  const _BottomSheetHeader({required this.title});
-
-  final Widget title;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final textStyle = theme.textTheme.titleLarge ?? theme.textTheme.titleMedium;
-    return Container(
-      padding: const EdgeInsets.fromLTRB(20, 16, 20, 8),
-      alignment: Alignment.centerLeft,
-      child: DefaultTextStyle(
-        style: textStyle!,
-        child: title,
       ),
     );
   }
