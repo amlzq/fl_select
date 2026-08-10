@@ -36,6 +36,65 @@ SelectCategoryEntry<dynamic> _category(
 }
 
 void main() {
+  group('FlattenSelect 1D (flat) structure', () {
+    Widget harness(Set<SelectEntry> entries) {
+      return MaterialApp(
+        home: Scaffold(
+          body: SelectView(
+            delegate: FlattenSelectDelegate(
+              crossAxisCount: 3,
+              entriesLoader: () async => entries,
+            ),
+            onChanged: (_) {},
+          ),
+        ),
+      );
+    }
+
+    testWidgets('renders a SelectChipBar without a sidebar', (tester) async {
+      await tester.pumpWidget(
+        harness({
+          SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
+          SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
+        }),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.byType(SelectChipBar), findsOneWidget);
+      expect(find.byType(SelectSideBar), findsNothing);
+      expect(find.text('A 1'), findsOneWidget);
+      expect(find.text('A 2'), findsOneWidget);
+    });
+
+    testWidgets('tapping a flat chip reports a selection', (tester) async {
+      final applied = <Set<SelectEntry>>[];
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SelectView(
+              delegate: FlattenSelectDelegate(
+                crossAxisCount: 3,
+                selectionMode: SelectionMode.single,
+                entriesLoader: () async => {
+                  SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
+                  SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
+                },
+              ),
+              onChanged: applied.add,
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('A 2'));
+      await tester.pumpAndSettle();
+
+      expect(applied, hasLength(1));
+      expect(applied.single.map((e) => e.id), contains('a2'));
+    });
+  });
+
   group('FlattenSelect consumes category.layout', () {
     testWidgets('defaults to a grid when no layout is set', (tester) async {
       await tester.pumpWidget(

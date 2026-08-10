@@ -12,10 +12,13 @@ import 'widgets/widgets.dart';
 
 /// Horizontal layout: category navigation on the left and a flattened item list on the right.
 /// Tapping the left side drives scrolling on the right; scrolling the right side highlights the left side.
-/// Two-dimensional structured data.
+/// Supports both one-dimensional (flat entries) and two-dimensional
+/// (category -> children) structured data.
 ///
 /// Behavior notes:
-/// - This select is fixed to a two-level structure: category -> children.
+/// - In a flat 1D structure, the top-level entries are rendered directly as a
+///   wrapable [SelectChipBar] and no category sidebar is shown.
+/// - In a two-level structure, the sidebar drives which category's children are shown.
 /// - Child selection mode is determined per category by [SelectCategoryEntry.selectionMode].
 /// - The right-side content is scroll-synced with the left category list.
 /// - Custom range entries ([SelectRangeEntry.custom]) are rendered as an input
@@ -114,6 +117,9 @@ class FlattenSelectState extends State<FlattenSelect> {
 
   /// Selection Mode for category entries
   SelectionMode? get categorySelectionMode => delegate.selectionMode;
+
+  /// Whether the entries form a two-dimensional (category -> children) tree.
+  bool get _isCategoryTree => widget.entries.firstOrNull is SelectCategoryEntry;
 
   SelectCategoryEntry? get selectedCategory =>
       widget.entries.elementAtOrNull(_tempSelectedCategoryIndex)
@@ -242,6 +248,27 @@ class FlattenSelectState extends State<FlattenSelect> {
   }
 
   void _onTerminalItemTap(SelectChildEntry item) {
+    // Flat 1D structure: no category owner, toggle the entry directly at the
+    // top level.
+    if (!_isCategoryTree) {
+      if (item is SelectRangeEntry && item.isCustom) {
+        final hasRange = item.min != null || item.max != null;
+        if (hasRange) {
+          controller?.select(item.id, parentId: item.parentId);
+        } else {
+          controller?.unselect(item.id, parentId: item.parentId);
+        }
+      } else {
+        controller?.toggleFlatEntry(
+          item,
+          selectionMode: selectSelectionMode ?? SelectionMode.single,
+          isCategoryTree: false,
+        );
+      }
+      _setStateOrImmediateApply(item);
+      return;
+    }
+
     final categoryEntry =
         widget.entries.singleWhereOrNull((e) => e.id == item.parentId);
     if (categoryEntry is! SelectCategoryEntry) {
@@ -405,6 +432,56 @@ class FlattenSelectState extends State<FlattenSelect> {
   Widget build(BuildContext context) {
     final theme = SelectTheme.of(context);
 
+    final actionBar = SelectionMode.multiple == selectSelectionMode &&
+            !SelectActionBarVisibility.isHidden(context)
+        ? (delegate.actionBarBuilder?.call(
+              context,
+              onResetTap: _onResetTap,
+              onApplyTap: _onApplyTap,
+            ) ??
+            SelectActionBar(
+              resetText: delegate.resetText,
+              applyText: delegate.applyText,
+              resetFlex: delegate.actionBarTheme?.resetFlex,
+              applyFlex: delegate.actionBarTheme?.applyFlex,
+              onResetTap: _onResetTap,
+              onApplyTap: _onApplyTap,
+            ))
+        : null;
+
+    // Flat 1D structure: no category sidebar, render the top-level entries
+    // directly as a wrapable chip bar.
+    if (!_isCategoryTree) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                vertical: 10,
+                horizontal: 12,
+              ),
+              child: SelectChipBar(
+                entries: widget.entries,
+                selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
+                isWrapable: true,
+                backgroundColor: delegate.chipBarTheme?.backgroundColor,
+                padding: delegate.chipBarTheme?.padding,
+                variant: delegate.chipBarTheme?.variant,
+                chipColor: delegate.chipBarTheme?.chipColor,
+                selectedChipColor: delegate.chipBarTheme?.selectedChipColor,
+                labelStyle: delegate.chipBarTheme?.labelStyle,
+                selectedLabelStyle: delegate.chipBarTheme?.selectedLabelStyle,
+                onChanged: (_, item) =>
+                    _onTerminalItemTap(item as SelectChildEntry),
+              ),
+            ),
+          ),
+          if (actionBar != null) actionBar,
+        ],
+      );
+    }
+
     // A category badge should only appear when it has a "real" selection,
     // i.e. at least one selected child that is not the "Any" placeholder.
     // Selecting only "Any" must not trigger the badge.
@@ -472,21 +549,7 @@ class FlattenSelectState extends State<FlattenSelect> {
             ],
           ),
         ),
-        if (SelectionMode.multiple == selectSelectionMode &&
-            !SelectActionBarVisibility.isHidden(context))
-          delegate.actionBarBuilder?.call(
-                context,
-                onResetTap: _onResetTap,
-                onApplyTap: _onApplyTap,
-              ) ??
-              SelectActionBar(
-                resetText: delegate.resetText,
-                applyText: delegate.applyText,
-                resetFlex: delegate.actionBarTheme?.resetFlex,
-                applyFlex: delegate.actionBarTheme?.applyFlex,
-                onResetTap: _onResetTap,
-                onApplyTap: _onApplyTap,
-              ),
+        if (actionBar != null) actionBar,
       ],
     );
   }
