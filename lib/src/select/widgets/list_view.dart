@@ -265,6 +265,7 @@ class SelectListViewState extends State<SelectListView>
   @override
   Widget build(BuildContext context) {
     super.build(context);
+    final showTitle = widget.showTitle && widget.category?.name != null;
     return SingleChildScrollView(
       physics: const ClampingScrollPhysics(),
       padding: widget.padding,
@@ -273,15 +274,18 @@ class SelectListViewState extends State<SelectListView>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Category label
-          if (widget.category != null && widget.showTitle)
+          if (showTitle)
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: Text(
-                widget.category?.name ?? '',
-                style: const TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
+              child: DefaultTextStyle.merge(
+                style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w600,
+                        ) ??
+                    const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                child: Text(widget.category?.name ?? ''),
               ),
             ),
           // An input item at header

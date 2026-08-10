@@ -137,13 +137,16 @@ class _SelectCounterState extends State<SelectCounter> {
         children: [
           if (showTitle)
             Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Text(
-                widget.category?.name ?? '',
+              padding: const EdgeInsets.only(bottom: 10),
+              child: DefaultTextStyle.merge(
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,
                         ) ??
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                child: Text(widget.category?.name ?? ''),
               ),
             ),
           if (labels.isEmpty)

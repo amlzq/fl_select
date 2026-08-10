@@ -442,7 +442,7 @@ class _SelectRangeViewState extends State<SelectRangeView> {
         children: [
           if (showTitle)
             Padding(
-              padding: const EdgeInsets.only(bottom: 8),
+              padding: const EdgeInsets.only(bottom: 10),
               child: DefaultTextStyle.merge(
                 style: Theme.of(context).textTheme.titleSmall?.copyWith(
                           fontWeight: FontWeight.w600,

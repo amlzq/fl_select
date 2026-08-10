@@ -350,7 +350,7 @@ class FlattenSelectState extends State<FlattenSelect> {
       SelectListLayout(:final toText) => SelectListView(
           key: ValueKey('category_$index'),
           category: category,
-          showTitle: false,
+          showTitle: true,
           entries: entries,
           selectedEntries: selectedEntries,
           onChanged: (_, entry) =>
@@ -387,6 +387,7 @@ class FlattenSelectState extends State<FlattenSelect> {
           selectedEntries: selectedEntries,
           showTitle: true,
           isWrapable: true,
+          direction: Axis.vertical,
           backgroundColor: delegate.chipBarTheme?.backgroundColor,
           padding: delegate.chipBarTheme?.padding,
           variant: delegate.chipBarTheme?.variant,

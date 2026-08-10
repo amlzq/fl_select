@@ -25,6 +25,7 @@ class SelectChipBar extends StatelessWidget {
     this.selectionMode = SelectionMode.single,
     this.isWrapable = false,
     this.showTitle = true,
+    this.direction = Axis.horizontal,
     this.backgroundColor,
     this.padding,
     this.variant,
@@ -58,6 +59,13 @@ class SelectChipBar extends StatelessWidget {
 
   /// Whether to show the category title.
   final bool showTitle;
+
+  /// The direction of the [category] title relative to the chip group.
+  ///
+  /// Defaults to [Axis.horizontal], which lays the title to the left of the
+  /// chips in a single row. Set to [Axis.vertical] to stack the title above
+  /// the chip group.
+  final Axis direction;
 
   /// The color of the chip bar's background.
   ///
@@ -167,32 +175,71 @@ class SelectChipBar extends StatelessWidget {
         })(),
     ];
 
+    final chipGroup = isWrapable
+        ? Wrap(spacing: 12, runSpacing: 12, children: children)
+        : SingleChildScrollView(
+            padding: EdgeInsets.zero,
+            physics: const ClampingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: children.separateWith(const SizedBox(width: 12)),
+            ),
+          );
+
+    // In vertical layout the title sits above the chip group, so the bar
+    // height must grow to fit the chips rather than being fixed.
+    final useVertical = direction == Axis.vertical;
+    final isFixedHeight = !isWrapable && !useVertical;
+
     return Container(
-      height: isWrapable ? null : kSelectChipBarHeight,
+      height: isFixedHeight ? kSelectChipBarHeight : null,
       color: effectiveBackgroundColor,
       padding: effectivePadding,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // const SizedBox(width: 12),
-          if (category != null && showTitle) Text(category?.name ?? ''),
-          if (category != null && showTitle) const SizedBox(width: 12),
-          Expanded(
-            child: isWrapable
-                ? Wrap(spacing: 12, runSpacing: 12, children: children)
-                : SingleChildScrollView(
-                    padding: EdgeInsets.zero,
-                    physics: const ClampingScrollPhysics(),
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children:
-                          children.separateWith(const SizedBox(width: 12)),
+      child: useVertical
+          ? Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Category label
+                if (showTitle && category?.name != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: DefaultTextStyle.merge(
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ) ??
+                          const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                      child: Text(category?.name ?? ''),
                     ),
                   ),
-          ),
-          const SizedBox(width: 12),
-        ],
-      ),
+                chipGroup,
+              ],
+            )
+          : Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Category label
+                if (showTitle && category?.name != null)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10),
+                    child: DefaultTextStyle.merge(
+                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                fontWeight: FontWeight.w600,
+                              ) ??
+                          const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                          ),
+                      child: Text(category?.name ?? ''),
+                    ),
+                  ),
+                Expanded(child: chipGroup),
+                const SizedBox(width: 12),
+              ],
+            ),
     );
   }
 }
@@ -267,7 +314,7 @@ class _SelectChipBarDefaults extends SelectChipBarTheme {
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  Color? get backgroundColor => _theme.backgroundColor;
+  Color? get backgroundColor => Colors.transparent;
 
   @override
   EdgeInsetsGeometry? get padding => EdgeInsets.zero;
