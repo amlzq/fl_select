@@ -151,10 +151,9 @@ typedef SelectIntEntry<E> = SelectRangeEntry<int, E>;
 class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
   /// Creates a range entry.
   ///
-  /// [parentId] must be correct and non-empty: it has to equal the id of the
-  /// entry's owning parent (a category or a header/footer node). Passing an
-  /// empty string breaks the parent-child relationship and makes the entry
-  /// unselectable in a 2D-or-deeper structure.
+  /// When used inside [SelectCategoryEntry.children], the `parentId` is
+  /// automatically injected — prefer using [SelectCategoryEntry.children] for
+  /// 2D+ trees so you never need to write `parentId` by hand.
   SelectRangeEntry({
     this.min,
     this.max,
@@ -162,7 +161,7 @@ class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
     this.inputLabel,
     this.minHintText,
     this.maxHintText,
-    required super.parentId,
+    super.parentId = '',
     required super.id,
     required super.name,
     super.children,
@@ -199,10 +198,8 @@ class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
   /// Custom range entry
   /// This entry is usually rendered as an input field or a slider/progress bar in the UI.
   ///
-  /// [parentId] must be correct and non-empty: it has to equal the id of the
-  /// entry's owning parent (a category or a header/footer node). An empty
-  /// string breaks the parent-child relationship and leaves the entry
-  /// unselectable in a 2D-or-deeper structure.
+  /// When used inside [SelectCategoryEntry.children], the `parentId` is
+  /// automatically injected.
   SelectRangeEntry.custom({
     this.min,
     this.max,
@@ -210,7 +207,7 @@ class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
     this.inputLabel,
     this.minHintText,
     this.maxHintText,
-    required super.parentId,
+    super.parentId = '',
     super.name,
     super.enabled,
     super.immediate,
@@ -220,10 +217,8 @@ class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
 
   /// "Any" entry
   ///
-  /// [parentId] must be correct and non-empty: it has to equal the id of the
-  /// entry's owning parent (a category or a header/footer node). An empty
-  /// string breaks the parent-child relationship and leaves the entry
-  /// unselectable in a 2D-or-deeper structure.
+  /// When used inside [SelectCategoryEntry.children], the `parentId` is
+  /// automatically injected.
   SelectRangeEntry.any({
     this.min,
     this.max,
@@ -231,7 +226,7 @@ class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
     this.inputLabel,
     this.minHintText,
     this.maxHintText,
-    required super.parentId,
+    super.parentId = '',
     required super.name,
     super.enabled,
     super.immediate,
@@ -291,10 +286,9 @@ extension SelectRangeEntryExt on SelectRangeEntry {
 class SelectTextEntry<E> extends SelectChildEntry<E> {
   /// Creates a text entry.
   ///
-  /// [parentId] must be correct and non-empty: it has to equal the id of the
-  /// entry's owning parent (a category or a header/footer node). An empty
-  /// string breaks the parent-child relationship and leaves the entry
-  /// unselectable in a 2D-or-deeper structure.
+  /// When used inside [SelectCategoryEntry.children], the `parentId` is
+  /// automatically injected — prefer using [SelectCategoryEntry.children] for
+  /// 2D+ trees so you never need to write `parentId` by hand.
   SelectTextEntry({
     required super.parentId,
     required super.id,
@@ -307,13 +301,24 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
   /// Creates a text entry from only an [id], leaving [SelectChildEntry.parentId]
   /// empty and the name blank.
   ///
-  /// This is a placeholder-style constructor intended for building an entry
-  /// where the parent relationship is not (yet) known or required — for
-  /// example a flat 1D structure. Because `parentId` is hard-coded to an empty
-  /// string, it must not be used under a [SelectCategoryEntry]: in a 2D-or-
-  /// deeper structure the `parentId` must point to the owning category id,
-  /// otherwise the entry cannot be selected. Prefer the full constructor and
-  /// set `parentId` explicitly when nesting under a category.
+  /// This is a placeholder-style constructor for building an entry where the
+  /// parent relationship is not (yet) known. When used inside
+  /// [SelectCategoryEntry.children], the `parentId` is automatically injected
+  /// by the category, making this constructor safe for both 1D and 2D+ trees:
+  ///
+  /// ```dart
+  /// SelectCategoryEntry.children(
+  ///   id: 'c1',
+  ///   name: 'Category 1',
+  ///   children: {
+  ///     SelectTextEntry.id(id: 'a'),       // parentId auto-injected
+  ///     SelectTextEntry.name(id: 'b', name: 'B'),
+  ///   },
+  /// )
+  /// ```
+  ///
+  /// If you use the plain [SelectCategoryEntry] constructor (without
+  /// auto-injection), the `parentId` must be set explicitly on every child.
   SelectTextEntry.id({required super.id}) : super(parentId: '', name: '');
 
   /// Creates a leaf entry without a parent id.
@@ -322,10 +327,23 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
   /// empty string, so it is only suitable for a flat 1D structure where the
   /// top level contains no [SelectCategoryEntry] (e.g. sort order).
   ///
-  /// In a 2D-or-deeper structure (such as [GridSelect], [ListSelect],
-  /// [FlattenSelect], or [CascadingSelect]) the child entry's `parentId` must
-  /// point to its owning category id, otherwise it cannot be selected. Use the
-  /// full constructor and set `parentId` explicitly instead.
+  /// When used inside [SelectCategoryEntry.children], the `parentId` is
+  /// automatically injected by the category — you do **not** need to set it
+  /// manually. This is the recommended approach for 2D+ trees:
+  ///
+  /// ```dart
+  /// SelectCategoryEntry.children(
+  ///   id: 'c3',
+  ///   name: 'Category 3',
+  ///   children: {
+  ///     SelectTextEntry.name(id: 'a', name: 'A'), // parentId auto-injected
+  ///     SelectTextEntry.name(id: 'b', name: 'B'),
+  ///   },
+  /// )
+  /// ```
+  ///
+  /// If you use the plain [SelectCategoryEntry] constructor, you must set
+  /// `parentId` explicitly via the full [SelectTextEntry] constructor.
   SelectTextEntry.name({
     required super.id,
     required super.name,
@@ -335,10 +353,8 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
 
   /// "Any" entry
   ///
-  /// [parentId] must be correct and non-empty: it has to equal the id of the
-  /// entry's owning parent (a category or a header/footer node). An empty
-  /// string breaks the parent-child relationship and leaves the entry
-  /// unselectable in a 2D-or-deeper structure.
+  /// When used inside [SelectCategoryEntry.children], the `parentId` is
+  /// automatically injected.
   SelectTextEntry.any({
     required super.parentId,
     required super.name,
@@ -364,6 +380,10 @@ class SelectChildEntry<E> extends SelectEntry<E> {
   });
 
   /// The id of this entry's parent category.
+  ///
+  /// When the entry is created inside [SelectCategoryEntry.children], this
+  /// value is automatically injected by the category — there is no need to
+  /// set it manually.
   final String parentId;
 
   /// "Any" entry
@@ -451,6 +471,96 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
     super.enabled,
     super.immediate,
   });
+
+  /// Creates a category entry and automatically injects [id] as the
+  /// [SelectChildEntry.parentId] of every child in [children], as well as
+  /// any [header]/[footer] and their recursive children.
+  ///
+  /// This is the recommended constructor for 2D-or-deeper structures. Because
+  /// `parentId` is filled in by the category itself, you never need to
+  /// manually set it on the children — eliminating copy-paste mistakes and
+  /// forgetting-to-set errors:
+  ///
+  /// ```dart
+  /// SelectCategoryEntry.children(
+  ///   id: 'c3',
+  ///   name: 'Category 3',
+  ///   children: {
+  ///     SelectTextEntry.name(id: 'a', name: 'A'),
+  ///     SelectTextEntry.name(id: 'b', name: 'B'),
+  ///   },
+  ///   layout: const SelectListLayout(),
+  /// )
+  /// ```
+  ///
+  /// If you use this constructor, children, header, and footer entries should
+  /// **not** set their own `parentId` — the injected value always wins.
+  ///
+  /// For fine-grained control (e.g. when children are pre-built and already
+  /// carry the correct `parentId`), use the default [SelectCategoryEntry]
+  /// constructor directly.
+  factory SelectCategoryEntry.children({
+    SelectionMode selectionMode = SelectionMode.single,
+    SelectEntry<E>? header,
+    SelectionMode headerSelectionMode = SelectionMode.single,
+    SelectEntry<E>? footer,
+    SelectionMode footerSelectionMode = SelectionMode.single,
+    SelectLayout? layout,
+    required String id,
+    required String name,
+    required Set<SelectEntry<E>> children,
+    bool enabled = true,
+    bool immediate = false,
+  }) {
+    SelectEntry<E> injectParentId(SelectEntry<E> entry) {
+      if (entry is SelectChildEntry<E>) {
+        final injected = entry.copyWith(parentId: id);
+        final injectedChildren = injected.children?.map(injectParentId).toSet();
+        return injected.copyWith(children: injectedChildren);
+      }
+      final injectedChildren = entry.children?.map(injectParentId).toSet();
+      if (entry is SelectCategoryEntry<E>) {
+        final injectedHeader =
+            entry.header != null ? injectParentId(entry.header!) : null;
+        final injectedFooter =
+            entry.footer != null ? injectParentId(entry.footer!) : null;
+        return entry.copyWith(
+          children: injectedChildren,
+          header: injectedHeader,
+          footer: injectedFooter,
+        );
+      }
+      // For generic SelectEntry subclasses, children is the only child
+      // relationship we can inject.
+      return SelectChildEntry<E>(
+        parentId: id,
+        id: entry.id,
+        name: entry.name,
+        children: injectedChildren,
+        enabled: entry.enabled,
+        immediate: entry.immediate,
+        extra: entry.extra,
+      );
+    }
+
+    final injectedChildren = children.map(injectParentId).toSet();
+    final injectedHeader = header != null ? injectParentId(header) : null;
+    final injectedFooter = footer != null ? injectParentId(footer) : null;
+
+    return SelectCategoryEntry<E>(
+      selectionMode: selectionMode,
+      headerSelectionMode: headerSelectionMode,
+      footerSelectionMode: footerSelectionMode,
+      layout: layout,
+      id: id,
+      name: name,
+      children: injectedChildren,
+      header: injectedHeader,
+      footer: injectedFooter,
+      enabled: enabled,
+      immediate: immediate,
+    );
+  }
 
   /// The selection mode applied to this category's children.
   ///

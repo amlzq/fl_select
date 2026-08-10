@@ -121,87 +121,75 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: GridSelectDelegate(
                     entriesLoader: () async => {
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c1',
                         name: 'Cate 1',
                         children: {
-                          SelectTextEntry(parentId: 'c1', id: 'a', name: 'A'),
-                          SelectTextEntry(parentId: 'c1', id: 'b', name: 'B'),
-                          SelectTextEntry(parentId: 'c1', id: 'c', name: 'C'),
-                          SelectTextEntry(parentId: 'c1', id: 'd', name: 'D'),
+                          SelectTextEntry.name(id: 'a', name: 'A'),
+                          SelectTextEntry.name(id: 'b', name: 'B'),
+                          SelectTextEntry.name(id: 'c', name: 'C'),
+                          SelectTextEntry.name(id: 'd', name: 'D'),
                         },
                       ),
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c2',
                         name: 'Cate 2',
                         children: {
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'a', name: 'Tiger'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'b', name: 'Lion'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'c', name: 'Bear'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'd', name: 'Elephant'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'e', name: 'Monkey'),
-                          SelectTextEntry(parentId: 'c2', id: 'f', name: 'Dog'),
-                          SelectTextEntry(parentId: 'c2', id: 'g', name: 'Cat'),
-                          SelectTextEntry(parentId: 'c2', id: 'h', name: 'Pig'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'i', name: 'Horse'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'j', name: 'Sheep'),
-                          SelectTextEntry(parentId: 'c2', id: 'k', name: 'Cow'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'l', name: 'Chicken'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'm', name: 'Duck'),
-                          SelectTextEntry(parentId: 'c2', id: 'n', name: 'Pig'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'o', name: 'Horse'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'p', name: 'Sheep'),
-                          SelectTextEntry(parentId: 'c2', id: 'q', name: 'Cow'),
+                          SelectTextEntry.name(id: 'a', name: 'Tiger'),
+                          SelectTextEntry.name(id: 'b', name: 'Lion'),
+                          SelectTextEntry.name(id: 'c', name: 'Bear'),
+                          SelectTextEntry.name(id: 'd', name: 'Elephant'),
+                          SelectTextEntry.name(id: 'e', name: 'Monkey'),
+                          SelectTextEntry.name(id: 'f', name: 'Dog'),
+                          SelectTextEntry.name(id: 'g', name: 'Cat'),
+                          SelectTextEntry.name(id: 'h', name: 'Pig'),
+                          SelectTextEntry.name(id: 'i', name: 'Horse'),
+                          SelectTextEntry.name(id: 'j', name: 'Sheep'),
+                          SelectTextEntry.name(id: 'k', name: 'Cow'),
+                          SelectTextEntry.name(id: 'l', name: 'Chicken'),
+                          SelectTextEntry.name(id: 'm', name: 'Duck'),
+                          SelectTextEntry.name(id: 'n', name: 'Pig'),
+                          SelectTextEntry.name(id: 'o', name: 'Horse'),
+                          SelectTextEntry.name(id: 'p', name: 'Sheep'),
+                          SelectTextEntry.name(id: 'q', name: 'Cow'),
                         },
                         layout: const SelectChipLayout(),
                       ),
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c3',
                         name: 'Cate 3',
                         children: {
-                          SelectTextEntry(parentId: 'c3', id: 'a', name: 'A'),
-                          SelectTextEntry(parentId: 'c3', id: 'b', name: 'B'),
-                          SelectTextEntry(parentId: 'c3', id: 'c', name: 'C'),
-                          SelectTextEntry(parentId: 'c3', id: 'd', name: 'D'),
+                          SelectTextEntry.name(id: 'a', name: 'A'),
+                          SelectTextEntry.name(id: 'b', name: 'B'),
+                          SelectTextEntry.name(id: 'c', name: 'C'),
+                          SelectTextEntry.name(id: 'd', name: 'D'),
                         },
                         layout: const SelectListLayout(),
                       ),
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c4',
                         name: 'Cate 4',
                         children: {
                           SelectRangeEntry(
-                            parentId: 'c4',
                             id: 'a',
                             name: '\$0-\$2000000',
                             min: 0,
                             max: 2000000,
                             divisions: 80,
                           ),
-                          SelectRangeEntry.custom(parentId: 'c4'),
+                          SelectRangeEntry.custom(),
                         },
                         layout: const SelectRangeLayout(),
                       ),
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c5',
                         name: 'Cate 5',
                         children: {
-                          SelectTextEntry(parentId: 'c5', id: 'a', name: '1'),
-                          SelectTextEntry(parentId: 'c5', id: 'b', name: '2'),
-                          SelectTextEntry(parentId: 'c5', id: 'c', name: '3'),
-                          SelectTextEntry(parentId: 'c5', id: 'd', name: '4'),
-                          SelectTextEntry(parentId: 'c5', id: 'e', name: '5'),
+                          SelectTextEntry.name(id: 'a', name: '1'),
+                          SelectTextEntry.name(id: 'b', name: '2'),
+                          SelectTextEntry.name(id: 'c', name: '3'),
+                          SelectTextEntry.name(id: 'd', name: '4'),
+                          SelectTextEntry.name(id: 'e', name: '5'),
                         },
                         layout: const SelectCounterLayout(),
                       ),
@@ -269,31 +257,26 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: FlattenSelectDelegate(
                     entriesLoader: () async => {
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c1',
                         name: 'Cate 1',
                         children: {
-                          SelectTextEntry(
-                              parentId: 'c1', id: 'a', name: 'Tiger'),
-                          SelectTextEntry(
-                              parentId: 'c1', id: 'b', name: 'Lion'),
-                          SelectTextEntry(
-                              parentId: 'c1', id: 'c', name: 'Bear'),
-                          SelectTextEntry(
-                              parentId: 'c1', id: 'd', name: 'Elephant'),
-                          SelectTextEntry(
-                              parentId: 'c1', id: 'e', name: 'Monkey'),
-                          SelectTextEntry(parentId: 'c1', id: 'f', name: 'Dog'),
+                          SelectTextEntry.name(id: 'a', name: 'Tiger'),
+                          SelectTextEntry.name(id: 'b', name: 'Lion'),
+                          SelectTextEntry.name(id: 'c', name: 'Bear'),
+                          SelectTextEntry.name(id: 'd', name: 'Elephant'),
+                          SelectTextEntry.name(id: 'e', name: 'Monkey'),
+                          SelectTextEntry.name(id: 'f', name: 'Dog'),
                         },
                       ),
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c2',
                         name: 'Cate 2',
                         children: {
-                          SelectTextEntry(parentId: 'c2', id: 'a', name: 'A'),
-                          SelectTextEntry(parentId: 'c2', id: 'b', name: 'B'),
-                          SelectTextEntry(parentId: 'c2', id: 'c', name: 'C'),
-                          SelectTextEntry(parentId: 'c2', id: 'd', name: 'D'),
+                          SelectTextEntry.name(id: 'a', name: 'A'),
+                          SelectTextEntry.name(id: 'b', name: 'B'),
+                          SelectTextEntry.name(id: 'c', name: 'C'),
+                          SelectTextEntry.name(id: 'd', name: 'D'),
                         },
                         layout: const SelectGridLayout(
                           crossAxisCount: 2,
@@ -302,42 +285,41 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                           mainAxisSpacing: 10,
                         ),
                       ),
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c3',
                         name: 'Cate 3',
                         children: {
-                          SelectTextEntry(parentId: 'c3', id: 'a', name: 'A'),
-                          SelectTextEntry(parentId: 'c3', id: 'b', name: 'B'),
-                          SelectTextEntry(parentId: 'c3', id: 'c', name: 'C'),
-                          SelectTextEntry(parentId: 'c3', id: 'd', name: 'D'),
+                          SelectTextEntry.name(id: 'a', name: 'A'),
+                          SelectTextEntry.name(id: 'b', name: 'B'),
+                          SelectTextEntry.name(id: 'c', name: 'C'),
+                          SelectTextEntry.name(id: 'd', name: 'D'),
                         },
                         layout: const SelectListLayout(),
                       ),
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c4',
                         name: 'Cate 4',
                         children: {
                           SelectRangeEntry(
-                            parentId: 'c4',
                             id: 'a',
                             name: '\$0-\$2000000',
                             min: 0,
                             max: 2000000,
                             divisions: 80,
                           ),
-                          SelectRangeEntry.custom(parentId: 'c4'),
+                          SelectRangeEntry.custom(),
                         },
                         layout: const SelectRangeLayout(),
                       ),
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c5',
                         name: 'Cate 5',
                         children: {
-                          SelectTextEntry(parentId: 'c5', id: 'a', name: '1'),
-                          SelectTextEntry(parentId: 'c5', id: 'b', name: '2'),
-                          SelectTextEntry(parentId: 'c5', id: 'c', name: '3'),
-                          SelectTextEntry(parentId: 'c5', id: 'd', name: '4'),
-                          SelectTextEntry(parentId: 'c5', id: 'e', name: '5'),
+                          SelectTextEntry.name(id: 'a', name: '1'),
+                          SelectTextEntry.name(id: 'b', name: '2'),
+                          SelectTextEntry.name(id: 'c', name: '3'),
+                          SelectTextEntry.name(id: 'd', name: '4'),
+                          SelectTextEntry.name(id: 'e', name: '5'),
                         },
                         layout: const SelectCounterLayout(),
                       ),
@@ -360,10 +342,10 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: ListSelectDelegate(
                     entriesLoader: () async => {
-                      SelectTextEntry(parentId: 'c1', id: 'a', name: 'A'),
-                      SelectTextEntry(parentId: 'c1', id: 'b', name: 'B'),
-                      SelectTextEntry(parentId: 'c1', id: 'c', name: 'C'),
-                      SelectTextEntry(parentId: 'c1', id: 'd', name: 'D'),
+                      SelectTextEntry.name(id: 'a', name: 'A'),
+                      SelectTextEntry.name(id: 'b', name: 'B'),
+                      SelectTextEntry.name(id: 'c', name: 'C'),
+                      SelectTextEntry.name(id: 'd', name: 'D'),
                     },
                     resetText: AppLocalizations.of(context)?.reset ?? '',
                     applyText: AppLocalizations.of(context)?.apply ?? '',
@@ -383,59 +365,48 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: ListSelectDelegate(
                     entriesLoader: () async => {
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c1',
                         name: 'Cate 1',
                         children: {
-                          SelectTextEntry(parentId: 'c1', id: 'a', name: 'A'),
-                          SelectTextEntry(parentId: 'c1', id: 'b', name: 'B'),
-                          SelectTextEntry(parentId: 'c1', id: 'c', name: 'C'),
-                          SelectTextEntry(parentId: 'c1', id: 'd', name: 'D'),
+                          SelectTextEntry.name(id: 'a', name: 'A'),
+                          SelectTextEntry.name(id: 'b', name: 'B'),
+                          SelectTextEntry.name(id: 'c', name: 'C'),
+                          SelectTextEntry.name(id: 'd', name: 'D'),
                         },
                       ),
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c2',
                         name: 'Cate 2',
                         children: {
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'a', name: 'Tiger'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'b', name: 'Lion'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'c', name: 'Bear'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'd', name: 'Elephant'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'e', name: 'Monkey'),
-                          SelectTextEntry(parentId: 'c2', id: 'f', name: 'Dog'),
-                          SelectTextEntry(parentId: 'c2', id: 'g', name: 'Cat'),
-                          SelectTextEntry(parentId: 'c2', id: 'h', name: 'Pig'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'i', name: 'Horse'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'j', name: 'Sheep'),
-                          SelectTextEntry(parentId: 'c2', id: 'k', name: 'Cow'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'l', name: 'Chicken'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'm', name: 'Duck'),
-                          SelectTextEntry(parentId: 'c2', id: 'n', name: 'Pig'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'o', name: 'Horse'),
-                          SelectTextEntry(
-                              parentId: 'c2', id: 'p', name: 'Sheep'),
-                          SelectTextEntry(parentId: 'c2', id: 'q', name: 'Cow'),
+                          SelectTextEntry.name(id: 'a', name: 'Tiger'),
+                          SelectTextEntry.name(id: 'b', name: 'Lion'),
+                          SelectTextEntry.name(id: 'c', name: 'Bear'),
+                          SelectTextEntry.name(id: 'd', name: 'Elephant'),
+                          SelectTextEntry.name(id: 'e', name: 'Monkey'),
+                          SelectTextEntry.name(id: 'f', name: 'Dog'),
+                          SelectTextEntry.name(id: 'g', name: 'Cat'),
+                          SelectTextEntry.name(id: 'h', name: 'Pig'),
+                          SelectTextEntry.name(id: 'i', name: 'Horse'),
+                          SelectTextEntry.name(id: 'j', name: 'Sheep'),
+                          SelectTextEntry.name(id: 'k', name: 'Cow'),
+                          SelectTextEntry.name(id: 'l', name: 'Chicken'),
+                          SelectTextEntry.name(id: 'm', name: 'Duck'),
+                          SelectTextEntry.name(id: 'n', name: 'Pig'),
+                          SelectTextEntry.name(id: 'o', name: 'Horse'),
+                          SelectTextEntry.name(id: 'p', name: 'Sheep'),
+                          SelectTextEntry.name(id: 'q', name: 'Cow'),
                         },
                         layout: const SelectChipLayout(),
                       ),
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c3',
                         name: 'Cate 3',
                         children: {
-                          SelectTextEntry(parentId: 'c3', id: 'a', name: 'A'),
-                          SelectTextEntry(parentId: 'c3', id: 'b', name: 'B'),
-                          SelectTextEntry(parentId: 'c3', id: 'c', name: 'C'),
-                          SelectTextEntry(parentId: 'c3', id: 'd', name: 'D'),
+                          SelectTextEntry.name(id: 'a', name: 'A'),
+                          SelectTextEntry.name(id: 'b', name: 'B'),
+                          SelectTextEntry.name(id: 'c', name: 'C'),
+                          SelectTextEntry.name(id: 'd', name: 'D'),
                         },
                         layout: const SelectGridLayout(
                           crossAxisCount: 3,
@@ -444,31 +415,30 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                           mainAxisSpacing: 10,
                         ),
                       ),
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c4',
                         name: 'Cate 4',
                         children: {
                           SelectRangeEntry(
-                            parentId: 'c4',
                             id: 'a',
                             name: '\$0-\$2000000',
                             min: 0,
                             max: 2000000,
                             divisions: 80,
                           ),
-                          SelectRangeEntry.custom(parentId: 'c4'),
+                          SelectRangeEntry.custom(),
                         },
                         layout: const SelectRangeLayout(),
                       ),
-                      SelectCategoryEntry(
+                      SelectCategoryEntry.children(
                         id: 'c5',
                         name: 'Cate 5',
                         children: {
-                          SelectTextEntry(parentId: 'c5', id: 'a', name: '1'),
-                          SelectTextEntry(parentId: 'c5', id: 'b', name: '2'),
-                          SelectTextEntry(parentId: 'c5', id: 'c', name: '3'),
-                          SelectTextEntry(parentId: 'c5', id: 'd', name: '4'),
-                          SelectTextEntry(parentId: 'c5', id: 'e', name: '5'),
+                          SelectTextEntry.name(id: 'a', name: '1'),
+                          SelectTextEntry.name(id: 'b', name: '2'),
+                          SelectTextEntry.name(id: 'c', name: '3'),
+                          SelectTextEntry.name(id: 'd', name: '4'),
+                          SelectTextEntry.name(id: 'e', name: '5'),
                         },
                         layout: const SelectCounterLayout(),
                       ),
