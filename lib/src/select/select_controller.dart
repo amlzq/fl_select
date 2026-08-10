@@ -109,7 +109,7 @@ class SelectController extends ChangeNotifier {
     SelectEntries? previousSelectedOverride,
     SelectEntries? resetSelectedOverride,
   }) {
-    _validateParentIds(entries);
+    validateEntries(entries);
     final changed = tree.bind(
       entries,
       previousSelected: previousSelectedOverride ?? previousSelected,
@@ -134,9 +134,30 @@ class SelectController extends ChangeNotifier {
   /// tapping cannot resolve the owning category and the selection is silently
   /// dropped. This check throws an [ArgumentError] during development instead
   /// of failing silently in release builds.
-  static void _validateParentIds(List<SelectEntry> entries) {
+  ///
+  /// This is public so hosts (e.g. [SelectPanel]) can validate loaded entries
+  /// up front and surface the error through their error UI instead of letting
+  /// it escape mid-build and hang the frame.
+  static void validateEntries(List<SelectEntry> entries) {
     final hasCategory = entries.any((e) => e is SelectCategoryEntry);
     if (!hasCategory) return;
+
+    // A 2D-or-deeper structure requires every top-level entry to be a
+    // [SelectCategoryEntry]. The select widgets assume this invariant when they
+    // resolve the focused/rendered category (e.g. via `entries.first` or by
+    // indexing into the list), so violating it would crash during the build
+    // phase. Fail fast here instead so [SelectPanel] can surface it through the
+    // error UI.
+    for (final entry in entries) {
+      if (entry is! SelectCategoryEntry) {
+        throw ArgumentError(
+          'In a 2D-or-deeper structure, every top-level entry must be a '
+          'SelectCategoryEntry, but found "${entry.runtimeType}" '
+          '(id: "${entry.id}") at the top level. A flat 1D list is only '
+          'supported when there is no SelectCategoryEntry at all.',
+        );
+      }
+    }
 
     void validateParent(SelectEntry parent, SelectEntry child) {
       if (child is SelectChildEntry && child.parentId != parent.id) {

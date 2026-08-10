@@ -169,6 +169,26 @@ class _SelectPanelState extends State<SelectPanel> {
                   );
                 } else {
                   final entries = snapshot.data?.toList() ?? <SelectEntry>[];
+                  // Validate the loaded entries up front so that bad
+                  // parent/child relationships surface through the error UI
+                  // and are logged to the console, instead of escaping during
+                  // a descendant's build phase (which freezes the frame).
+                  try {
+                    SelectController.validateEntries(entries);
+                  } catch (error, stackTrace) {
+                    FlutterError.reportError(
+                      FlutterErrorDetails(
+                        exception: error,
+                        stack: stackTrace,
+                        library: 'fl_select',
+                        context: ErrorDescription(
+                          'while validating select entries for '
+                          '${widget.delegate.runtimeType}',
+                        ),
+                      ),
+                    );
+                    return widget.delegate.buildError(context, error, stackTrace);
+                  }
                   return GestureDetector(
                     behavior: HitTestBehavior.opaque,
                     onTap: () {

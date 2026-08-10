@@ -157,9 +157,10 @@ class FlattenSelectState extends State<FlattenSelect> {
   /// Whether the entries form a two-dimensional (category -> children) tree.
   bool get _isCategoryTree => widget.entries.firstOrNull is SelectCategoryEntry;
 
-  SelectCategoryEntry? get selectedCategory =>
-      widget.entries.elementAtOrNull(_tempSelectedCategoryIndex)
-          as SelectCategoryEntry;
+  SelectCategoryEntry? get selectedCategory {
+    final entry = widget.entries.elementAtOrNull(_tempSelectedCategoryIndex);
+    return entry is SelectCategoryEntry ? entry : null;
+  }
 
   bool _onScrollNotification(ScrollNotification notification) {
     // If this scroll was triggered programmatically, ignore it

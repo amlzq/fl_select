@@ -50,8 +50,8 @@ class GridSelectState extends State<GridSelect> {
   @override
   void initState() {
     super.initState();
-    _tempSelectedCategory =
-        _isCategoryTree ? widget.entries.first as SelectCategoryEntry : null;
+    final first = widget.entries.firstOrNull;
+    _tempSelectedCategory = first is SelectCategoryEntry ? first : null;
   }
 
   /// Whether the entries form a two-dimensional (category -> children) tree.

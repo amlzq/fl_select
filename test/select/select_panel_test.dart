@@ -99,6 +99,69 @@ void main() {
       expect(find.textContaining('Error:'), findsOneWidget);
     });
 
+    testWidgets(
+        'shows an error when a 2D structure has a mismatched parentId instead of hanging',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SelectPanel(
+              delegate: _TestDelegate(
+                entriesLoader: () async => <SelectEntry<dynamic>>{
+                  SelectCategoryEntry<dynamic>(
+                    id: 'c1',
+                    name: 'Cate 1',
+                    children: {
+                      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                    },
+                  ),
+                },
+                bodyBuilder: (_, __, ___) => const Text('body'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      // The build-phase ArgumentError is routed through the error UI.
+      expect(find.text('body'), findsNothing);
+      expect(find.textContaining('Error:'), findsOneWidget);
+      // And it is reported to the console; consume it so the test passes.
+      expect(tester.takeException(), isNotNull);
+    });
+
+    testWidgets(
+        'uses errorBuilder for a 2D structure with a mismatched parentId',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SelectPanel(
+              delegate: _TestDelegate(
+                entriesLoader: () async => <SelectEntry<dynamic>>{
+                  SelectCategoryEntry<dynamic>(
+                    id: 'c1',
+                    name: 'Cate 1',
+                    children: {
+                      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                    },
+                  ),
+                },
+                bodyBuilder: (_, __, ___) => const Text('body'),
+                errorBuilder: (error, _) => Text('custom: $error'),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+      expect(find.text('body'), findsNothing);
+      expect(find.textContaining('custom:'), findsOneWidget);
+      expect(tester.takeException(), isNotNull);
+    });
+
     testWidgets('uses errorBuilder when data fails', (tester) async {
       await tester.pumpWidget(
         MaterialApp(

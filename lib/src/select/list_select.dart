@@ -82,9 +82,10 @@ class ListSelectState extends State<ListSelect> {
 
   SelectionMode? get categorySelectionMode => controller?.selectionMode;
 
-  SelectCategoryEntry? get selectedCategory =>
-      widget.entries.elementAtOrNull(_tempSelectedCategoryIndex)
-          as SelectCategoryEntry;
+  SelectCategoryEntry? get selectedCategory {
+    final entry = widget.entries.elementAtOrNull(_tempSelectedCategoryIndex);
+    return entry is SelectCategoryEntry ? entry : null;
+  }
 
   void _onTerminalItemTap(SelectChildEntry item) {
     if (item is SelectRangeEntry && item.isCustom) {

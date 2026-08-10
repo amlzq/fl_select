@@ -144,11 +144,13 @@ class CascadingSelectState extends State<CascadingSelect> {
     _initializeTempSelectedEntryPerLevel(null, 0);
 
     if (_tempSelectedEntryPerLevel.isEmpty && widget.entries.isNotEmpty) {
-      final firstCategory = widget.entries.first as SelectCategoryEntry;
-      _tempSelectedEntryPerLevel.add(firstCategory);
-      _cascadingList.add(firstCategory.children?.toList() ?? []);
-      _currentLevel = 1;
-      _scrollControllers.add(ScrollController());
+      final firstEntry = widget.entries.first;
+      if (firstEntry is SelectCategoryEntry) {
+        _tempSelectedEntryPerLevel.add(firstEntry);
+        _cascadingList.add(firstEntry.children?.toList() ?? []);
+        _currentLevel = 1;
+        _scrollControllers.add(ScrollController());
+      }
     }
 
     // Reveal to selected list item after build
