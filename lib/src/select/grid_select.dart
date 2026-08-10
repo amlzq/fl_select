@@ -10,10 +10,13 @@ import 'select_layout.dart';
 import 'widgets/widgets.dart';
 
 /// Vertical layout: category tabs on top and a grid of items below.
-/// Two-dimensional structured data.
+/// Supports both one-dimensional (flat entries) and two-dimensional
+/// (category -> children) structured data.
 ///
 /// Behavior notes:
-/// - This select is fixed to a two-level structure: category -> children.
+/// - In a flat 1D structure, the top-level entries are rendered directly as a
+///   grid and no category tabs are shown.
+/// - In a two-level structure, category tabs drive which children are shown.
 /// - If a category contains an "Any" child entry, it may be selected by default.
 /// - If a category contains a custom range entry ([SelectRangeEntry.custom]),
 ///   two numeric fields are shown for min/max input.
@@ -38,8 +41,8 @@ class GridSelect extends StatefulWidget {
 }
 
 class GridSelectState extends State<GridSelect> {
-  /// Focused category entry
-  late SelectCategoryEntry _tempSelectedCategory;
+  /// Focused category entry (only used in a 2D structure).
+  SelectCategoryEntry? _tempSelectedCategory;
 
   SelectController? controller;
   bool _didInitCategoryFromState = false;
@@ -47,8 +50,12 @@ class GridSelectState extends State<GridSelect> {
   @override
   void initState() {
     super.initState();
-    _tempSelectedCategory = widget.entries.first as SelectCategoryEntry;
+    _tempSelectedCategory =
+        _isCategoryTree ? widget.entries.first as SelectCategoryEntry : null;
   }
+
+  /// Whether the entries form a two-dimensional (category -> children) tree.
+  bool get _isCategoryTree => widget.entries.firstOrNull is SelectCategoryEntry;
 
   @override
   void dispose() {
@@ -78,7 +85,7 @@ class GridSelectState extends State<GridSelect> {
       initializeAnyIfEmpty: true,
       previousSelectedOverride: widget.previousSelected,
     );
-    if (!_didInitCategoryFromState) {
+    if (_isCategoryTree && !_didInitCategoryFromState) {
       final selectedCategory = controller
           ?.selectedEntriesAtLevel(0)
           .whereType<SelectCategoryEntry>()
@@ -101,7 +108,7 @@ class GridSelectState extends State<GridSelect> {
 
   /// Selection Mode for the selected category sub-items
   SelectionMode get childrenSelectionMode =>
-      _tempSelectedCategory.selectionMode;
+      _tempSelectedCategory?.selectionMode ?? SelectionMode.single;
 
   /// Selection Mode for delegate.
   /// It is jointly determined by the category selection mode and the sub-item selection mode.
@@ -126,6 +133,25 @@ class GridSelectState extends State<GridSelect> {
   }
 
   void _onTerminalItemTap(SelectChildEntry entry) {
+    if (!_isCategoryTree) {
+      if (entry is SelectRangeEntry && entry.isCustom) {
+        final hasRange = entry.min != null || entry.max != null;
+        if (hasRange) {
+          controller?.select(entry.id, parentId: entry.parentId);
+        } else {
+          controller?.unselect(entry.id, parentId: entry.parentId);
+        }
+      } else {
+        controller?.toggleFlatEntry(
+          entry,
+          selectionMode: selectSelectionMode ?? SelectionMode.single,
+          isCategoryTree: false,
+        );
+      }
+      _setStateOrImmediateApply(entry);
+      return;
+    }
+
     final category = widget.entries
         .whereType<SelectCategoryEntry>()
         .singleWhereOrNull((e) => e.id == entry.parentId);
@@ -172,12 +198,16 @@ class GridSelectState extends State<GridSelect> {
   }
 
   void _onResetTap() {
-    // Reset only the currently focused category (tab) rather than every
-    // category, so selections in the other tabs are preserved.
-    controller?.resetCategoryState(
-      _tempSelectedCategory,
-      initializeAnyIfEmpty: true,
-    );
+    if (!_isCategoryTree) {
+      controller?.resetState(initializeAnyIfEmpty: true);
+    } else {
+      // Reset only the currently focused category (tab) rather than every
+      // category, so selections in the other tabs are preserved.
+      controller?.resetCategoryState(
+        _tempSelectedCategory!,
+        initializeAnyIfEmpty: true,
+      );
+    }
     setState(() {});
     controller?.reset();
   }
@@ -278,9 +308,52 @@ class GridSelectState extends State<GridSelect> {
 
   @override
   Widget build(BuildContext context) {
+    // In a flat 1D structure there are no categories, so no tab bar is shown
+    // and the top-level entries are rendered directly as a grid.
+    if (!_isCategoryTree) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Flexible(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+              child: SelectGridView(
+                crossAxisCount: delegate.crossAxisCount,
+                mainAxisSpacing: delegate.mainAxisSpacing,
+                crossAxisSpacing: delegate.crossAxisSpacing,
+                childAspectRatio: delegate.childAspectRatio,
+                tileVariant: delegate.gridTileTheme?.variant,
+                fieldVariant: delegate.fieldTileTheme?.variant,
+                entries: widget.entries,
+                selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
+                onChanged: (_, entry) =>
+                    _onTerminalItemTap(entry as SelectChildEntry),
+              ),
+            ),
+          ),
+          if (SelectionMode.multiple == selectSelectionMode &&
+              !SelectActionBarVisibility.isHidden(context))
+            delegate.actionBarBuilder?.call(
+                  context,
+                  onResetTap: _onResetTap,
+                  onApplyTap: _onApplyTap,
+                ) ??
+                SelectActionBar(
+                  resetText: delegate.resetText,
+                  applyText: delegate.applyText,
+                  resetFlex: delegate.actionBarTheme?.resetFlex,
+                  applyFlex: delegate.actionBarTheme?.applyFlex,
+                  onResetTap: _onResetTap,
+                  onApplyTap: _onApplyTap,
+                ),
+        ],
+      );
+    }
+
+    final category = _tempSelectedCategory!;
+
     /// Focused category index
-    final tempSelectedCategoryIndex =
-        widget.entries.indexOf(_tempSelectedCategory);
+    final tempSelectedCategoryIndex = widget.entries.indexOf(category);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -291,14 +364,14 @@ class GridSelectState extends State<GridSelect> {
             onChanged: (_, item) =>
                 _onCategoryItemTap(item as SelectCategoryEntry),
             entries: widget.entries,
-            selectedCategories: {_tempSelectedCategory},
+            selectedCategories: {category},
             focusedIndex: tempSelectedCategoryIndex,
           ),
         Flexible(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
             child: _buildCategoryView(
-              _tempSelectedCategory,
+              category,
               index: tempSelectedCategoryIndex,
             ),
           ),
