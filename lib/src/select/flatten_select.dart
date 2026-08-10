@@ -33,9 +33,21 @@ class FlattenSelect extends StatefulWidget {
     required this.delegate,
     required this.entries,
     required this.previousSelected,
-    required this.crossAxisCount,
+    @Deprecated(
+      'Use SelectGridLayout.crossAxisCount on SelectCategoryEntry.layout instead.',
+    )
+    this.crossAxisCount = 2,
+    @Deprecated(
+      'Use SelectGridLayout.mainAxisSpacing on SelectCategoryEntry.layout instead.',
+    )
     this.mainAxisSpacing = 0.0,
+    @Deprecated(
+      'Use SelectGridLayout.crossAxisSpacing on SelectCategoryEntry.layout instead.',
+    )
     this.crossAxisSpacing = 0.0,
+    @Deprecated(
+      'Use SelectGridLayout.childAspectRatio on SelectCategoryEntry.layout instead.',
+    )
     this.childAspectRatio = 1.0,
   });
 
@@ -45,12 +57,36 @@ class FlattenSelect extends StatefulWidget {
 
   final Set<SelectEntry>? previousSelected;
 
+  /// Deprecated: `FlattenSelect` renders grid layouts from
+  /// [SelectCategoryEntry.layout] and no longer uses this widget parameter.
+  /// Set a [SelectGridLayout] on [SelectCategoryEntry.layout] instead.
+  @Deprecated(
+    'Use SelectGridLayout.crossAxisCount on SelectCategoryEntry.layout instead.',
+  )
   final int crossAxisCount;
 
+  /// Deprecated: `FlattenSelect` renders grid layouts from
+  /// [SelectCategoryEntry.layout] and no longer uses this widget parameter.
+  /// Set a [SelectGridLayout] on [SelectCategoryEntry.layout] instead.
+  @Deprecated(
+    'Use SelectGridLayout.mainAxisSpacing on SelectCategoryEntry.layout instead.',
+  )
   final double mainAxisSpacing;
 
+  /// Deprecated: `FlattenSelect` renders grid layouts from
+  /// [SelectCategoryEntry.layout] and no longer uses this widget parameter.
+  /// Set a [SelectGridLayout] on [SelectCategoryEntry.layout] instead.
+  @Deprecated(
+    'Use SelectGridLayout.crossAxisSpacing on SelectCategoryEntry.layout instead.',
+  )
   final double crossAxisSpacing;
 
+  /// Deprecated: `FlattenSelect` renders grid layouts from
+  /// [SelectCategoryEntry.layout] and no longer uses this widget parameter.
+  /// Set a [SelectGridLayout] on [SelectCategoryEntry.layout] instead.
+  @Deprecated(
+    'Use SelectGridLayout.childAspectRatio on SelectCategoryEntry.layout instead.',
+  )
   final double childAspectRatio;
 
   @override
@@ -326,10 +362,8 @@ class FlattenSelectState extends State<FlattenSelect> {
   }
 
   /// Builds the right-side content for a single category by exhaustively
-  /// consuming [SelectCategoryEntry.layout], mirroring [ListSelect] and
-  /// [GridSelect]. When a category has no layout, it falls back to the grid
-  /// using this widget's own cross-axis parameters, so the default behaviour
-  /// is unchanged.
+  /// consuming [SelectCategoryEntry.layout].
+  /// When a category has no layout, it falls back to a wrapable [SelectChipBar].
   Widget _buildCategoryView(
     SelectCategoryEntry category, {
     required int index,
@@ -338,13 +372,7 @@ class FlattenSelectState extends State<FlattenSelect> {
     final entries = category.children?.toList() ?? [];
     final selectedEntries =
         controller?.selectedEntriesForParent(category.id, level: 1) ?? {};
-    final layout = category.layout ??
-        SelectGridLayout(
-          crossAxisCount: widget.crossAxisCount,
-          mainAxisSpacing: widget.mainAxisSpacing,
-          crossAxisSpacing: widget.crossAxisSpacing,
-          childAspectRatio: widget.childAspectRatio,
-        );
+    final layout = category.layout ?? const SelectChipLayout();
 
     final view = switch (layout) {
       SelectListLayout(:final toText) => SelectListView(

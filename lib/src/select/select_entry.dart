@@ -475,7 +475,10 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
 
   /// The layout used to render this category's children.
   ///
-  /// When `null`, a default [SelectListLayout] is used at render time.
+  /// When `null`, a default layout is used at render time:
+  /// - [ListSelectDelegate] falls back to [SelectListLayout].
+  /// - [GridSelectDelegate] falls back to a [SelectGridLayout] driven by the delegate.
+  /// - [FlattenSelectDelegate] falls back to [SelectChipLayout].
   final SelectLayout? layout;
 
   SelectCategoryEntry<E> copyWith({
