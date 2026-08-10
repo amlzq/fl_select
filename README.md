@@ -119,7 +119,7 @@ PopupSelectBar(
     CascadingSelectDelegate(entriesLoader: _fetchNeighborhood),
     GridSelectDelegate(crossAxisCount: 3, entriesLoader: _fetchPrice),
     GridSelectDelegate(crossAxisCount: 3, entriesLoader: _fetchRooms),
-    FlattenSelectDelegate(crossAxisCount: 3, entriesLoader: _fetchMore),
+    FlattenSelectDelegate(entriesLoader: _fetchMore),
     ListSelectDelegate(entriesLoader: _fetchSort),
   ],
   onApplied: (tabData, selected) {

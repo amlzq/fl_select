@@ -228,10 +228,6 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
         selectedEntriesLoader: data.flatten.selected,
         resetEntriesLoader: data.flatten.reset,
         selectionMode: p.selectionMode,
-        crossAxisCount: p.crossAxisCount,
-        childAspectRatio: p.childAspectRatio,
-        crossAxisSpacing: p.spacing,
-        mainAxisSpacing: p.spacing,
         gridTileTheme:
             SelectGridTileTheme(variant: _gridVariant(p.tileVariant)),
         chipBarTheme: chipBarTheme,

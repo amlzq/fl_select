@@ -9,10 +9,6 @@ Widget _flattenHarness(Set<SelectEntry> entries) {
     home: Scaffold(
       body: SelectView(
         delegate: FlattenSelectDelegate(
-          crossAxisCount: 3,
-          mainAxisSpacing: 4,
-          crossAxisSpacing: 4,
-          childAspectRatio: 1.5,
           entriesLoader: () async => entries,
         ),
         onChanged: (_) {},
@@ -42,7 +38,6 @@ void main() {
         home: Scaffold(
           body: SelectView(
             delegate: FlattenSelectDelegate(
-              crossAxisCount: 3,
               entriesLoader: () async => entries,
             ),
             onChanged: (_) {},
@@ -73,7 +68,6 @@ void main() {
           home: Scaffold(
             body: SelectView(
               delegate: FlattenSelectDelegate(
-                crossAxisCount: 3,
                 selectionMode: SelectionMode.single,
                 entriesLoader: () async => {
                   SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
