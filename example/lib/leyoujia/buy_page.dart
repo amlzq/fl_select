@@ -519,10 +519,6 @@ class _BuyPageState extends State<BuyPage> {
                       _filtersRepo.fetchFloorPlanBuySelectedData,
                   resetEntriesLoader: _filtersRepo.fetchFloorPlanBuyResetData,
                   selectionMode: SelectionMode.multiple,
-                  crossAxisCount: 3,
-                  childAspectRatio: 2.5,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
                   sideBarTheme: const SelectSideBarTheme(width: 98),
                   actionBarBuilder: (
                     context, {
@@ -541,10 +537,6 @@ class _BuyPageState extends State<BuyPage> {
                   selectedEntriesLoader: _filtersRepo.fetchMoreBuySelectedData,
                   resetEntriesLoader: _filtersRepo.fetchMoreBuyResetData,
                   selectionMode: SelectionMode.multiple,
-                  crossAxisCount: 3,
-                  childAspectRatio: 2.5,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
                   sideBarTheme: const SelectSideBarTheme(width: 98),
                   actionBarBuilder: (
                     context, {

@@ -248,10 +248,6 @@ class _SellPageState extends State<SellPage> {
                       _filtersRepo.fetchFloorPlanSellSelectedData,
                   resetEntriesLoader: _filtersRepo.fetchFloorPlanSellResetData,
                   selectionMode: SelectionMode.multiple,
-                  crossAxisCount: 3,
-                  childAspectRatio: 2.5,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
                   sideBarTheme: const SelectSideBarTheme(width: 98),
                 ),
                 ListSelectDelegate(

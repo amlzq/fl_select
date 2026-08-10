@@ -394,6 +394,12 @@ class HouseFiltersRepository {
                       ))
                 .toSet(),
             selectionMode: SelectionMode.multiple,
+            layout: const SelectGridLayout(
+              crossAxisCount: 3,
+              childAspectRatio: 2.5,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
           ),
         )
         .toSet();
@@ -451,6 +457,12 @@ class HouseFiltersRepository {
                       ))
                 .toSet(),
             selectionMode: SelectionMode.multiple,
+            layout: const SelectGridLayout(
+              crossAxisCount: 3,
+              childAspectRatio: 2.5,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
           ),
         )
         .toSet();
@@ -509,6 +521,12 @@ class HouseFiltersRepository {
                 .toSet(),
             selectionMode:
                 singleAll ? SelectionMode.single : SelectionMode.multiple,
+            layout: const SelectGridLayout(
+              crossAxisCount: 3,
+              childAspectRatio: 2.5,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
           ),
         )
         .toSet();
@@ -545,6 +563,12 @@ class HouseFiltersRepository {
                     ))
                 .toSet(),
             selectionMode: SelectionMode.multiple,
+            layout: const SelectGridLayout(
+              crossAxisCount: 3,
+              childAspectRatio: 2.5,
+              crossAxisSpacing: 8,
+              mainAxisSpacing: 8,
+            ),
           ),
         )
         .toSet();

@@ -294,10 +294,6 @@ class _RentPageState extends State<RentPage> {
                       _filtersRepo.fetchFloorPlanRentSelectedData,
                   resetEntriesLoader: _filtersRepo.fetchFloorPlanRentResetData,
                   selectionMode: SelectionMode.single,
-                  crossAxisCount: 3,
-                  childAspectRatio: 2.5,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
                   actionBarBuilder: (
                     context, {
                     required onResetTap,

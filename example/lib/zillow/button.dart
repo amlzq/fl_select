@@ -200,10 +200,6 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
                 entriesLoader: _filtersRepo.fetchRoomsData,
                 selectedEntriesLoader: _filtersRepo.fetchRoomsSelectedData,
                 selectionMode: SelectionMode.multiple,
-                crossAxisCount: 3,
-                childAspectRatio: 2.5,
-                crossAxisSpacing: 8,
-                mainAxisSpacing: 8,
                 sideBarTheme: const SelectSideBarTheme(width: 98),
                 panelTheme: const SelectPanelTheme(
                   elevation: 8,
