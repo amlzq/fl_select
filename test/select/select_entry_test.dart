@@ -202,6 +202,129 @@ void main() {
       expect(empty.enabled, isTrue);
       expect(empty.immediate, isFalse);
     });
+
+    test('children constructor injects parentId into direct children', () {
+      final parent = SelectChildEntry<dynamic>.children(
+        id: 'p',
+        name: 'Parent',
+        children: {
+          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+          SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+        },
+      );
+
+      expect(parent.id, 'p');
+      expect(parent.parentId, '');
+      expect(parent.name, 'Parent');
+      expect(parent.children!.length, 2);
+      for (final child in parent.children!) {
+        expect((child as SelectChildEntry).parentId, 'p');
+      }
+    });
+
+    test('children constructor injects parentId recursively into descendants',
+        () {
+      final parent = SelectChildEntry<dynamic>.children(
+        id: 'p',
+        name: 'Parent',
+        children: {
+          SelectTextEntry<dynamic>.name(
+            id: 'a',
+            name: 'A',
+          ).copyWith(
+            children: {
+              SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1'),
+            },
+          ),
+        },
+      );
+
+      final child = parent.children!.single as SelectChildEntry;
+      expect(child.parentId, 'p');
+      final grandchild = child.children!.single as SelectChildEntry;
+      // Each node's parentId matches its direct parent: the grandchild's direct
+      // parent is the child (id 'a'), not the root (id 'p').
+      expect(grandchild.parentId, 'a');
+    });
+
+    test('children constructor leaves own parentId empty, preserves fields', () {
+      final parent = SelectChildEntry<dynamic>.children(
+        id: 'p',
+        name: 'Parent',
+        enabled: false,
+        immediate: true,
+        extra: 42,
+        children: {
+          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+        },
+      );
+
+      expect(parent.parentId, '');
+      expect(parent.id, 'p');
+      expect(parent.enabled, false);
+      expect(parent.immediate, true);
+      expect(parent.extra, 42);
+    });
+
+    test('children constructor supports nested SelectChildEntry.children', () {
+      final root = SelectChildEntry<dynamic>.children(
+        id: 'p',
+        name: 'Parent',
+        children: {
+          SelectChildEntry<dynamic>.children(
+            id: 'g',
+            name: 'Grandparent',
+            children: {
+              SelectTextEntry<dynamic>.name(id: 'gg', name: 'GG'),
+            },
+          ),
+        },
+      );
+
+      final inner = root.children!.single as SelectChildEntry;
+      expect(inner.parentId, 'p');
+      expect(inner.children!.single.id, 'gg');
+      final grandchild = inner.children!.single as SelectChildEntry;
+      // The grandchild's direct parent is the inner node (id 'g'), so its
+      // parentId is 'g', not the root's id 'p'.
+      expect(grandchild.parentId, 'g');
+    });
+
+    test('3D category tree passes SelectController.validateEntries', () {
+      final category = SelectCategoryEntry<dynamic>.children(
+        id: 'c1',
+        name: 'Cate 1',
+        children: {
+          SelectTextEntry<dynamic>.children(
+            id: 'a',
+            name: 'A',
+            children: {
+              SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1'),
+              SelectTextEntry<dynamic>.name(id: 'a2', name: 'A2'),
+            },
+          ),
+          SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+          SelectTextEntry<dynamic>.name(id: 'c', name: 'C'),
+        },
+      );
+
+      // Direct children of the category carry the category's id.
+      for (final child in category.children!) {
+        expect((child as SelectChildEntry).parentId, 'c1');
+      }
+      // The 'a' branch's own children carry 'a' as their parentId.
+      final branchA = category.children!.firstWhere((e) => e.id == 'a')
+          as SelectChildEntry;
+      for (final grandchild in branchA.children!) {
+        expect((grandchild as SelectChildEntry).parentId, 'a');
+      }
+
+      // A 3D tree must not fail parentId validation.
+      expect(
+        () => SelectController.validateEntries([category]),
+        returnsNormally,
+      );
+    });
   });
 
   group('SelectChildEntryExt', () {
@@ -286,6 +409,43 @@ void main() {
       );
 
       expect(a, equals(b));
+    });
+
+    test('children constructor returns a SelectTextEntry and injects parentId',
+        () {
+      final entry = SelectTextEntry<dynamic>.children(
+        id: 'p',
+        name: 'Parent',
+        children: {
+          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+        },
+      );
+
+      expect(entry, isA<SelectTextEntry<dynamic>>());
+      expect(entry.id, 'p');
+      expect(entry.parentId, '');
+      expect(entry.name, 'Parent');
+      final child = entry.children!.single as SelectChildEntry;
+      expect(child.parentId, 'p');
+    });
+
+    test('children constructor leaves own parentId empty, preserves fields', () {
+      final entry = SelectTextEntry<dynamic>.children(
+        id: 'p',
+        name: 'Parent',
+        enabled: false,
+        immediate: true,
+        extra: 'x',
+        children: {
+          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+        },
+      );
+
+      expect(entry.parentId, '');
+      expect(entry.id, 'p');
+      expect(entry.enabled, false);
+      expect(entry.immediate, true);
+      expect(entry.extra, 'x');
     });
   });
 

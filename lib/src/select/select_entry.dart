@@ -352,6 +352,61 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
     super.immediate,
   }) : super(parentId: '');
 
+  /// Creates a text entry and automatically injects [id] as the
+  /// [SelectChildEntry.parentId] of every child in [children], recursively.
+  ///
+  /// This is a convenience counterpart of [SelectChildEntry.children] that
+  /// preserves the concrete [SelectTextEntry] type. Use it for 3D-or-deeper
+  /// structures where the node itself is a plain text entry that also carries
+  /// children:
+  ///
+  /// ```dart
+  /// SelectChildEntry.children(
+  ///   id: 'p',
+  ///   name: 'Parent',
+  ///   children: {
+  ///     SelectTextEntry.children(
+  ///       id: 'a',
+  ///       name: 'A',
+  ///       children: {
+  ///         SelectTextEntry.name(id: 'a1', name: 'A1'),
+  ///       },
+  ///     ),
+  ///   },
+  /// )
+  /// ```
+  ///
+  /// This entry's own [SelectChildEntry.parentId] is left empty (`''`) here —
+  /// it is meant to be injected by the parent it is later placed into, so it
+  /// is not requested from you.
+  ///
+  /// If you use this constructor, children should **not** set their own
+  /// `parentId` — the injected value always wins.
+  ///
+  /// For fine-grained control (e.g. when children are pre-built and already
+  /// carry the correct `parentId`), use the default [SelectTextEntry]
+  /// constructor directly.
+  factory SelectTextEntry.children({
+    required String id,
+    required String name,
+    required Set<SelectEntry<E>> children,
+    bool enabled = true,
+    bool immediate = false,
+    E? extra,
+  }) {
+    final injectedChildren =
+        children.map((e) => _injectParentId(e, id)).toSet();
+    return SelectTextEntry<E>(
+      parentId: '',
+      id: id,
+      name: name,
+      children: injectedChildren,
+      enabled: enabled,
+      immediate: immediate,
+      extra: extra,
+    );
+  }
+
   /// "Any" entry
   ///
   /// When used inside [SelectCategoryEntry.children], the `parentId` is
@@ -438,6 +493,57 @@ class SelectChildEntry<E> extends SelectEntry<E> {
           extra: null,
         );
 
+  /// Creates a child entry and automatically injects [id] as the
+  /// [SelectChildEntry.parentId] of every child in [children], recursively.
+  ///
+  /// This is the recommended constructor for 3D-or-deeper structures. Because
+  /// `parentId` is filled in by the entry itself, you never need to manually
+  /// set it on the children — eliminating copy-paste mistakes and
+  /// forgetting-to-set errors:
+  ///
+  /// ```dart
+  /// SelectChildEntry.children(
+  ///   id: 'p',
+  ///   name: 'Parent',
+  ///   children: {
+  ///     SelectTextEntry.name(id: 'a', name: 'A'),
+  ///     SelectTextEntry.name(id: 'b', name: 'B'),
+  ///   },
+  /// )
+  /// ```
+  ///
+  /// This entry's own [SelectChildEntry.parentId] is left empty (`''`) here —
+  /// it is meant to be injected by the parent it is later placed into (via
+  /// `SelectCategoryEntry.children` / `SelectChildEntry.children` / a
+  /// `SelectTextEntry.children`), so it is not requested from you.
+  ///
+  /// If you use this constructor, children should **not** set their own
+  /// `parentId` — the injected value always wins.
+  ///
+  /// For fine-grained control (e.g. when children are pre-built and already
+  /// carry the correct `parentId`), use the default [SelectChildEntry]
+  /// constructor directly.
+  factory SelectChildEntry.children({
+    required String id,
+    String? name,
+    required Set<SelectEntry<E>> children,
+    bool enabled = true,
+    bool immediate = false,
+    E? extra,
+  }) {
+    final injectedChildren =
+        children.map((e) => _injectParentId(e, id)).toSet();
+    return SelectChildEntry<E>(
+      parentId: '',
+      id: id,
+      name: name,
+      children: injectedChildren,
+      enabled: enabled,
+      immediate: immediate,
+      extra: extra,
+    );
+  }
+
   SelectChildEntry<E> copyWith({
     String? parentId,
     String? id,
@@ -485,6 +591,54 @@ extension SelectChildEntryExt on SelectChildEntry {
 
   /// Whether this entry has a non-empty id.
   bool get isNotEmpty => id.isNotEmpty;
+}
+
+/// Recursively injects [parentId] into [entry] and all of its descendants,
+/// setting each `SelectChildEntry.parentId` to the id of its **direct**
+/// parent node (and rewriting generic [SelectEntry] instances into child
+/// entries so they can carry a parent).
+///
+/// Shared by the [SelectChildEntry.children], [SelectTextEntry.children] and
+/// [SelectCategoryEntry.children] factory constructors, which all use their
+/// own `id` as the [parentId] of their children so callers never have to write
+/// `parentId` by hand. Because injection recurses with each node's own id, the
+/// resulting `parentId` always matches the node's direct parent — which
+/// `SelectController.validateEntries` requires for 2D-or-deeper trees.
+SelectEntry<E> _injectParentId<E>(SelectEntry<E> entry, String parentId) {
+  if (entry is SelectChildEntry<E>) {
+    final injected = entry.copyWith(parentId: parentId);
+    // The direct parent of injected's children is injected itself, so their
+    // parentId is injected's own id — not the parentId passed in above.
+    final injectedChildren =
+        injected.children?.map((e) => _injectParentId(e, injected.id)).toSet();
+    return injected.copyWith(children: injectedChildren);
+  }
+  // For a non-child entry (a SelectCategoryEntry or a generic SelectEntry),
+  // its children's direct parent is the entry itself, so recurse with entry.id.
+  final injectedChildren =
+      entry.children?.map((e) => _injectParentId(e, entry.id)).toSet();
+  if (entry is SelectCategoryEntry<E>) {
+    final injectedHeader =
+        entry.header != null ? _injectParentId(entry.header!, entry.id) : null;
+    final injectedFooter =
+        entry.footer != null ? _injectParentId(entry.footer!, entry.id) : null;
+    return entry.copyWith(
+      children: injectedChildren,
+      header: injectedHeader,
+      footer: injectedFooter,
+    );
+  }
+  // For generic SelectEntry subclasses, children is the only child
+  // relationship we can inject.
+  return SelectChildEntry<E>(
+    parentId: parentId,
+    id: entry.id,
+    name: entry.name,
+    children: injectedChildren,
+    enabled: entry.enabled,
+    immediate: entry.immediate,
+    extra: entry.extra,
+  );
 }
 
 /// A category entry (i.e. a root node).
@@ -543,40 +697,10 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
     bool enabled = true,
     bool immediate = false,
   }) {
-    SelectEntry<E> injectParentId(SelectEntry<E> entry) {
-      if (entry is SelectChildEntry<E>) {
-        final injected = entry.copyWith(parentId: id);
-        final injectedChildren = injected.children?.map(injectParentId).toSet();
-        return injected.copyWith(children: injectedChildren);
-      }
-      final injectedChildren = entry.children?.map(injectParentId).toSet();
-      if (entry is SelectCategoryEntry<E>) {
-        final injectedHeader =
-            entry.header != null ? injectParentId(entry.header!) : null;
-        final injectedFooter =
-            entry.footer != null ? injectParentId(entry.footer!) : null;
-        return entry.copyWith(
-          children: injectedChildren,
-          header: injectedHeader,
-          footer: injectedFooter,
-        );
-      }
-      // For generic SelectEntry subclasses, children is the only child
-      // relationship we can inject.
-      return SelectChildEntry<E>(
-        parentId: id,
-        id: entry.id,
-        name: entry.name,
-        children: injectedChildren,
-        enabled: entry.enabled,
-        immediate: entry.immediate,
-        extra: entry.extra,
-      );
-    }
-
-    final injectedChildren = children.map(injectParentId).toSet();
-    final injectedHeader = header != null ? injectParentId(header) : null;
-    final injectedFooter = footer != null ? injectParentId(footer) : null;
+    final injectedChildren =
+        children.map((e) => _injectParentId(e, id)).toSet();
+    final injectedHeader = header != null ? _injectParentId(header, id) : null;
+    final injectedFooter = footer != null ? _injectParentId(footer, id) : null;
 
     return SelectCategoryEntry<E>(
       selectionMode: selectionMode,
