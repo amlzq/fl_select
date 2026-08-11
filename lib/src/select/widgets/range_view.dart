@@ -8,7 +8,8 @@ import 'range_slider.dart';
 import 'skeleton_view.dart';
 
 /// A composite view that renders a [SelectRangeSlider] above a
-/// [SelectFieldTile], keeping both in sync with a single source of truth.
+/// [SelectFieldTile], keeping both in sync with a single [SelectRangeEntry]
+/// as the source of truth.
 ///
 /// This is the canonical render target for
 /// [SelectRangeLayout] — drop the layout on a category that contains

@@ -8,17 +8,18 @@ import 'skeleton_view.dart';
 
 /// A spin-box counter for a single-valued [SelectCategoryEntry].
 ///
-/// The [SelectCounter] renders a title (the category name) on the first row
-/// and a [_SpinBox] on the second row. The spin box shows a `-` button on the
-/// left, the current value in the middle, and a `+` button on the right. The
-/// user increments / decrements through the category's child entries (e.g.
-/// "Any", "1", "1+", "2", "2+", ...). At the two extremes, the corresponding
-/// button is disabled.
+/// Internally filters [entries] for [SelectTextEntry] instances and ignores
+/// all other [SelectEntry] subtypes. The counter renders a title (the category
+/// name) on the first row and a [_SpinBox] on the second row. The spin box
+/// shows a `-` button on the left, the current value in the middle, and a `+`
+/// button on the right. The user increments / decrements through the text
+/// entries (e.g. "Any", "1", "1+", "2", "2+", ...). At the two extremes, the
+/// corresponding button is disabled.
 ///
 /// This is the canonical render target for [SelectCounterLayout]: drop the
-/// layout on a category that contains the value entries you want to step
-/// through and you get a stepper out of the box. The "Any" entry (if present)
-/// is always the left-most, zero value.
+/// layout on a category that contains the [SelectTextEntry] values you want to
+/// step through and you get a stepper out of the box. The "Any" entry (if
+/// present) is always the left-most, zero value.
 class SelectCounter extends StatefulWidget {
   const SelectCounter({
     super.key,
@@ -43,6 +44,11 @@ class SelectCounter extends StatefulWidget {
   final SelectCategoryEntry? category;
 
   /// The child entries to step through, in display order.
+  ///
+  /// Only leaf [SelectTextEntry]s are stepped through: any [SelectCategoryEntry]
+  /// (or other non-text child) in this list is ignored. This keeps the counter
+  /// semantically single-valued — a nested category has no numeric/text value to
+  /// step into, so filtering it out avoids it being mistaken for a value.
   ///
   /// A special "Any" entry ([SelectChildEntry.isAny]), when present, is pinned
   /// to the left-most (zero) position.
@@ -204,7 +210,7 @@ class _SpinBox extends StatelessWidget {
     final canIncrement = index < values.length - 1;
 
     return Row(
-      mainAxisSize: MainAxisSize.min,
+      mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton.filled(

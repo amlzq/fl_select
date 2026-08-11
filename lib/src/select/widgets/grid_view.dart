@@ -11,7 +11,14 @@ import 'grid_tile.dart';
 import 'grid_tile_theme.dart';
 import 'skeleton_view.dart';
 
-/// A grid view that can include a single input item.
+/// A grid view that renders terminal-node [SelectEntry] entries as selectable
+/// grid tiles.
+///
+/// Handles all [SelectEntry] subtypes: [SelectTextEntry] and non-custom
+/// [SelectRangeEntry] are rendered as tiles; a single custom
+/// [SelectRangeEntry] is rendered as an input field at the header or footer.
+///
+/// This is the canonical render target for [SelectGridLayout].
 /// Only used in tabs or flatten; uses AutomaticKeepAliveClientMixin.
 class SelectGridView extends StatefulWidget {
   const SelectGridView({

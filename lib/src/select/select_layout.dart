@@ -3,8 +3,13 @@ import 'package:flutter/foundation.dart';
 /// Sealed layout descriptor for the children of a [SelectCategoryEntry].
 ///
 /// Select the layout of a category's children via a single `layout` property.
-/// Use a [SelectListLayout] for a vertical list, [SelectGridLayout] for a
-/// grid, or [SelectChipLayout] for a wrap of chips.
+/// Each layout subclass maps to a specific widget and entry type:
+///
+/// * [SelectListLayout] → [SelectListView] (handles all [SelectEntry] subtypes)
+/// * [SelectGridLayout] → [SelectGridView] (handles all [SelectEntry] subtypes)
+/// * [SelectChipLayout] → [SelectChipBar] (handles all [SelectEntry] subtypes)
+/// * [SelectCounterLayout] → [SelectCounter] (handles [SelectTextEntry])
+/// * [SelectRangeLayout] → [SelectRangeView] (handles [SelectRangeEntry])
 ///
 /// Because the class is `sealed`, the compiler can exhaustively check `switch`
 /// statements over [SelectLayout], so adding a new layout later is a
@@ -15,6 +20,10 @@ sealed class SelectLayout {
 }
 
 /// Vertical list layout for the children of a [SelectCategoryEntry].
+///
+/// Rendered by [SelectListView], which handles all [SelectEntry] subtypes:
+/// [SelectTextEntry] and non-custom [SelectRangeEntry] as selectable tiles,
+/// plus a custom [SelectRangeEntry] as an input field.
 class SelectListLayout extends SelectLayout {
   const SelectListLayout({
     this.toText = '-',
@@ -33,6 +42,10 @@ class SelectListLayout extends SelectLayout {
 }
 
 /// Grid layout for the children of a [SelectCategoryEntry].
+///
+/// Rendered by [SelectGridView], which handles all [SelectEntry] subtypes:
+/// [SelectTextEntry] and non-custom [SelectRangeEntry] as selectable tiles,
+/// plus a custom [SelectRangeEntry] as an input field.
 class SelectGridLayout extends SelectLayout {
   const SelectGridLayout({
     required this.crossAxisCount,
@@ -73,6 +86,9 @@ class SelectGridLayout extends SelectLayout {
 }
 
 /// Wrap of chips layout for the children of a [SelectCategoryEntry].
+///
+/// Rendered by [SelectChipBar], which handles all [SelectEntry] subtypes
+/// using their [SelectEntry.name] as the chip label.
 class SelectChipLayout extends SelectLayout {
   const SelectChipLayout();
 
@@ -85,10 +101,11 @@ class SelectChipLayout extends SelectLayout {
 
 /// Counter (spin-box) layout for the children of a [SelectCategoryEntry].
 ///
-/// Use this layout to render a single-valued "stepper": a `-` button on the
-/// left, the current value in the middle and a `+` button on the right. The
-/// user steps through the category's child entries (e.g. "Any", "1", "1+",
-/// "2", "2+", ...). At the two extremes the corresponding button is disabled.
+/// Rendered by [SelectCounter], which filters entries for [SelectTextEntry]
+/// and steps through them: a `-` button on the left, the current value in the
+/// middle and a `+` button on the right. The user steps through the text
+/// entries (e.g. "Any", "1", "1+", "2", "2+", ...). At the two extremes the
+/// corresponding button is disabled.
 class SelectCounterLayout extends SelectLayout {
   const SelectCounterLayout();
 
@@ -101,8 +118,8 @@ class SelectCounterLayout extends SelectLayout {
 
 /// Range-slider layout for the children of a [SelectCategoryEntry].
 ///
-/// Use this layout when a category owns a single custom [SelectRangeEntry]
-/// and you want to render it as a "price-range" style control: a
+/// Rendered by [SelectRangeView], which reads min/max from a single
+/// [SelectRangeEntry] and renders it as a "price-range" style control: a
 /// [SelectRangeSlider] on top of two synced text fields.
 ///
 /// The category is expected to expose exactly one

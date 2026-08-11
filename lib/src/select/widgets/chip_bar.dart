@@ -11,11 +11,14 @@ import 'extensions.dart';
 /// Default height for [SelectChipBar].
 const kSelectChipBarHeight = 44.0;
 
-/// A horizontal chip bar for selecting among sibling entries.
+/// A horizontal chip bar for selecting among sibling [SelectEntry] entries.
 ///
-/// This widget is commonly used as a "quick filter" row (e.g. showing children
-/// of a selected entry). Selection state is provided by [selectedEntries] and user
-/// interactions are reported via [onItemTap].
+/// Renders all [SelectEntry] subtypes as chips using their [SelectEntry.name]
+/// as the label. This widget is commonly used as a "quick filter" row (e.g.
+/// showing children of a selected entry). Selection state is provided by
+/// [selectedEntries] and user interactions are reported via [onItemTap].
+///
+/// This is the canonical render target for [SelectChipLayout].
 class SelectChipBar extends StatelessWidget {
   const SelectChipBar({
     super.key,
@@ -159,7 +162,7 @@ class SelectChipBar extends StatelessWidget {
       for (final entry in entries.asMap().entries)
         (() {
           final index = entry.key;
-          final item = entry.value as SelectChildEntry;
+          final item = entry.value;
           final selected = (selectedEntries?.contains(item) ?? false);
           return _Chip(
             label: item.name ?? '',

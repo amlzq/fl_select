@@ -10,8 +10,14 @@ import 'field_tile.dart';
 import 'list_tile.dart';
 import 'skeleton_view.dart';
 
-/// A list view that can include a single input item.
-/// Must be a terminal-node list.
+/// A list view that renders terminal-node [SelectEntry] entries as selectable
+/// radio or checkbox tiles.
+///
+/// Handles all [SelectEntry] subtypes: [SelectTextEntry] and non-custom
+/// [SelectRangeEntry] are rendered as tiles; a single custom
+/// [SelectRangeEntry] is rendered as an input field at the header or footer.
+///
+/// This is the canonical render target for [SelectListLayout].
 /// Only used in tabs or flatten; uses AutomaticKeepAliveClientMixin.
 class SelectListView extends StatefulWidget {
   const SelectListView({

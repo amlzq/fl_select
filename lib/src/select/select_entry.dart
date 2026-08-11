@@ -296,6 +296,7 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
     super.children,
     super.enabled,
     super.immediate,
+    super.extra,
   });
 
   /// Creates a text entry from only an [id], leaving [SelectChildEntry.parentId]
@@ -361,6 +362,36 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
     super.enabled,
     super.immediate,
   }) : super.any();
+
+  /// Returns a copy of this entry with the given fields replaced, preserving
+  /// the concrete [SelectTextEntry] type.
+  ///
+  /// Overriding [SelectChildEntry.copyWith] here is important: when
+  /// [SelectCategoryEntry.children] auto-injects the [SelectChildEntry.parentId],
+  /// it calls `copyWith` on each child. The base implementation returns a
+  /// plain [SelectChildEntry], which would lose the `SelectTextEntry` type and
+  /// break callers that filter by concrete type (e.g. [SelectCounter] using
+  /// `whereType<SelectTextEntry>()`).
+  @override
+  SelectTextEntry<E> copyWith({
+    String? parentId,
+    String? id,
+    String? name,
+    Set<SelectEntry<E>>? children,
+    bool? enabled,
+    bool? immediate,
+    E? extra,
+  }) {
+    return SelectTextEntry<E>(
+      parentId: parentId ?? this.parentId,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      children: children ?? this.children,
+      enabled: enabled ?? this.enabled,
+      immediate: immediate ?? this.immediate,
+      extra: extra ?? this.extra,
+    );
+  }
 
   @override
   String toString() =>
