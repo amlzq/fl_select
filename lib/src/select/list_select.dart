@@ -221,13 +221,19 @@ class ListSelectState extends State<ListSelect> {
                                   _onTerminalItemTap(entry as SelectChildEntry),
                               toText: toText,
                             ),
-                          SelectChipLayout() => SelectChipBar(
+                          SelectChipLayout(
+                            :final spacing,
+                            :final runSpacing,
+                          ) =>
+                            SelectChipBar(
                               key: ValueKey('category_$index'),
                               category: category,
                               entries: entries,
                               selectedEntries: selectedEntries,
                               showTitle: false,
                               isWrapable: true,
+                              spacing: spacing,
+                              runSpacing: runSpacing,
                               backgroundColor: chipBarTheme?.backgroundColor,
                               padding: chipBarTheme?.padding,
                               variant: chipBarTheme?.variant,

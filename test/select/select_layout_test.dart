@@ -76,6 +76,13 @@ void main() {
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
     });
+
+    test('== and hashCode: different spacing makes layouts unequal', () {
+      const a = SelectChipLayout(spacing: 8, runSpacing: 12);
+      const b = SelectChipLayout(spacing: 12, runSpacing: 12);
+      expect(a, isNot(equals(b)));
+      expect(a.hashCode, isNot(equals(b.hashCode)));
+    });
   });
 
   group('SelectRangeLayout', () {

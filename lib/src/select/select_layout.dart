@@ -90,13 +90,26 @@ class SelectGridLayout extends SelectLayout {
 /// Rendered by [SelectChipBar], which handles all [SelectEntry] subtypes
 /// using their [SelectEntry.name] as the chip label.
 class SelectChipLayout extends SelectLayout {
-  const SelectChipLayout();
+  const SelectChipLayout({
+    this.spacing = 12,
+    this.runSpacing = 12,
+  });
+
+  /// Horizontal spacing between chips in the wrap.
+  final double spacing;
+
+  /// Vertical spacing between wrapped chip rows.
+  final double runSpacing;
 
   @override
-  bool operator ==(Object other) => other is SelectChipLayout;
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SelectChipLayout &&
+          spacing == other.spacing &&
+          runSpacing == other.runSpacing;
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode => Object.hash(spacing, runSpacing);
 }
 
 /// Counter (spin-box) layout for the children of a [SelectCategoryEntry].

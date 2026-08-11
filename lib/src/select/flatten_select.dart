@@ -409,7 +409,11 @@ class FlattenSelectState extends State<FlattenSelect> {
               _onTerminalItemTap(entry as SelectChildEntry),
           toText: toText,
         ),
-      SelectChipLayout() => SelectChipBar(
+      SelectChipLayout(
+        :final spacing,
+        :final runSpacing,
+      ) =>
+        SelectChipBar(
           key: ValueKey('category_$index'),
           category: category,
           entries: entries,
@@ -417,6 +421,8 @@ class FlattenSelectState extends State<FlattenSelect> {
           showTitle: true,
           isWrapable: true,
           direction: Axis.vertical,
+          spacing: spacing,
+          runSpacing: runSpacing,
           backgroundColor: delegate.chipBarTheme?.backgroundColor,
           padding: delegate.chipBarTheme?.padding,
           variant: delegate.chipBarTheme?.variant,

@@ -29,6 +29,8 @@ class SelectChipBar extends StatelessWidget {
     this.isWrapable = false,
     this.showTitle = true,
     this.direction = Axis.horizontal,
+    this.spacing = 12,
+    this.runSpacing = 12,
     this.backgroundColor,
     this.padding,
     this.variant,
@@ -69,6 +71,18 @@ class SelectChipBar extends StatelessWidget {
   /// chips in a single row. Set to [Axis.vertical] to stack the title above
   /// the chip group.
   final Axis direction;
+
+  /// Horizontal spacing between chips.
+  ///
+  /// When [isWrapable] is true this is the [Wrap.spacing] between chips in a
+  /// row; otherwise it is the width of the separators between chips in the
+  /// single-row [Row]. Defaults to 12.
+  final double spacing;
+
+  /// Vertical spacing between wrapped chip rows.
+  ///
+  /// Only used when [isWrapable] is true. Defaults to 12.
+  final double runSpacing;
 
   /// The color of the chip bar's background.
   ///
@@ -179,13 +193,13 @@ class SelectChipBar extends StatelessWidget {
     ];
 
     final chipGroup = isWrapable
-        ? Wrap(spacing: 12, runSpacing: 12, children: children)
+        ? Wrap(spacing: spacing, runSpacing: runSpacing, children: children)
         : SingleChildScrollView(
             padding: EdgeInsets.zero,
             physics: const ClampingScrollPhysics(),
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: children.separateWith(const SizedBox(width: 12)),
+              children: children.separateWith(SizedBox(width: spacing)),
             ),
           );
 
