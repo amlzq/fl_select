@@ -165,9 +165,11 @@ class _SelectRangeViewState extends State<SelectRangeView> {
     // During ordinary edits both old and new carry a custom entry, so neither
     // branch runs and the user's in-progress input is never clobbered.
     final oldHadCustom = (oldWidget.selectedEntries ?? const <SelectEntry>{})
-        .any((e) => e is SelectRangeEntry && e.isCustom);
+        .whereType<SelectRangeEntry>()
+        .any(_isOwnCustom);
     final newHasCustom = (widget.selectedEntries ?? const <SelectEntry>{})
-        .any((e) => e is SelectRangeEntry && e.isCustom);
+        .whereType<SelectRangeEntry>()
+        .any(_isOwnCustom);
     if (!oldHadCustom && newHasCustom) {
       final restored = _restoreFromSelected();
       if (restored != null) {
@@ -240,6 +242,19 @@ class _SelectRangeViewState extends State<SelectRangeView> {
     }
   }
 
+  /// Whether [e] is this view's own custom range entry.
+  ///
+  /// In a multi-category tree, every category shares the same level-1
+  /// selection set and custom entries all use the same id (`custom`). We must
+  /// therefore scope restoration to the entry owned by this category
+  /// ([widget.category].id) so a value committed in one category never leaks
+  /// into another category's slider/fields.
+  bool _isOwnCustom(SelectRangeEntry e) {
+    final categoryId = widget.category?.id;
+    if (categoryId == null) return e.isCustom;
+    return e.isCustom && e.parentId == categoryId;
+  }
+
   /// Restores the last-selected range from the custom entry carried in
   /// [selectedEntries].
   ///
@@ -252,7 +267,7 @@ class _SelectRangeViewState extends State<SelectRangeView> {
   /// so it is projected back to the corresponding slider bound here.
   RangeValues? _restoreFromSelected() {
     for (final e in widget.selectedEntries ?? const <SelectEntry>{}) {
-      if (e is SelectRangeEntry && e.isCustom) {
+      if (e is SelectRangeEntry && _isOwnCustom(e)) {
         final start = (_toDouble(e.min) ?? _min).clamp(_min, _max).toDouble();
         final end = (_toDouble(e.max) ?? _max).clamp(_min, _max).toDouble();
         return RangeValues(start, end);

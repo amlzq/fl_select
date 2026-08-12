@@ -143,36 +143,42 @@ class SelectListViewState extends State<SelectListView>
     // react to this transition (not every rebuild) to avoid clobbering text the
     // user is actively typing.
     final oldHadCustom = (oldWidget.selectedEntries ?? {})
-        .any((e) => e is SelectRangeEntry && e.isCustom);
+        .whereType<SelectRangeEntry>()
+        .any(_isOwnCustom);
     final newHasCustom =
-        _selectedEntries.any((e) => e is SelectRangeEntry && e.isCustom);
+        _selectedEntries.whereType<SelectRangeEntry>().any(_isOwnCustom);
     if (oldHadCustom && !newHasCustom) {
       _clearAllInput();
       _unfocusAllInput();
     }
   }
 
+  /// Whether [e] is this view's own custom range entry.
+  ///
+  /// In a multi-category tree, every category shares the same level-1
+  /// selection set and custom entries all use the same id (`custom`). We must
+  /// therefore scope restoration to the entry owned by this category
+  /// ([widget.category].id) so a value committed in one category never leaks
+  /// into another category's input fields.
+  bool _isOwnCustom(SelectRangeEntry e) {
+    final categoryId = widget.category?.id;
+    if (categoryId == null) return e.isCustom;
+    return e.isCustom && e.parentId == categoryId;
+  }
+
   void _restoreCustomSelectionToInputs() {
     final selectedCustom = _selectedEntries
         .whereType<SelectRangeEntry>()
+        .where(_isOwnCustom)
         .firstWhereOrNull((e) => e.isCustom);
-    // Temporarily remove listeners to avoid triggering _inputListener during
-    // build phase (e.g. when called from didUpdateWidget), which would cause
-    // setState() or markNeedsBuild() called during build.
-    _minController?.removeListener(_inputListener);
-    _maxController?.removeListener(_inputListener);
     _minController?.text = selectedCustom?.min?.toString() ?? '';
     _maxController?.text = selectedCustom?.max?.toString() ?? '';
-    _minController?.addListener(_inputListener);
-    _maxController?.addListener(_inputListener);
   }
 
   @override
   void dispose() {
-    _minController?.removeListener(_inputListener);
-    _maxController?.removeListener(_inputListener);
-    _minFocusNode?.removeListener(_onFocusChanged);
-    _maxFocusNode?.removeListener(_onFocusChanged);
+    _minFocusNode?.removeListener(_focusListener);
+    _maxFocusNode?.removeListener(_focusListener);
 
     _minController?.dispose();
     _maxController?.dispose();
@@ -184,27 +190,31 @@ class SelectListViewState extends State<SelectListView>
   }
 
   void _initializeInput() {
-    if (_minController == null) {
-      _minController = TextEditingController();
-      _minController?.addListener(_inputListener);
-    }
-    if (_maxController == null) {
-      _maxController = TextEditingController();
-      _maxController?.addListener(_inputListener);
-    }
+    _minController ??= TextEditingController();
+    _maxController ??= TextEditingController();
     _minFocusNode ??= FocusNode();
     _maxFocusNode ??= FocusNode();
-    _minFocusNode?.addListener(_onFocusChanged);
-    _maxFocusNode?.addListener(_onFocusChanged);
+    _minFocusNode?.addListener(_focusListener);
+    _maxFocusNode?.addListener(_focusListener);
   }
 
-  /// Parses the current min/max input, normalizes it onto [custom], and notifies
-  /// the listener via [OnChanged].
+  /// Commits the current min/max input to [custom].
+  ///
+  /// Mirrors [SelectGridViewState]'s behavior: it is only invoked on focus loss
+  /// (from [_onFocusChanged]), never on every keystroke, so an inverted range is
+  /// always swapped and written back without clobbering in-progress typing.
   void _commitCustomRange(SelectRangeEntry? custom) {
     if (custom == null) return;
-    var minInt = int.tryParse(_minController!.text) ?? 0;
-    var maxInt = int.tryParse(_maxController!.text) ?? 0;
-    final swapped = minInt > maxInt;
+    final minText = _minController!.text;
+    final maxText = _maxController!.text;
+    var minInt = int.tryParse(minText) ?? 0;
+    var maxInt = int.tryParse(maxText) ?? 0;
+    // Only normalize an inverted range when both bounds have actually been
+    // entered. Otherwise an empty field (parsed as 0) would spuriously trigger
+    // a swap and push a freshly-typed min value into the max field (or clear
+    // the min field), losing the user's input.
+    final bothEntered = minText.isNotEmpty && maxText.isNotEmpty;
+    final swapped = bothEntered && minInt > maxInt;
     if (swapped) {
       final temp = minInt;
       minInt = maxInt;
@@ -222,20 +232,8 @@ class SelectListViewState extends State<SelectListView>
     widget.onChanged(index, custom);
   }
 
-  /// Listens to input fields; once the user types, clears selected items and
-  /// commits the (possibly partial) range to the listener.
-  void _inputListener() {
-    if (widget.selectedEntries?.isNotEmpty ?? false) {
-      setState(() {
-        widget.selectedEntries?.clear();
-      });
-    }
-    _commitCustomRange(firstCustomEntry);
-    _commitCustomRange(lastCustomEntry);
-  }
-
   /// When the range input loses focus, commit the final normalized values.
-  void _onFocusChanged() {
+  void _focusListener() {
     if (!(_minFocusNode?.hasFocus ?? false) &&
         !(_maxFocusNode?.hasFocus ?? false)) {
       _commitCustomRange(firstCustomEntry);
@@ -249,12 +247,8 @@ class SelectListViewState extends State<SelectListView>
 
   void _clearAllInput() {
     if (inputNotEmpty) {
-      _minController?.removeListener(_inputListener);
-      _maxController?.removeListener(_inputListener);
       _minController?.clear();
       _maxController?.clear();
-      _minController?.addListener(_inputListener);
-      _maxController?.addListener(_inputListener);
     }
   }
 

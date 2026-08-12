@@ -138,15 +138,32 @@ class SelectGridViewState extends State<SelectGridView>
     }
 
     // Restore selection state for custom items.
+    _restoreCustomSelectionToInputs();
+
+    _minFocusNode?.addListener(_focusListener);
+    _maxFocusNode?.addListener(_focusListener);
+  }
+
+  /// Whether [e] is this view's own custom range entry.
+  ///
+  /// In a multi-category tree, every category shares the same level-1
+  /// selection set and custom entries all use the same id (`custom`). We must
+  /// therefore scope restoration to the entry owned by this category
+  /// ([widget.category].id) so a value committed in one category never leaks
+  /// into another category's input fields.
+  bool _isOwnCustom(SelectRangeEntry e) {
+    final categoryId = widget.category?.id;
+    if (categoryId == null) return e.isCustom;
+    return e.isCustom && e.parentId == categoryId;
+  }
+
+  void _restoreCustomSelectionToInputs() {
     for (var selectedEntry in _selectedEntries) {
-      if (selectedEntry is SelectRangeEntry && selectedEntry.isCustom) {
+      if (selectedEntry is SelectRangeEntry && _isOwnCustom(selectedEntry)) {
         _minController?.text = selectedEntry.min?.toString() ?? '';
         _maxController?.text = selectedEntry.max?.toString() ?? '';
       }
     }
-
-    _minFocusNode?.addListener(_focusListener);
-    _maxFocusNode?.addListener(_focusListener);
   }
 
   @override
@@ -163,21 +180,17 @@ class SelectGridViewState extends State<SelectGridView>
     }
 
     // Restore selection state for custom items.
-    for (var selectedEntry in _selectedEntries) {
-      if (selectedEntry is SelectRangeEntry && selectedEntry.isCustom) {
-        _minController?.text = selectedEntry.min?.toString() ?? '';
-        _maxController?.text = selectedEntry.max?.toString() ?? '';
-      }
-    }
+    _restoreCustomSelectionToInputs();
 
     // When the custom range was selected and is now removed (e.g. tapping a
     // preset or clicking reset), clear the input fields so stale values are not
     // left behind. We only react to this transition (not every rebuild) to
     // avoid clobbering text the user is actively typing.
     final oldHadCustom = (oldWidget.selectedEntries ?? {})
-        .any((e) => e is SelectRangeEntry && e.isCustom);
+        .whereType<SelectRangeEntry>()
+        .any(_isOwnCustom);
     final newHasCustom =
-        _selectedEntries.any((e) => e is SelectRangeEntry && e.isCustom);
+        _selectedEntries.whereType<SelectRangeEntry>().any(_isOwnCustom);
     if (oldHadCustom && !newHasCustom) {
       _clearAllInput();
       _unfocusAllInput();
@@ -209,9 +222,16 @@ class SelectGridViewState extends State<SelectGridView>
   /// the listener via [OnChanged].
   void _commitCustomRange(SelectRangeEntry? custom) {
     if (custom == null) return;
-    var minInt = int.tryParse(_minController!.text) ?? 0;
-    var maxInt = int.tryParse(_maxController!.text) ?? 0;
-    final swapped = minInt > maxInt;
+    final minText = _minController!.text;
+    final maxText = _maxController!.text;
+    var minInt = int.tryParse(minText) ?? 0;
+    var maxInt = int.tryParse(maxText) ?? 0;
+    // Only normalize an inverted range when both bounds have actually been
+    // entered. Otherwise an empty field (parsed as 0) would spuriously trigger
+    // a swap and push a freshly-typed min value into the max field (or clear
+    // the min field), losing the user's input.
+    final bothEntered = minText.isNotEmpty && maxText.isNotEmpty;
+    final swapped = bothEntered && minInt > maxInt;
     if (swapped) {
       final temp = minInt;
       minInt = maxInt;
