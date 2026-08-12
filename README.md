@@ -59,9 +59,9 @@ SelectCategoryEntry(
   id: 'price',
   name: 'Price',
   children: {
-    SelectRangeEntry<int, void>.any(parentId: 'price', name: 'Any'),
-    SelectRangeEntry<int, void>(parentId: 'price', id: '0-100', name: '0-100', min: 0, max: 100),
-    SelectRangeEntry<int, void>.custom(parentId: 'price', name: 'Custom'),
+    SelectIntEntry.any(parentId: 'price', name: 'Any'),
+    SelectIntEntry(parentId: 'price', id: '0-100', name: '0-100', min: 0, max: 100),
+    SelectIntEntry.custom(parentId: 'price', name: 'Custom'),
   },
 );
 
@@ -138,7 +138,7 @@ A single-trigger alternative to `PopupSelectBar` — opens a select overlay on t
 PopupSelectButton(
   label: 'Neighborhood',
   selectDelegate: GridSelectDelegate(crossAxisCount: 3, entriesLoader: _fetchNeighborhood),
-  onApplied: (tabData, selected) { /* ... */ },
+  onApplied: (selected) { /* ... */ },
 );
 
 PopupSelectButton.elevated(
@@ -181,7 +181,6 @@ Shows a select in a modal bottom sheet built on Flutter's `showModalBottomSheet`
 final SelectEntries? selected = await showModalBottomSelect(
   context: context,
   delegate: ListSelectDelegate(
-    crossAxisCount: 3,
     selectionMode: SelectionMode.multiple,
     entriesLoader: _fetchMore,
   ),

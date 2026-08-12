@@ -1,3 +1,21 @@
+## 0.7.2
+
+- **BUGFIX** fix custom range input handling across `SelectListView`, `SelectGridView` and `SelectRangeView`:
+  - **values not refreshing after normalization** — `_commitCustomRange` now writes the canonical (min ≤ max) order back into the min/max fields, so entering an inverted range (e.g. min `222` / max `100`) immediately reflects `100` / `222` on screen.
+  - **min value being lost** — an inverted range is only swapped when both fields are non-empty; an empty field (parsed as `0`) no longer spuriously triggers a swap that clears the min field while typing min first.
+  - **premature swap while typing** — `SelectListView` now listens only to the focus nodes and commits on focus loss (matching `SelectGridView`), instead of committing on every keystroke, so typing `222` then starting `111` no longer flips the fields before the user finishes.
+  - **cross-category contamination** — when multiple `SelectCategoryEntry`s each own a `SelectRangeEntry.custom()` (all sharing the same `custom` id) inside a `ListSelect` tree, restoring the slider/fields now scopes to the entry whose `parentId` matches the current category, so committing a value in one category no longer leaks into another category's inputs or slider.
+
+- **BUGFIX** fix `SelectController.select` / `unselect` not affecting root-level entries in a flat (1D) structure. `findPath` returns a single-element path for such entries, so the flat-handling branch (which required `path.isEmpty`) was never reached and `select`/`unselect` silently no-op'd. The flat branch now also matches when the path's first element is not a `SelectCategoryEntry`. This fixes committing a custom range in single mode not deselecting the previously selected option.
+
+- **BUGFIX** harden against build-phase crashes that previously froze the UI with no console output: `SelectController.validateEntries` now additionally asserts that every top-level entry is a `SelectCategoryEntry` in a 2D-or-deeper structure, so `SelectPanel` routes malformed structures to the error UI instead of hanging the frame. The four `as SelectCategoryEntry` casts in `GridSelect`/`ListSelect`/`FlattenSelect`/`CascadingSelect` were replaced with `is`-checked safe conversions as a second line of defense.
+
+- **DEPRECATION** mark `FlattenSelectDelegate.crossAxisCount`, `FlattenSelectDelegate.mainAxisSpacing`, `FlattenSelectDelegate.crossAxisSpacing` and `FlattenSelectDelegate.childAspectRatio` as deprecated. `FlattenSelect` now falls back to `SelectChipLayout` when `SelectCategoryEntry.layout` is null, so these delegate grid parameters no longer affect rendering. Set a `SelectGridLayout` on `SelectCategoryEntry.layout` instead.
+
+- **FEATURE** when `SelectCategoryEntry.layout` is null, `FlattenSelect` now falls back to a wrapable `SelectChipBar` (`SelectChipLayout`) instead of a grid built from the widget's own cross-axis parameters.
+
+- **FEATURE** add the `children` factory constructors on `SelectCategoryEntry`, `SelectChildEntry` and `SelectTextEntry`. Each automatically injects its own `id` as the `SelectChildEntry.parentId` of every child (recursively), so you never need to write `parentId` on children by hand when building 2D-or-deeper trees — `SelectCategoryEntry.children` covers the category (root) level, while `SelectChildEntry.children` (and the type-preserving `SelectTextEntry.children`) cover deeper (non-root) levels. All share the injection logic via a common `_injectParentId` helper.
+
 ## 0.7.1
 
 - **FEATURE** `showSelect` now accepts optional `leading`, `trailing` and `centerTitle` widgets to attach to the header row, mirroring `showModalBottomSelect`. Both entries now share a common `SelectHeader` widget that lays the title out with an outer `Stack` so the title stays truly centered across the full header width even when `leading` / `trailing` are asymmetrical.
