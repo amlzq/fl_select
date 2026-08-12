@@ -49,7 +49,7 @@ class ZillowPage extends StatelessWidget {
                       builder: (context) => const SelectViewExamplePage()),
                 );
               },
-              child: const Text('SelectViewExample'),
+              child: const Text('SelectView Example'),
             ),
             TextButton(
               onPressed: () {

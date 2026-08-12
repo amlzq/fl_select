@@ -5,46 +5,9 @@ import 'package:flutter/material.dart';
 import 'generated/l10n/app_localizations.dart';
 import 'log.dart';
 import 'widgets/show_select_result.dart';
-import 'zillow/house_filters_repository.dart';
-import 'zillow/house_repository.dart';
-import 'zillow/utils.dart';
 
-class SelectViewExamplePage extends StatefulWidget {
+class SelectViewExamplePage extends StatelessWidget {
   const SelectViewExamplePage({super.key});
-
-  @override
-  State<SelectViewExamplePage> createState() => _ViewPageState();
-}
-
-class _ViewPageState extends State<SelectViewExamplePage> {
-  late final HouseFiltersRepository _filtersRepo;
-  HouseFilter? _filter;
-
-  @override
-  void initState() {
-    super.initState();
-    _filtersRepo = HouseFiltersRepository();
-  }
-
-  void _handleNeighborhoodChange(SelectEntries result) async {
-    final l10n = AppLocalizations.of(context);
-    _filter ??= HouseFilter(cityId: userCityId);
-    _filtersRepo.neighborhoodResult = result;
-    _filter?.neighborhood = result
-        .cascadingPairsOf('neighborhood')
-        .map((p) => {
-              "region_id": p.id,
-              "neighborhood_id": p.childIds,
-            })
-        .toList(growable: false);
-
-    if (_filter == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n?.resultParseFailed ?? '')),
-      );
-      return;
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,19 +21,95 @@ class _ViewPageState extends State<SelectViewExamplePage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 const Text(
-                  'Neighborhood',
+                  'CascadingSelectDelegate',
                   style: TextStyle(fontSize: 20),
                 ),
                 SelectView(
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: CascadingSelectDelegate(
-                    entriesLoader: _filtersRepo.fetchNeighborhoodData,
-                    selectedEntriesLoader:
-                        _filtersRepo.fetchNeighborhoodSelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchNeighborhoodResetData,
+                    entriesLoader: () async => {
+                      SelectCategoryEntry.children(
+                        id: 'cate1',
+                        name: 'Cate 1',
+                        children: {
+                          SelectTextEntry.children(
+                            id: 'l1-a',
+                            name: 'A',
+                            children: {
+                              SelectTextEntry.name(
+                                  id: 'l2-a', name: 'Football'),
+                              SelectTextEntry.name(
+                                  id: 'a2-b', name: 'Basketball'),
+                              SelectTextEntry.name(
+                                  id: 'l2-c', name: 'Baseball'),
+                              SelectTextEntry.name(
+                                  id: 'l2-d', name: 'Swimming'),
+                            },
+                          ),
+                          SelectTextEntry.name(id: 'l1-b', name: 'B'),
+                          SelectTextEntry.name(id: 'l1-c', name: 'C'),
+                          SelectTextEntry.name(id: 'l1-d', name: 'D'),
+                        },
+                        // selectionMode: SelectionMode.multiple,
+                      ),
+                      SelectCategoryEntry.children(
+                        id: 'cate2',
+                        name: 'Cate 2',
+                        children: {
+                          SelectTextEntry.name(id: 'a', name: 'Tiger'),
+                          SelectTextEntry.name(id: 'b', name: 'Lion'),
+                          SelectTextEntry.name(id: 'c', name: 'Bear'),
+                          SelectTextEntry.name(id: 'd', name: 'Elephant'),
+                          SelectTextEntry.name(id: 'e', name: 'Monkey'),
+                          SelectTextEntry.name(id: 'f', name: 'Dog'),
+                          SelectTextEntry.name(id: 'g', name: 'Cat'),
+                          SelectTextEntry.name(id: 'h', name: 'Pig'),
+                          SelectTextEntry.name(id: 'i', name: 'Horse'),
+                          SelectTextEntry.name(id: 'j', name: 'Sheep'),
+                          SelectTextEntry.name(id: 'k', name: 'Cow'),
+                          SelectTextEntry.name(id: 'l', name: 'Chicken'),
+                          SelectTextEntry.name(id: 'm', name: 'Duck'),
+                          SelectTextEntry.name(id: 'n', name: 'Pig'),
+                          SelectTextEntry.name(id: 'o', name: 'Horse'),
+                          SelectTextEntry.name(id: 'p', name: 'Sheep'),
+                          SelectTextEntry.name(id: 'q', name: 'Cow'),
+                        },
+                      ),
+                      SelectCategoryEntry.children(
+                        id: 'cate3',
+                        name: 'Cate 3',
+                        children: {
+                          SelectTextEntry.name(id: 'a', name: 'A'),
+                          SelectTextEntry.name(id: 'b', name: 'B'),
+                          SelectTextEntry.name(id: 'c', name: 'C'),
+                          SelectTextEntry.name(id: 'd', name: 'D'),
+                        },
+                      ),
+                      SelectCategoryEntry.children(
+                        id: 'cate4',
+                        name: 'Cate 4',
+                        children: {
+                          SelectTextEntry.name(id: 'a', name: 'A'),
+                          SelectTextEntry.name(id: 'b', name: 'B'),
+                          SelectTextEntry.name(id: 'c', name: 'C'),
+                          SelectTextEntry.name(id: 'd', name: 'D'),
+                        },
+                      ),
+                      SelectCategoryEntry.children(
+                        id: 'cate5',
+                        name: 'Cate 5',
+                        children: {
+                          SelectTextEntry.name(id: 'a', name: '1'),
+                          SelectTextEntry.name(id: 'b', name: '2'),
+                          SelectTextEntry.name(id: 'c', name: '3'),
+                          SelectTextEntry.name(id: 'd', name: '4'),
+                          SelectTextEntry.name(id: 'e', name: '5'),
+                        },
+                      ),
+                    },
                     selectionMode: SelectionMode.multiple,
-                    sideBarTheme: const SelectSideBarTheme(width: 150),
+                    sideBarTheme: const SelectSideBarTheme(width: 100),
                     isScrollable: true,
                     radioBuilder: (context, selected) {
                       return MyRadio(value: selected);
@@ -81,7 +120,6 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                   ),
                   onChanged: (selected) {
                     largePrint('onChangeTap: $selected');
-                    _handleNeighborhoodChange(selected);
                     showSelectResult(context, selected);
                   },
                 ),
@@ -95,6 +133,7 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: GridSelectDelegate(
                     entriesLoader: () async => {
+                      SelectRangeEntry.custom(),
                       SelectTextEntry.name(id: 'a', name: 'A'),
                       SelectTextEntry.name(id: 'b', name: 'B'),
                       SelectTextEntry.name(id: 'c', name: 'C'),
@@ -122,17 +161,19 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                   delegate: GridSelectDelegate(
                     entriesLoader: () async => {
                       SelectCategoryEntry.children(
-                        id: 'c1',
+                        id: 'cate1',
                         name: 'Cate 1',
                         children: {
                           SelectTextEntry.name(id: 'a', name: 'A'),
                           SelectTextEntry.name(id: 'b', name: 'B'),
                           SelectTextEntry.name(id: 'c', name: 'C'),
                           SelectTextEntry.name(id: 'd', name: 'D'),
+                          SelectRangeEntry.custom(),
                         },
+                        // selectionMode: SelectionMode.multiple,
                       ),
                       SelectCategoryEntry.children(
-                        id: 'c2',
+                        id: 'cate2',
                         name: 'Cate 2',
                         children: {
                           SelectTextEntry.name(id: 'a', name: 'Tiger'),
@@ -156,7 +197,7 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                         layout: const SelectChipLayout(),
                       ),
                       SelectCategoryEntry.children(
-                        id: 'c3',
+                        id: 'cate3',
                         name: 'Cate 3',
                         children: {
                           SelectTextEntry.name(id: 'a', name: 'A'),
@@ -167,7 +208,7 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                         layout: const SelectListLayout(),
                       ),
                       SelectCategoryEntry.children(
-                        id: 'c4',
+                        id: 'cate4',
                         name: 'Cate 4',
                         children: {
                           SelectRangeEntry(
@@ -182,7 +223,7 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                         layout: const SelectRangeLayout(),
                       ),
                       SelectCategoryEntry.children(
-                        id: 'c5',
+                        id: 'cate5',
                         name: 'Cate 5',
                         children: {
                           SelectTextEntry.name(id: 'a', name: '1'),
@@ -258,7 +299,7 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                   delegate: FlattenSelectDelegate(
                     entriesLoader: () async => {
                       SelectCategoryEntry.children(
-                        id: 'c1',
+                        id: 'cate1',
                         name: 'Cate 1',
                         children: {
                           SelectTextEntry.name(id: 'a', name: 'Tiger'),
@@ -270,9 +311,10 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                         },
                       ),
                       SelectCategoryEntry.children(
-                        id: 'c2',
+                        id: 'cate2',
                         name: 'Cate 2',
                         children: {
+                          SelectRangeEntry.custom(),
                           SelectTextEntry.name(id: 'a', name: 'A'),
                           SelectTextEntry.name(id: 'b', name: 'B'),
                           SelectTextEntry.name(id: 'c', name: 'C'),
@@ -286,18 +328,19 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                         ),
                       ),
                       SelectCategoryEntry.children(
-                        id: 'c3',
+                        id: 'cate3',
                         name: 'Cate 3',
                         children: {
                           SelectTextEntry.name(id: 'a', name: 'A'),
                           SelectTextEntry.name(id: 'b', name: 'B'),
                           SelectTextEntry.name(id: 'c', name: 'C'),
                           SelectTextEntry.name(id: 'd', name: 'D'),
+                          SelectRangeEntry.custom(),
                         },
                         layout: const SelectListLayout(),
                       ),
                       SelectCategoryEntry.children(
-                        id: 'c4',
+                        id: 'cate4',
                         name: 'Cate 4',
                         children: {
                           SelectRangeEntry(
@@ -312,7 +355,7 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                         layout: const SelectRangeLayout(),
                       ),
                       SelectCategoryEntry.children(
-                        id: 'c5',
+                        id: 'cate5',
                         name: 'Cate 5',
                         children: {
                           SelectTextEntry.name(id: 'a', name: '1'),
@@ -366,17 +409,18 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                   delegate: ListSelectDelegate(
                     entriesLoader: () async => {
                       SelectCategoryEntry.children(
-                        id: 'c1',
+                        id: 'cate1',
                         name: 'Cate 1',
                         children: {
+                          SelectRangeEntry.custom(),
                           SelectTextEntry.name(id: 'a', name: 'A'),
                           SelectTextEntry.name(id: 'b', name: 'B'),
-                          SelectTextEntry.name(id: 'c', name: 'C'),
-                          SelectTextEntry.name(id: 'd', name: 'D'),
+                          // SelectTextEntry.name(id: 'c', name: 'C'),
+                          // SelectTextEntry.name(id: 'd', name: 'D'),
                         },
                       ),
                       SelectCategoryEntry.children(
-                        id: 'c2',
+                        id: 'cate2',
                         name: 'Cate 2',
                         children: {
                           SelectTextEntry.name(id: 'a', name: 'Tiger'),
@@ -400,13 +444,14 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                         layout: const SelectChipLayout(),
                       ),
                       SelectCategoryEntry.children(
-                        id: 'c3',
+                        id: 'cate3',
                         name: 'Cate 3',
                         children: {
-                          SelectTextEntry.name(id: 'a', name: 'A'),
-                          SelectTextEntry.name(id: 'b', name: 'B'),
+                          // SelectTextEntry.name(id: 'a', name: 'A'),
+                          // SelectTextEntry.name(id: 'b', name: 'B'),
                           SelectTextEntry.name(id: 'c', name: 'C'),
                           SelectTextEntry.name(id: 'd', name: 'D'),
+                          SelectRangeEntry.custom(),
                         },
                         layout: const SelectGridLayout(
                           crossAxisCount: 3,
@@ -416,7 +461,7 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                         ),
                       ),
                       SelectCategoryEntry.children(
-                        id: 'c4',
+                        id: 'cate4',
                         name: 'Cate 4',
                         children: {
                           SelectRangeEntry(
@@ -431,7 +476,7 @@ class _ViewPageState extends State<SelectViewExamplePage> {
                         layout: const SelectRangeLayout(),
                       ),
                       SelectCategoryEntry.children(
-                        id: 'c5',
+                        id: 'cate5',
                         name: 'Cate 5',
                         children: {
                           SelectTextEntry.name(id: 'a', name: '1'),
