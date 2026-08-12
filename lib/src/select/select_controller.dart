@@ -347,7 +347,16 @@ class SelectController extends ChangeNotifier {
     final path = tree.findPath(id, parentId: parentId);
     final effectiveSelectionMode = _effectiveSelectionMode();
 
-    if (path == null || path.isEmpty) {
+    // A flat (1D) structure stores its entries at the top level without a
+    // category wrapper. `findPath` returns a single-element path for such an
+    // entry, so instead of checking `path.isEmpty` alone we treat any path
+    // whose first element is not a [SelectCategoryEntry] as the flat case.
+    // Otherwise selecting a root-level flat entry (e.g. a committed custom
+    // range) would silently no-op and never replace the previous selection in
+    // single mode.
+    final isFlatRoot =
+        path == null || path.isEmpty || path.first is! SelectCategoryEntry;
+    if (isFlatRoot) {
       if (tree.entries.isEmpty || tree.entries.first is SelectCategoryEntry) {
         return false;
       }
@@ -370,6 +379,8 @@ class SelectController extends ChangeNotifier {
     }
 
     final root = path.first;
+    // `isFlatRoot` being false already implies the first path element is a
+    // category; this guard only promotes the type for the analyzer.
     if (root is! SelectCategoryEntry) return false;
 
     if (path.length == 2) {
@@ -431,7 +442,12 @@ class SelectController extends ChangeNotifier {
     final effectiveSelectionMode = _effectiveSelectionMode();
     final path = tree.findPath(id, parentId: parentId);
 
-    if (path == null || path.isEmpty) {
+    // Mirror the flat detection in [select]: a root-level flat entry's path is
+    // a single-element list whose first item is not a category, so it must be
+    // unselected at the top level instead of being treated as a category tree.
+    final isFlatRoot =
+        path == null || path.isEmpty || path.first is! SelectCategoryEntry;
+    if (isFlatRoot) {
       final selected0 = tree.mutableSelectedEntriesAtLevel(0);
       if (!selected0.contains(entry)) return true;
       if (effectiveSelectionMode == SelectionMode.single) {
@@ -448,6 +464,8 @@ class SelectController extends ChangeNotifier {
     }
 
     final root = path.first;
+    // `isFlatRoot` being false already implies the first path element is a
+    // category; this guard only promotes the type for the analyzer.
     if (root is! SelectCategoryEntry) return false;
 
     if (path.length == 2) {

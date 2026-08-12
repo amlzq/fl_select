@@ -187,7 +187,8 @@ class _SelectPanelState extends State<SelectPanel> {
                         ),
                       ),
                     );
-                    return widget.delegate.buildError(context, error, stackTrace);
+                    return widget.delegate
+                        .buildError(context, error, stackTrace);
                   }
                   return GestureDetector(
                     behavior: HitTestBehavior.opaque,

@@ -157,6 +157,63 @@ void main() {
       expect(selected.max, 20);
     });
 
+    test('select on a flat root entry selects it at level 0', () {
+      final controller = SelectController(selectionMode: SelectionMode.single);
+      final a = _text('', 'a', 'A');
+      controller.bindState([a], initializeAnyIfEmpty: false);
+
+      expect(controller.select('a'), isTrue);
+      expect(controller.selectedEntriesAtLevel(0).contains(a), isTrue);
+    });
+
+    test('select on flat root replaces previous selection in single mode', () {
+      final controller = SelectController(selectionMode: SelectionMode.single);
+      final a = _text('', 'a', 'A');
+      final b = _text('', 'b', 'B');
+      controller.bindState([a, b], initializeAnyIfEmpty: false);
+
+      expect(controller.select('a'), isTrue);
+      expect(controller.selectedEntriesAtLevel(0).contains(a), isTrue);
+
+      expect(controller.select('b'), isTrue);
+      expect(controller.selectedEntriesAtLevel(0).contains(b), isTrue);
+      // In single mode, a must be deselected when b is selected.
+      expect(controller.selectedEntriesAtLevel(0).contains(a), isFalse);
+    });
+
+    test('select custom range on flat root replaces other selections', () {
+      final controller = SelectController(selectionMode: SelectionMode.single);
+      final custom = SelectRangeEntry<int, dynamic>.custom(
+        parentId: '',
+        name: 'Custom',
+      );
+      final a = _text('', 'a', 'A');
+      controller.bindState([custom, a], initializeAnyIfEmpty: false);
+
+      // Pre-select a text entry first.
+      controller.select('a');
+      expect(controller.selectedEntriesAtLevel(0).contains(a), isTrue);
+
+      // Committing the custom range must replace the previous selection.
+      custom.min = 10;
+      custom.max = 20;
+      expect(controller.select('custom'), isTrue);
+      expect(controller.selectedEntriesAtLevel(0).contains(custom), isTrue);
+      expect(controller.selectedEntriesAtLevel(0).contains(a), isFalse);
+    });
+
+    test('unselect on a flat root entry clears it at level 0', () {
+      final controller = SelectController(selectionMode: SelectionMode.single);
+      final a = _text('', 'a', 'A');
+      controller.bindState([a], initializeAnyIfEmpty: false);
+
+      controller.select('a');
+      expect(controller.selectedEntriesAtLevel(0).contains(a), isTrue);
+
+      expect(controller.unselect('a'), isTrue);
+      expect(controller.selectedEntriesAtLevel(0).contains(a), isFalse);
+    });
+
     test('select with applyIfImmediate calls apply listeners in single mode',
         () {
       final controller = SelectController(selectionMode: SelectionMode.single);

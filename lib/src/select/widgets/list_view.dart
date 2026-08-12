@@ -204,13 +204,20 @@ class SelectListViewState extends State<SelectListView>
     if (custom == null) return;
     var minInt = int.tryParse(_minController!.text) ?? 0;
     var maxInt = int.tryParse(_maxController!.text) ?? 0;
-    if (minInt > maxInt) {
+    final swapped = minInt > maxInt;
+    if (swapped) {
       final temp = minInt;
       minInt = maxInt;
       maxInt = temp;
     }
     custom.min = (minInt == 0) ? null : minInt;
     custom.max = (maxInt == 0) ? null : maxInt;
+    // Reflect the canonical (swapped) order back into the fields so the display
+    // immediately shows "left small, right big" instead of the raw typed order.
+    if (swapped) {
+      _minController?.text = custom.min?.toString() ?? '';
+      _maxController?.text = custom.max?.toString() ?? '';
+    }
     final index = widget.entries.indexOf(custom);
     widget.onChanged(index, custom);
   }

@@ -137,8 +137,10 @@ class SelectFieldTile extends StatelessWidget {
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10),
-              child:
-                  Text(separator, style: const TextStyle(color: Colors.grey)),
+              child: Text(
+                separator,
+                style: const TextStyle(color: Colors.grey),
+              ),
             ),
             Expanded(
               child: _TextField(
