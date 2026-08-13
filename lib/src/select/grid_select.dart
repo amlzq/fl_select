@@ -27,13 +27,15 @@ import 'widgets/widgets.dart';
 class GridSelect extends StatefulWidget {
   final GridSelectDelegate delegate;
   final List<SelectEntry> entries;
-  final Set<SelectEntry>? previousSelected;
+
+  /// The previously applied selection to restore, if any.
+  final Set<SelectEntry>? selectedEntries;
 
   const GridSelect({
     super.key,
     required this.delegate,
     required this.entries,
-    required this.previousSelected,
+    this.selectedEntries,
   });
 
   @override
@@ -83,7 +85,7 @@ class GridSelectState extends State<GridSelect> {
     controller?.bindState(
       widget.entries,
       initializeAnyIfEmpty: true,
-      previousSelectedOverride: widget.previousSelected,
+      selectedEntriesOverride: widget.selectedEntries,
     );
     if (_isCategoryTree && !_didInitCategoryFromState) {
       final selectedCategory = controller

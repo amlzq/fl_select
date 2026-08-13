@@ -416,8 +416,8 @@ class PopupSelectController extends ChangeNotifier {
     if (select == null) return;
     final ctrl = SelectController(
       selectionMode: select.selectionMode,
-      previousSelected: select.selectedEntries,
-      resetSelected: select.resetEntries,
+      selectedEntries: select.selectedEntries,
+      resetEntries: select.resetEntries,
     );
     ctrl.addChangeListener(handleChange);
     ctrl.addApplyListener(

@@ -32,7 +32,7 @@ class FlattenSelect extends StatefulWidget {
     super.key,
     required this.delegate,
     required this.entries,
-    required this.previousSelected,
+    this.selectedEntries,
     @Deprecated(
       'Use SelectGridLayout.crossAxisCount on SelectCategoryEntry.layout instead.',
     )
@@ -55,7 +55,8 @@ class FlattenSelect extends StatefulWidget {
 
   final List<SelectEntry> entries;
 
-  final Set<SelectEntry>? previousSelected;
+  /// The previously applied selection to restore, if any.
+  final Set<SelectEntry>? selectedEntries;
 
   /// Deprecated: `FlattenSelect` renders grid layouts from
   /// [SelectCategoryEntry.layout] and no longer uses this widget parameter.
@@ -129,7 +130,7 @@ class FlattenSelectState extends State<FlattenSelect> {
     controller?.bindState(
       widget.entries,
       initializeAnyIfEmpty: true,
-      previousSelectedOverride: widget.previousSelected,
+      selectedEntriesOverride: widget.selectedEntries,
     );
   }
 

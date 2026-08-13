@@ -14,7 +14,7 @@ import 'state/state_tree.dart';
 /// [addApplyListener], and [addResetListener].
 ///
 /// The selection behavior ([selectionMode]) and the initial/reset selection
-/// state ([previousSelected]/[resetSelected]) are injected as plain data at
+/// state ([selectedEntries]/[resetEntries]) are injected as plain data at
 /// construction time. The controller does not depend on the [SelectDelegate]
 /// configuration class.
 class SelectController extends ChangeNotifier {
@@ -28,12 +28,22 @@ class SelectController extends ChangeNotifier {
   ///
   /// Typically the selection persisted from a previous session. If null, the
   /// controller starts with no selection.
-  final SelectEntries? previousSelected;
+  final SelectEntries? selectedEntries;
 
   /// The selection state used when the user triggers a reset.
   ///
-  /// If null, reset falls back to [previousSelected] (or no selection).
-  final SelectEntries? resetSelected;
+  /// If null, reset falls back to [selectedEntries] (or no selection).
+  final SelectEntries? resetEntries;
+
+  /// @nodoc
+  @Deprecated(
+      'Use selectedEntries instead. This will be removed in a future minor version.')
+  SelectEntries? get previousSelected => selectedEntries;
+
+  /// @nodoc
+  @Deprecated(
+      'Use resetEntries instead. This will be removed in a future minor version.')
+  SelectEntries? get resetSelected => resetEntries;
 
   /// The underlying state tree holding the bound entries and their selection
   /// state.
@@ -47,9 +57,20 @@ class SelectController extends ChangeNotifier {
 
   SelectController({
     required this.selectionMode,
-    this.previousSelected,
-    this.resetSelected,
-  });
+    SelectEntries? selectedEntries,
+    SelectEntries? resetEntries,
+    @Deprecated(
+        'Use selectedEntries instead. This will be removed in a future minor version.')
+    SelectEntries? previousSelected,
+    @Deprecated(
+        'Use resetEntries instead. This will be removed in a future minor version.')
+    SelectEntries? resetSelected,
+  })  : selectedEntries = selectedEntries ?? previousSelected,
+        resetEntries = resetEntries ?? resetSelected,
+        assert(selectedEntries == null || previousSelected == null,
+            'Either provide selectedEntries or previousSelected, not both.'),
+        assert(resetEntries == null || resetSelected == null,
+            'Either provide resetEntries or resetSelected, not both.');
 
   /// Registers a listener to be called when the selection changes.
   ///
@@ -106,14 +127,14 @@ class SelectController extends ChangeNotifier {
   void bindState(
     List<SelectEntry> entries, {
     required bool initializeAnyIfEmpty,
-    SelectEntries? previousSelectedOverride,
-    SelectEntries? resetSelectedOverride,
+    SelectEntries? selectedEntriesOverride,
+    SelectEntries? resetEntriesOverride,
   }) {
     validateEntries(entries);
     final changed = tree.bind(
       entries,
-      previousSelected: previousSelectedOverride ?? previousSelected,
-      resetSelected: resetSelectedOverride ?? resetSelected,
+      selectedEntries: selectedEntriesOverride,
+      resetEntries: resetEntriesOverride,
       initializeAnyIfEmpty: initializeAnyIfEmpty,
     );
     if (changed) {

@@ -72,7 +72,7 @@ void main() {
       expect(delegate.selectedEntries, isNotNull);
       expect(delegate.selectedEntries!.any((e) => e.id == 'a'), isTrue);
 
-      // Reopen: the controller must be rebuilt with `previousSelected` coming
+      // Reopen: the controller must be rebuilt with `selectedEntries` coming
       // from `delegate.selectedData`, so the previously applied selection is
       // restored rather than lost. The tab label now shows the applied value.
       await tester.tap(find.widgetWithText(PopupTab, 'A'));
@@ -81,7 +81,7 @@ void main() {
       expect(controller.isSelectShowing, isTrue);
       expect(controller.selectController, isNotNull);
       expect(
-          controller.selectController!.previousSelected!
+          controller.selectController!.selectedEntries!
               .any((e) => e.id == 'a'),
           isTrue);
     });

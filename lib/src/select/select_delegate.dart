@@ -167,12 +167,12 @@ abstract class SelectDelegate {
 
   /// Builds the select body widget.
   ///
-  /// [entries] are the full selectable entries. [previousSelected] represents
+  /// [entries] are the full selectable entries. [selectedEntries] represents
   /// a previously applied selection, if any.
   Widget buildBody(
     BuildContext context,
     List<SelectEntry> entries,
-    Set<SelectEntry>? previousSelected,
+    Set<SelectEntry>? selectedEntries,
   );
 
   /// Builds the loading skeleton.
@@ -247,12 +247,12 @@ class CascadingSelectDelegate extends SelectDelegate {
   Widget buildBody(
     BuildContext context,
     List<SelectEntry> entries,
-    Set<SelectEntry>? previousSelected,
+    Set<SelectEntry>? selectedEntries,
   ) {
     return CascadingSelect(
       delegate: this,
       entries: entries,
-      previousSelected: previousSelected,
+      selectedEntries: selectedEntries,
     );
   }
 
@@ -308,12 +308,12 @@ class ListSelectDelegate extends SelectDelegate {
   Widget buildBody(
     BuildContext context,
     List<SelectEntry> entries,
-    Set<SelectEntry>? previousSelected,
+    Set<SelectEntry>? selectedEntries,
   ) {
     return ListSelect(
       delegate: this,
       entries: entries,
-      previousSelected: previousSelected,
+      selectedEntries: selectedEntries,
     );
   }
 
@@ -382,12 +382,12 @@ class GridSelectDelegate extends SelectDelegate {
   Widget buildBody(
     BuildContext context,
     List<SelectEntry> entries,
-    Set<SelectEntry>? previousSelected,
+    Set<SelectEntry>? selectedEntries,
   ) {
     return GridSelect(
       delegate: this,
       entries: entries,
-      previousSelected: previousSelected,
+      selectedEntries: selectedEntries,
     );
   }
 
@@ -495,12 +495,12 @@ class FlattenSelectDelegate extends SelectDelegate {
   Widget buildBody(
     BuildContext context,
     List<SelectEntry> entries,
-    Set<SelectEntry>? previousSelected,
+    Set<SelectEntry>? selectedEntries,
   ) {
     return FlattenSelect(
       delegate: this,
       entries: entries,
-      previousSelected: previousSelected,
+      selectedEntries: selectedEntries,
       // ignore: deprecated_member_use_from_same_package
       crossAxisCount: crossAxisCount,
       // ignore: deprecated_member_use_from_same_package

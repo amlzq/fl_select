@@ -88,8 +88,8 @@ class _SelectPanelState extends State<SelectPanel> {
   void _createInternalController() {
     _internalController = SelectController(
       selectionMode: widget.delegate.selectionMode,
-      previousSelected: widget.delegate.selectedEntries,
-      resetSelected: widget.delegate.resetEntries,
+      selectedEntries: widget.delegate.selectedEntries,
+      resetEntries: widget.delegate.resetEntries,
     );
   }
 
@@ -196,7 +196,7 @@ class _SelectPanelState extends State<SelectPanel> {
                       FocusScope.of(context).unfocus();
                     },
                     child: widget.delegate.buildBody(
-                        context, entries, _controller.previousSelected),
+                        context, entries, _controller.selectedEntries),
                   );
                 }
               } else {

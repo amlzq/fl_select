@@ -1,3 +1,7 @@
+## Next
+
+- **DEPRECATION** rename the `previousSelected` / `resetSelected` API surface to `selectedEntries` / `resetEntries` to align naming across the library. Only the public API — `SelectController` constructor params and getters — retains the old names as deprecated aliases for backward compatibility; they **will be removed in a future minor version**. Internal members (`StateTree`, `SelectController.bindState`, `SelectDelegate.buildBody`, and the four `Select*` widgets) are renamed without aliases. No behavior changes.
+
 ## 0.7.2
 
 - **BUGFIX** fix custom range input handling across `SelectListView`, `SelectGridView` and `SelectRangeView`:

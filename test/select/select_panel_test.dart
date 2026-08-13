@@ -362,8 +362,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(captured, isNotNull);
-      expect(captured!.previousSelected, isNotNull);
-      expect(captured!.previousSelected!.any((e) => e.id == 'a'), isTrue);
+      expect(captured!.selectedEntries, isNotNull);
+      expect(captured!.selectedEntries!.any((e) => e.id == 'a'), isTrue);
     });
   });
 }

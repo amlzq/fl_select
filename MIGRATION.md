@@ -1,5 +1,71 @@
 # Migration Guide
 
+## MIGRATE TO Next
+
+### `previousSelected` / `resetSelected` renamed to `selectedEntries` / `resetEntries`
+
+The `previousSelected` / `resetSelected` API surface has been renamed to
+`selectedEntries` / `resetEntries` to align naming across the library. The
+rename covers `SelectController`, `StateTree`, `SelectDelegate.buildBody` and
+the four `Select*` widgets:
+
+| Old name                                                | New name                                                 |
+| ------------------------------------------------------- | -------------------------------------------------------- |
+| `SelectController.previousSelected`                      | `SelectController.selectedEntries`                       |
+| `SelectController.resetSelected`                         | `SelectController.resetEntries`                          |
+| `SelectController.bindState(previousSelectedOverride:)`  | `SelectController.bindState(selectedEntriesOverride:)`   |
+| `SelectController.bindState(resetSelectedOverride:)`     | `SelectController.bindState(resetEntriesOverride:)`      |
+| `StateTree.previousSelected`                             | `StateTree.selectedEntries`                              |
+| `StateTree.resetSelected`                                | `StateTree.resetEntries`                                 |
+| `StateTree.bind(previousSelected:)`                      | `StateTree.bind(selectedEntries:)`                       |
+| `StateTree.bind(resetSelected:)`                         | `StateTree.bind(resetEntries:)`                          |
+| `SelectDelegate.buildBody(previousSelected)`             | `SelectDelegate.buildBody(selectedEntries)`              |
+| `CascadingSelect.previousSelected`                       | `CascadingSelect.selectedEntries`                        |
+| `ListSelect.previousSelected`                            | `ListSelect.selectedEntries`                             |
+| `GridSelect.previousSelected`                            | `GridSelect.selectedEntries`                             |
+| `FlattenSelect.previousSelected`                         | `FlattenSelect.selectedEntries`                          |
+
+Only the public-facing `SelectController` constructor parameters and getters
+retain the old names as deprecated aliases for backward compatibility; they
+**will be removed in a future minor version**. All other renamed members (on
+`StateTree`, `bindState`, `SelectDelegate.buildBody`, and the four `Select*`
+widgets) are internal and have been renamed without aliases — update call sites
+directly. No behavior changes.
+
+> Note: `SelectDelegate.buildBody` is a positional parameter, so the rename is
+> purely cosmetic for callers and overrides — existing override signatures keep
+> working regardless of the parameter name they use.
+
+Migration: replace each old name with its new counterpart at every call site.
+
+```dart
+// Before
+SelectController(
+  selectionMode: SelectionMode.single,
+  previousSelected: { ... },
+  resetSelected: { ... },
+);
+
+controller.bindState(
+  entries,
+  initializeAnyIfEmpty: false,
+  previousSelectedOverride: { ... },
+);
+
+// After
+SelectController(
+  selectionMode: SelectionMode.single,
+  selectedEntries: { ... },
+  resetEntries: { ... },
+);
+
+controller.bindState(
+  entries,
+  initializeAnyIfEmpty: false,
+  selectedEntriesOverride: { ... },
+);
+```
+
 ## MIGRATE TO 0.7.0
 
 ### Selector lifecycle callbacks renamed to `onSelect*` on `PopupSelectBar` / `PopupSelectButton`

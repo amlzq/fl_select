@@ -11,8 +11,8 @@ class StateTree {
 
   List<SelectEntry> _entries = const [];
   final Map<String, List<SelectEntry>> _idIndex = {};
-  SelectEntries? _previousSelected;
-  SelectEntries? _resetSelected;
+  SelectEntries? _selectedEntries;
+  SelectEntries? _resetEntries;
 
   final List<SelectEntries> _selectedEntriesPerLevel = [];
   final Map<String, SelectEntries> _selectedHeaderEntries = {};
@@ -20,9 +20,13 @@ class StateTree {
 
   List<SelectEntry> get entries => _entries;
 
-  SelectEntries? get previousSelected => _previousSelected;
+  /// The initial selection state this tree was bound with, or `null` when none
+  /// was provided.
+  SelectEntries? get selectedEntries => _selectedEntries;
 
-  SelectEntries? get resetSelected => _resetSelected;
+  /// The selection state used when [reset] is invoked, or `null` when none was
+  /// provided.
+  SelectEntries? get resetEntries => _resetEntries;
 
   int get levelCount => _selectedEntriesPerLevel.length;
 
@@ -37,30 +41,30 @@ class StateTree {
 
   bool bind(
     List<SelectEntry> entries, {
-    SelectEntries? previousSelected,
-    SelectEntries? resetSelected,
+    SelectEntries? selectedEntries,
+    SelectEntries? resetEntries,
     required bool initializeAnyIfEmpty,
   }) {
     final isSameEntries = _entryListEquality.equals(_entries, entries);
     final isSamePrevious = _entrySetEquality.equals(
-        _previousSelected ?? {}, previousSelected ?? {});
+        _selectedEntries ?? {}, selectedEntries ?? {});
     final isSameReset =
-        _entrySetEquality.equals(_resetSelected ?? {}, resetSelected ?? {});
+        _entrySetEquality.equals(_resetEntries ?? {}, resetEntries ?? {});
     if (isSameEntries && isSamePrevious && isSameReset) {
       return false;
     }
 
     _entries = entries;
     _rebuildIdIndex();
-    _previousSelected = previousSelected;
-    _resetSelected = resetSelected;
-    _restoreSelections(previousSelected,
+    _selectedEntries = selectedEntries;
+    _resetEntries = resetEntries;
+    _restoreSelections(selectedEntries,
         initializeAnyIfEmpty: initializeAnyIfEmpty);
     return true;
   }
 
   void reset({required bool initializeAnyIfEmpty}) {
-    _restoreSelections(_resetSelected,
+    _restoreSelections(_resetEntries,
         initializeAnyIfEmpty: initializeAnyIfEmpty);
   }
 

@@ -641,10 +641,10 @@ void main() {
   });
 
   group('SelectController - resetState', () {
-    test('resetState restores resetSelected and notifies', () {
+    test('resetState restores resetEntries and notifies', () {
       final controller = SelectController(
         selectionMode: SelectionMode.single,
-        resetSelected: {_text('c', 'b', 'B')},
+        resetEntries: {_text('c', 'b', 'B')},
       );
       final a = _text('c', 'a', 'A');
       final b = _text('c', 'b', 'B');

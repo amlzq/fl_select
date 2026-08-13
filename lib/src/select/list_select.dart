@@ -15,13 +15,15 @@ import 'widgets/widgets.dart';
 class ListSelect extends StatefulWidget {
   final ListSelectDelegate delegate;
   final List<SelectEntry> entries;
-  final Set<SelectEntry>? previousSelected;
+
+  /// The previously applied selection to restore, if any.
+  final Set<SelectEntry>? selectedEntries;
 
   const ListSelect({
     super.key,
     required this.delegate,
     required this.entries,
-    required this.previousSelected,
+    this.selectedEntries,
   });
 
   @override
@@ -60,7 +62,7 @@ class ListSelectState extends State<ListSelect> {
     controller?.bindState(
       widget.entries,
       initializeAnyIfEmpty: true,
-      previousSelectedOverride: widget.previousSelected,
+      selectedEntriesOverride: widget.selectedEntries,
     );
   }
 

@@ -26,14 +26,15 @@ class CascadingSelect extends StatefulWidget {
     super.key,
     required this.delegate,
     required this.entries,
-    required this.previousSelected,
+    this.selectedEntries,
   });
 
   final CascadingSelectDelegate delegate;
 
   final List<SelectEntry> entries;
 
-  final Set<SelectEntry>? previousSelected;
+  /// The previously applied selection to restore, if any.
+  final Set<SelectEntry>? selectedEntries;
 
   @override
   State<CascadingSelect> createState() => CascadingSelectState();
@@ -87,7 +88,7 @@ class CascadingSelectState extends State<CascadingSelect> {
     // Only rebuild the selection state when the data actually changes.
     // In playground's SelectView mode, the ancestor EntryPointScreen calls
     // setState on every onChanged, which causes didUpdateWidget to fire on
-    // every tap — even though entries and previousSelected are unchanged.
+    // every tap — even though entries and selectedEntries are unchanged.
     // Unconditionally calling _updateSelectController (which calls
     // _rebuildSelectionState) discards the in-memory focused-path state
     // (_tempSelectedEntryPerLevel) and rebuilds it from the state tree.
@@ -97,8 +98,8 @@ class CascadingSelectState extends State<CascadingSelect> {
     final sameEntries = const ListEquality<SelectEntry>()
         .equals(widget.entries, oldWidget.entries);
     final samePrevious = const SetEquality<SelectEntry>().equals(
-        widget.previousSelected ?? const {},
-        oldWidget.previousSelected ?? const {});
+        widget.selectedEntries ?? const {},
+        oldWidget.selectedEntries ?? const {});
     if (!sameEntries || !samePrevious) {
       _updateSelectController(context);
     }
@@ -123,7 +124,7 @@ class CascadingSelectState extends State<CascadingSelect> {
     controller?.bindState(
       widget.entries,
       initializeAnyIfEmpty: false,
-      previousSelectedOverride: widget.previousSelected,
+      selectedEntriesOverride: widget.selectedEntries,
     );
     _rebuildSelectionState();
   }

@@ -55,24 +55,24 @@ void main() {
       expect(tree.bind([c], initializeAnyIfEmpty: false), isFalse);
     });
 
-    test('bind returns true when previousSelected changes', () {
+    test('bind returns true when selectedEntries changes', () {
       final tree = StateTree();
       final a = _text('c', 'a', 'A');
       final c = _category('c', 'C', children: {a});
       tree.bind([c], initializeAnyIfEmpty: false);
       expect(
-        tree.bind([c], initializeAnyIfEmpty: false, previousSelected: {a}),
+        tree.bind([c], initializeAnyIfEmpty: false, selectedEntries: {a}),
         isTrue,
       );
     });
 
-    test('bind returns true when resetSelected changes', () {
+    test('bind returns true when resetEntries changes', () {
       final tree = StateTree();
       final a = _text('c', 'a', 'A');
       final c = _category('c', 'C', children: {a});
       tree.bind([c], initializeAnyIfEmpty: false);
       expect(
-        tree.bind([c], initializeAnyIfEmpty: false, resetSelected: {a}),
+        tree.bind([c], initializeAnyIfEmpty: false, resetEntries: {a}),
         isTrue,
       );
     });
@@ -410,21 +410,21 @@ void main() {
     });
   });
 
-  group('StateTree – _restoreSelections with previousSelected', () {
+  group('StateTree – _restoreSelections with selectedEntries', () {
     test('restores previously selected entries', () {
       final tree = StateTree();
       final a = _text('c', 'a', 'A');
       final c = _category('c', 'C', children: {a});
 
-      // previousSelected must contain a category entry with its selected
-      // children so restorePreviousSelected can rebuild the tree.
+      // selectedEntries must contain a category entry with its selected
+      // children so restoreSelections can rebuild the tree.
       final selectedCategory = SelectCategoryEntry<dynamic>(
         id: 'c',
         name: 'C',
         children: {a},
       );
       tree.bind([c],
-          initializeAnyIfEmpty: false, previousSelected: {selectedCategory});
+          initializeAnyIfEmpty: false, selectedEntries: {selectedCategory});
 
       expect(tree.selectedEntriesAtLevel(0).contains(c), isTrue);
       expect(tree.selectedEntriesAtLevel(1).contains(a), isTrue);
@@ -436,7 +436,7 @@ void main() {
       final parent = _text('c', 'p', 'P', children: {leaf});
       final c = _category('c', 'C', children: {parent});
 
-      // previousSelected must contain a category entry with nested children
+      // selectedEntries must contain a category entry with nested children
       final selectedCategory = SelectCategoryEntry<dynamic>(
         id: 'c',
         name: 'C',
@@ -450,7 +450,7 @@ void main() {
         },
       );
       tree.bind([c],
-          initializeAnyIfEmpty: false, previousSelected: {selectedCategory});
+          initializeAnyIfEmpty: false, selectedEntries: {selectedCategory});
 
       expect(tree.selectedEntriesAtLevel(0).contains(c), isTrue);
       expect(tree.selectedEntriesAtLevel(1).contains(parent), isTrue);
@@ -458,13 +458,13 @@ void main() {
     });
 
     test(
-        'falls back to Any when previousSelected is empty and initializeAnyIfEmpty is true',
+        'falls back to Any when selectedEntries is empty and initializeAnyIfEmpty is true',
         () {
       final tree = StateTree();
       final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
       final a = _text('c', 'a', 'A');
       final c = _category('c', 'C', children: {any, a});
-      tree.bind([c], initializeAnyIfEmpty: true, previousSelected: {});
+      tree.bind([c], initializeAnyIfEmpty: true, selectedEntries: {});
 
       expect(tree.selectedEntriesAtLevel(0).contains(c), isTrue);
       expect(tree.selectedEntriesAtLevel(1).contains(any), isTrue);
@@ -472,7 +472,7 @@ void main() {
   });
 
   group('StateTree – reset', () {
-    test('reset restores resetSelected entries', () {
+    test('reset restores resetEntries entries', () {
       final tree = StateTree();
       final a = _text('c', 'a', 'A');
       final b = _text('c', 'b', 'B');
@@ -485,7 +485,7 @@ void main() {
         children: {a},
       );
       tree.bind([c],
-          initializeAnyIfEmpty: false, previousSelected: {selectedWithA});
+          initializeAnyIfEmpty: false, selectedEntries: {selectedWithA});
       expect(tree.selectedEntriesAtLevel(1).contains(a), isTrue);
 
       // Reset with b via a category entry
@@ -496,8 +496,8 @@ void main() {
       );
       tree.bind([c],
           initializeAnyIfEmpty: false,
-          previousSelected: {selectedWithA},
-          resetSelected: {selectedWithB});
+          selectedEntries: {selectedWithA},
+          resetEntries: {selectedWithB});
       tree.reset(initializeAnyIfEmpty: false);
 
       expect(tree.selectedEntriesAtLevel(0).contains(c), isTrue);
@@ -579,12 +579,12 @@ void main() {
         ),
       );
       tree.bind([c],
-          initializeAnyIfEmpty: false, previousSelected: {selectedCategory});
+          initializeAnyIfEmpty: false, selectedEntries: {selectedCategory});
       expect(
           tree.selectedHeaderEntriesFor('c').map((e) => e.id).toSet(), {'h1'});
     });
 
-    test('restores footer selections from previousSelected', () {
+    test('restores footer selections from selectedEntries', () {
       final tree = StateTree();
       final f1 = _text('footer', 'f1', 'F1');
       final footer = _text('c', 'footer', 'Footer', children: {f1});
@@ -608,7 +608,7 @@ void main() {
         ),
       );
       tree.bind([c],
-          initializeAnyIfEmpty: false, previousSelected: {selectedCategory});
+          initializeAnyIfEmpty: false, selectedEntries: {selectedCategory});
       expect(
           tree.selectedFooterEntriesFor('c').map((e) => e.id).toSet(), {'f1'});
     });
@@ -656,30 +656,30 @@ void main() {
     });
   });
 
-  group('StateTree – previousSelected / resetSelected', () {
-    test('previousSelected getter returns bound value', () {
+  group('StateTree – selectedEntries / resetEntries', () {
+    test('selectedEntries getter returns bound value', () {
       final tree = StateTree();
       final a = _text('c', 'a', 'A');
       final c = _category('c', 'C', children: {a});
-      tree.bind([c], initializeAnyIfEmpty: false, previousSelected: {a});
-      expect(tree.previousSelected, isNotNull);
-      expect(tree.previousSelected!.contains(a), isTrue);
+      tree.bind([c], initializeAnyIfEmpty: false, selectedEntries: {a});
+      expect(tree.selectedEntries, isNotNull);
+      expect(tree.selectedEntries!.contains(a), isTrue);
     });
 
-    test('resetSelected getter returns bound value', () {
+    test('resetEntries getter returns bound value', () {
       final tree = StateTree();
       final a = _text('c', 'a', 'A');
       final c = _category('c', 'C', children: {a});
-      tree.bind([c], initializeAnyIfEmpty: false, resetSelected: {a});
-      expect(tree.resetSelected, isNotNull);
-      expect(tree.resetSelected!.contains(a), isTrue);
+      tree.bind([c], initializeAnyIfEmpty: false, resetEntries: {a});
+      expect(tree.resetEntries, isNotNull);
+      expect(tree.resetEntries!.contains(a), isTrue);
     });
 
-    test('previousSelected is null when not provided', () {
+    test('selectedEntries is null when not provided', () {
       final tree = StateTree();
       final c = _category('c', 'C', children: {_text('c', 'a', 'A')});
       tree.bind([c], initializeAnyIfEmpty: false);
-      expect(tree.previousSelected, isNull);
+      expect(tree.selectedEntries, isNull);
     });
   });
 }
