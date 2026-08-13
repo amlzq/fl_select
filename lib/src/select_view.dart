@@ -160,8 +160,8 @@ class _SelectViewState extends State<SelectView> {
   void _createInternalController() {
     _internalController = SelectController(
       selectionMode: widget.delegate.selectionMode,
-      previousSelected: widget.delegate.selectedData,
-      resetSelected: widget.delegate.resetData,
+      previousSelected: widget.delegate.selectedEntries,
+      resetSelected: widget.delegate.resetEntries,
     );
   }
 

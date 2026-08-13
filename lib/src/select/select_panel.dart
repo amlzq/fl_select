@@ -88,8 +88,8 @@ class _SelectPanelState extends State<SelectPanel> {
   void _createInternalController() {
     _internalController = SelectController(
       selectionMode: widget.delegate.selectionMode,
-      previousSelected: widget.delegate.selectedData,
-      resetSelected: widget.delegate.resetData,
+      previousSelected: widget.delegate.selectedEntries,
+      resetSelected: widget.delegate.resetEntries,
     );
   }
 
@@ -158,7 +158,7 @@ class _SelectPanelState extends State<SelectPanel> {
         child: SelectControllerProvider(
           controller: _controller,
           child: FutureBuilder<SelectEntries>(
-            future: widget.delegate.data,
+            future: widget.delegate.asyncEntries,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.done) {
                 if (snapshot.hasError) {

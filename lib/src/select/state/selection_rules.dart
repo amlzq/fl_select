@@ -151,7 +151,7 @@ class SelectionRules {
           selectedEntries.remove(entry);
         } else {
           selectedEntries.removeWhere(
-              (e) => (e as SelectTextEntry).parentId == entry.parentId);
+              (e) => (e as SelectChildEntry).parentId == entry.parentId);
           selectedEntries.add(entry);
         }
       }

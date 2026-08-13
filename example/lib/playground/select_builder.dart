@@ -185,7 +185,7 @@ SelectDelegate buildDelegate(
   final delegate = _createDelegate(p, data);
   final previous = selectionCache[_selectionKey(language, p)];
   if (previous != null && previous != delegate) {
-    delegate.selectedData = previous.selectedData;
+    delegate.selectedEntries = previous.selectedEntries;
   }
   delegateCache[key] = delegate;
   selectionCache[_selectionKey(language, p)] = delegate;

@@ -66,35 +66,36 @@ abstract class SelectDelegate {
   /// result.
   final Future<SelectEntries> Function() entriesLoader;
 
-  Future<SelectEntries>? _data;
+  Future<SelectEntries>? _asyncEntries;
 
   /// The selectable entries future, lazily initialized from [entriesLoader]
   /// on first access.
-  Future<SelectEntries>? get data => _data ??= entriesLoader();
+  Future<SelectEntries>? get asyncEntries => _asyncEntries ??= entriesLoader();
 
   /// Returns the previously selected entries to restore.
   ///
   /// This is typically used for restoring state when reopening the select.
   final SelectEntries? Function()? selectedEntriesLoader;
 
-  SelectEntries? _selectedData;
+  SelectEntries? _selectedEntries;
 
   /// The previously selected entries, lazily initialized from
   /// [selectedEntriesLoader] on first access.
   ///
   /// Can be set explicitly to override the cached value.
-  SelectEntries? get selectedData =>
-      _selectedData ??= selectedEntriesLoader?.call();
-  set selectedData(SelectEntries? value) => _selectedData = value;
+  SelectEntries? get selectedEntries =>
+      _selectedEntries ??= selectedEntriesLoader?.call();
+  set selectedEntries(SelectEntries? value) => _selectedEntries = value;
 
   /// Returns the selection that should be used when "Reset" is tapped.
   final SelectEntries? Function()? resetEntriesLoader;
 
-  SelectEntries? _resetData;
+  SelectEntries? _resetEntries;
 
   /// The reset selection entries, lazily initialized from [resetEntriesLoader]
   /// on first access.
-  SelectEntries? get resetData => _resetData ??= resetEntriesLoader?.call();
+  SelectEntries? get resetEntries =>
+      _resetEntries ??= resetEntriesLoader?.call();
 
   /// Optional builder to customize the action bar UI.
   final SelectActionBarBuilder? actionBarBuilder;

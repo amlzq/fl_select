@@ -30,7 +30,7 @@ void main() {
       // The applied selection must be persisted on the delegate so that a
       // reopened controller (PopupSelectBar / Button / Dialog / bottom
       // sheet) reconstructs with `previousSelected = applied`.
-      expect(delegate.selectedData, applied);
+      expect(delegate.selectedEntries, applied);
     });
 
     testWidgets('PopupSelectBar restores the previous selection when reopened',
@@ -69,8 +69,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // The applied selection is written back to the delegate.
-      expect(delegate.selectedData, isNotNull);
-      expect(delegate.selectedData!.any((e) => e.id == 'a'), isTrue);
+      expect(delegate.selectedEntries, isNotNull);
+      expect(delegate.selectedEntries!.any((e) => e.id == 'a'), isTrue);
 
       // Reopen: the controller must be rebuilt with `previousSelected` coming
       // from `delegate.selectedData`, so the previously applied selection is

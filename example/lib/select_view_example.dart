@@ -415,8 +415,8 @@ class SelectViewExamplePage extends StatelessWidget {
                           SelectRangeEntry.custom(),
                           SelectTextEntry.name(id: 'a', name: 'A'),
                           SelectTextEntry.name(id: 'b', name: 'B'),
-                          // SelectTextEntry.name(id: 'c', name: 'C'),
-                          // SelectTextEntry.name(id: 'd', name: 'D'),
+                          SelectTextEntry.name(id: 'c', name: 'C'),
+                          SelectTextEntry.name(id: 'd', name: 'D'),
                         },
                       ),
                       SelectCategoryEntry.children(
@@ -447,8 +447,8 @@ class SelectViewExamplePage extends StatelessWidget {
                         id: 'cate3',
                         name: 'Cate 3',
                         children: {
-                          // SelectTextEntry.name(id: 'a', name: 'A'),
-                          // SelectTextEntry.name(id: 'b', name: 'B'),
+                          SelectTextEntry.name(id: 'a', name: 'A'),
+                          SelectTextEntry.name(id: 'b', name: 'B'),
                           SelectTextEntry.name(id: 'c', name: 'C'),
                           SelectTextEntry.name(id: 'd', name: 'D'),
                           SelectRangeEntry.custom(),

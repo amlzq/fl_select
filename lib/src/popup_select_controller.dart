@@ -416,8 +416,8 @@ class PopupSelectController extends ChangeNotifier {
     if (select == null) return;
     final ctrl = SelectController(
       selectionMode: select.selectionMode,
-      previousSelected: select.selectedData,
-      resetSelected: select.resetData,
+      previousSelected: select.selectedEntries,
+      resetSelected: select.resetEntries,
     );
     ctrl.addChangeListener(handleChange);
     ctrl.addApplyListener(
@@ -455,7 +455,7 @@ class PopupSelectController extends ChangeNotifier {
     // `previousSelected = selected`. Without this write-back, `selectedData`
     // keeps the initial `selectedEntriesLoader` value and the previous selection
     // is lost on reopen — even though `selectedEntriesLoader` was supplied.
-    previousSelectDelegate?.selectedData = selected;
+    previousSelectDelegate?.selectedEntries = selected;
     for (final listener in List.of(_applyListeners)) {
       listener(labelState, selected);
     }
@@ -501,12 +501,12 @@ class PopupSelectController extends ChangeNotifier {
     final select = _selectDelegateAt(tabIndex);
     if (select == null) return false;
 
-    final dataFuture = select.data;
-    if (dataFuture == null) return false;
+    final entriesFuture = select.asyncEntries;
+    if (entriesFuture == null) return false;
 
     late final SelectEntries entries;
     try {
-      entries = await dataFuture;
+      entries = await entriesFuture;
     } catch (_) {
       return false;
     }
@@ -535,14 +535,14 @@ class PopupSelectController extends ChangeNotifier {
 
     previousSelectDelegate = select;
 
-    final dataFuture = select.data;
-    if (dataFuture == null) return false;
+    final entriesFuture = select.asyncEntries;
+    if (entriesFuture == null) return false;
 
-    select.resetData;
+    select.resetEntries;
 
     late final SelectEntries entries;
     try {
-      entries = await dataFuture;
+      entries = await entriesFuture;
     } catch (_) {
       return false;
     }
@@ -552,7 +552,7 @@ class PopupSelectController extends ChangeNotifier {
     if (ctx.invalidCategoryHit) return false;
     if (ctx.invalidCustomHit) return false;
 
-    select.selectedData = selected;
+    select.selectedEntries = selected;
     _showSelect(tabIndex);
     handleChange(selected);
     return true;
