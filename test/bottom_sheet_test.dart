@@ -13,8 +13,9 @@ class _SheetTestDelegate extends SelectDelegate {
   Widget buildBody(
     BuildContext context,
     List<SelectEntry> entries,
-    Set<SelectEntry>? previousSelected,
-  ) =>
+    Set<SelectEntry>? previousSelected, {
+    String searchQuery = '',
+  }) =>
       const Text('body');
 
   @override

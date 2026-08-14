@@ -8,6 +8,7 @@ import 'constants.dart';
 import 'select_controller.dart';
 import 'select_delegate.dart';
 import 'select_entry.dart';
+import 'select_search_filter.dart';
 import 'select_theme.dart';
 import 'widgets/widgets.dart';
 
@@ -27,6 +28,8 @@ class CascadingSelect extends StatefulWidget {
     required this.delegate,
     required this.entries,
     this.selectedEntries,
+    this.searchQuery = '',
+    this.searchPredicate,
   });
 
   final CascadingSelectDelegate delegate;
@@ -35,6 +38,13 @@ class CascadingSelect extends StatefulWidget {
 
   /// The previously applied selection to restore, if any.
   final Set<SelectEntry>? selectedEntries;
+
+  /// The current search query. When non-empty, [entries] is filtered for
+  /// display using [searchPredicate].
+  final String searchQuery;
+
+  /// Custom predicate for search filtering.
+  final SelectSearchPredicate? searchPredicate;
 
   @override
   State<CascadingSelect> createState() => CascadingSelectState();
@@ -62,6 +72,18 @@ class CascadingSelectState extends State<CascadingSelect> {
   /// Gradient colors for each level
   late List<Color> _backgroundColors;
   // late List<Color> _textColors;
+
+  bool get _isSearching => widget.searchQuery.isNotEmpty;
+
+  List<SelectEntry> get _displayEntries => _isSearching
+      ? filterEntriesForSearch(widget.entries, widget.searchQuery,
+          predicate: widget.searchPredicate)
+      : widget.entries;
+
+  /// Entries used to drive the cascading state: filtered when searching,
+  /// otherwise the full [widget.entries].
+  List<SelectEntry> get _effectiveEntries =>
+      _isSearching ? _displayEntries : widget.entries;
 
   @override
   void initState() {
@@ -100,8 +122,14 @@ class CascadingSelectState extends State<CascadingSelect> {
     final samePrevious = const SetEquality<SelectEntry>().equals(
         widget.selectedEntries ?? const {},
         oldWidget.selectedEntries ?? const {});
+    final sameSearchQuery = widget.searchQuery == oldWidget.searchQuery;
     if (!sameEntries || !samePrevious) {
       _updateSelectController(context);
+    } else if (!sameSearchQuery) {
+      // Search query changed without data change — rebuild cascading state
+      // from filtered entries and refresh the UI.
+      _rebuildSelectionState();
+      setState(() {});
     }
   }
 
@@ -141,6 +169,22 @@ class CascadingSelectState extends State<CascadingSelect> {
     _currentLevel = 0;
     _cascadingList.clear();
     _disposeScrollControllers();
+
+    if (_isSearching) {
+      // When searching, build cascading state from the filtered tree. Skip
+      // restoring the full focused path; just start from the first matching
+      // category and its (already filtered) children.
+      final entries = _effectiveEntries;
+      if (entries.isNotEmpty && entries.first is SelectCategoryEntry) {
+        final firstCategory = entries.first as SelectCategoryEntry;
+        _tempSelectedEntryPerLevel.add(firstCategory);
+        _cascadingList.add(firstCategory.children?.toList() ?? []);
+        _currentLevel = 1;
+        _scrollControllers.add(ScrollController());
+      }
+      _scheduleCascadeReveal();
+      return;
+    }
 
     _initializeTempSelectedEntryPerLevel(null, 0);
 
@@ -389,7 +433,7 @@ class CascadingSelectState extends State<CascadingSelect> {
     if (SelectionMode.multiple == categorySelectionMode) {
       return SelectionMode.multiple;
     }
-    if (widget.entries.firstWhereOrNull(testMultipleElement) != null) {
+    if (_effectiveEntries.firstWhereOrNull(testMultipleElement) != null) {
       return SelectionMode.multiple;
     }
     return SelectionMode.single;
@@ -548,10 +592,11 @@ class CascadingSelectState extends State<CascadingSelect> {
     final previousSelectedCategoryId = tempSelectedCategory.id;
     controller?.resetState(initializeAnyIfEmpty: false);
     _rebuildSelectionState();
-    final newCategory =
-        widget.entries.firstWhere((e) => e.id == previousSelectedCategoryId)
-            as SelectCategoryEntry;
-    _onCategoryItemTap(newCategory);
+    final newCategory = _effectiveEntries.firstWhereOrNull(
+        (e) => e.id == previousSelectedCategoryId) as SelectCategoryEntry?;
+    if (newCategory != null) {
+      _onCategoryItemTap(newCategory);
+    }
     setState(() {});
     controller?.reset();
   }
@@ -629,6 +674,31 @@ class CascadingSelectState extends State<CascadingSelect> {
     final theme = SelectTheme.of(context);
     final isScrollable = delegate.isScrollable == true;
 
+    // Empty-state guard: when searching yields no results, show a placeholder.
+    if (_isSearching && _effectiveEntries.isEmpty) {
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Expanded(child: Center(child: Text('No results'))),
+          if (SelectionMode.multiple == selectSelectionMode &&
+              !SelectActionBarVisibility.isHidden(context))
+            delegate.actionBarBuilder?.call(
+                  context,
+                  onResetTap: _onResetTap,
+                  onApplyTap: _onApplyTap,
+                ) ??
+                SelectActionBar(
+                  resetText: delegate.resetText,
+                  applyText: delegate.applyText,
+                  resetFlex: delegate.actionBarTheme?.resetFlex,
+                  applyFlex: delegate.actionBarTheme?.applyFlex,
+                  onResetTap: _onResetTap,
+                  onApplyTap: _onApplyTap,
+                ),
+        ],
+      );
+    }
+
     /// Maximum level for the current category
     // final maxLevel = tempSelectedCategory.maxLevel;
     // final isMultipleSelectionMode =
@@ -650,7 +720,7 @@ class CascadingSelectState extends State<CascadingSelect> {
         delegate.selectedColor ?? theme.selectedColor;
 
     final tempSelectedCategoryIndex =
-        widget.entries.indexOf(tempSelectedCategory);
+        _effectiveEntries.indexOf(tempSelectedCategory);
 
     // A category badge should only appear when it has a "real" selection,
     // i.e. at least one selected child that is not the "Any" placeholder.
@@ -677,7 +747,7 @@ class CascadingSelectState extends State<CascadingSelect> {
                 backgroundColor: categoryBackgroundColor,
                 selectedColor: effectiveSelectedColor,
                 selectedTileColor: selectedTileColor,
-                entries: widget.entries,
+                entries: _effectiveEntries,
                 selectedCategories: selectedCategories,
                 focusedIndex: tempSelectedCategoryIndex,
                 onChanged: (_, entry) =>

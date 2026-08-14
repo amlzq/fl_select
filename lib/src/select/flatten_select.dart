@@ -7,6 +7,7 @@ import 'select_controller.dart';
 import 'select_delegate.dart';
 import 'select_entry.dart';
 import 'select_layout.dart';
+import 'select_search_filter.dart';
 import 'select_theme.dart';
 import 'widgets/widgets.dart';
 
@@ -33,6 +34,8 @@ class FlattenSelect extends StatefulWidget {
     required this.delegate,
     required this.entries,
     this.selectedEntries,
+    this.searchQuery = '',
+    this.searchPredicate,
     @Deprecated(
       'Use SelectGridLayout.crossAxisCount on SelectCategoryEntry.layout instead.',
     )
@@ -57,6 +60,13 @@ class FlattenSelect extends StatefulWidget {
 
   /// The previously applied selection to restore, if any.
   final Set<SelectEntry>? selectedEntries;
+
+  /// The current search query. When non-empty, [entries] is filtered for
+  /// display using [searchPredicate].
+  final String searchQuery;
+
+  /// Custom predicate for search filtering.
+  final SelectSearchPredicate? searchPredicate;
 
   /// Deprecated: `FlattenSelect` renders grid layouts from
   /// [SelectCategoryEntry.layout] and no longer uses this widget parameter.
@@ -104,6 +114,13 @@ class FlattenSelectState extends State<FlattenSelect> {
 
   SelectController? controller;
 
+  bool get _isSearching => widget.searchQuery.isNotEmpty;
+
+  List<SelectEntry> get _displayEntries => _isSearching
+      ? filterEntriesForSearch(widget.entries, widget.searchQuery,
+          predicate: widget.searchPredicate)
+      : widget.entries;
+
   @override
   void dispose() {
     controller?.removeListener(_handleSelectControllerTick);
@@ -120,6 +137,12 @@ class FlattenSelectState extends State<FlattenSelect> {
   void didUpdateWidget(covariant FlattenSelect oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateSelectController(context);
+    // Clamp the selected category index when search results reduce the number
+    // of categories.
+    if (_tempSelectedCategoryIndex >= _displayEntries.length) {
+      _tempSelectedCategoryIndex =
+          _displayEntries.isEmpty ? 0 : _displayEntries.length - 1;
+    }
   }
 
   void _updateSelectController(BuildContext context) {
@@ -159,7 +182,7 @@ class FlattenSelectState extends State<FlattenSelect> {
   bool get _isCategoryTree => widget.entries.firstOrNull is SelectCategoryEntry;
 
   SelectCategoryEntry? get selectedCategory {
-    final entry = widget.entries.elementAtOrNull(_tempSelectedCategoryIndex);
+    final entry = _displayEntries.elementAtOrNull(_tempSelectedCategoryIndex);
     return entry is SelectCategoryEntry ? entry : null;
   }
 
@@ -190,7 +213,7 @@ class FlattenSelectState extends State<FlattenSelect> {
 
     // 3. Traverse children (based on the core idea of scrollview_observer)
     // Each child is given a ValueKey('category_$index') so we can find it.
-    for (int i = 0; i < widget.entries.length; i++) {
+    for (int i = 0; i < _displayEntries.length; i++) {
       // Key point: find the child's RenderObject directly from the current context.
       // This has overhead for huge lists, but is efficient and robust for a category select (limited size).
       final childKey = ValueKey('category_$i');
@@ -245,7 +268,7 @@ class FlattenSelectState extends State<FlattenSelect> {
   void _onCategoryItemTap(int index) {
     if (_tempSelectedCategoryIndex == index) return;
 
-    final category = widget.entries[index] as SelectCategoryEntry;
+    final category = _displayEntries[index] as SelectCategoryEntry;
     controller?.focusCategoryEntry(
       category,
       selectionMode: categorySelectionMode ?? SelectionMode.single,
@@ -499,7 +522,7 @@ class FlattenSelectState extends State<FlattenSelect> {
                 horizontal: 12,
               ),
               child: SelectChipBar(
-                entries: widget.entries,
+                entries: _displayEntries,
                 selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
                 isWrapable: true,
                 backgroundColor: delegate.chipBarTheme?.backgroundColor,
@@ -550,7 +573,7 @@ class FlattenSelectState extends State<FlattenSelect> {
                 backgroundColor: categoryBackgroundColor,
                 selectedColor: effectiveSelectedColor,
                 selectedTileColor: terminalBackgroundColor,
-                entries: widget.entries,
+                entries: _displayEntries,
                 selectedCategories: selectedCategories,
                 focusedIndex: _tempSelectedCategoryIndex,
                 onChanged: (index, entry) => _onCategoryItemTap(index),
@@ -569,10 +592,10 @@ class FlattenSelectState extends State<FlattenSelect> {
                       // shrinkWrap: true,
                       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
                           .onDrag, // Automatically dismiss the soft keyboard while dragging.
-                      children: widget.entries.mapIndexed((index, item) {
+                      children: _displayEntries.mapIndexed((index, item) {
                         final category =
-                            widget.entries[index] as SelectCategoryEntry;
-                        final isLast = item == widget.entries.last;
+                            _displayEntries[index] as SelectCategoryEntry;
+                        final isLast = item == _displayEntries.last;
                         return _buildCategoryView(
                           category,
                           index: index,

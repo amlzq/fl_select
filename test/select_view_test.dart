@@ -20,8 +20,9 @@ class _TestDelegate extends SelectDelegate {
   Widget buildBody(
     BuildContext context,
     List<SelectEntry> entries,
-    Set<SelectEntry>? previousSelected,
-  ) =>
+    Set<SelectEntry>? previousSelected, {
+    String searchQuery = '',
+  }) =>
       bodyBuilder(context, entries, previousSelected);
 
   @override

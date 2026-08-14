@@ -7,6 +7,7 @@ import 'select_controller.dart';
 import 'select_delegate.dart';
 import 'select_entry.dart';
 import 'select_layout.dart';
+import 'select_search_filter.dart';
 import 'widgets/widgets.dart';
 
 /// Vertical layout: category tabs on top and a grid of items below.
@@ -31,11 +32,20 @@ class GridSelect extends StatefulWidget {
   /// The previously applied selection to restore, if any.
   final Set<SelectEntry>? selectedEntries;
 
+  /// The current search query. When non-empty, [entries] is filtered for
+  /// display using [searchPredicate].
+  final String searchQuery;
+
+  /// Custom predicate for search filtering.
+  final SelectSearchPredicate? searchPredicate;
+
   const GridSelect({
     super.key,
     required this.delegate,
     required this.entries,
     this.selectedEntries,
+    this.searchQuery = '',
+    this.searchPredicate,
   });
 
   @override
@@ -48,6 +58,24 @@ class GridSelectState extends State<GridSelect> {
 
   SelectController? controller;
   bool _didInitCategoryFromState = false;
+
+  bool get _isSearching => widget.searchQuery.isNotEmpty;
+
+  List<SelectEntry> get _displayEntries => _isSearching
+      ? filterEntriesForSearch(widget.entries, widget.searchQuery,
+          predicate: widget.searchPredicate)
+      : widget.entries;
+
+  /// Returns the currently selected category that exists in [_displayEntries],
+  /// or falls back to the first available category.
+  SelectCategoryEntry? get _effectiveSelectedCategory {
+    final cats = _displayEntries.whereType<SelectCategoryEntry>();
+    if (_tempSelectedCategory != null &&
+        cats.any((c) => c.id == _tempSelectedCategory!.id)) {
+      return _tempSelectedCategory;
+    }
+    return cats.firstOrNull;
+  }
 
   @override
   void initState() {
@@ -332,7 +360,7 @@ class GridSelectState extends State<GridSelect> {
                 childAspectRatio: delegate.childAspectRatio,
                 tileVariant: delegate.gridTileTheme?.variant,
                 fieldVariant: delegate.fieldTileTheme?.variant,
-                entries: widget.entries,
+                entries: _displayEntries,
                 selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
                 onChanged: (_, entry) =>
                     _onTerminalItemTap(entry as SelectChildEntry),
@@ -358,20 +386,44 @@ class GridSelectState extends State<GridSelect> {
       );
     }
 
-    final category = _tempSelectedCategory!;
+    final category = _effectiveSelectedCategory;
+    if (category == null) {
+      // No categories match the search query.
+      return Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Flexible(child: Center(child: Text('No results'))),
+          if (SelectionMode.multiple == selectSelectionMode &&
+              !SelectActionBarVisibility.isHidden(context))
+            delegate.actionBarBuilder?.call(
+                  context,
+                  onResetTap: _onResetTap,
+                  onApplyTap: _onApplyTap,
+                ) ??
+                SelectActionBar(
+                  resetText: delegate.resetText,
+                  applyText: delegate.applyText,
+                  resetFlex: delegate.actionBarTheme?.resetFlex,
+                  applyFlex: delegate.actionBarTheme?.applyFlex,
+                  onResetTap: _onResetTap,
+                  onApplyTap: _onApplyTap,
+                ),
+        ],
+      );
+    }
 
     /// Focused category index
-    final tempSelectedCategoryIndex = widget.entries.indexOf(category);
+    final tempSelectedCategoryIndex = _displayEntries.indexOf(category);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (widget.entries.length > 1)
+        if (_displayEntries.length > 1)
           SelectTabBar(
             isScrollable: false,
             onChanged: (_, item) =>
                 _onCategoryItemTap(item as SelectCategoryEntry),
-            entries: widget.entries,
+            entries: _displayEntries,
             selectedCategories: {category},
             focusedIndex: tempSelectedCategoryIndex,
           ),

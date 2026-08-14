@@ -7,6 +7,7 @@ import 'select_controller.dart';
 import 'select_delegate.dart';
 import 'select_entry.dart';
 import 'select_layout.dart';
+import 'select_search_filter.dart';
 import 'widgets/widgets.dart';
 
 /// Standard list view
@@ -19,11 +20,20 @@ class ListSelect extends StatefulWidget {
   /// The previously applied selection to restore, if any.
   final Set<SelectEntry>? selectedEntries;
 
+  /// The current search query. When non-empty, [entries] is filtered for
+  /// display using [searchPredicate].
+  final String searchQuery;
+
+  /// Custom predicate for search filtering.
+  final SelectSearchPredicate? searchPredicate;
+
   const ListSelect({
     super.key,
     required this.delegate,
     required this.entries,
     this.selectedEntries,
+    this.searchQuery = '',
+    this.searchPredicate,
   });
 
   @override
@@ -35,6 +45,13 @@ class ListSelectState extends State<ListSelect> {
   int _tempSelectedCategoryIndex = 0;
 
   SelectController? controller;
+
+  bool get _isSearching => widget.searchQuery.isNotEmpty;
+
+  List<SelectEntry> get _displayEntries => _isSearching
+      ? filterEntriesForSearch(widget.entries, widget.searchQuery,
+          predicate: widget.searchPredicate)
+      : widget.entries;
 
   @override
   void didChangeDependencies() {
@@ -170,16 +187,16 @@ class ListSelectState extends State<ListSelect> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(
-          child: widget.entries.first is SelectCategoryEntry
+          child: _displayEntries.firstOrNull is SelectCategoryEntry
               ? SingleChildScrollView(
                   physics: const ClampingScrollPhysics(),
                   padding:
                       const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
-                    children: List.generate(widget.entries.length, (index) {
+                    children: List.generate(_displayEntries.length, (index) {
                       final category =
-                          widget.entries[index] as SelectCategoryEntry;
+                          _displayEntries[index] as SelectCategoryEntry;
                       final selectedEntries =
                           controller?.selectedEntriesAtLevel(1) ?? {};
                       final entries = category.children?.toList() ?? [];
@@ -274,7 +291,7 @@ class ListSelectState extends State<ListSelect> {
                   ),
                 )
               : SelectListView(
-                  entries: widget.entries,
+                  entries: _displayEntries,
                   selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
                   onChanged: (_, entry) =>
                       _onTerminalItemTap(entry as SelectChildEntry),

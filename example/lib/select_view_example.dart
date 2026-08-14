@@ -2,7 +2,6 @@ import 'package:example/widgets/my_widgets.dart';
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
 
-import 'generated/l10n/app_localizations.dart';
 import 'log.dart';
 import 'widgets/show_select_result.dart';
 
@@ -117,6 +116,12 @@ class SelectViewExamplePage extends StatelessWidget {
                     checkboxBuilder: (context, selected) {
                       return MyCheckbox(value: selected);
                     },
+                    searchEnabled: true,
+                    searchHintText: 'Search items...',
+                    searchPredicate: (entry, query) {
+                      return entry.name?.contains(query) == true;
+                    },
+                    searchDebounceDuration: const Duration(milliseconds: 300),
                   ),
                   onChanged: (selected) {
                     largePrint('onChangeTap: $selected');
@@ -143,7 +148,6 @@ class SelectViewExamplePage extends StatelessWidget {
                     childAspectRatio: 3,
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
-                    applyText: AppLocalizations.of(context)?.apply ?? '',
                   ),
                   onChanged: (selected) {
                     largePrint('onChangeTap: $selected');
@@ -246,7 +250,6 @@ class SelectViewExamplePage extends StatelessWidget {
                     fieldTileTheme: const SelectFieldTileTheme(
                       variant: SelectFieldTileVariant.outlined,
                     ),
-                    applyText: AppLocalizations.of(context)?.apply ?? '',
                   ),
                   onChanged: (selected) {
                     largePrint('onChangeTap: $selected');
@@ -390,8 +393,12 @@ class SelectViewExamplePage extends StatelessWidget {
                       SelectTextEntry.name(id: 'c', name: 'C'),
                       SelectTextEntry.name(id: 'd', name: 'D'),
                     },
-                    resetText: AppLocalizations.of(context)?.reset ?? '',
-                    applyText: AppLocalizations.of(context)?.apply ?? '',
+                    searchEnabled: true,
+                    searchHintText: 'Search items...',
+                    searchPredicate: (entry, query) {
+                      return entry.name?.contains(query) == true;
+                    },
+                    searchDebounceDuration: const Duration(milliseconds: 300),
                   ),
                   onChanged: (selected) {
                     largePrint('onChangeTap: $selected');
@@ -489,6 +496,12 @@ class SelectViewExamplePage extends StatelessWidget {
                       ),
                     },
                     selectionMode: SelectionMode.single,
+                    searchEnabled: true,
+                    searchHintText: 'Search items...',
+                    searchPredicate: (entry, query) {
+                      return entry.name?.contains(query) == true;
+                    },
+                    searchDebounceDuration: const Duration(milliseconds: 300),
                   ),
                   onChanged: (selected) {
                     largePrint('onChangeTap: $selected');

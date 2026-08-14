@@ -53,6 +53,7 @@ class SelectTheme extends InheritedTheme {
           radioTheme: data.radioTheme,
           checkboxTheme: data.checkboxTheme,
           chipBarThemeData: data.chipBarThemeData,
+          searchBarTheme: data.searchBarTheme,
         );
         return SelectTheme(
           key: key,

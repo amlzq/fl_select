@@ -9,6 +9,7 @@ import 'widgets/field_tile_theme.dart';
 import 'widgets/grid_tile_theme.dart';
 import 'widgets/list_tile_theme.dart';
 import 'widgets/range_slider_theme.dart';
+import 'widgets/search_bar_theme.dart';
 import 'widgets/side_bar_theme.dart';
 import 'widgets/tab_bar_theme.dart';
 
@@ -41,6 +42,7 @@ class SelectThemeData with Diagnosticable {
     CheckboxThemeData? checkboxTheme,
     SelectChipBarTheme? chipBarThemeData,
     SelectPanelTheme? panelTheme,
+    SelectSearchBarTheme? searchBarTheme,
   }) {
     return SelectThemeData.raw(
       selectedColor: selectedColor ?? theme.colorScheme.primary,
@@ -66,6 +68,7 @@ class SelectThemeData with Diagnosticable {
       checkboxTheme: checkboxTheme ?? const CheckboxThemeData(),
       chipBarThemeData: chipBarThemeData ?? const SelectChipBarTheme(),
       panelTheme: panelTheme ?? const SelectPanelTheme(),
+      searchBarTheme: searchBarTheme ?? const SelectSearchBarTheme(),
     );
   }
 
@@ -90,6 +93,7 @@ class SelectThemeData with Diagnosticable {
     required this.checkboxTheme,
     required this.chipBarThemeData,
     required this.panelTheme,
+    required this.searchBarTheme,
   });
 
   /// Convenience factory that uses [theme] defaults without any overrides.
@@ -151,6 +155,9 @@ class SelectThemeData with Diagnosticable {
   /// Theme overrides for the panel's elevation, shadow and shape decoration.
   final SelectPanelTheme panelTheme;
 
+  /// Theme overrides for the search bar.
+  final SelectSearchBarTheme searchBarTheme;
+
   /// Creates a copy of this theme data with the given fields replaced.
   SelectThemeData copyWith({
     Color? selectedColor,
@@ -172,6 +179,7 @@ class SelectThemeData with Diagnosticable {
     CheckboxThemeData? checkboxTheme,
     SelectChipBarTheme? chipBarThemeData,
     SelectPanelTheme? panelTheme,
+    SelectSearchBarTheme? searchBarTheme,
   }) {
     return SelectThemeData.raw(
       selectedColor: selectedColor ?? this.selectedColor,
@@ -195,6 +203,7 @@ class SelectThemeData with Diagnosticable {
       checkboxTheme: checkboxTheme ?? this.checkboxTheme,
       chipBarThemeData: chipBarThemeData ?? this.chipBarThemeData,
       panelTheme: panelTheme ?? this.panelTheme,
+      searchBarTheme: searchBarTheme ?? this.searchBarTheme,
     );
   }
 
@@ -237,6 +246,8 @@ class SelectThemeData with Diagnosticable {
       chipBarThemeData:
           SelectChipBarTheme.lerp(a?.chipBarThemeData, b?.chipBarThemeData, t),
       panelTheme: SelectPanelTheme.lerp(a?.panelTheme, b?.panelTheme, t),
+      searchBarTheme:
+          SelectSearchBarTheme.lerp(a?.searchBarTheme, b?.searchBarTheme, t),
     );
   }
 
@@ -261,6 +272,7 @@ class SelectThemeData with Diagnosticable {
         checkboxTheme,
         chipBarThemeData,
         panelTheme,
+        searchBarTheme,
       );
 
   @override
@@ -290,6 +302,7 @@ class SelectThemeData with Diagnosticable {
         other.radioTheme == radioTheme &&
         other.checkboxTheme == checkboxTheme &&
         other.chipBarThemeData == chipBarThemeData &&
-        other.panelTheme == panelTheme;
+        other.panelTheme == panelTheme &&
+        other.searchBarTheme == searchBarTheme;
   }
 }

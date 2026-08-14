@@ -7,6 +7,7 @@ import 'grid_select.dart';
 import 'list_select.dart';
 import 'select_entry.dart';
 import 'select_panel_theme.dart';
+import 'select_search_filter.dart';
 import 'widgets/widgets.dart';
 
 /// Builds the action bar shown at the bottom of the select panel.
@@ -44,6 +45,11 @@ abstract class SelectDelegate {
     this.onBackgroundColorHighest,
     this.resetText,
     this.applyText,
+    this.searchEnabled = false,
+    this.searchPredicate,
+    this.searchHintText,
+    this.searchDebounceDuration = const Duration(milliseconds: 300),
+    this.searchBarTheme,
     this.actionBarTheme,
     this.tabBarTheme,
     this.sideBarTheme,
@@ -125,6 +131,36 @@ abstract class SelectDelegate {
 
   final String? applyText;
 
+  /// Whether the search bar is visible in the select panel.
+  ///
+  /// When `true`, a search bar is rendered above the body. Typing a query
+  /// filters the displayed entries using [searchPredicate] while preserving
+  /// the original layout and selection state.
+  ///
+  /// Defaults to `false`.
+  final bool searchEnabled;
+
+  /// Custom predicate used to match entries against a search query.
+  ///
+  /// Defaults to [defaultSelectSearchPredicate] (case-insensitive substring
+  /// match on [SelectEntry.name]).
+  final SelectSearchPredicate? searchPredicate;
+
+  /// Hint text shown in the search bar when the input is empty.
+  final String? searchHintText;
+
+  /// The debounce delay before filtering entries after the search text
+  /// changes.
+  ///
+  /// Defaults to 300 ms.
+  final Duration searchDebounceDuration;
+
+  /// Theme overrides for the search bar.
+  ///
+  /// When `null`, the surrounding [SelectTheme]'s `searchBarTheme` is used,
+  /// falling back to Material defaults.
+  final SelectSearchBarTheme? searchBarTheme;
+
   /// Theme overrides for the action bar widget.
   final SelectActionBarTheme? actionBarTheme;
 
@@ -169,11 +205,16 @@ abstract class SelectDelegate {
   ///
   /// [entries] are the full selectable entries. [selectedEntries] represents
   /// a previously applied selection, if any.
+  ///
+  /// [searchQuery] is the current search query string. When non-empty, the
+  /// body should filter its displayed entries using [searchPredicate] while
+  /// keeping the original [entries] for state binding.
   Widget buildBody(
     BuildContext context,
     List<SelectEntry> entries,
-    Set<SelectEntry>? selectedEntries,
-  );
+    Set<SelectEntry>? selectedEntries, {
+    String searchQuery = '',
+  });
 
   /// Builds the loading skeleton.
   Widget buildSkeleton(BuildContext context);
@@ -216,6 +257,11 @@ class CascadingSelectDelegate extends SelectDelegate {
     super.onBackgroundColorHighest,
     super.resetText,
     super.applyText,
+    super.searchEnabled,
+    super.searchPredicate,
+    super.searchHintText,
+    super.searchDebounceDuration,
+    super.searchBarTheme,
     super.actionBarTheme,
     super.tabBarTheme,
     super.sideBarTheme,
@@ -247,12 +293,15 @@ class CascadingSelectDelegate extends SelectDelegate {
   Widget buildBody(
     BuildContext context,
     List<SelectEntry> entries,
-    Set<SelectEntry>? selectedEntries,
-  ) {
+    Set<SelectEntry>? selectedEntries, {
+    String searchQuery = '',
+  }) {
     return CascadingSelect(
       delegate: this,
       entries: entries,
       selectedEntries: selectedEntries,
+      searchQuery: searchQuery,
+      searchPredicate: searchPredicate,
     );
   }
 
@@ -285,6 +334,11 @@ class ListSelectDelegate extends SelectDelegate {
     super.onBackgroundColorHighest,
     super.resetText,
     super.applyText,
+    super.searchEnabled,
+    super.searchPredicate,
+    super.searchHintText,
+    super.searchDebounceDuration,
+    super.searchBarTheme,
     super.actionBarTheme,
     super.tabBarTheme,
     super.sideBarTheme,
@@ -308,12 +362,15 @@ class ListSelectDelegate extends SelectDelegate {
   Widget buildBody(
     BuildContext context,
     List<SelectEntry> entries,
-    Set<SelectEntry>? selectedEntries,
-  ) {
+    Set<SelectEntry>? selectedEntries, {
+    String searchQuery = '',
+  }) {
     return ListSelect(
       delegate: this,
       entries: entries,
       selectedEntries: selectedEntries,
+      searchQuery: searchQuery,
+      searchPredicate: searchPredicate,
     );
   }
 
@@ -347,6 +404,11 @@ class GridSelectDelegate extends SelectDelegate {
     super.onBackgroundColorHighest,
     super.resetText,
     super.applyText,
+    super.searchEnabled,
+    super.searchPredicate,
+    super.searchHintText,
+    super.searchDebounceDuration,
+    super.searchBarTheme,
     super.actionBarTheme,
     super.sideBarTheme,
     super.tabBarTheme,
@@ -382,12 +444,15 @@ class GridSelectDelegate extends SelectDelegate {
   Widget buildBody(
     BuildContext context,
     List<SelectEntry> entries,
-    Set<SelectEntry>? selectedEntries,
-  ) {
+    Set<SelectEntry>? selectedEntries, {
+    String searchQuery = '',
+  }) {
     return GridSelect(
       delegate: this,
       entries: entries,
       selectedEntries: selectedEntries,
+      searchQuery: searchQuery,
+      searchPredicate: searchPredicate,
     );
   }
 
@@ -438,6 +503,11 @@ class FlattenSelectDelegate extends SelectDelegate {
     super.onBackgroundColorHighest,
     super.resetText,
     super.applyText,
+    super.searchEnabled,
+    super.searchPredicate,
+    super.searchHintText,
+    super.searchDebounceDuration,
+    super.searchBarTheme,
     super.actionBarTheme,
     super.sideBarTheme,
     super.tabBarTheme,
@@ -495,12 +565,15 @@ class FlattenSelectDelegate extends SelectDelegate {
   Widget buildBody(
     BuildContext context,
     List<SelectEntry> entries,
-    Set<SelectEntry>? selectedEntries,
-  ) {
+    Set<SelectEntry>? selectedEntries, {
+    String searchQuery = '',
+  }) {
     return FlattenSelect(
       delegate: this,
       entries: entries,
       selectedEntries: selectedEntries,
+      searchQuery: searchQuery,
+      searchPredicate: searchPredicate,
       // ignore: deprecated_member_use_from_same_package
       crossAxisCount: crossAxisCount,
       // ignore: deprecated_member_use_from_same_package

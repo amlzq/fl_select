@@ -20,6 +20,7 @@ export 'src/select/select_entry.dart';
 export 'src/select/select_layout.dart';
 export 'src/select/select_panel.dart';
 export 'src/select/select_panel_theme.dart';
+export 'src/select/select_search_filter.dart';
 export 'src/select/select_theme.dart';
 export 'src/select/select_theme_data.dart';
 export 'src/select/widgets/widgets.dart';

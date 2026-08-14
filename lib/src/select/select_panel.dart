@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import 'constants.dart';
@@ -6,6 +8,7 @@ import 'select_delegate.dart';
 import 'select_entry.dart';
 import 'select_theme.dart';
 import 'select_theme_data.dart';
+import 'widgets/widgets.dart';
 
 /// A widget that renders a [SelectDelegate] and manages its selection state.
 ///
@@ -74,11 +77,19 @@ class _SelectPanelState extends State<SelectPanel> {
   SelectController? _internalController;
   final List<VoidCallback> _unregister = [];
 
+  // Search state
+  late final TextEditingController _searchController;
+  late final FocusNode _searchFocusNode;
+  String _searchQuery = '';
+  Timer? _debounceTimer;
+
   SelectController get _controller => widget.controller ?? _internalController!;
 
   @override
   void initState() {
     super.initState();
+    _searchController = TextEditingController();
+    _searchFocusNode = FocusNode();
     if (widget.controller == null) {
       _createInternalController();
     }
@@ -137,9 +148,25 @@ class _SelectPanelState extends State<SelectPanel> {
 
   @override
   void dispose() {
+    _debounceTimer?.cancel();
+    _searchController.dispose();
+    _searchFocusNode.dispose();
     _unregisterForwardingListeners();
     _disposeInternalController();
     super.dispose();
+  }
+
+  void _onSearchChanged(String value) {
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(
+      widget.delegate.searchDebounceDuration,
+      () {
+        if (!mounted) return;
+        setState(() {
+          _searchQuery = value.trim();
+        });
+      },
+    );
   }
 
   @override
@@ -195,8 +222,26 @@ class _SelectPanelState extends State<SelectPanel> {
                     onTap: () {
                       FocusScope.of(context).unfocus();
                     },
-                    child: widget.delegate.buildBody(
-                        context, entries, _controller.selectedEntries),
+                    child: Column(
+                      children: [
+                        if (widget.delegate.searchEnabled)
+                          SelectSearchBar(
+                            controller: _searchController,
+                            focusNode: _searchFocusNode,
+                            hintText: widget.delegate.searchHintText,
+                            onChanged: _onSearchChanged,
+                            theme: widget.delegate.searchBarTheme,
+                          ),
+                        Expanded(
+                          child: widget.delegate.buildBody(
+                            context,
+                            entries,
+                            _controller.selectedEntries,
+                            searchQuery: _searchQuery,
+                          ),
+                        ),
+                      ],
+                    ),
                   );
                 }
               } else {
