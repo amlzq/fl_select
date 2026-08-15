@@ -165,22 +165,43 @@ class CascadingSelectState extends State<CascadingSelect> {
   CascadingSelectDelegate get delegate => widget.delegate;
 
   void _rebuildSelectionState() {
+    // Capture the currently focused category before clearing, so a search
+    // rebuild can keep focusing it when it still matches the filter.
+    final previousFocusedCategoryId =
+        _tempSelectedEntryPerLevel.firstOrNull?.id;
     _tempSelectedEntryPerLevel.clear();
     _currentLevel = 0;
     _cascadingList.clear();
     _disposeScrollControllers();
 
     if (_isSearching) {
-      // When searching, build cascading state from the filtered tree. Skip
-      // restoring the full focused path; just start from the first matching
-      // category and its (already filtered) children.
+      // When searching, build cascading state from the filtered tree. Keep
+      // the previously focused category when it still matches, otherwise
+      // fall back to the first matching category.
       final entries = _effectiveEntries;
-      if (entries.isNotEmpty && entries.first is SelectCategoryEntry) {
-        final firstCategory = entries.first as SelectCategoryEntry;
+      SelectCategoryEntry? firstCategory;
+      if (previousFocusedCategoryId != null) {
+        firstCategory = entries
+            .whereType<SelectCategoryEntry>()
+            .firstWhereOrNull((c) => c.id == previousFocusedCategoryId);
+      }
+      firstCategory ??= entries.whereType<SelectCategoryEntry>().firstOrNull;
+      if (firstCategory != null) {
         _tempSelectedEntryPerLevel.add(firstCategory);
         _cascadingList.add(firstCategory.children?.toList() ?? []);
-        _currentLevel = 1;
         _scrollControllers.add(ScrollController());
+        // Keep expanding along the first branch that still has children so
+        // deeper matches (e.g. entries at the third level) are revealed.
+        while (true) {
+          final currentEntries = _cascadingList.lastOrNull;
+          if (currentEntries == null) break;
+          final next = currentEntries.firstWhereOrNull((e) => e.hasChildren);
+          if (next == null) break;
+          _tempSelectedEntryPerLevel.add(next);
+          _cascadingList.add(next.children?.toList() ?? []);
+          _scrollControllers.add(ScrollController());
+        }
+        _currentLevel = _cascadingList.length;
       }
       _scheduleCascadeReveal();
       return;
@@ -374,10 +395,38 @@ class CascadingSelectState extends State<CascadingSelect> {
     return bestEntry;
   }
 
+  /// Resolves [entry] to the corresponding entry in the original, unfiltered
+  /// [widget.entries] tree.
+  ///
+  /// Selections made while searching store filtered copies (created via
+  /// `copyWith` with only matching children). Resolving back to the source
+  /// tree ensures cascading columns render the full children after the search
+  /// is canceled.
+  SelectEntry? _resolveFromSource(SelectEntry? parent, SelectEntry entry) {
+    final source = parent == null ? widget.entries : parent.children;
+    if (source == null) return null;
+    for (final candidate in source) {
+      if (candidate.id != entry.id) continue;
+      if (entry is SelectChildEntry) {
+        if (candidate is SelectChildEntry &&
+            candidate.parentId == entry.parentId) {
+          return candidate;
+        }
+        continue;
+      }
+      return candidate;
+    }
+    return null;
+  }
+
   /// Builds a connected focused path from state tree selections.
   void _initializeTempSelectedEntryPerLevel(SelectEntry? parent, int level) {
-    final selectedEntry = _pickFocusedEntryForLevel(parent, level);
-    if (selectedEntry == null) return;
+    final picked = _pickFocusedEntryForLevel(parent, level);
+    if (picked == null) return;
+
+    // Prefer the original tree instance so the expanded columns show the
+    // complete children, not the search-filtered subset.
+    final selectedEntry = _resolveFromSource(parent, picked) ?? picked;
 
     _tempSelectedEntryPerLevel.add(selectedEntry);
     if (selectedEntry.hasChildren) {
@@ -536,7 +585,10 @@ class CascadingSelectState extends State<CascadingSelect> {
       _currentLevel = level;
       controller?.toggleCascadingEntry(
         entry,
-        selectionMode: selectSelectionMode ?? SelectionMode.single,
+        // Cross-category clearing must follow the delegate-level mode. The
+        // mixed [selectSelectionMode] would report multiple as soon as any
+        // category opts into multiple, disabling the clearing.
+        selectionMode: controller?.selectionMode ?? SelectionMode.single,
         childrenSelectionMode: childrenSelectionMode,
         focusedPath: _tempSelectedEntryPerLevel.take(cascadeIndex + 1).toList(),
         category: tempSelectedCategory,
@@ -547,7 +599,8 @@ class CascadingSelectState extends State<CascadingSelect> {
 
     controller?.toggleCascadingEntry(
       entry,
-      selectionMode: selectSelectionMode ?? SelectionMode.single,
+      // Delegate-level mode; see the Any-skip branch above for rationale.
+      selectionMode: controller?.selectionMode ?? SelectionMode.single,
       childrenSelectionMode: childrenSelectionMode,
       focusedPath: _tempSelectedEntryPerLevel.take(cascadeIndex + 1).toList(),
       category: tempSelectedCategory,

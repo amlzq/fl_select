@@ -436,7 +436,9 @@ class SelectController extends ChangeNotifier {
     if (!alreadySelected) {
       toggleCascadingEntry(
         leaf,
-        selectionMode: effectiveSelectionMode,
+        // Delegate-level mode governs cross-category clearing; the mixed
+        // [effectiveSelectionMode] only reflects per-category behavior.
+        selectionMode: selectionMode,
         childrenSelectionMode: root.selectionMode,
         focusedPath: focusedPath,
         category: root,
@@ -539,7 +541,9 @@ class SelectController extends ChangeNotifier {
 
     toggleCascadingEntry(
       leaf,
-      selectionMode: effectiveSelectionMode,
+      // Delegate-level mode; the mixed mode only reflects per-category
+      // behavior. (No clearing happens on unselect anyway.)
+      selectionMode: selectionMode,
       childrenSelectionMode: root.selectionMode,
       focusedPath: focusedPath,
       category: root,

@@ -12,10 +12,10 @@ class SelectionRules {
     SelectCategoryEntry category, {
     required SelectionMode selectionMode,
   }) {
-    if (SelectionMode.single == selectionMode) {
-      tree.clearSelections();
-    }
-
+    // Focusing a category is a navigation action: it never clears selections
+    // made in other categories. Cross-category clearing for delegate-level
+    // single selection is applied when a leaf is selected — see
+    // [toggleCascadingLeaf].
     tree.ensureLevels(2);
     final selectedChildren = tree.mutableSelectedEntriesAtLevel(1);
     final hasChildOfCategory = selectedChildren.any(
@@ -125,6 +125,56 @@ class SelectionRules {
     }
   }
 
+  /// Removes every child selection that belongs to [category]'s subtree
+  /// across all levels.
+  ///
+  /// A single-selection category must keep at most one pick, but the state
+  /// tree stores selections per depth level, mixing entries from unrelated
+  /// categories. Clearing a whole level would therefore drop other
+  /// categories' selections. Instead, only entries whose parent chain roots
+  /// at [category] are removed: a child entry's [SelectChildEntry.parentId]
+  /// always points at a node inside the category subtree (the category
+  /// itself or one of its non-leaf descendants).
+  void _removeCategorySelections(
+    StateTree tree,
+    SelectCategoryEntry category,
+  ) {
+    // Ids of nodes that can act as a parent: the category itself plus its
+    // non-leaf descendants. Leaf ids are skipped because no child entry can
+    // reference them as parentId, which also reduces cross-category id
+    // collisions for leaves sharing the same id.
+    final subtreeParentIds = <String>{};
+    void collect(SelectEntry node) {
+      final children = node.children;
+      if (children == null || children.isEmpty) return;
+      subtreeParentIds.add(node.id);
+      for (final child in children) {
+        collect(child);
+      }
+    }
+
+    collect(category);
+    // Header/footer are standalone fields, not members of [category.children];
+    // collect them separately so their nested selections are also matched.
+    final header = category.header;
+    if (header != null) collect(header);
+    final footer = category.footer;
+    if (footer != null) collect(footer);
+
+    for (var i = 1; i < tree.levelCount; i++) {
+      tree.mutableSelectedEntriesAtLevel(i).removeWhere(
+            (e) =>
+                e is SelectChildEntry &&
+                subtreeParentIds.contains(e.parentId),
+          );
+    }
+
+    // Header/footer selections live in their own maps indexed by category id;
+    // they are not part of the per-level sets above.
+    tree.mutableHeaderEntriesFor(category.id).clear();
+    tree.mutableFooterEntriesFor(category.id).clear();
+  }
+
   void toggleCascadingLeaf(
     StateTree tree,
     SelectChildEntry entry, {
@@ -142,9 +192,8 @@ class SelectionRules {
     if (entry.isAny) {
       if (SelectionMode.single == childrenSelectionMode) {
         if (!selectedEntries.contains(entry)) {
-          selectedEntries
-            ..clear()
-            ..add(entry);
+          _removeCategorySelections(tree, category);
+          selectedEntries.add(entry);
         }
       } else {
         if (selectedEntries.contains(entry)) {
@@ -185,9 +234,8 @@ class SelectionRules {
 
       if (SelectionMode.single == childrenSelectionMode) {
         if (!selectedEntries.contains(entry)) {
-          selectedEntries
-            ..clear()
-            ..add(entry);
+          _removeCategorySelections(tree, category);
+          selectedEntries.add(entry);
         }
       } else {
         if (selectedEntries.contains(entry)) {
@@ -201,6 +249,16 @@ class SelectionRules {
     if (selectedEntries.contains(entry)) {
       for (var i = level - 1; i >= 0; i--) {
         tree.mutableSelectedEntriesAtLevel(i).add(focusedPath[i]);
+      }
+      // Delegate-level single selection: selecting a leaf deselects every
+      // other category's selections. The clear happens here on selection,
+      // not when the category is focused.
+      if (SelectionMode.single == selectionMode) {
+        for (final other in tree.entries.whereType<SelectCategoryEntry>()) {
+          if (other.id == category.id) continue;
+          _removeCategorySelections(tree, other);
+          tree.mutableSelectedEntriesAtLevel(0).remove(other);
+        }
       }
       return;
     }

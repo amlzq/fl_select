@@ -42,7 +42,7 @@ SelectCategoryEntry<dynamic> _category(
 void main() {
   group('SelectionRules – focusCategory', () {
     test(
-        'single mode: clears all previous selections then adds Any for category',
+        'single mode: keeps other categories\' selections and adds Any for focused category',
         () {
       const rules = SelectionRules();
       final tree = StateTree();
@@ -60,13 +60,15 @@ void main() {
 
       rules.focusCategory(tree, c1, selectionMode: SelectionMode.single);
 
-      // Previous selections should be cleared, c1 should be selected
+      // Focusing is navigation-only: c2's selections are kept, Any is added
+      // for the newly focused category.
       expect(tree.selectedEntriesAtLevel(0).contains(c1), isTrue);
-      expect(tree.selectedEntriesAtLevel(0).contains(c2), isFalse);
+      expect(tree.selectedEntriesAtLevel(0).contains(c2), isTrue);
       expect(tree.selectedEntriesAtLevel(1).contains(any), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(b), isTrue);
     });
 
-    test('single mode: clearSelections then adds Any for category with Any',
+    test('single mode: focus keeps existing child selections in the category',
         () {
       const rules = SelectionRules();
       final tree = StateTree();
@@ -81,13 +83,14 @@ void main() {
 
       rules.focusCategory(tree, c, selectionMode: SelectionMode.single);
 
-      // In single mode, focusCategory clears all and then adds Any for the category
+      // Focus does not clear an already selected child, and Any is not
+      // re-initialized since the category already has a selection.
       expect(tree.selectedEntriesAtLevel(0).contains(c), isTrue);
-      expect(tree.selectedEntriesAtLevel(1).contains(any), isTrue);
-      expect(tree.selectedEntriesAtLevel(1).contains(a), isFalse);
+      expect(tree.selectedEntriesAtLevel(1).contains(any), isFalse);
+      expect(tree.selectedEntriesAtLevel(1).contains(a), isTrue);
     });
 
-    test('single mode: category without selected children is removed from root',
+    test('single mode: focus does not remove other categories\' selections',
         () {
       const rules = SelectionRules();
       final tree = StateTree();
@@ -104,13 +107,14 @@ void main() {
       // Focus on c2 which has no selected children
       rules.focusCategory(tree, c2, selectionMode: SelectionMode.single);
 
-      // c1 should be removed since c2 has no Any to auto-select
-      expect(tree.selectedEntriesAtLevel(0).contains(c1), isFalse);
+      // c1's selections are untouched; clearing only happens on leaf
+      // selection, not on category focus.
+      expect(tree.selectedEntriesAtLevel(0).contains(c1), isTrue);
       expect(
           tree.selectedEntriesAtLevel(1).where(
                 (e) => e is SelectChildEntry && e.parentId == 'c1',
               ),
-          isEmpty);
+          isNotEmpty);
     });
 
     test(
