@@ -451,6 +451,118 @@ void main() {
       expect(tree.selectedEntriesAtLevel(0).contains(c), isFalse);
     });
 
+    test(
+        'delegate single mode: selecting a leaf in a multiple-selection category clears other categories',
+        () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final a1 = _text('c1', 'a', 'A');
+      final b1 = _text('c1', 'b', 'B');
+      final c1 = _category('c1', 'C1',
+          children: {a1, b1}, selectionMode: SelectionMode.multiple);
+      final a2 = _text('c2', 'a', 'A2');
+      final b2 = _text('c2', 'b', 'B2');
+      final c2 = _category('c2', 'C2',
+          children: {a2, b2}, selectionMode: SelectionMode.multiple);
+      final a3 = _text('c3', 'a', 'A3');
+      final c3 = _category('c3', 'C3', children: {a3});
+      tree.bind([c1, c2, c3], initializeAnyIfEmpty: false);
+
+      // Pre-select leaves in c1 and c3.
+      tree.ensureLevels(2);
+      tree.mutableSelectedEntriesAtLevel(0)
+        ..add(c1)
+        ..add(c3);
+      tree.mutableSelectedEntriesAtLevel(1)
+        ..add(a1)
+        ..add(b1)
+        ..add(a3);
+
+      // Select a leaf in c2 while the delegate-level mode is single.
+      rules.toggleFlatLeaf(
+        tree,
+        a2,
+        selectionMode: SelectionMode.single,
+        isCategoryTree: true,
+        category: c2,
+      );
+
+      // Only c2/a2 survives; c1 and c3 selections are cleared.
+      expect(tree.selectedEntriesAtLevel(1).contains(a2), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(a1), isFalse);
+      expect(tree.selectedEntriesAtLevel(1).contains(b1), isFalse);
+      expect(tree.selectedEntriesAtLevel(1).contains(a3), isFalse);
+      expect(tree.selectedEntriesAtLevel(0).contains(c2), isTrue);
+      expect(tree.selectedEntriesAtLevel(0).contains(c1), isFalse);
+      expect(tree.selectedEntriesAtLevel(0).contains(c3), isFalse);
+    });
+
+    test(
+        'delegate single mode: deselecting a leaf in a multiple-selection category keeps other categories',
+        () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final a1 = _text('c1', 'a', 'A');
+      final c1 = _category('c1', 'C1',
+          children: {a1}, selectionMode: SelectionMode.multiple);
+      final a2 = _text('c2', 'a', 'A2');
+      final b2 = _text('c2', 'b', 'B2');
+      final c2 = _category('c2', 'C2',
+          children: {a2, b2}, selectionMode: SelectionMode.multiple);
+      tree.bind([c1, c2], initializeAnyIfEmpty: false);
+
+      // Pre-select leaves in both categories.
+      tree.ensureLevels(2);
+      tree.mutableSelectedEntriesAtLevel(0)
+        ..add(c1)
+        ..add(c2);
+      tree.mutableSelectedEntriesAtLevel(1)
+        ..add(a1)
+        ..add(a2);
+
+      // Deselect (toggle off) a2: c1's selection must survive.
+      rules.toggleFlatLeaf(
+        tree,
+        a2,
+        selectionMode: SelectionMode.single,
+        isCategoryTree: true,
+        category: c2,
+      );
+
+      expect(tree.selectedEntriesAtLevel(1).contains(a2), isFalse);
+      expect(tree.selectedEntriesAtLevel(1).contains(a1), isTrue);
+      expect(tree.selectedEntriesAtLevel(0).contains(c1), isTrue);
+    });
+
+    test(
+        'delegate multiple mode: selecting a leaf keeps other categories\' selections',
+        () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final a1 = _text('c1', 'a', 'A');
+      final c1 = _category('c1', 'C1',
+          children: {a1}, selectionMode: SelectionMode.multiple);
+      final a2 = _text('c2', 'a', 'A2');
+      final c2 = _category('c2', 'C2',
+          children: {a2}, selectionMode: SelectionMode.multiple);
+      tree.bind([c1, c2], initializeAnyIfEmpty: false);
+
+      tree.ensureLevels(2);
+      tree.mutableSelectedEntriesAtLevel(0).add(c1);
+      tree.mutableSelectedEntriesAtLevel(1).add(a1);
+
+      rules.toggleFlatLeaf(
+        tree,
+        a2,
+        selectionMode: SelectionMode.multiple,
+        isCategoryTree: true,
+        category: c2,
+      );
+
+      expect(tree.selectedEntriesAtLevel(1).contains(a1), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(a2), isTrue);
+    });
+
     test('category tree: null category returns early', () {
       const rules = SelectionRules();
       final tree = StateTree();

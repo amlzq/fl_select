@@ -413,7 +413,9 @@ class SelectController extends ChangeNotifier {
       if (!alreadySelected) {
         toggleFlatEntry(
           leaf,
-          selectionMode: effectiveSelectionMode,
+          // Delegate-level mode governs cross-category clearing; the mixed
+          // [effectiveSelectionMode] only reflects per-category behavior.
+          selectionMode: selectionMode,
           isCategoryTree: true,
           category: root,
         );
@@ -510,7 +512,9 @@ class SelectController extends ChangeNotifier {
       } else {
         toggleFlatEntry(
           leaf,
-          selectionMode: effectiveSelectionMode,
+          // Delegate-level mode governs cross-category clearing; the mixed
+          // [effectiveSelectionMode] only reflects per-category behavior.
+          selectionMode: selectionMode,
           isCategoryTree: true,
           category: root,
         );

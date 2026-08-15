@@ -114,6 +114,18 @@ class SelectionRules {
         selectedEntries.any((e) => testSameParentElement(e, category.id));
     if (hasSelectionInCategory) {
       rootSelected.add(category);
+      // Delegate-level single selection: selecting a leaf deselects every
+      // other category's selections. The clear happens here on selection,
+      // not when the category is focused. [selectionMode] is expected to
+      // be the delegate-level mode (see toggleCascadingLeaf).
+      if (SelectionMode.single == selectionMode &&
+          selectedEntries.contains(item)) {
+        for (final other in tree.entries.whereType<SelectCategoryEntry>()) {
+          if (other.id == category.id) continue;
+          _removeCategorySelections(tree, other);
+          rootSelected.remove(other);
+        }
+      }
     } else {
       final anyItem = category.children?.singleWhereOrNull(testAnyElement);
       if (anyItem != null) {

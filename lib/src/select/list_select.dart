@@ -146,7 +146,10 @@ class ListSelectState extends State<ListSelect> {
     final category = categoryEntry;
     controller?.toggleFlatEntry(
       item,
-      selectionMode: selectSelectionMode ?? SelectionMode.single,
+      // Cross-category clearing must follow the delegate-level mode. The
+      // mixed [selectSelectionMode] reports multiple as soon as any
+      // category opts into multiple, which would disable the clearing.
+      selectionMode: categorySelectionMode ?? SelectionMode.single,
       isCategoryTree: true,
       category: category,
     );
