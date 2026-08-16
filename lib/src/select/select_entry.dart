@@ -130,6 +130,68 @@ extension SelectEntriesExtension on SelectEntries {
   /// selected. Convenience accessor for single-selection tabs such as sort
   /// order.
   String? get firstSelectedId => firstOrNull?.id;
+
+  /// Converts this selection tree into a URL query string such as
+  /// `cate1=a&cate2=b`.
+  ///
+  /// Each selected top-level category contributes `key=value` pairs in
+  /// `header → children → footer` order:
+  ///
+  /// - entries under the category's children are keyed by the category's own
+  ///   id, taking the ids of the deepest selected leaves as values (so a
+  ///   3-level tree like `cate1 → l1-a → l2-a` yields `cate1=l2-a`, not
+  ///   `cate1=l1-a`);
+  /// - the header/footer subtrees (when they carry children) are keyed by the
+  ///   header/footer's own id instead, e.g. `c3-f=f-a`.
+  ///
+  /// Special leaf values:
+  ///
+  /// - a leaf whose id is [kAnyEntryId] (the "any" option) contributes its
+  ///   parent's id, so `l1-a → any` yields `cate1=l1-a`;
+  /// - a [SelectRangeEntry] carrying min/max values contributes `min-max`,
+  ///   e.g. `cate1=111-222`.
+  ///
+  /// Returns an empty string when nothing is selected.
+  String get toQueryParameters {
+    final pairs = <String>[];
+
+    void collect(SelectEntry entry, String rootKey, String parentId) {
+      if (entry is SelectRangeEntry && entry.hasCustomValue) {
+        pairs.add('$rootKey=${entry.min}-${entry.max}');
+      } else if (!entry.hasChildren) {
+        final value = entry.id == kAnyEntryId ? parentId : entry.id;
+        pairs.add('$rootKey=$value');
+      } else {
+        for (final child in entry.children!) {
+          collect(child, rootKey, entry.id);
+        }
+      }
+    }
+
+    for (final entry in this) {
+      if (entry is! SelectCategoryEntry) continue;
+      final header = entry.header;
+      if (header != null && header.hasChildren) {
+        for (final child in header.children!) {
+          collect(child, header.id, header.id);
+        }
+      }
+      final children = entry.children;
+      if (children != null) {
+        for (final child in children) {
+          collect(child, entry.id, entry.id);
+        }
+      }
+      final footer = entry.footer;
+      if (footer != null && footer.hasChildren) {
+        for (final child in footer.children!) {
+          collect(child, footer.id, footer.id);
+        }
+      }
+    }
+
+    return pairs.join('&');
+  }
 }
 
 /// Special entry id representing the "Any" entry.
@@ -267,7 +329,7 @@ class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
 
   @override
   String toString() =>
-      'SelectRangeEntry(id: $id, parentId: $parentId, name: $name, min: $min, max: $max, divisions: $divisions)';
+      'SelectRangeEntry(id: $id, parentId: $parentId, name: $name, min: $min, max: $max, divisions: $divisions, children: $children)';
 }
 
 extension SelectRangeEntryExt on SelectRangeEntry {
@@ -450,7 +512,7 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
 
   @override
   String toString() =>
-      'SelectTextEntry(id: $id, parentId: $parentId, name: $name)';
+      'SelectTextEntry(id: $id, parentId: $parentId, name: $name, children: $children)';
 }
 
 /// A child entry (i.e. a non-root node).
@@ -579,7 +641,7 @@ class SelectChildEntry<E> extends SelectEntry<E> {
 
   @override
   String toString() =>
-      'SelectChildEntry(id: $id, parentId: $parentId, name: $name)';
+      'SelectChildEntry(id: $id, parentId: $parentId, name: $name, children: $children)';
 }
 
 extension SelectChildEntryExt on SelectChildEntry {

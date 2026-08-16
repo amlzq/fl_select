@@ -277,6 +277,91 @@ void main() {
     });
   });
 
+  group('SelectEntriesExtension – toQueryParameters', () {
+    test('maps category children to key=leafId pairs', () {
+      final cate3 = _category('cate3', 'Cate 3', children: {
+        _text('cate3', 'b', 'B'),
+      });
+      final cate4 = _category('cate4', 'Cate 4', children: {
+        _text('cate4', 'd', 'D'),
+      });
+
+      expect({cate3, cate4}.toQueryParameters, 'cate3=b&cate4=d');
+    });
+
+    test('takes the deepest leaves as values in cascading trees', () {
+      final cate1 = _category('cate1', 'Cate 1', children: {
+        _text('cate1', 'l1-a', 'A', children: {
+          _text('l1-a', 'l2-a', 'Football'),
+          _text('l1-a', 'l2-b', 'Basketball'),
+        }),
+      });
+
+      expect({cate1}.toQueryParameters, 'cate1=l2-a&cate1=l2-b');
+    });
+
+    test('resolves any leaves to their parent id', () {
+      final cate1 = _category('cate1', 'Cate 1', children: {
+        _text('cate1', 'l1-a', 'A', children: {
+          _text('l1-a', 'any', 'Any'),
+        }),
+      });
+
+      expect({cate1}.toQueryParameters, 'cate1=l1-a');
+    });
+
+    test('mixes cascading and direct children under the same key', () {
+      final cate1 = _category('cate1', 'Cate 1', children: {
+        _text('cate1', 'l1-a', 'A', children: {
+          _text('l1-a', 'any', 'Any'),
+        }),
+        _text('cate1', 'l1-b', 'B'),
+      });
+
+      expect({cate1}.toQueryParameters, 'cate1=l1-a&cate1=l1-b');
+    });
+
+    test('keys header/footer subtrees by their own ids', () {
+      final cate3 = _category(
+        'cate3',
+        'Cate 3',
+        children: {_text('cate3', 'a', 'Football')},
+        header: _text('cate3', 'c3-h', 'Header', children: {
+          _text('c3-h', 'h-a', 'Red'),
+        }),
+        footer: _text('cate3', 'c3-f', 'Footer', children: {
+          _text('c3-f', 'f-a', 'Blue'),
+        }),
+      );
+
+      expect(
+        {cate3}.toQueryParameters,
+        'c3-h=h-a&cate3=a&c3-f=f-a',
+      );
+    });
+
+    test('formats custom range entries as min-max', () {
+      final cate1 = _category('cate1', 'Cate 1', children: {
+        SelectRangeEntry<int, dynamic>(
+          parentId: 'cate1',
+          id: 'custom',
+          name: null,
+          min: 111,
+          max: 222,
+        ),
+      });
+      final cate2 = _category('cate2', 'Cate 2', children: {
+        _text('cate2', 'b', 'Lion'),
+      });
+
+      expect({cate1, cate2}.toQueryParameters, 'cate1=111-222&cate2=b');
+    });
+
+    test('returns empty string for empty set', () {
+      expect(<SelectEntry<dynamic>>{}.toQueryParameters, '');
+    });
+  });
+
   group('IterableExtension', () {
     test('hasAnyItem returns true when iterable contains any entry', () {
       final any = SelectTextEntry<dynamic>.any(parentId: 'p', name: 'Any');

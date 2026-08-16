@@ -41,7 +41,7 @@ class SelectViewExamplePage extends StatelessWidget {
                               SelectTextEntry.name(
                                   id: 'l2-a', name: 'Football'),
                               SelectTextEntry.name(
-                                  id: 'a2-b', name: 'Basketball'),
+                                  id: 'l2-b', name: 'Basketball'),
                               SelectTextEntry.name(
                                   id: 'l2-c', name: 'Baseball'),
                               SelectTextEntry.name(
@@ -82,19 +82,19 @@ class SelectViewExamplePage extends StatelessWidget {
                         id: 'cate3',
                         name: 'Cate 3',
                         children: {
-                          SelectTextEntry.name(id: 'a', name: 'A'),
-                          SelectTextEntry.name(id: 'b', name: 'B'),
-                          SelectTextEntry.name(id: 'c', name: 'C'),
-                          SelectTextEntry.name(id: 'd', name: 'D'),
+                          SelectTextEntry.name(id: 'a', name: 'Football'),
+                          SelectTextEntry.name(id: 'b', name: 'Basketball'),
+                          SelectTextEntry.name(id: 'c', name: 'Baseball'),
+                          SelectTextEntry.name(id: 'd', name: 'Tennis'),
                         },
                         footer: SelectTextEntry.children(
                           id: 'c3-f',
                           name: 'Footer',
                           children: {
-                            SelectTextEntry.name(id: 'f-a', name: 'Football'),
-                            SelectTextEntry.name(id: 'f-b', name: 'Basketball'),
-                            SelectTextEntry.name(id: 'f-c', name: 'Baseball'),
-                            SelectTextEntry.name(id: 'f-d', name: 'Swimming'),
+                            SelectTextEntry.name(id: 'f-a', name: 'Blue'),
+                            SelectTextEntry.name(id: 'f-b', name: 'Red'),
+                            SelectTextEntry.name(id: 'f-c', name: 'Green'),
+                            SelectTextEntry.name(id: 'f-d', name: 'Yellow'),
                           },
                         ),
                         footerSelectionMode: SelectionMode.single,
@@ -150,6 +150,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -211,6 +213,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -238,6 +242,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -341,6 +347,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -376,6 +384,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -463,6 +473,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -490,6 +502,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -593,6 +607,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters}');
                     showSelectResult(context, selected);
                   },
                 ),

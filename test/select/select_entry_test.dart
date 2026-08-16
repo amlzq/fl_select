@@ -247,7 +247,8 @@ void main() {
       expect(grandchild.parentId, 'a');
     });
 
-    test('children constructor leaves own parentId empty, preserves fields', () {
+    test('children constructor leaves own parentId empty, preserves fields',
+        () {
       final parent = SelectChildEntry<dynamic>.children(
         id: 'p',
         name: 'Parent',
@@ -313,8 +314,8 @@ void main() {
         expect((child as SelectChildEntry).parentId, 'c1');
       }
       // The 'a' branch's own children carry 'a' as their parentId.
-      final branchA = category.children!.firstWhere((e) => e.id == 'a')
-          as SelectChildEntry;
+      final branchA =
+          category.children!.firstWhere((e) => e.id == 'a') as SelectChildEntry;
       for (final grandchild in branchA.children!) {
         expect((grandchild as SelectChildEntry).parentId, 'a');
       }
@@ -429,7 +430,8 @@ void main() {
       expect(child.parentId, 'p');
     });
 
-    test('children constructor leaves own parentId empty, preserves fields', () {
+    test('children constructor leaves own parentId empty, preserves fields',
+        () {
       final entry = SelectTextEntry<dynamic>.children(
         id: 'p',
         name: 'Parent',
