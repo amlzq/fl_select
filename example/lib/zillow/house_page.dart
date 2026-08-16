@@ -547,12 +547,12 @@ class _HousePageState extends State<HousePage> {
               onSelectHidden: (PopupTabData tabData) {
                 debugPrint('onHidden: ${tabData.label}');
               },
-              onChanged: (tabData, selected) {
+              onChanged: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onChanged: tabData=$tabData, selected=$selected');
                 _handleSelectChange(tabData, selected);
                 showSelectResult(context, selected);
               },
-              onApplied: (tabData, selected) {
+              onApplied: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onApplied: tabData=$tabData, selected=$selected');
                 _handleSelectApply(tabData, selected);
                 if (tabData.index == 3) {

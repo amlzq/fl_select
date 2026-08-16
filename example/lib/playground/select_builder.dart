@@ -347,11 +347,7 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
             padding: const EdgeInsets.symmetric(vertical: 6),
             child: FilledButton(
               onPressed: () async {
-                final result = await open(
-                  context,
-                  _tabDelegate(e.$1),
-                  title,
-                );
+                final result = await open(context, _tabDelegate(e.$1), title);
                 _onApplied(result);
               },
               child: Text(e.$2),
@@ -420,7 +416,7 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
                   delegate: widget.delegate,
                   margin:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                  onChanged: (selected) {
+                  onChanged: (SelectEntries selected) {
                     // SelectView applies immediately: change == apply.
                     _onChanged(selected);
                     _onApplied(selected);

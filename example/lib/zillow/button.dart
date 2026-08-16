@@ -143,12 +143,12 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
                 return MyCheckbox(value: selected);
               },
             ),
-            onChanged: (selected) {
+            onChanged: (SelectEntries selected) {
               largePrint('onChanged: $selected');
               _handleSelectChange('neighborhood', selected);
               showSelectResult(context, selected);
             },
-            onApplied: (selected) {
+            onApplied: (SelectEntries selected) {
               largePrint('onApplied: $selected');
               _handleSelectApply('neighborhood', selected);
               showSelectResult(context, selected);
@@ -177,12 +177,12 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
                 ),
                 applyText: AppLocalizations.of(context)?.apply ?? '',
               ),
-              onChanged: (selected) {
+              onChanged: (SelectEntries selected) {
                 largePrint('onChanged: $selected');
                 _handleSelectChange('price', selected);
                 showSelectResult(context, selected);
               },
-              onApplied: (selected) {
+              onApplied: (SelectEntries selected) {
                 largePrint('onApplied: $selected');
                 _handleSelectApply('price', selected);
                 showSelectResult(context, selected);
@@ -209,12 +209,12 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
                   clipBehavior: Clip.antiAlias,
                 ),
               ),
-              onChanged: (selected) {
+              onChanged: (SelectEntries selected) {
                 largePrint('onChanged: $selected');
                 _handleSelectChange('rooms', selected);
                 showSelectResult(context, selected);
               },
-              onApplied: (selected) {
+              onApplied: (SelectEntries selected) {
                 largePrint('onApplied: $selected');
                 _handleSelectApply('rooms', selected);
                 showSelectResult(context, selected);
@@ -246,12 +246,12 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
                     variant: SelectChipVariant.outlined,
                   ),
                 ),
-                onChanged: (selected) {
+                onChanged: (SelectEntries selected) {
                   largePrint('onChanged: $selected');
                   _handleSelectChange('more', selected);
                   showSelectResult(context, selected);
                 },
-                onApplied: (selected) {
+                onApplied: (SelectEntries selected) {
                   largePrint('onApplied: $selected');
                   _handleSelectApply('more', selected);
                   showSelectResult(context, selected);
@@ -273,12 +273,12 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
                 resetEntriesLoader: _filtersRepo.fetchSortResetData,
                 selectionMode: SelectionMode.single,
               ),
-              onChanged: (selected) {
+              onChanged: (SelectEntries selected) {
                 largePrint('onChanged: $selected');
                 _handleSelectChange('sort', selected);
                 showSelectResult(context, selected);
               },
-              onApplied: (selected) {
+              onApplied: (SelectEntries selected) {
                 largePrint('onApplied: $selected');
                 _handleSelectApply('sort', selected);
                 showSelectResult(context, selected);

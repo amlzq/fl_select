@@ -173,12 +173,12 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
                 return MyCheckbox(value: selected);
               },
             ),
-            onChanged: (selected) {
+            onChanged: (SelectEntries selected) {
               largePrint('onChanged: $selected');
               _handleSelectChange('region', selected);
               showSelectResult(context, selected);
             },
-            onApplied: (selected) {
+            onApplied: (SelectEntries selected) {
               largePrint('onApplied: $selected');
               _handleSelectApply('region', selected);
               showSelectResult(context, selected);
@@ -190,7 +190,7 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
           Center(
             child: PopupSelectButton.elevated(
               label: '价格',
-              labelLoader: (selected) {
+              labelLoader: (SelectEntries selected) {
                 return '价格${selected.length}';
               },
               selectDelegate: GridSelectDelegate(
@@ -217,12 +217,12 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
                 ),
                 applyText: AppLocalizations.of(context)?.apply ?? '',
               ),
-              onChanged: (selected) {
+              onChanged: (SelectEntries selected) {
                 largePrint('onChanged: $selected');
                 _handleSelectChange('price', selected);
                 showSelectResult(context, selected);
               },
-              onApplied: (selected) {
+              onApplied: (SelectEntries selected) {
                 largePrint('onApplied: $selected');
                 _handleSelectApply('price', selected);
                 showSelectResult(context, selected);
@@ -244,12 +244,12 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
                 selectionMode: SelectionMode.multiple,
                 sideBarTheme: const SelectSideBarTheme(width: 98),
               ),
-              onChanged: (selected) {
+              onChanged: (SelectEntries selected) {
                 largePrint('onChanged: $selected');
                 _handleSelectChange('floorplan', selected);
                 showSelectResult(context, selected);
               },
-              onApplied: (selected) {
+              onApplied: (SelectEntries selected) {
                 largePrint('onApplied: $selected');
                 _handleSelectApply('floorplan', selected);
                 showSelectResult(context, selected);
@@ -273,12 +273,12 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
                   return MyRadio(value: selected);
                 },
               ),
-              onChanged: (selected) {
+              onChanged: (SelectEntries selected) {
                 largePrint('onChanged: $selected');
                 _handleSelectChange('sort', selected);
                 showSelectResult(context, selected);
               },
-              onApplied: (selected) {
+              onApplied: (SelectEntries selected) {
                 largePrint('onApplied: $selected');
                 _handleSelectApply('sort', selected);
                 showSelectResult(context, selected);

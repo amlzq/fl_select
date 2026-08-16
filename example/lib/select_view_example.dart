@@ -36,6 +36,8 @@ class SelectViewExamplePage extends StatelessWidget {
                             id: 'l1-a',
                             name: 'A',
                             children: {
+                              SelectTextEntry.any(
+                                  parentId: 'l1-a', name: 'Any'),
                               SelectTextEntry.name(
                                   id: 'l2-a', name: 'Football'),
                               SelectTextEntry.name(
@@ -50,7 +52,7 @@ class SelectViewExamplePage extends StatelessWidget {
                           SelectTextEntry.name(id: 'l1-c', name: 'C'),
                           SelectTextEntry.name(id: 'l1-d', name: 'D'),
                         },
-                        // selectionMode: SelectionMode.multiple,
+                        selectionMode: SelectionMode.multiple,
                       ),
                       SelectCategoryEntry.children(
                         id: 'cate2',
@@ -74,6 +76,7 @@ class SelectViewExamplePage extends StatelessWidget {
                           SelectTextEntry.name(id: 'p', name: 'Sheep'),
                           SelectTextEntry.name(id: 'q', name: 'Cow'),
                         },
+                        selectionMode: SelectionMode.multiple,
                       ),
                       SelectCategoryEntry.children(
                         id: 'cate3',
@@ -84,10 +87,32 @@ class SelectViewExamplePage extends StatelessWidget {
                           SelectTextEntry.name(id: 'c', name: 'C'),
                           SelectTextEntry.name(id: 'd', name: 'D'),
                         },
+                        footer: SelectTextEntry.children(
+                          id: 'c3-f',
+                          name: 'Footer',
+                          children: {
+                            SelectTextEntry.name(id: 'f-a', name: 'Football'),
+                            SelectTextEntry.name(id: 'f-b', name: 'Basketball'),
+                            SelectTextEntry.name(id: 'f-c', name: 'Baseball'),
+                            SelectTextEntry.name(id: 'f-d', name: 'Swimming'),
+                          },
+                        ),
+                        footerSelectionMode: SelectionMode.single,
                       ),
                       SelectCategoryEntry.children(
                         id: 'cate4',
                         name: 'Cate 4',
+                        header: SelectTextEntry.children(
+                          id: 'c4-h',
+                          name: 'Header',
+                          children: {
+                            SelectTextEntry.name(id: 'h-a', name: 'Football'),
+                            SelectTextEntry.name(id: 'h-b', name: 'Basketball'),
+                            SelectTextEntry.name(id: 'h-c', name: 'Baseball'),
+                            SelectTextEntry.name(id: 'h-d', name: 'Swimming'),
+                          },
+                        ),
+                        headerSelectionMode: SelectionMode.single,
                         children: {
                           SelectTextEntry.name(id: 'a', name: 'A'),
                           SelectTextEntry.name(id: 'b', name: 'B'),
@@ -107,7 +132,7 @@ class SelectViewExamplePage extends StatelessWidget {
                         },
                       ),
                     },
-                    selectionMode: SelectionMode.multiple,
+                    selectionMode: SelectionMode.single,
                     sideBarTheme: const SelectSideBarTheme(width: 100),
                     isScrollable: true,
                     radioBuilder: (context, selected) {
@@ -123,8 +148,69 @@ class SelectViewExamplePage extends StatelessWidget {
                     },
                     searchDebounceDuration: const Duration(milliseconds: 300),
                   ),
-                  onChanged: (selected) {
-                    largePrint('onChangeTap: $selected');
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
+                    showSelectResult(context, selected);
+                  },
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'CascadingSelectDelegate-1D',
+                  style: TextStyle(fontSize: 20),
+                ),
+                SelectView(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  delegate: CascadingSelectDelegate(
+                    entriesLoader: () async => {
+                      SelectCategoryEntry(
+                        id: 'cate1',
+                        name: 'Cate 1',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate2',
+                        name: 'Cate 2',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate3',
+                        name: 'Cate 3',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate4',
+                        name: 'Cate 4',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate5',
+                        name: 'Cate 5',
+                        children: null,
+                      ),
+                      // SelectTextEntry.name(id: 'a', name: 'Tiger'),
+                      // SelectTextEntry.name(id: 'b', name: 'Lion'),
+                      // SelectTextEntry.name(id: 'c', name: 'Bear'),
+                      // SelectTextEntry.name(id: 'd', name: 'Elephant'),
+                    },
+                    selectionMode: SelectionMode.single,
+                    sideBarTheme: const SelectSideBarTheme(width: 100),
+                    isScrollable: true,
+                    radioBuilder: (context, selected) {
+                      return MyRadio(value: selected);
+                    },
+                    checkboxBuilder: (context, selected) {
+                      return MyCheckbox(value: selected);
+                    },
+                    searchEnabled: true,
+                    searchHintText: 'Search items...',
+                    searchPredicate: (entry, query) {
+                      return entry.name?.contains(query) == true;
+                    },
+                    searchDebounceDuration: const Duration(milliseconds: 300),
+                  ),
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -148,9 +234,10 @@ class SelectViewExamplePage extends StatelessWidget {
                     childAspectRatio: 3,
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
+                    // selectionMode: SelectionMode.multiple,
                   ),
-                  onChanged: (selected) {
-                    largePrint('onChangeTap: $selected');
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -174,7 +261,7 @@ class SelectViewExamplePage extends StatelessWidget {
                           SelectTextEntry.name(id: 'd', name: 'D'),
                           SelectRangeEntry.custom(),
                         },
-                        // selectionMode: SelectionMode.multiple,
+                        // selectionMode: SelectionMode.single,
                       ),
                       SelectCategoryEntry.children(
                         id: 'cate2',
@@ -198,6 +285,7 @@ class SelectViewExamplePage extends StatelessWidget {
                           SelectTextEntry.name(id: 'p', name: 'Sheep'),
                           SelectTextEntry.name(id: 'q', name: 'Cow'),
                         },
+                        // selectionMode: SelectionMode.single,
                         layout: const SelectChipLayout(),
                       ),
                       SelectCategoryEntry.children(
@@ -251,8 +339,8 @@ class SelectViewExamplePage extends StatelessWidget {
                       variant: SelectFieldTileVariant.outlined,
                     ),
                   ),
-                  onChanged: (selected) {
-                    largePrint('onChangeTap: $selected');
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -286,8 +374,8 @@ class SelectViewExamplePage extends StatelessWidget {
                     },
                     sideBarTheme: const SelectSideBarTheme(width: 90),
                   ),
-                  onChanged: (selected) {
-                    largePrint('onChangeTap: $selected');
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -373,8 +461,8 @@ class SelectViewExamplePage extends StatelessWidget {
                     selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 90),
                   ),
-                  onChanged: (selected) {
-                    largePrint('onChangeTap: $selected');
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -400,8 +488,8 @@ class SelectViewExamplePage extends StatelessWidget {
                     },
                     searchDebounceDuration: const Duration(milliseconds: 300),
                   ),
-                  onChanged: (selected) {
-                    largePrint('onChangeTap: $selected');
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -503,8 +591,8 @@ class SelectViewExamplePage extends StatelessWidget {
                     },
                     searchDebounceDuration: const Duration(milliseconds: 300),
                   ),
-                  onChanged: (selected) {
-                    largePrint('onChangeTap: $selected');
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
                     showSelectResult(context, selected);
                   },
                 ),

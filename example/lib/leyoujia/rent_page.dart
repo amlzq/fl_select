@@ -239,7 +239,7 @@ class _RentPageState extends State<RentPage> {
                 PopupTab(
                   // tag: 'region',
                   label: l10n?.region ?? '',
-                  // labelLoader: (tabData, selected) {
+                  // labelLoader: (PopupTabData tabData, SelectEntries selected) {
                   //   // 可选：用户根据结果自定义标签
                   //   return '自定义标签';
                   // },
@@ -322,12 +322,12 @@ class _RentPageState extends State<RentPage> {
               onSelectHidden: (PopupTabData tabData) {
                 largePrint('onHidden: ${tabData.label}');
               },
-              onChanged: (tabData, selected) {
+              onChanged: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onChanged: tabData=$tabData, selected=$selected');
                 _handleSelectChange(tabData, selected);
                 showSelectResult(context, selected);
               },
-              onApplied: (tabData, selected) {
+              onApplied: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onApplied: tabData=$tabData, selected=$selected');
                 _handleSelectApply(tabData, selected);
                 if (tabData.index == 2) {
