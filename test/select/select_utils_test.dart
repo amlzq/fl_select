@@ -213,6 +213,43 @@ void main() {
       expect(rootAfter.footer!.children!.map((e) => e.id).toSet(), {'f1'});
     });
 
+    test('clippingTree drops header/footer with no selected children', () {
+      final h1 = _text('header', 'h1', 'H1');
+      final header = _text('r', 'header', 'Header', children: {h1});
+
+      final f1 = _text('footer', 'f1', 'F1');
+      final footer = _text('r', 'footer', 'Footer', children: {f1});
+
+      final root = _category(
+        'r',
+        'R',
+        children: {_text('r', 'c1', 'C1')},
+        header: header,
+        footer: footer,
+      );
+
+      final entries = <SelectEntry<dynamic>>{root};
+
+      SelectUtils.clippingTree(
+        entries,
+        [
+          <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
+          <SelectEntry<dynamic>>{_text('r', 'c1', 'C1')},
+        ],
+        0,
+        {
+          'r': <SelectEntry<dynamic>>{},
+        },
+        {},
+      );
+
+      final rootAfter = entries.single as SelectCategoryEntry<dynamic>;
+      expect(rootAfter.children!.map((e) => e.id).toSet(), {'c1'});
+      // A header/footer with no selected children is not selected itself.
+      expect(rootAfter.header, isNull);
+      expect(rootAfter.footer, isNull);
+    });
+
     test('cloneTree clones only selected branches', () {
       final g1 = _text('c1', 'g1', 'G1');
       final g2 = _text('c1', 'g2', 'G2');

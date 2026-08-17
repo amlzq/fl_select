@@ -327,7 +327,12 @@ class SelectUtils {
     return _cloneEntryWithChildren(entry, null);
   }
 
-  static SelectEntry _cloneHeaderFooterEntry(
+  /// Clones a header/footer entry keeping only its selected children.
+  ///
+  /// Returns `null` when none of its children is selected: a header/footer
+  /// entry only counts as selected through its children, so an entry whose
+  /// children would be empty must be dropped from the cloned tree entirely.
+  static SelectEntry? _cloneHeaderFooterEntry(
     SelectEntry entry,
     SelectEntries? selectedChildren, {
     required bool deepCloneSelectedSubtree,
@@ -336,17 +341,17 @@ class SelectUtils {
     final selectedIds =
         selectedChildren?.map((e) => e.id).toSet() ?? const <String>{};
 
+    if (selectedIds.isEmpty) {
+      return null;
+    }
+
     Set<SelectEntry>? clonedChildren;
     if (entry.children != null) {
-      if (selectedIds.isEmpty) {
-        clonedChildren = <SelectEntry>{};
-      } else {
-        final selectedOrdered =
-            originalChildren.where((child) => selectedIds.contains(child.id));
-        clonedChildren = deepCloneSelectedSubtree
-            ? deepCloneEntries(selectedOrdered)
-            : selectedOrdered.map(_cloneEntryWithoutChildren).toSet();
-      }
+      final selectedOrdered =
+          originalChildren.where((child) => selectedIds.contains(child.id));
+      clonedChildren = deepCloneSelectedSubtree
+          ? deepCloneEntries(selectedOrdered)
+          : selectedOrdered.map(_cloneEntryWithoutChildren).toSet();
     }
 
     return _cloneEntryWithChildren(entry, clonedChildren);
@@ -388,26 +393,30 @@ class SelectUtils {
 
         if (selectedHeaderEntries != null) {
           final headerSelected = selectedHeaderEntries[category.id] ?? {};
-          final headerChildren = category.header?.children;
-          if (headerChildren != null) {
+          final header = category.header;
+          if (header != null) {
             if (headerSelected.isEmpty) {
-              headerChildren.clear();
+              // A header with no selected children is not selected itself,
+              // so drop it from the clipped tree.
+              category.header = null;
             } else {
-              headerChildren
-                  .removeWhere((e) => !headerSelected.any((s) => s.id == e.id));
+              header.children?.removeWhere(
+                  (e) => !headerSelected.any((s) => s.id == e.id));
             }
           }
         }
 
         if (selectedFooterEntries != null) {
           final footerSelected = selectedFooterEntries[category.id] ?? {};
-          final footerChildren = category.footer?.children;
-          if (footerChildren != null) {
+          final footer = category.footer;
+          if (footer != null) {
             if (footerSelected.isEmpty) {
-              footerChildren.clear();
+              // A footer with no selected children is not selected itself,
+              // so drop it from the clipped tree.
+              category.footer = null;
             } else {
-              footerChildren
-                  .removeWhere((e) => !footerSelected.any((s) => s.id == e.id));
+              footer.children?.removeWhere(
+                  (e) => !footerSelected.any((s) => s.id == e.id));
             }
           }
         }

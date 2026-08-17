@@ -161,6 +161,40 @@ void main() {
       expect(clonedC.header!.children!.map((e) => e.id).toSet(), {'h1'});
     });
 
+    test('cloneTree drops header/footer with no selected children', () {
+      final h1 = _text('header', 'h1', 'H1');
+      final header = _text('c', 'header', 'Header', children: {h1});
+
+      final f1 = _text('footer', 'f1', 'F1');
+      final footer = _text('c', 'footer', 'Footer', children: {f1});
+
+      final c = _category(
+        'c',
+        'C',
+        children: {_text('c', 'a', 'A')},
+        header: header,
+        footer: footer,
+      );
+
+      final cloned = SelectUtils.cloneTree(
+        {c},
+        [
+          <SelectEntry<dynamic>>{c},
+          <SelectEntry<dynamic>>{_text('c', 'a', 'A')},
+        ],
+        selectedHeaderEntries: {
+          'c': <SelectEntry<dynamic>>{},
+        },
+        selectedFooterEntries: {},
+      );
+
+      final clonedC = cloned.single as SelectCategoryEntry<dynamic>;
+      expect(clonedC.children!.map((e) => e.id).toSet(), {'a'});
+      // A header/footer with no selected children is not selected itself.
+      expect(clonedC.header, isNull);
+      expect(clonedC.footer, isNull);
+    });
+
     test('cloneTree with deepCloneSelectedSubtree=false keeps shallow clones',
         () {
       final g1 = _text('c1', 'g1', 'G1', children: {_text('g1', 'gg1', 'GG1')});
