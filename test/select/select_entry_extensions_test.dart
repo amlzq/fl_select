@@ -277,7 +277,7 @@ void main() {
     });
   });
 
-  group('SelectEntriesExtension – toQueryParameters', () {
+  group('SelectEntriesExtension – toQueryMap', () {
     test('maps category children to key=leafId pairs', () {
       final cate3 = _category('cate3', 'Cate 3', children: {
         _text('cate3', 'b', 'B'),
@@ -286,10 +286,13 @@ void main() {
         _text('cate4', 'd', 'D'),
       });
 
-      expect({cate3, cate4}.toQueryParameters, 'cate3=b&cate4=d');
+      expect({cate3, cate4}.toQueryMap(), {
+        'cate3': ['b'],
+        'cate4': ['d'],
+      });
     });
 
-    test('takes the deepest leaves as values in cascading trees', () {
+    test('groups the deepest leaves under one key in cascading trees', () {
       final cate1 = _category('cate1', 'Cate 1', children: {
         _text('cate1', 'l1-a', 'A', children: {
           _text('l1-a', 'l2-a', 'Football'),
@@ -297,7 +300,9 @@ void main() {
         }),
       });
 
-      expect({cate1}.toQueryParameters, 'cate1=l2-a&cate1=l2-b');
+      expect({cate1}.toQueryMap(), {
+        'cate1': ['l2-a', 'l2-b'],
+      });
     });
 
     test('resolves any leaves to their parent id', () {
@@ -307,18 +312,9 @@ void main() {
         }),
       });
 
-      expect({cate1}.toQueryParameters, 'cate1=l1-a');
-    });
-
-    test('mixes cascading and direct children under the same key', () {
-      final cate1 = _category('cate1', 'Cate 1', children: {
-        _text('cate1', 'l1-a', 'A', children: {
-          _text('l1-a', 'any', 'Any'),
-        }),
-        _text('cate1', 'l1-b', 'B'),
+      expect({cate1}.toQueryMap(), {
+        'cate1': ['l1-a'],
       });
-
-      expect({cate1}.toQueryParameters, 'cate1=l1-a&cate1=l1-b');
     });
 
     test('keys header/footer subtrees by their own ids', () {
@@ -334,10 +330,11 @@ void main() {
         }),
       );
 
-      expect(
-        {cate3}.toQueryParameters,
-        'c3-h=h-a&cate3=a&c3-f=f-a',
-      );
+      expect({cate3}.toQueryMap(), {
+        'c3-h': ['h-a'],
+        'cate3': ['a'],
+        'c3-f': ['f-a'],
+      });
     });
 
     test('formats custom range entries as min-max', () {
@@ -350,15 +347,122 @@ void main() {
           max: 222,
         ),
       });
-      final cate2 = _category('cate2', 'Cate 2', children: {
-        _text('cate2', 'b', 'Lion'),
+
+      expect({cate1}.toQueryMap(), {
+        'cate1': ['111-222'],
+      });
+    });
+
+    test('returns empty map for empty set', () {
+      expect(<SelectEntry<dynamic>>{}.toQueryMap(), isEmpty);
+    });
+  });
+
+  group('SelectEntriesExtension – toQueryParameters', () {
+    Set<SelectEntry<dynamic>> multiValueSelection() => {
+          _category('cate1', 'Cate 1', children: {
+            _text('cate1', 'l2-a', 'Football'),
+            _text('cate1', 'l2-b', 'Basketball'),
+          }),
+          _category('cate2', 'Cate 2', children: {
+            _text('cate2', 'c', 'Lion'),
+          }),
+        };
+
+    test('defaults to repeat format', () {
+      expect(
+        multiValueSelection().toQueryParameters(),
+        'cate1=l2-a&cate1=l2-b&cate2=c',
+      );
+    });
+
+    test('repeat format repeats the key per value', () {
+      expect(
+        multiValueSelection()
+            .toQueryParameters(arrayFormat: SelectArrayFormat.repeat),
+        'cate1=l2-a&cate1=l2-b&cate2=c',
+      );
+    });
+
+    test('brackets format appends [] to the key', () {
+      expect(
+        multiValueSelection()
+            .toQueryParameters(arrayFormat: SelectArrayFormat.brackets),
+        'cate1%5B%5D=l2-a&cate1%5B%5D=l2-b&cate2%5B%5D=c',
+      );
+    });
+
+    test('comma format joins values with commas', () {
+      expect(
+        multiValueSelection()
+            .toQueryParameters(arrayFormat: SelectArrayFormat.comma),
+        'cate1=l2-a,l2-b&cate2=c',
+      );
+    });
+
+    test('indices format numbers each value', () {
+      expect(
+        multiValueSelection()
+            .toQueryParameters(arrayFormat: SelectArrayFormat.indices),
+        'cate1%5B0%5D=l2-a&cate1%5B1%5D=l2-b&cate2%5B0%5D=c',
+      );
+    });
+
+    test('delimited format joins values with the delimiter', () {
+      expect(
+        multiValueSelection().toQueryParameters(
+            arrayFormat: SelectArrayFormat.delimited, delimiter: '|'),
+        'cate1=l2-a|l2-b&cate2=c',
+      );
+    });
+
+    test('delimited format defaults delimiter to comma', () {
+      expect(
+        multiValueSelection()
+            .toQueryParameters(arrayFormat: SelectArrayFormat.delimited),
+        'cate1=l2-a,l2-b&cate2=c',
+      );
+    });
+
+    test('encode=false keeps reserved characters raw', () {
+      expect(
+        multiValueSelection().toQueryParameters(
+            arrayFormat: SelectArrayFormat.brackets, encode: false),
+        'cate1[]=l2-a&cate1[]=l2-b&cate2[]=c',
+      );
+      expect(
+        multiValueSelection().toQueryParameters(
+            arrayFormat: SelectArrayFormat.delimited,
+            delimiter: '|',
+            encode: false),
+        'cate1=l2-a|l2-b&cate2=c',
+      );
+    });
+
+    test('percent-encodes values with special characters', () {
+      final cate = _category('cate', 'Cate', children: {
+        _text('cate', 'a&b=c', 'Weird'),
       });
 
-      expect({cate1, cate2}.toQueryParameters, 'cate1=111-222&cate2=b');
+      expect(
+        {cate}.toQueryParameters(),
+        'cate=a%26b%3Dc',
+      );
+    });
+
+    test('mixes cascading and direct children under the same key', () {
+      final cate1 = _category('cate1', 'Cate 1', children: {
+        _text('cate1', 'l1-a', 'A', children: {
+          _text('l1-a', 'any', 'Any'),
+        }),
+        _text('cate1', 'l1-b', 'B'),
+      });
+
+      expect({cate1}.toQueryParameters(), 'cate1=l1-a&cate1=l1-b');
     });
 
     test('returns empty string for empty set', () {
-      expect(<SelectEntry<dynamic>>{}.toQueryParameters, '');
+      expect(<SelectEntry<dynamic>>{}.toQueryParameters(), '');
     });
   });
 

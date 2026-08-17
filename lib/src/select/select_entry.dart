@@ -131,36 +131,39 @@ extension SelectEntriesExtension on SelectEntries {
   /// order.
   String? get firstSelectedId => firstOrNull?.id;
 
-  /// Converts this selection tree into a URL query string such as
-  /// `cate1=a&cate2=b`.
+  /// Converts this selection tree into a map of query keys to value lists,
+  /// e.g. `{cate1: [a, b], cate2: [c]}`.
   ///
-  /// Each selected top-level category contributes `key=value` pairs in
+  /// Each selected top-level category contributes entries in
   /// `header → children → footer` order:
   ///
   /// - entries under the category's children are keyed by the category's own
   ///   id, taking the ids of the deepest selected leaves as values (so a
-  ///   3-level tree like `cate1 → l1-a → l2-a` yields `cate1=l2-a`, not
-  ///   `cate1=l1-a`);
+  ///   3-level tree like `cate1 → l1-a → l2-a` yields `cate1: [l2-a]`, not
+  ///   `cate1: [l1-a]`);
   /// - the header/footer subtrees (when they carry children) are keyed by the
-  ///   header/footer's own id instead, e.g. `c3-f=f-a`.
+  ///   header/footer's own id instead, e.g. `c3-f: [f-a]`.
   ///
   /// Special leaf values:
   ///
   /// - a leaf whose id is [kAnyEntryId] (the "any" option) contributes its
-  ///   parent's id, so `l1-a → any` yields `cate1=l1-a`;
+  ///   parent's id, so `l1-a → any` yields `cate1: [l1-a]`;
   /// - a [SelectRangeEntry] carrying min/max values contributes `min-max`,
-  ///   e.g. `cate1=111-222`.
+  ///   e.g. `cate1: [111-222]`.
   ///
-  /// Returns an empty string when nothing is selected.
-  String get toQueryParameters {
-    final pairs = <String>[];
+  /// The `Map<String, List<String>>` shape mirrors [Uri.queryParametersAll],
+  /// which is required to read repeated keys back without losing values.
+  ///
+  /// Returns an empty map when nothing is selected.
+  Map<String, List<String>> toQueryMap() {
+    final map = <String, List<String>>{};
 
     void collect(SelectEntry entry, String rootKey, String parentId) {
       if (entry is SelectRangeEntry && entry.hasCustomValue) {
-        pairs.add('$rootKey=${entry.min}-${entry.max}');
+        (map[rootKey] ??= []).add('${entry.min}-${entry.max}');
       } else if (!entry.hasChildren) {
         final value = entry.id == kAnyEntryId ? parentId : entry.id;
-        pairs.add('$rootKey=$value');
+        (map[rootKey] ??= []).add(value);
       } else {
         for (final child in entry.children!) {
           collect(child, rootKey, entry.id);
@@ -190,8 +193,82 @@ extension SelectEntriesExtension on SelectEntries {
       }
     }
 
+    return map;
+  }
+
+  /// Converts this selection tree into a URL query string such as
+  /// `cate1=a&cate2=b`, with the multi-value layout controlled by
+  /// [arrayFormat].
+  ///
+  /// The key/value pairs are derived from [toQueryMap]; see there for how a
+  /// selection tree maps to keys and values. Given `{cate1: [l2-a, l2-b]}`:
+  ///
+  /// - [SelectArrayFormat.repeat] (the default): `cate1=l2-a&cate1=l2-b`;
+  /// - [SelectArrayFormat.brackets]: `cate1[]=l2-a&cate1[]=l2-b`;
+  /// - [SelectArrayFormat.comma]: `cate1=l2-a,l2-b`;
+  /// - [SelectArrayFormat.indices]: `cate1[0]=l2-a&cate1[1]=l2-b`;
+  /// - [SelectArrayFormat.delimited]: joined with [delimiter], which covers
+  ///   OpenAPI `pipeDelimited` (`|`) and `spaceDelimited` (` `).
+  ///
+  /// When [encode] is true (the default), keys and values are percent-encoded
+  /// with [Uri.encodeQueryComponent]. Set it to false only when the caller
+  /// handles encoding.
+  ///
+  /// Returns an empty string when nothing is selected.
+  String toQueryParameters({
+    SelectArrayFormat arrayFormat = SelectArrayFormat.repeat,
+    String delimiter = ',',
+    bool encode = true,
+  }) {
+    final map = toQueryMap();
+    if (map.isEmpty) return '';
+
+    String enc(String component) =>
+        encode ? Uri.encodeQueryComponent(component) : component;
+    String pair(String key, String value) => '${enc(key)}=${enc(value)}';
+
+    final pairs = <String>[];
+    for (final mapEntry in map.entries) {
+      final key = mapEntry.key;
+      final values = mapEntry.value;
+      switch (arrayFormat) {
+        case SelectArrayFormat.repeat:
+          pairs.addAll(values.map((value) => pair(key, value)));
+        case SelectArrayFormat.brackets:
+          pairs.addAll(values.map((value) => pair('$key[]', value)));
+        case SelectArrayFormat.indices:
+          for (var i = 0; i < values.length; i++) {
+            pairs.add(pair('$key[$i]', values[i]));
+          }
+        case SelectArrayFormat.comma:
+          pairs.add('${enc(key)}=${values.map(enc).join(',')}');
+        case SelectArrayFormat.delimited:
+          pairs.add('${enc(key)}=${values.map(enc).join(delimiter)}');
+      }
+    }
     return pairs.join('&');
   }
+}
+
+/// Multi-value layouts for serializing repeated values into a URL query
+/// string via `toQueryParameters`.
+enum SelectArrayFormat {
+  /// `cate1=a&cate1=b` — repeated keys. The default.
+  repeat,
+
+  /// `cate1[]=a&cate1[]=b` — PHP / Rails style.
+  brackets,
+
+  /// `cate1=a,b` — comma-joined (OpenAPI `form`, explode: false).
+  comma,
+
+  /// `cate1[0]=a&cate1[1]=b` — indexed keys.
+  indices,
+
+  /// `cate1=a|b` — joined with the `delimiter` argument of
+  /// `toQueryParameters` (default `,`), covering OpenAPI `pipeDelimited`
+  /// (`|`) and `spaceDelimited` (` `).
+  delimited,
 }
 
 /// Special entry id representing the "Any" entry.

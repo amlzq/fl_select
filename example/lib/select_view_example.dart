@@ -151,7 +151,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters}');
+                        'toQueryParameters: ${selected.toQueryParameters()}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -214,7 +214,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters}');
+                        'toQueryParameters: ${selected.toQueryParameters()}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -242,8 +242,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
-                    largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters}');
+                    largePrint('toQueryMap: ${selected.toQueryMap()}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -348,7 +347,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters}');
+                        'toQueryParameters: ${selected.toQueryParameters()}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -384,8 +383,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
-                    largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters}');
+                    largePrint('toQueryMap: ${selected.toQueryMap()}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -474,7 +472,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters}');
+                        'toQueryParameters: ${selected.toQueryParameters()}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -503,7 +501,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters}');
+                        'toQueryParameters: ${selected.toQueryParameters()}');
                     showSelectResult(context, selected);
                   },
                 ),
@@ -608,7 +606,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters}');
+                        'toQueryParameters: ${selected.toQueryParameters()}');
                     showSelectResult(context, selected);
                   },
                 ),

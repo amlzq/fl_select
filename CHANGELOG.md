@@ -1,6 +1,8 @@
 ## Next
 
-- **FEATURE** add `toQueryParameters` extension on `SelectEntries` to serialize a selection tree into a URL query string (e.g. `cate1=a&cate2=b`). Each category contributes `key=value` pairs keyed by its own id with the deepest selected leaf ids as values; header/footer subtrees are keyed by their own ids; an "any" leaf resolves to its parent id; and a custom `SelectRangeEntry` formats as `min-max`.
+- **FEATURE** add `toQueryMap()` and `toQueryParameters()` extensions on `SelectEntries` to serialize a selection tree into URL query parameters. Each category contributes key/value pairs keyed by its own id with the deepest selected leaf ids as values; header/footer subtrees are keyed by their own ids; an "any" leaf resolves to its parent id; and a custom `SelectRangeEntry` formats as `min-max`.
+  - `toQueryMap()` returns a `Map<String, List<String>>` mirroring `Uri.queryParametersAll`, so repeated keys can be read back without losing values, or handed to HTTP clients that accept multi-value maps directly.
+  - `toQueryParameters({arrayFormat, delimiter, encode})` renders the map into a query string, with multi-value layouts selected by the new `SelectArrayFormat` enum: `repeat` (default, `cate1=a&cate1=b`), `brackets` (`cate1[]=a`), `comma` (`cate1=a,b`), `indices` (`cate1[0]=a`), and `delimited` (`cate1=a|b` with a custom `delimiter`, covering OpenAPI `pipeDelimited`/`spaceDelimited`). Values are percent-encoded by default.
 
 - **BUGFIX** fix cascading selection state handling around search and cross-category clearing in `CascadingSelect`: focusing a category no longer clears other categories' selections; per-category single mode only clears selections within its own subtree; header/footer selections are cleared across categories; deeper search matches are auto-expanded; canceling a search restores the original unfiltered tree entries.
 
