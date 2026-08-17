@@ -157,7 +157,7 @@ class SelectViewExamplePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 const Text(
-                  'CascadingSelectDelegate-1D',
+                  'CascadingSelectDelegate-1L',
                   style: TextStyle(fontSize: 20),
                 ),
                 SelectView(

@@ -13,10 +13,12 @@ import 'select_theme.dart';
 import 'widgets/widgets.dart';
 
 /// Horizontal layout: category list on the left and cascading item lists on the right.
-/// Tree-structured data with unlimited cascading levels.
+///
+/// Requires a two-level-or-deeper (category) structure; flat (parentless)
+/// entries are not supported. Renders one column per level, supporting
+/// arbitrary depth (category -> child -> grandchild -> ...).
 ///
 /// Behavior notes:
-/// - Supports arbitrary depth (category -> child -> grandchild -> ...).
 /// - Maintains a focused item per level to drive the cascade columns.
 /// - Selection state is stored per level; in multi-selection mode an action bar
 ///   may be used to apply the final selection.

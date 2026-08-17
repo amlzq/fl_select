@@ -1,10 +1,10 @@
-A customizable Flutter select widget for building filter bars, cascading menus, and pickers with single/multiple selection, async loading, theming, and i18n.
+A customizable Flutter select widget for building filter bars, cascading menus, and pickers with single/multiple selection, async loading, search filtering, theming, and i18n.
 
 [Playground](https://flselect.zeaon.dev/)
 
 ![Highlights](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/highlights.gif)
 
-**`[Multiple Selection]` `[Async Loading]` `[5 Entry Points]` `[4 Delegate Layouts]` `[i18n ×10]`**
+**`[Multiple Selection]` `[Async Loading]` `[Search]` `[5 Entry Points]` `[4 Delegate Layouts]` `[i18n ×10]`**
 
 ### Features
 
@@ -14,8 +14,10 @@ Two layers work together: **entry points** decide _where_ the select appears, an
 - **Delegates** — four layouts: `CascadingSelectDelegate` (tree), `GridSelectDelegate` (grid), `ListSelectDelegate` (single column), `FlattenSelectDelegate` (grid that keeps category grouping).
 - Single & multiple selection via `SelectionMode` (per category or as a delegate fallback).
 - Async data loading through `entriesLoader`.
+- Search filtering: set `searchEnabled` on any delegate and a `SelectSearchBar` filters entries as you type (debounced, with a customizable predicate and theme).
 - Flexible entries: the "Any" entry clears a category, `SelectRangeEntry.custom` takes user min/max input, and an `immediate` entry applies on tap without the action bar.
 - `skeletonBuilder` & `errorBuilder` for loading and error states.
+- Serialize a selection into URL query parameters via `toQueryMap()` / `toQueryParameters()` (repeat / brackets / comma / indices / delimited layouts).
 - Theming via `SelectThemeData` and the `PopupSelectBarTheme` / `PopupSelectButtonTheme` extensions.
 - Built-in i18n in 10 languages via `SelectLocalizationsDelegate`.
 
@@ -82,12 +84,14 @@ SelectTextEntry.name(id: 'default', name: 'Default');
 
 The built-in delegates are:
 
-| Delegate                  | Description                                                                                                             | Preview                                                                                                          |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `CascadingSelectDelegate` | A tree select: categories on the left, a cascading list on the right.                                                   | ![CascadingSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/cascading.jpg) |
-| `GridSelectDelegate`      | A grid layout. `crossAxisCount` is required.                                                                            | ![GridSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/grid.jpg)           |
-| `ListSelectDelegate`      | A single-column list (use `.name(...)` leaves for a flat list).                                                         | ![ListSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/list.jpg)           |
-| `FlattenSelectDelegate`   | Renders children in a grid while keeping the category hierarchy. Best with `SelectionMode.multiple` and an "Any" entry. | ![FlattenSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/flatten.jpg)     |
+| Delegate                  | Description                                                                                                                          | Preview                                                                                                          |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
+| `CascadingSelectDelegate` | Categories on the left, cascading item columns on the right. Requires a two-level-or-deeper (category) structure; one column per level. | ![CascadingSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/cascading.jpg) |
+| `GridSelectDelegate`      | Category tabs on top, items below. Flat or two-level; children laid out by `category.layout` (default grid, `crossAxisCount` required). | ![GridSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/grid.jpg)           |
+| `ListSelectDelegate`      | Flat entries in a single list, or one expandable group per category.                                                                   | ![ListSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/list.jpg)           |
+| `FlattenSelectDelegate`   | Category sidebar on the left, children in one scrollable column. Flat or two-level; children laid out by `category.layout` (default chips). Best with `SelectionMode.multiple` and an "Any" entry. | ![FlattenSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/flatten.jpg)     |
+
+List, Grid and Flatten render at most two levels; use `CascadingSelectDelegate` for multi-level (cascading) data.
 
 #### SelectView
 
@@ -175,7 +179,7 @@ if (selected != null) {
 
 #### showModalBottomSelect
 
-Shows a select in a modal bottom sheet built on Flutter's `showModalBottomSheet`. Same interaction as `showSelect` (and its deprecated alias `showselect`). Standard sheet parameters (`isScrollControlled`, `isDismissible`, `enableDrag`, `showDragHandle`, `constraints`, etc.) are forwarded.
+Shows a select in a modal bottom sheet built on Flutter's `showModalBottomSheet`. Same interaction as `showSelect`. Standard sheet parameters (`isScrollControlled`, `isDismissible`, `enableDrag`, `showDragHandle`, `constraints`, etc.) are forwarded.
 
 ```dart
 final SelectEntries? selected = await showModalBottomSelect(
@@ -193,6 +197,48 @@ if (selected != null) {
 ```
 
 ![showModalBottomSelect](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/bottom_sheet.gif)
+
+#### Search
+
+Set `searchEnabled: true` on any delegate to render a `SelectSearchBar` above the body. Typing filters the displayed entries (debounced 300 ms by default) while preserving the layout and selection state — canceling the search restores the original entries.
+
+```dart
+CascadingSelectDelegate(
+  entriesLoader: _fetchNeighborhood,
+  searchEnabled: true,
+  searchHintText: 'Search',
+  searchDebounceDuration: const Duration(milliseconds: 300),
+  // searchPredicate: (entry, query) => ..., // defaults to a case-insensitive
+  //                                        // substring match on SelectEntry.name
+);
+```
+
+The default predicate (`defaultSelectSearchPredicate`) matches `SelectEntry.name` case-insensitively; provide a custom `searchPredicate` to match `id`, `extra`, or any other field. Style the bar via `searchBarTheme` (`SelectSearchBarTheme`) on the delegate, or globally through `SelectThemeData`.
+
+#### Serializing selections
+
+Selections arrive as a `SelectEntries` tree. Two extensions turn that tree into URL query parameters — each category contributes key/value pairs keyed by its own id with the deepest selected leaf ids as values; an "Any" leaf resolves to its parent id; a custom `SelectRangeEntry` formats as `min-max`:
+
+```dart
+final selected = await showSelect(context: context, delegate: ...);
+
+// Map<String, List<String>>, mirroring Uri.queryParametersAll
+final map = selected?.toQueryMap(); // {price: [0-100], more: [near_subway]}
+
+// Or a ready-made query string
+selected?.toQueryParameters(); // price=0-100&more=near_subway
+
+// Multi-value layouts via SelectArrayFormat
+selected?.toQueryParameters(arrayFormat: SelectArrayFormat.brackets); // more[]=a&more[]=b
+selected?.toQueryParameters(arrayFormat: SelectArrayFormat.comma);    // more=a,b
+selected?.toQueryParameters(arrayFormat: SelectArrayFormat.indices);  // more[0]=a
+selected?.toQueryParameters(
+  arrayFormat: SelectArrayFormat.delimited,
+  delimiter: '|',
+); // more=a|b (covers OpenAPI pipeDelimited / spaceDelimited)
+```
+
+Values are percent-encoded by default; pass `encode: false` when the caller handles encoding.
 
 #### Theming
 

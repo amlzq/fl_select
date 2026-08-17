@@ -143,9 +143,9 @@ class SelectController extends ChangeNotifier {
   }
 
   /// Validates that every child entry's [SelectChildEntry.parentId] points to
-  /// its direct parent in a 2D-or-deeper tree.
+  /// its direct parent in a two-level-or-deeper tree.
   ///
-  /// In a flat 1D structure (no top-level [SelectCategoryEntry]), `parentId`
+  /// In a flat structure (no top-level [SelectCategoryEntry]), `parentId`
   /// may legitimately be empty (e.g. entries built with
   /// [SelectTextEntry.name]), so validation is skipped entirely.
   ///
@@ -163,7 +163,7 @@ class SelectController extends ChangeNotifier {
     final hasCategory = entries.any((e) => e is SelectCategoryEntry);
     if (!hasCategory) return;
 
-    // A 2D-or-deeper structure requires every top-level entry to be a
+    // A two-level-or-deeper structure requires every top-level entry to be a
     // [SelectCategoryEntry]. The select widgets assume this invariant when they
     // resolve the focused/rendered category (e.g. via `entries.first` or by
     // indexing into the list), so violating it would crash during the build
@@ -172,9 +172,9 @@ class SelectController extends ChangeNotifier {
     for (final entry in entries) {
       if (entry is! SelectCategoryEntry) {
         throw ArgumentError(
-          'In a 2D-or-deeper structure, every top-level entry must be a '
+          'In a two-level-or-deeper structure, every top-level entry must be a '
           'SelectCategoryEntry, but found "${entry.runtimeType}" '
-          '(id: "${entry.id}") at the top level. A flat 1D list is only '
+          '(id: "${entry.id}") at the top level. A flat list is only '
           'supported when there is no SelectCategoryEntry at all.',
         );
       }
@@ -185,9 +185,9 @@ class SelectController extends ChangeNotifier {
         throw ArgumentError(
           'SelectChildEntry(parentId: "${child.parentId}", id: "${child.id}") '
           'has a parentId that does not match its parent node (id: "${parent.id}"). '
-          'In a 2D-or-deeper structure, a child entry\'s parentId must equal its '
+          'In a two-level-or-deeper structure, a child entry\'s parentId must equal its '
           'direct parent\'s id, otherwise it cannot be selected. If this is a '
-          'flat 1D list, make sure there is no SelectCategoryEntry at the top '
+          'flat list, make sure there is no SelectCategoryEntry at the top '
           'level.',
         );
       }
@@ -368,7 +368,7 @@ class SelectController extends ChangeNotifier {
     final path = tree.findPath(id, parentId: parentId);
     final effectiveSelectionMode = _effectiveSelectionMode();
 
-    // A flat (1D) structure stores its entries at the top level without a
+    // A flat structure stores its entries at the top level without a
     // category wrapper. `findPath` returns a single-element path for such an
     // entry, so instead of checking `path.isEmpty` alone we treat any path
     // whose first element is not a [SelectCategoryEntry] as the flat case.

@@ -10,9 +10,12 @@ import 'select_layout.dart';
 import 'select_search_filter.dart';
 import 'widgets/widgets.dart';
 
-/// Standard list view
-/// One-dimensional structured data
+/// Standard list view.
 ///
+/// Renders flat entries in a single list, or two-level entries as one
+/// expandable group per category whose children are laid out by the
+/// category's `layout` (defaulting to a list). Levels deeper than the
+/// second are not rendered.
 class ListSelect extends StatefulWidget {
   final ListSelectDelegate delegate;
   final List<SelectEntry> entries;
@@ -137,7 +140,7 @@ class ListSelectState extends State<ListSelect> {
           'ListSelect: child entry "${item.id}" has a parentId of '
           '"${item.parentId}" that does not match any category; the tap was '
           'ignored. Check that the child\'s parentId points to its owning '
-          'category id (a 2D-or-deeper structure).',
+          'category id (a two-level-or-deeper structure).',
         );
         return true;
       }());

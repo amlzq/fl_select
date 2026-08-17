@@ -292,7 +292,7 @@ class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
   ///
   /// When used inside [SelectCategoryEntry.children], the `parentId` is
   /// automatically injected — prefer using [SelectCategoryEntry.children] for
-  /// 2D+ trees so you never need to write `parentId` by hand.
+  /// two-level-or-deeper trees so you never need to write `parentId` by hand.
   SelectRangeEntry({
     this.min,
     this.max,
@@ -427,7 +427,7 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
   ///
   /// When used inside [SelectCategoryEntry.children], the `parentId` is
   /// automatically injected — prefer using [SelectCategoryEntry.children] for
-  /// 2D+ trees so you never need to write `parentId` by hand.
+  /// two-level-or-deeper trees so you never need to write `parentId` by hand.
   SelectTextEntry({
     required super.parentId,
     required super.id,
@@ -444,7 +444,7 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
   /// This is a placeholder-style constructor for building an entry where the
   /// parent relationship is not (yet) known. When used inside
   /// [SelectCategoryEntry.children], the `parentId` is automatically injected
-  /// by the category, making this constructor safe for both 1D and 2D+ trees:
+  /// by the category, making this constructor safe for both flat and two-level-or-deeper trees:
   ///
   /// ```dart
   /// SelectCategoryEntry.children(
@@ -464,12 +464,12 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
   /// Creates a leaf entry without a parent id.
   ///
   /// This convenience constructor hard-codes [SelectChildEntry.parentId] to an
-  /// empty string, so it is only suitable for a flat 1D structure where the
+  /// empty string, so it is only suitable for a flat structure where the
   /// top level contains no [SelectCategoryEntry] (e.g. sort order).
   ///
   /// When used inside [SelectCategoryEntry.children], the `parentId` is
   /// automatically injected by the category — you do **not** need to set it
-  /// manually. This is the recommended approach for 2D+ trees:
+  /// manually. This is the recommended approach for two-level-or-deeper trees:
   ///
   /// ```dart
   /// SelectCategoryEntry.children(
@@ -495,7 +495,7 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
   /// [SelectChildEntry.parentId] of every child in [children], recursively.
   ///
   /// This is a convenience counterpart of [SelectChildEntry.children] that
-  /// preserves the concrete [SelectTextEntry] type. Use it for 3D-or-deeper
+  /// preserves the concrete [SelectTextEntry] type. Use it for multi-level
   /// structures where the node itself is a plain text entry that also carries
   /// children:
   ///
@@ -635,7 +635,7 @@ class SelectChildEntry<E> extends SelectEntry<E> {
   /// Creates a child entry and automatically injects [id] as the
   /// [SelectChildEntry.parentId] of every child in [children], recursively.
   ///
-  /// This is the recommended constructor for 3D-or-deeper structures. Because
+  /// This is the recommended constructor for multi-level structures. Because
   /// `parentId` is filled in by the entry itself, you never need to manually
   /// set it on the children — eliminating copy-paste mistakes and
   /// forgetting-to-set errors:
@@ -742,7 +742,7 @@ extension SelectChildEntryExt on SelectChildEntry {
 /// own `id` as the [parentId] of their children so callers never have to write
 /// `parentId` by hand. Because injection recurses with each node's own id, the
 /// resulting `parentId` always matches the node's direct parent — which
-/// `SelectController.validateEntries` requires for 2D-or-deeper trees.
+/// `SelectController.validateEntries` requires for two-level-or-deeper trees.
 SelectEntry<E> _injectParentId<E>(SelectEntry<E> entry, String parentId) {
   if (entry is SelectChildEntry<E>) {
     final injected = entry.copyWith(parentId: parentId);
@@ -800,8 +800,8 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
   /// [SelectChildEntry.parentId] of every child in [children], as well as
   /// any [header]/[footer] and their recursive children.
   ///
-  /// This is the recommended constructor for 2D-or-deeper structures. Because
-  /// `parentId` is filled in by the category itself, you never need to
+  /// This is the recommended constructor for two-level-or-deeper structures.
+  /// Because `parentId` is filled in by the category itself, you never need to
   /// manually set it on the children — eliminating copy-paste mistakes and
   /// forgetting-to-set errors:
   ///

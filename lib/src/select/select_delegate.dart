@@ -233,9 +233,15 @@ abstract class SelectDelegate {
   }
 }
 
-/// A cascading select for tree-structured data.
+/// A cascading select for two-level-or-deeper (category) tree data.
 ///
-/// This layout shows categories on the left and a cascading list to the right.
+/// This layout shows categories on the left and cascading item columns to
+/// the right, expanding one column per level with unlimited depth
+/// (category -> child -> grandchild -> ...).
+///
+/// Flat (parentless) structures are not supported; use
+/// [ListSelectDelegate], [GridSelectDelegate] or [FlattenSelectDelegate]
+/// for flat data.
 class CascadingSelectDelegate extends SelectDelegate {
   CascadingSelectDelegate({
     this.categoryBackgroundColor,
@@ -315,7 +321,16 @@ class CascadingSelectDelegate extends SelectDelegate {
   }
 }
 
-/// A single-column list select.
+/// A list select that renders entries as a single expandable list.
+///
+/// Supports both flat and two-level structures:
+/// - Flat: parentless entries render directly in a single list.
+/// - Two-level: each [SelectCategoryEntry] renders as an expandable group
+///   whose children are laid out by the category's `layout`.
+///
+/// At most two levels are rendered; levels nested deeper than the second
+/// are not rendered. Use [CascadingSelectDelegate] for multi-level
+/// (cascading) data.
 class ListSelectDelegate extends SelectDelegate {
   ListSelectDelegate({
     this.checkboxBuilder,
@@ -381,7 +396,18 @@ class ListSelectDelegate extends SelectDelegate {
   }
 }
 
-/// A grid select.
+/// A grid select with category tabs.
+///
+/// Supports both flat and two-level structures:
+/// - Flat: parentless entries render directly in a grid and no category
+///   tabs are shown.
+/// - Two-level: category tabs on top drive which category's children are
+///   shown below, laid out by the category's `layout` (defaulting to a
+///   grid built from this delegate's grid parameters).
+///
+/// At most two levels are rendered; levels nested deeper than the second
+/// are not rendered. Use [CascadingSelectDelegate] for multi-level
+/// (cascading) data.
 class GridSelectDelegate extends SelectDelegate {
   GridSelectDelegate({
     required this.crossAxisCount,
@@ -469,8 +495,19 @@ class GridSelectDelegate extends SelectDelegate {
   }
 }
 
-/// A "flatten" select that renders children in a grid while keeping the
-/// hierarchy behavior.
+/// A "flatten" select that renders each category's children in a single
+/// scrollable column with a category sidebar on the left.
+///
+/// Supports both flat and two-level structures:
+/// - Flat: parentless entries render directly as a wrapable chip bar and
+///   no category sidebar is shown.
+/// - Two-level: tapping the left sidebar scrolls the right column to the
+///   category's children, laid out by the category's `layout` (defaulting
+///   to a chip layout).
+///
+/// At most two levels are rendered; levels nested deeper than the second
+/// are not rendered. Use [CascadingSelectDelegate] for multi-level
+/// (cascading) data.
 class FlattenSelectDelegate extends SelectDelegate {
   FlattenSelectDelegate({
     @Deprecated(

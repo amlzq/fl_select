@@ -10,14 +10,18 @@ import 'select_layout.dart';
 import 'select_search_filter.dart';
 import 'widgets/widgets.dart';
 
-/// Vertical layout: category tabs on top and a grid of items below.
-/// Supports both one-dimensional (flat entries) and two-dimensional
+/// Vertical layout: category tabs on top and items below.
+/// Supports both flat (parentless entries) and two-level
 /// (category -> children) structured data.
 ///
 /// Behavior notes:
-/// - In a flat 1D structure, the top-level entries are rendered directly as a
+/// - In a flat structure, the top-level entries are rendered directly as a
 ///   grid and no category tabs are shown.
-/// - In a two-level structure, category tabs drive which children are shown.
+/// - In a two-level structure, category tabs drive which children are shown,
+///   laid out by the category's `layout` (defaulting to a grid built from
+///   the delegate's grid parameters).
+/// - At most two levels are rendered; levels nested deeper than the second
+///   are not rendered.
 /// - If a category contains an "Any" child entry, it may be selected by default.
 /// - If a category contains a custom range entry ([SelectRangeEntry.custom]),
 ///   two numeric fields are shown for min/max input.
@@ -53,7 +57,7 @@ class GridSelect extends StatefulWidget {
 }
 
 class GridSelectState extends State<GridSelect> {
-  /// Focused category entry (only used in a 2D structure).
+  /// Focused category entry (only used in a two-level-or-deeper structure).
   SelectCategoryEntry? _tempSelectedCategory;
 
   SelectController? controller;
@@ -84,7 +88,7 @@ class GridSelectState extends State<GridSelect> {
     _tempSelectedCategory = first is SelectCategoryEntry ? first : null;
   }
 
-  /// Whether the entries form a two-dimensional (category -> children) tree.
+  /// Whether the entries form a two-level (category -> children) tree.
   bool get _isCategoryTree => widget.entries.firstOrNull is SelectCategoryEntry;
 
   @override
@@ -191,7 +195,7 @@ class GridSelectState extends State<GridSelect> {
           'GridSelect: child entry "${entry.id}" has a parentId of '
           '"${entry.parentId}" that does not match any category; the tap was '
           'ignored. Check that the child\'s parentId points to its owning '
-          'category id (a 2D-or-deeper structure).',
+          'category id (a two-level-or-deeper structure).',
         );
         return true;
       }());
@@ -347,7 +351,7 @@ class GridSelectState extends State<GridSelect> {
 
   @override
   Widget build(BuildContext context) {
-    // In a flat 1D structure there are no categories, so no tab bar is shown
+    // In a flat structure there are no categories, so no tab bar is shown
     // and the top-level entries are rendered directly as a grid.
     if (!_isCategoryTree) {
       return Column(

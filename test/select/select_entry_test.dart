@@ -291,7 +291,7 @@ void main() {
       expect(grandchild.parentId, 'g');
     });
 
-    test('3D category tree passes SelectController.validateEntries', () {
+    test('multi-level category tree passes SelectController.validateEntries', () {
       final category = SelectCategoryEntry<dynamic>.children(
         id: 'c1',
         name: 'Cate 1',
@@ -320,7 +320,7 @@ void main() {
         expect((grandchild as SelectChildEntry).parentId, 'a');
       }
 
-      // A 3D tree must not fail parentId validation.
+      // A multi-level tree must not fail parentId validation.
       expect(
         () => SelectController.validateEntries([category]),
         returnsNormally,

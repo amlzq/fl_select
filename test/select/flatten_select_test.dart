@@ -32,7 +32,7 @@ SelectCategoryEntry<dynamic> _category(
 }
 
 void main() {
-  group('FlattenSelect 1D (flat) structure', () {
+  group('FlattenSelect flat structure', () {
     Widget harness(Set<SelectEntry> entries) {
       return MaterialApp(
         home: Scaffold(

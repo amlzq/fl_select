@@ -101,7 +101,7 @@ void main() {
     });
 
     testWidgets(
-        'shows an error when a 2D structure has a mismatched parentId instead of hanging',
+        'shows an error when a two-level structure has a mismatched parentId instead of hanging',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -133,7 +133,7 @@ void main() {
     });
 
     testWidgets(
-        'uses errorBuilder for a 2D structure with a mismatched parentId',
+        'uses errorBuilder for a two-level structure with a mismatched parentId',
         (tester) async {
       await tester.pumpWidget(
         MaterialApp(

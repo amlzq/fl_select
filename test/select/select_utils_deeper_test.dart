@@ -232,7 +232,7 @@ void main() {
     });
   });
 
-  group('SelectUtils – restorePreviousSelected (deeper)', () {
+  group('SelectUtils – restorePreviousSelected (multi-level)', () {
     test('restores multi-level cascading selections', () {
       final leaf = _text('p', 'l', 'L');
       final parent = _text('c', 'p', 'P', children: {leaf});
@@ -292,7 +292,7 @@ void main() {
     });
   });
 
-  group('SelectUtils – getResultLabel (deeper)', () {
+  group('SelectUtils – getResultLabel (multi-level)', () {
     test('returns null for null entries', () {
       expect(SelectUtils.getResultLabel(null, 'Multiple'), isNull);
     });

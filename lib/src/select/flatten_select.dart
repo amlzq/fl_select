@@ -13,13 +13,17 @@ import 'widgets/widgets.dart';
 
 /// Horizontal layout: category navigation on the left and a flattened item list on the right.
 /// Tapping the left side drives scrolling on the right; scrolling the right side highlights the left side.
-/// Supports both one-dimensional (flat entries) and two-dimensional
+/// Supports both flat (parentless entries) and two-level
 /// (category -> children) structured data.
 ///
 /// Behavior notes:
-/// - In a flat 1D structure, the top-level entries are rendered directly as a
+/// - In a flat structure, the top-level entries are rendered directly as a
 ///   wrapable [SelectChipBar] and no category sidebar is shown.
-/// - In a two-level structure, the sidebar drives which category's children are shown.
+/// - In a two-level structure, the sidebar drives which category's children
+///   are shown; each category's children are laid out by the category's
+///   `layout` (defaulting to a wrapable [SelectChipBar]).
+/// - At most two levels are rendered; levels nested deeper than the second
+///   are not rendered.
 /// - Child selection mode is determined per category by [SelectCategoryEntry.selectionMode].
 /// - The right-side content is scroll-synced with the left category list.
 /// - Custom range entries ([SelectRangeEntry.custom]) are rendered as an input
@@ -178,7 +182,7 @@ class FlattenSelectState extends State<FlattenSelect> {
   /// Selection Mode for category entries
   SelectionMode? get categorySelectionMode => delegate.selectionMode;
 
-  /// Whether the entries form a two-dimensional (category -> children) tree.
+  /// Whether the entries form a two-level (category -> children) tree.
   bool get _isCategoryTree => widget.entries.firstOrNull is SelectCategoryEntry;
 
   SelectCategoryEntry? get selectedCategory {
@@ -309,7 +313,7 @@ class FlattenSelectState extends State<FlattenSelect> {
   }
 
   void _onTerminalItemTap(SelectChildEntry item) {
-    // Flat 1D structure: no category owner, toggle the entry directly at the
+    // Flat structure: no category owner, toggle the entry directly at the
     // top level.
     if (!_isCategoryTree) {
       if (item is SelectRangeEntry && item.isCustom) {
@@ -338,7 +342,7 @@ class FlattenSelectState extends State<FlattenSelect> {
           'FlattenSelect: child entry "${item.id}" has a parentId of '
           '"${item.parentId}" that does not match any category; the tap was '
           'ignored. Check that the child\'s parentId points to its owning '
-          'category id (a 2D-or-deeper structure).',
+          'category id (a two-level-or-deeper structure).',
         );
         return true;
       }());
@@ -512,7 +516,7 @@ class FlattenSelectState extends State<FlattenSelect> {
             ))
         : null;
 
-    // Flat 1D structure: no category sidebar, render the top-level entries
+    // Flat structure: no category sidebar, render the top-level entries
     // directly as a wrapable chip bar.
     if (!_isCategoryTree) {
       return Column(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Builds a [SelectView] backed by a [GridSelectDelegate] so we can assert how
-/// [GridSelect] handles both 1D (flat) and 2D (category) structures.
+/// [GridSelect] handles both flat and two-level (category) structures.
 Widget _gridHarness(
   Set<SelectEntry> entries, {
   SelectionMode selectionMode = SelectionMode.single,
@@ -23,7 +23,7 @@ Widget _gridHarness(
 }
 
 void main() {
-  group('GridSelect 1D (flat) structure', () {
+  group('GridSelect flat structure', () {
     testWidgets('renders a grid without category tabs', (tester) async {
       await tester.pumpWidget(
         _gridHarness({
@@ -71,7 +71,7 @@ void main() {
     });
   });
 
-  group('GridSelect 2D (category) structure', () {
+  group('GridSelect two-level (category) structure', () {
     testWidgets('renders category tabs and the focused category grid',
         (tester) async {
       await tester.pumpWidget(
