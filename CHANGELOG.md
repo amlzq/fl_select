@@ -1,4 +1,4 @@
-## Next
+## 0.8.0
 
 - **FEATURE** add `toQueryMap()` and `toQueryParameters()` extensions on `SelectEntries` to serialize a selection tree into URL query parameters. Each category contributes key/value pairs keyed by its own id with the deepest selected leaf ids as values; header/footer subtrees are keyed by their own ids; an "any" leaf resolves to its parent id; and a custom `SelectRangeEntry` formats as `min-max`.
   - `toQueryMap()` returns a `Map<String, List<String>>` mirroring `Uri.queryParametersAll`, so repeated keys can be read back without losing values, or handed to HTTP clients that accept multi-value maps directly.

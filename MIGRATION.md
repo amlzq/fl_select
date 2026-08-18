@@ -1,6 +1,6 @@
 # Migration Guide
 
-## MIGRATE TO Next
+## MIGRATE TO 0.8.0
 
 ### `previousSelected` / `resetSelected` renamed to `selectedEntries` / `resetEntries`
 
