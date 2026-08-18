@@ -4,6 +4,18 @@ A customizable Flutter select widget for building filter bars, cascading menus, 
 
 ![Highlights](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/highlights.gif)
 
+### Agent Skills
+
+This repo bundles an [Agent Skill](https://skills.sh/) so AI coding agents (Claude Code, Cursor, Codex, Windsurf, GitHub Copilot, etc.) use `fl_select` correctly — accurate APIs, no hallucinated parameters.
+
+Install it with:
+
+```bash
+npx skills add amlzq/fl_select
+```
+
+Then just ask your agent to build a filter bar or select UI with `fl_select`. The skill lives in [`skills/fl-select`](skills/fl-select).
+
 ### Features
 
 Two layers work together: **entry points** decide _where_ the select appears, and **delegates** decide _how_ entries are laid out — any delegate plugs into any entry point.
