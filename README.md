@@ -4,20 +4,17 @@ A customizable Flutter select widget for building filter bars, cascading menus, 
 
 ![Highlights](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/highlights.gif)
 
-**`[Multiple Selection]` `[Async Loading]` `[Search]` `[5 Entry Points]` `[4 Delegate Layouts]` `[i18n ×10]`**
-
 ### Features
 
 Two layers work together: **entry points** decide _where_ the select appears, and **delegates** decide _how_ entries are laid out — any delegate plugs into any entry point.
 
-- **Entry points** — five ways to show a select: `SelectView` (inline), `PopupSelectBar` (tab bar), `PopupSelectButton` (single trigger), `showSelect` (dialog), `showModalBottomSelect` (bottom sheet).
-- **Delegates** — four layouts: `CascadingSelectDelegate` (tree), `GridSelectDelegate` (grid), `ListSelectDelegate` (single column), `FlattenSelectDelegate` (grid that keeps category grouping).
+- **Entry points** — five ways to show a select: `SelectView` , `PopupSelectBar` , `PopupSelectButton` , `showSelect` , `showModalBottomSelect` .
+- **Delegates** — four navigation styles: `CascadingSelectDelegate` , `GridSelectDelegate` , `ListSelectDelegate` , `FlattenSelectDelegate` . In all but the cascading one, each category's children are laid out by `category.layout` — list / grid / chips / range slider / counter.
 - Single & multiple selection via `SelectionMode` (per category or as a delegate fallback).
 - Async data loading through `entriesLoader`.
 - Search filtering: set `searchEnabled` on any delegate and a `SelectSearchBar` filters entries as you type (debounced, with a customizable predicate and theme).
 - Flexible entries: the "Any" entry clears a category, `SelectRangeEntry.custom` takes user min/max input, and an `immediate` entry applies on tap without the action bar.
 - `skeletonBuilder` & `errorBuilder` for loading and error states.
-- Serialize a selection into URL query parameters via `toQueryMap()` / `toQueryParameters()` (repeat / brackets / comma / indices / delimited layouts).
 - Theming via `SelectThemeData` and the `PopupSelectBarTheme` / `PopupSelectButtonTheme` extensions.
 - Built-in i18n in 10 languages via `SelectLocalizationsDelegate`.
 
@@ -41,7 +38,16 @@ import 'package:fl_select/fl_select.dart';
 
 A delegate controls both data loading and how the body is rendered, and any delegate works with every entry point above.
 
-##### Common concepts
+The built-in delegates are:
+
+| Delegate                  | Description                                                                                                             | Preview                                                                                                          |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `CascadingSelectDelegate` | A tree select: categories on the left, a cascading list on the right.                                                   | ![CascadingSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/cascading.jpg) |
+| `GridSelectDelegate`      | A grid layout (`crossAxisCount` is required; children follow `category.layout`, default grid).                                                                            | ![GridSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/grid.jpg)           |
+| `ListSelectDelegate`      | A single-column list (use `.name(...)` leaves for a flat list; children follow `category.layout`, default list).                                                         | ![ListSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/list.jpg)           |
+| `FlattenSelectDelegate`   | Renders children by `category.layout` (default chips) under a category sidebar synced to the scrolling column. Best with `SelectionMode.multiple` and an "Any" entry. | ![FlattenSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/flatten.jpg)     |
+
+#### SelectEntry
 
 Entries form a tree. `SelectCategoryEntry` is the root (a category) and `SelectChildEntry` is any non-root node, identified by its `parentId`.
 
@@ -82,20 +88,9 @@ SelectCategoryEntry(
 SelectTextEntry.name(id: 'default', name: 'Default');
 ```
 
-The built-in delegates are:
-
-| Delegate                  | Description                                                                                                                          | Preview                                                                                                          |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------- |
-| `CascadingSelectDelegate` | Categories on the left, cascading item columns on the right. Requires a two-level-or-deeper (category) structure; one column per level. | ![CascadingSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/cascading.jpg) |
-| `GridSelectDelegate`      | Category tabs on top, items below. Flat or two-level; children laid out by `category.layout` (default grid, `crossAxisCount` required). | ![GridSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/grid.jpg)           |
-| `ListSelectDelegate`      | Flat entries in a single list, or one expandable group per category.                                                                   | ![ListSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/list.jpg)           |
-| `FlattenSelectDelegate`   | Category sidebar on the left, children in one scrollable column. Flat or two-level; children laid out by `category.layout` (default chips). Best with `SelectionMode.multiple` and an "Any" entry. | ![FlattenSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/flatten.jpg)     |
-
-List, Grid and Flatten render at most two levels; use `CascadingSelectDelegate` for multi-level (cascading) data.
-
 #### SelectView
 
-`SelectView` embeds a select directly in a page or dialog body. Pass any `delegate` from the [Delegates](#delegates) section above — it controls both loading and rendering.
+`SelectView` embeds a select directly in a page or dialog body. Pass any `delegate`  — it controls both loading and rendering.
 
 ```dart
 SelectView(
@@ -242,16 +237,19 @@ Values are percent-encoded by default; pass `encode: false` when the caller hand
 
 #### Theming
 
-**Per instance** — pass `selectTheme` to any select entry point (`SelectView`, `showSelect`, `showModalBottomSelect`, `PopupSelectBar`, `PopupSelectButton`):
+**Per instance** — delegates carry the styling: set `selectedColor` / `onSelectedColor` (or any finer-grained `*Theme` field) directly on a delegate. `PopupSelectBar` also accepts a single `selectTheme` that overrides the styling of every tab's delegate:
 
 ```dart
-SelectView(
-  delegate: ListSelectDelegate(entriesLoader: _fetchSort),
-  selectTheme: SelectThemeData(
-    Theme.of(context),
-    selectedColor: Theme.of(context).colorScheme.primary,
-    onSelectedColor: Theme.of(context).colorScheme.onPrimary,
-  ),
+ListSelectDelegate(
+  entriesLoader: _fetchSort,
+  selectedColor: Theme.of(context).colorScheme.primary,
+  onSelectedColor: Theme.of(context).colorScheme.onPrimary,
+);
+
+PopupSelectBar(
+  tabs: ...,
+  selectDelegates: ...,
+  selectTheme: SelectThemeData(Theme.of(context)),
 );
 ```
 
