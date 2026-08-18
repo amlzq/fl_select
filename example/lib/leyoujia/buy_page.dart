@@ -585,14 +585,14 @@ class _BuyPageState extends State<BuyPage> {
                 return true;
               },
               onSelectShowed: (PopupTabData tabData) {
-                largePrint('onShowed: ${tabData.label}');
+                largePrint('onShowed: $tabData');
               },
               onSelectWillHide: (PopupTabData tabData) {
-                largePrint('onWillHide: ${tabData.label}');
+                largePrint('onWillHide: $tabData');
                 return true;
               },
               onSelectHidden: (PopupTabData tabData) {
-                largePrint('onHidden: ${tabData.label}');
+                largePrint('onHidden: $tabData');
               },
               onChanged: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onChanged: $tabData, $selected');

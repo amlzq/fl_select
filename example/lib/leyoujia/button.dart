@@ -175,11 +175,15 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
             ),
             onChanged: (SelectEntries selected) {
               largePrint('onChanged: $selected');
+              largePrint('toQueryMap: ${selected.toQueryMap()}');
+              largePrint('toQueryParameters: ${selected.toQueryParameters()}');
               _handleSelectChange('region', selected);
               showSelectResult(context, selected);
             },
             onApplied: (SelectEntries selected) {
               largePrint('onApplied: $selected');
+              largePrint('toQueryMap: ${selected.toQueryMap()}');
+              largePrint('toQueryParameters: ${selected.toQueryParameters()}');
               _handleSelectApply('region', selected);
               showSelectResult(context, selected);
             },
@@ -219,11 +223,17 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
               ),
               onChanged: (SelectEntries selected) {
                 largePrint('onChanged: $selected');
+                largePrint('toQueryMap: ${selected.toQueryMap()}');
+                largePrint(
+                    'toQueryParameters: ${selected.toQueryParameters()}');
                 _handleSelectChange('price', selected);
                 showSelectResult(context, selected);
               },
               onApplied: (SelectEntries selected) {
                 largePrint('onApplied: $selected');
+                largePrint('toQueryMap: ${selected.toQueryMap()}');
+                largePrint(
+                    'toQueryParameters: ${selected.toQueryParameters()}');
                 _handleSelectApply('price', selected);
                 showSelectResult(context, selected);
               },
@@ -246,11 +256,17 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
               ),
               onChanged: (SelectEntries selected) {
                 largePrint('onChanged: $selected');
+                largePrint('toQueryMap: ${selected.toQueryMap()}');
+                largePrint(
+                    'toQueryParameters: ${selected.toQueryParameters()}');
                 _handleSelectChange('floorplan', selected);
                 showSelectResult(context, selected);
               },
               onApplied: (SelectEntries selected) {
                 largePrint('onApplied: $selected');
+                largePrint('toQueryMap: ${selected.toQueryMap()}');
+                largePrint(
+                    'toQueryParameters: ${selected.toQueryParameters()}');
                 _handleSelectApply('floorplan', selected);
                 showSelectResult(context, selected);
               },
@@ -275,11 +291,17 @@ class _ButtonDemoPageState extends State<ButtonDemoPage> {
               ),
               onChanged: (SelectEntries selected) {
                 largePrint('onChanged: $selected');
+                largePrint('toQueryMap: ${selected.toQueryMap()}');
+                largePrint(
+                    'toQueryParameters: ${selected.toQueryParameters()}');
                 _handleSelectChange('sort', selected);
                 showSelectResult(context, selected);
               },
               onApplied: (SelectEntries selected) {
                 largePrint('onApplied: $selected');
+                largePrint('toQueryMap: ${selected.toQueryMap()}');
+                largePrint(
+                    'toQueryParameters: ${selected.toQueryParameters()}');
                 _handleSelectApply('sort', selected);
                 showSelectResult(context, selected);
               },

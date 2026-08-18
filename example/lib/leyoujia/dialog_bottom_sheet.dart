@@ -58,6 +58,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                 // showSelect). The query helpers now live on
                 // `SelectEntriesExtension`, so they can be called directly.
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.regionResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('region first: ${result.firstSelectedId}');
@@ -93,6 +96,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   title: const Text('价格选择器'),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.buyPriceResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('price first: ${result.firstSelectedId}');
@@ -125,6 +131,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   title: const Text('户型选择器'),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.floorPlanBuyResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('result: $result');
@@ -151,6 +160,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   title: const Text('更多选择器'),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.moreBuyResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('result: $result');
@@ -186,6 +198,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   title: const Text('排序选择器'),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.sortBuyResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('sort id: ${result.firstSelectedId}');
@@ -214,6 +229,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   title: const Text('区域选择器'),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.regionResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('region first: ${result.firstSelectedId}');
@@ -249,6 +267,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   title: const Text('价格选择器'),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.buyPriceResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('price first: ${result.firstSelectedId}');
@@ -279,6 +300,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   title: const Text('户型选择器'),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.floorPlanBuyResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('result: $result');
@@ -307,6 +331,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   title: const Text('更多选择器'),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.moreBuyResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('result: $result');
@@ -330,6 +357,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   title: const Text('排序选择器'),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.sortBuyResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('sort id: ${result.firstSelectedId}');

@@ -74,6 +74,14 @@ class HouseFiltersRepository {
         )
         .toSet();
 
+    // insert any entry
+    for (SelectEntry category in entries) {
+      category.children?.insert(
+          0,
+          SelectTextEntry.any(
+              parentId: category.id, name: anyEntryText, immediate: true));
+    }
+
     debugPrint('neighborhood length: ${entries.length}');
     return Future.value(entries);
   }

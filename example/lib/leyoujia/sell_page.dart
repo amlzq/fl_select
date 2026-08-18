@@ -261,10 +261,10 @@ class _SellPageState extends State<SellPage> {
                 ),
               ],
               onSelectShowed: (PopupTabData tabData) {
-                largePrint('onShowed: ${tabData.label}');
+                largePrint('onShowed: $tabData');
               },
               onSelectHidden: (PopupTabData tabData) {
-                largePrint('onHidden: ${tabData.label}');
+                largePrint('onHidden: $tabData');
               },
               onChanged: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onChanged: tabData=$tabData, selected=$selected');

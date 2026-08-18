@@ -538,22 +538,25 @@ class _HousePageState extends State<HousePage> {
                 return true;
               },
               onSelectShowed: (PopupTabData tabData) {
-                debugPrint('onShowed: ${tabData.label}');
+                debugPrint('onShowed: $tabData');
               },
               onSelectWillHide: (PopupTabData tabData) {
-                debugPrint('onWillHide: ${tabData.label}');
+                debugPrint('onWillHide: $tabData');
                 return true;
               },
               onSelectHidden: (PopupTabData tabData) {
-                debugPrint('onHidden: ${tabData.label}');
+                debugPrint('onHidden: $tabData');
               },
               onChanged: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onChanged: tabData=$tabData, selected=$selected');
+                largePrint('toQueryMap: ${selected.toQueryMap()}');
                 _handleSelectChange(tabData, selected);
                 showSelectResult(context, selected);
               },
               onApplied: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onApplied: tabData=$tabData, selected=$selected');
+                largePrint(
+                    'toQueryParameters: ${selected.toQueryParameters()}');
                 _handleSelectApply(tabData, selected);
                 if (tabData.index == 3) {
                   _moreApplyTextDebounce?.cancel();

@@ -58,6 +58,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   title: const Text('Neighborhood'),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.neighborhoodResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 final first = result.firstSelectedId;
@@ -88,6 +91,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   centerTitle: false,
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.priceResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('price first: ${result.firstSelectedId}');
@@ -119,6 +125,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   leading: const Icon(Icons.room),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.roomsResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('result: $result');
@@ -155,6 +164,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   ),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.moreResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('result: $result');
@@ -194,6 +206,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                 );
 
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.sortResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('sort id: ${result.firstSelectedId}');
@@ -225,6 +240,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   title: const Text('Neighborhood'),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.neighborhoodResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 final first = result.firstSelectedId;
@@ -258,6 +276,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   centerTitle: false,
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.priceResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('price first: ${result.firstSelectedId}');
@@ -287,6 +308,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   leading: const Icon(Icons.room),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.roomsResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('result: $result');
@@ -318,6 +342,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   ),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.moreResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('result: $result');
@@ -344,6 +371,9 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   ),
                 );
                 if (result == null) return;
+                largePrint('result: $result');
+                largePrint('toQueryMap: ${result.toQueryMap()}');
+                largePrint('toQueryParameters: ${result.toQueryParameters()}');
                 _filtersRepo.sortResult = result;
                 if (context.mounted) showSelectResult(context, result);
                 largePrint('sort id: ${result.firstSelectedId}');
