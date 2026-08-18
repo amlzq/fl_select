@@ -62,7 +62,7 @@ void main() {
 
       expect(
         entry.toString(),
-        'SelectChildEntry(id: e, parentId: p, name: Entry)',
+        'SelectChildEntry(id: e, parentId: p, name: Entry, children: null)',
       );
     });
   });
