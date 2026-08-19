@@ -300,18 +300,8 @@ class PopupSelectController extends ChangeNotifier {
     hideSelect();
   }
 
-  /// @nodoc
-  @Deprecated(
-      'Use toggleSelect instead. This will be removed in a future minor version.')
-  void toggleSelector({int? index}) => toggleSelect(index: index);
-
   /// Whether the select overlay is currently showing.
   bool get isSelectShowing => _isExpanded;
-
-  /// @nodoc
-  @Deprecated(
-      'Use isSelectShowing instead. This will be removed in a future minor version.')
-  bool get isSelectorShowing => isSelectShowing;
 
   /// Hides the select overlay if it is showing.
   void hideSelect({bool immediate = false}) {
@@ -363,12 +353,6 @@ class PopupSelectController extends ChangeNotifier {
       notifyListeners();
     });
   }
-
-  /// @nodoc
-  @Deprecated(
-      'Use hideSelect instead. This will be removed in a future minor version.')
-  void hideSelector({bool immediate = false}) =>
-      hideSelect(immediate: immediate);
 
   void _showSelect(int? index) {
     if (_isDisposed) return;

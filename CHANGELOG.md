@@ -1,3 +1,7 @@
+## Next
+
+- **BREAKING** remove the deprecated lifecycle aliases introduced at 0.7.0 by the `onSelector*` → `onSelect*` renaming: the `onSelectorShowed` / `onSelectorHidden` / `onSelectorWillShow` / `onSelectorWillHide` constructor parameters and getters on `PopupSelectBar` and `PopupSelectButton`, and the `PopupSelectController.hideSelector` / `toggleSelector` / `isSelectorShowing` members. Use `onSelectShowed` / `onSelectHidden` / `onSelectWillShow` / `onSelectWillHide`, `hideSelect`, `toggleSelect` and `isSelectShowing` instead; see the [Migration guide](https://github.com/amlzq/fl_select/blob/main/MIGRATION.md#migrate-to-070) for the old → new tables.
+
 ## 0.8.0
 
 - **FEATURE** add `toQueryMap()` and `toQueryParameters()` extensions on `SelectEntries` to serialize a selection tree into URL query parameters. Each category contributes key/value pairs keyed by its own id with the deepest selected leaf ids as values; header/footer subtrees are keyed by their own ids; an "any" leaf resolves to its parent id; and a custom `SelectRangeEntry` formats as `min-max`.

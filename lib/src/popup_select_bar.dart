@@ -53,10 +53,10 @@ class PopupSelectBar extends StatefulWidget implements PreferredSizeWidget {
     this.indicator,
     this.unselectedIndicator,
     this.overlayStyle,
-    PopupSelectBarToggleCallback? onSelectShowed,
-    PopupSelectBarToggleCallback? onSelectHidden,
-    PopupSelectBarWillToggleCallback? onSelectWillShow,
-    PopupSelectBarWillToggleCallback? onSelectWillHide,
+    this.onSelectShowed,
+    this.onSelectHidden,
+    this.onSelectWillShow,
+    this.onSelectWillHide,
     this.onChanged,
     required this.onApplied,
     this.onReset,
@@ -64,30 +64,7 @@ class PopupSelectBar extends StatefulWidget implements PreferredSizeWidget {
     this.initialIndex,
     this.selectTheme,
     this.direction = PopupSelectDirection.below,
-    @Deprecated(
-        'Use onSelectShowed instead. This will be removed in a future minor version.')
-    PopupSelectBarToggleCallback? onSelectorShowed,
-    @Deprecated(
-        'Use onSelectHidden instead. This will be removed in a future minor version.')
-    PopupSelectBarToggleCallback? onSelectorHidden,
-    @Deprecated(
-        'Use onSelectWillShow instead. This will be removed in a future minor version.')
-    PopupSelectBarWillToggleCallback? onSelectorWillShow,
-    @Deprecated(
-        'Use onSelectWillHide instead. This will be removed in a future minor version.')
-    PopupSelectBarWillToggleCallback? onSelectorWillHide,
-  })  : onSelectShowed = onSelectShowed ?? onSelectorShowed,
-        onSelectHidden = onSelectHidden ?? onSelectorHidden,
-        onSelectWillShow = onSelectWillShow ?? onSelectorWillShow,
-        onSelectWillHide = onSelectWillHide ?? onSelectorWillHide,
-        assert(onSelectShowed == null || onSelectorShowed == null,
-            'Either provide onSelectShowed or onSelectorShowed, not both.'),
-        assert(onSelectHidden == null || onSelectorHidden == null,
-            'Either provide onSelectHidden or onSelectorHidden, not both.'),
-        assert(onSelectWillShow == null || onSelectorWillShow == null,
-            'Either provide onSelectWillShow or onSelectorWillShow, not both.'),
-        assert(onSelectWillHide == null || onSelectorWillHide == null,
-            'Either provide onSelectWillHide or onSelectorWillHide, not both.');
+  });
 
   /// The set of tabs to display in the bar.
   ///
@@ -144,26 +121,6 @@ class PopupSelectBar extends StatefulWidget implements PreferredSizeWidget {
   /// Invoked just before the overlay is hidden for a tab. Returning `false`
   /// cancels the hide, leaving the overlay visible.
   final PopupSelectBarWillToggleCallback? onSelectWillHide;
-
-  /// @nodoc
-  @Deprecated(
-      'Use onSelectShowed instead. This will be removed in a future minor version.')
-  PopupSelectBarToggleCallback? get onSelectorShowed => onSelectShowed;
-
-  /// @nodoc
-  @Deprecated(
-      'Use onSelectHidden instead. This will be removed in a future minor version.')
-  PopupSelectBarToggleCallback? get onSelectorHidden => onSelectHidden;
-
-  /// @nodoc
-  @Deprecated(
-      'Use onSelectWillShow instead. This will be removed in a future minor version.')
-  PopupSelectBarWillToggleCallback? get onSelectorWillShow => onSelectWillShow;
-
-  /// @nodoc
-  @Deprecated(
-      'Use onSelectWillHide instead. This will be removed in a future minor version.')
-  PopupSelectBarWillToggleCallback? get onSelectorWillHide => onSelectWillHide;
 
   /// Fired whenever a select reports a selection change.
   final PopupSelectBarResultCallback? onChanged;
