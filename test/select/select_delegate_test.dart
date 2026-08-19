@@ -170,4 +170,104 @@ void main() {
       expect(find.text('Leaf 0'), findsNothing);
     });
   });
+
+  group('sync data', () {
+    test('entries can be supplied without a loader', () {
+      final entries = <SelectEntry<dynamic>>{
+        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+      };
+      final delegate = ListSelectDelegate(entries: entries);
+
+      expect(delegate.hasSyncEntries, isTrue);
+      expect(delegate.entries, same(entries));
+    });
+
+    test('asyncEntries wraps sync entries in a future', () async {
+      final entries = <SelectEntry<dynamic>>{
+        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+      };
+      final delegate = ListSelectDelegate(entries: entries);
+
+      expect(await delegate.asyncEntries, same(entries));
+    });
+
+    test('entries and entriesLoader are mutually exclusive', () {
+      expect(
+        () => ListSelectDelegate(
+          entries: const <SelectEntry<dynamic>>{},
+          entriesLoader: () async => <SelectEntry<dynamic>>{},
+        ),
+        throwsA(isA<AssertionError>()),
+      );
+    });
+
+    test('selectedEntries and selectedEntriesLoader are mutually exclusive',
+        () {
+      expect(
+        () => ListSelectDelegate(
+          entries: const <SelectEntry<dynamic>>{},
+          selectedEntries: const <SelectEntry<dynamic>>{},
+          selectedEntriesLoader: () => const <SelectEntry<dynamic>>{},
+        ),
+        throwsA(isA<AssertionError>()),
+      );
+    });
+
+    test('resetEntries and resetEntriesLoader are mutually exclusive', () {
+      expect(
+        () => ListSelectDelegate(
+          entries: const <SelectEntry<dynamic>>{},
+          resetEntries: const <SelectEntry<dynamic>>{},
+          resetEntriesLoader: () => const <SelectEntry<dynamic>>{},
+        ),
+        throwsA(isA<AssertionError>()),
+      );
+    });
+
+    test('selectedEntries supplied via the constructor is returned as-is',
+        () {
+      final selected = <SelectEntry<dynamic>>{
+        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+      };
+      final delegate = ListSelectDelegate(
+        entries: const <SelectEntry<dynamic>>{},
+        selectedEntries: selected,
+      );
+
+      expect(delegate.selectedEntries, same(selected));
+    });
+
+    test('resetEntries supplied via the constructor is returned as-is', () {
+      final reset = <SelectEntry<dynamic>>{
+        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+      };
+      final delegate = ListSelectDelegate(
+        entries: const <SelectEntry<dynamic>>{},
+        resetEntries: reset,
+      );
+
+      expect(delegate.resetEntries, same(reset));
+    });
+
+    testWidgets('sync entries render on the first frame without a skeleton',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SelectView(
+              delegate: ListSelectDelegate(
+                entries: <SelectEntry<dynamic>>{
+                  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                },
+              ),
+              onChanged: (_) {},
+            ),
+          ),
+        ),
+      );
+      // No pumpAndSettle: sync entries must be visible on the very first
+      // frame, proving the skeleton pass is skipped entirely.
+      expect(find.text('A'), findsOneWidget);
+    });
+  });
 }

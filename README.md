@@ -23,7 +23,7 @@ Two layers work together: **entry points** decide _where_ the select appears, an
 - **Entry points** — five ways to show a select: `SelectView` , `PopupSelectBar` , `PopupSelectButton` , `showSelect` , `showModalBottomSelect` .
 - **Delegates** — four navigation styles: `CascadingSelectDelegate` , `GridSelectDelegate` , `ListSelectDelegate` , `FlattenSelectDelegate` . In all but the cascading one, each category's children are laid out by `category.layout` — list / grid / chips / range slider / counter.
 - Single & multiple selection via `SelectionMode` (per category or as a delegate fallback).
-- Async data loading through `entriesLoader`.
+- Async data loading through `entriesLoader`, or synchronous data via `entries` / `selectedEntries` / `resetEntries` (rendered on the first frame, no skeleton).
 - Search filtering: set `searchEnabled` on any delegate and a `SelectSearchBar` filters entries as you type (debounced, with a customizable predicate and theme).
 - Flexible entries: the "Any" entry clears a category, `SelectRangeEntry.custom` takes user min/max input, and an `immediate` entry applies on tap without the action bar.
 - `skeletonBuilder` & `errorBuilder` for loading and error states.
@@ -71,7 +71,7 @@ Entries form a tree. `SelectCategoryEntry` is the root (a category) and `SelectC
 
 Selection is controlled by `SelectionMode` (`single` by default, or `multiple`), set on a `SelectCategoryEntry` (per category) or on the delegate (fallback). In multiple-selection mode, an entry with `immediate: true` applies on tap and skips the action bar.
 
-Entries load asynchronously via `entriesLoader`, which returns a `Future<SelectEntries>` where `SelectEntries` is `Set<SelectEntry>`.
+Entries load asynchronously via `entriesLoader`, which returns a `Future<SelectEntries>` where `SelectEntries` is `Set<SelectEntry>`. For static data, skip the loader and pass the values directly — mutually exclusive with the loaders:
 
 ```dart
 // A category with single-selection children
@@ -98,6 +98,15 @@ SelectCategoryEntry(
 
 // Parentless leaves for a flat list
 SelectTextEntry.name(id: 'default', name: 'Default');
+```
+
+```dart
+// Static data: no loader, no async — renders on the first frame
+ListSelectDelegate(
+  entries: {SelectTextEntry.name(id: 'relevance', name: 'Relevance')},
+  selectedEntries: {SelectTextEntry.name(id: 'relevance', name: 'Relevance')},
+  resetEntries: {SelectTextEntry.name(id: 'relevance', name: 'Relevance')},
+);
 ```
 
 #### SelectView

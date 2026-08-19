@@ -23,7 +23,8 @@ typedef SelectActionBarBuilder = Widget Function(
 /// Base configuration for a select.
 ///
 /// A [SelectDelegate] is responsible for:
-/// - Defining how entries are fetched and restored (via loader callbacks).
+/// - Defining its data, either synchronously (`entries`, `selectedEntries`
+///   and `resetEntries`) or lazily via loader callbacks.
 /// - Defining UI/theme overrides (colors and per-widget themes).
 /// - Building the select body widget, a loading skeleton and an error widget.
 ///
@@ -32,8 +33,11 @@ typedef SelectActionBarBuilder = Widget Function(
 abstract class SelectDelegate {
   SelectDelegate({
     this.selectionMode = SelectionMode.single,
-    required this.entriesLoader,
+    SelectEntries? entries,
+    this.entriesLoader,
+    SelectEntries? selectedEntries,
     this.selectedEntriesLoader,
+    SelectEntries? resetEntries,
     this.resetEntriesLoader,
     this.actionBarBuilder,
     this.selectedColor,
@@ -61,22 +65,51 @@ abstract class SelectDelegate {
     this.panelTheme,
     this.skeletonBuilder,
     this.errorBuilder,
-  });
+  })  : _entries = entries,
+        _selectedEntries = selectedEntries,
+        _resetEntries = resetEntries,
+        assert(
+          (entries != null) != (entriesLoader != null),
+          'Provide exactly one of entries or entriesLoader.',
+        ),
+        assert(
+          selectedEntries == null || selectedEntriesLoader == null,
+          'Provide at most one of selectedEntries or selectedEntriesLoader.',
+        ),
+        assert(
+          resetEntries == null || resetEntriesLoader == null,
+          'Provide at most one of resetEntries or resetEntriesLoader.',
+        );
 
   /// Selection mode applied to category entries.
   final SelectionMode selectionMode;
 
+  final SelectEntries? _entries;
+
+  /// The full selectable entries supplied synchronously, if any.
+  ///
+  /// When non-null, the select body renders them directly on the first
+  /// frame — without going through a loading skeleton — and [entriesLoader]
+  /// must be null. The entries are fixed for the delegate's lifetime;
+  /// create a new delegate when the data changes.
+  SelectEntries? get entries => _entries;
+
+  /// Whether the entries were supplied synchronously via [entries], as
+  /// opposed to an [entriesLoader].
+  bool get hasSyncEntries => _entries != null;
+
   /// Fetches the full selectable entries for this select.
   ///
   /// The select panel can display a loading skeleton while awaiting the
-  /// result.
-  final Future<SelectEntries> Function() entriesLoader;
+  /// result. Exactly one of [entries] and [entriesLoader] must be provided.
+  final Future<SelectEntries> Function()? entriesLoader;
 
   Future<SelectEntries>? _asyncEntries;
 
-  /// The selectable entries future, lazily initialized from [entriesLoader]
-  /// on first access.
-  Future<SelectEntries>? get asyncEntries => _asyncEntries ??= entriesLoader();
+  /// The selectable entries future, lazily initialized on first access from
+  /// [entries] (wrapped in [Future.value]) or [entriesLoader].
+  Future<SelectEntries>? get asyncEntries => _asyncEntries ??=
+      _entries != null ? Future.value(_entries) : entriesLoader?.call();
 
   /// Returns the previously selected entries to restore.
   ///
@@ -85,8 +118,11 @@ abstract class SelectDelegate {
 
   SelectEntries? _selectedEntries;
 
-  /// The previously selected entries, lazily initialized from
-  /// [selectedEntriesLoader] on first access.
+  /// The previously selected entries to restore.
+  ///
+  /// Returns the value passed to the constructor, if any (in which case
+  /// [selectedEntriesLoader] is never called). Otherwise the value is
+  /// lazily initialized from [selectedEntriesLoader] on first access.
   ///
   /// Can be set explicitly to override the cached value.
   SelectEntries? get selectedEntries =>
@@ -99,7 +135,7 @@ abstract class SelectDelegate {
   SelectEntries? _resetEntries;
 
   /// The reset selection entries, lazily initialized from [resetEntriesLoader]
-  /// on first access.
+  /// on first access, or the value passed to the constructor.
   SelectEntries? get resetEntries =>
       _resetEntries ??= resetEntriesLoader?.call();
 
@@ -250,8 +286,11 @@ class CascadingSelectDelegate extends SelectDelegate {
     this.radioBuilder,
     this.isScrollable = false,
     super.selectionMode = SelectionMode.single,
-    required super.entriesLoader,
+    super.entries,
+    super.entriesLoader,
+    super.selectedEntries,
     super.selectedEntriesLoader,
+    super.resetEntries,
     super.resetEntriesLoader,
     super.actionBarBuilder,
     super.selectedColor,
@@ -336,8 +375,11 @@ class ListSelectDelegate extends SelectDelegate {
     this.checkboxBuilder,
     this.radioBuilder,
     super.selectionMode = SelectionMode.single,
-    required super.entriesLoader,
+    super.entries,
+    super.entriesLoader,
+    super.selectedEntries,
     super.selectedEntriesLoader,
+    super.resetEntries,
     super.resetEntriesLoader,
     super.actionBarBuilder,
     super.selectedColor,
@@ -417,8 +459,11 @@ class GridSelectDelegate extends SelectDelegate {
     this.checkboxBuilder,
     this.radioBuilder,
     super.selectionMode = SelectionMode.single,
-    required super.entriesLoader,
+    super.entries,
+    super.entriesLoader,
+    super.selectedEntries,
     super.selectedEntriesLoader,
+    super.resetEntries,
     super.resetEntriesLoader,
     super.actionBarBuilder,
     super.selectedColor,
@@ -527,8 +572,11 @@ class FlattenSelectDelegate extends SelectDelegate {
     )
     this.childAspectRatio = 1.0,
     super.selectionMode = SelectionMode.single,
-    required super.entriesLoader,
+    super.entries,
+    super.entriesLoader,
+    super.selectedEntries,
     super.selectedEntriesLoader,
+    super.resetEntries,
     super.resetEntriesLoader,
     super.actionBarBuilder,
     super.selectedColor,

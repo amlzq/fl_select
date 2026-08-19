@@ -184,73 +184,91 @@ class _SelectPanelState extends State<SelectPanel> {
       child: _PanelDecoratedBox(
         child: SelectControllerProvider(
           controller: _controller,
-          child: FutureBuilder<SelectEntries>(
-            future: widget.delegate.asyncEntries,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.done) {
-                if (snapshot.hasError) {
-                  return widget.delegate.buildError(
-                    context,
-                    snapshot.error!,
-                    snapshot.stackTrace,
-                  );
-                } else {
-                  final entries = snapshot.data?.toList() ?? <SelectEntry>[];
-                  // Validate the loaded entries up front so that bad
-                  // parent/child relationships surface through the error UI
-                  // and are logged to the console, instead of escaping during
-                  // a descendant's build phase (which freezes the frame).
-                  try {
-                    SelectController.validateEntries(entries);
-                  } catch (error, stackTrace) {
-                    FlutterError.reportError(
-                      FlutterErrorDetails(
-                        exception: error,
-                        stack: stackTrace,
-                        library: 'fl_select',
-                        context: ErrorDescription(
-                          'while validating select entries for '
-                          '${widget.delegate.runtimeType}',
-                        ),
-                      ),
-                    );
-                    return widget.delegate
-                        .buildError(context, error, stackTrace);
-                  }
-                  return GestureDetector(
-                    behavior: HitTestBehavior.opaque,
-                    onTap: () {
-                      FocusScope.of(context).unfocus();
-                    },
-                    child: Column(
-                      children: [
-                        if (widget.delegate.searchEnabled)
-                          SelectSearchBar(
-                            controller: _searchController,
-                            focusNode: _searchFocusNode,
-                            hintText: widget.delegate.searchHintText,
-                            onChanged: _onSearchChanged,
-                            theme: widget.delegate.searchBarTheme,
-                          ),
-                        Expanded(
-                          child: widget.delegate.buildBody(
-                            context,
-                            entries,
-                            _controller.selectedEntries,
-                            searchQuery: _searchQuery,
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                }
-              } else {
-                // Request in progress: show loading
-                return widget.delegate.buildSkeleton(context);
-              }
-            },
+          child: _buildBody(context),
+        ),
+      ),
+    );
+  }
+
+  /// Builds the select body: an async [FutureBuilder] around
+  /// [SelectDelegate.asyncEntries] when a loader is used, or the content
+  /// directly when entries were supplied synchronously — in which case the
+  /// first frame renders the entries without a skeleton pass.
+  Widget _buildBody(BuildContext context) {
+    if (widget.delegate.hasSyncEntries) {
+      return _buildContent(context, widget.delegate.entries!.toList());
+    }
+    return FutureBuilder<SelectEntries>(
+      future: widget.delegate.asyncEntries,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.done) {
+          if (snapshot.hasError) {
+            return widget.delegate.buildError(
+              context,
+              snapshot.error!,
+              snapshot.stackTrace,
+            );
+          } else {
+            return _buildContent(
+              context,
+              snapshot.data?.toList() ?? <SelectEntry>[],
+            );
+          }
+        } else {
+          // Request in progress: show loading
+          return widget.delegate.buildSkeleton(context);
+        }
+      },
+    );
+  }
+
+  /// Validates [entries] up front and builds the search bar (when enabled)
+  /// plus the delegate body.
+  Widget _buildContent(BuildContext context, List<SelectEntry> entries) {
+    // Validate the loaded entries up front so that bad parent/child
+    // relationships surface through the error UI and are logged to the
+    // console, instead of escaping during a descendant's build phase
+    // (which freezes the frame).
+    try {
+      SelectController.validateEntries(entries);
+    } catch (error, stackTrace) {
+      FlutterError.reportError(
+        FlutterErrorDetails(
+          exception: error,
+          stack: stackTrace,
+          library: 'fl_select',
+          context: ErrorDescription(
+            'while validating select entries for '
+            '${widget.delegate.runtimeType}',
           ),
         ),
+      );
+      return widget.delegate.buildError(context, error, stackTrace);
+    }
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusScope.of(context).unfocus();
+      },
+      child: Column(
+        children: [
+          if (widget.delegate.searchEnabled)
+            SelectSearchBar(
+              controller: _searchController,
+              focusNode: _searchFocusNode,
+              hintText: widget.delegate.searchHintText,
+              onChanged: _onSearchChanged,
+              theme: widget.delegate.searchBarTheme,
+            ),
+          Expanded(
+            child: widget.delegate.buildBody(
+              context,
+              entries,
+              _controller.selectedEntries,
+              searchQuery: _searchQuery,
+            ),
+          ),
+        ],
       ),
     );
   }

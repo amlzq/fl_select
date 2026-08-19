@@ -27,7 +27,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: CascadingSelectDelegate(
-                    entriesLoader: () async => {
+                    entries: {
                       SelectCategoryEntry.children(
                         id: 'cate1',
                         name: 'Cate 1',
@@ -164,7 +164,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: CascadingSelectDelegate(
-                    entriesLoader: () async => {
+                    entries: {
                       SelectCategoryEntry(
                         id: 'cate1',
                         name: 'Cate 1',
@@ -227,7 +227,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: GridSelectDelegate(
-                    entriesLoader: () async => {
+                    entries: {
                       SelectRangeEntry.custom(),
                       SelectTextEntry.name(id: 'a', name: 'A'),
                       SelectTextEntry.name(id: 'b', name: 'B'),
@@ -255,7 +255,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: GridSelectDelegate(
-                    entriesLoader: () async => {
+                    entries: {
                       SelectCategoryEntry.children(
                         id: 'cate1',
                         name: 'Cate 1',
@@ -360,7 +360,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: FlattenSelectDelegate(
-                    entriesLoader: () async => {
+                    entries: {
                       SelectTextEntry.name(id: 'a', name: 'Tiger'),
                       SelectTextEntry.name(id: 'b', name: 'Lion'),
                       SelectTextEntry.name(id: 'c', name: 'Bear'),
@@ -396,7 +396,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: FlattenSelectDelegate(
-                    entriesLoader: () async => {
+                    entries: {
                       SelectCategoryEntry.children(
                         id: 'cate1',
                         name: 'Cate 1',
@@ -485,7 +485,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: ListSelectDelegate(
-                    entriesLoader: () async => {
+                    entries: {
                       SelectTextEntry.name(id: 'a', name: 'A'),
                       SelectTextEntry.name(id: 'b', name: 'B'),
                       SelectTextEntry.name(id: 'c', name: 'C'),
@@ -514,7 +514,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: ListSelectDelegate(
-                    entriesLoader: () async => {
+                    entries: {
                       SelectCategoryEntry.children(
                         id: 'cate1',
                         name: 'Cate 1',
