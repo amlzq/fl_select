@@ -1,6 +1,6 @@
 ---
 name: fl-select
-description: A customizable Flutter select widget (the fl_select package) for filter bars, cascading menus, and pickers with single/multiple selection, async loading, search filtering, theming, and i18n. Use this skill when building filter UIs, dropdown menus with categories, cascading/grid/list/chip selects, range pickers, or whenever working with fl_select APIs (SelectView, PopupSelectBar, PopupSelectButton, showSelect, showModalBottomSelect, SelectDelegate, SelectEntry).
+description: A customizable Flutter select widget (the fl_select package) for filter bars, cascading menus, and pickers with single/multiple selection, sync (static `entries`) or async data loading, search filtering, theming, and i18n. Use this skill when building filter UIs, dropdown menus with categories, cascading/grid/list/chip selects, range pickers, or whenever working with fl_select APIs (SelectView, PopupSelectBar, PopupSelectButton, showSelect, showModalBottomSelect, SelectDelegate, SelectEntry).
 ---
 
 # fl_select
@@ -16,7 +16,7 @@ A Flutter package for building filter bars, cascading menus, and pickers.
 
 Any delegate plugs into any entry point — there is exactly one delegate parameter, no per-entry-point variants. Custom layouts come from subclassing `SelectDelegate`, not from new entry points.
 
-Data always loads through the delegate's `entriesLoader` (async-first): `Future<SelectEntries> Function()` where `SelectEntries` is `Set<SelectEntry>`.
+Data reaches the delegate either synchronously (`entries`, `selectedEntries`, `resetEntries` passed directly — static data renders on the first frame, no skeleton) or asynchronously via loaders (`entriesLoader`: `Future<SelectEntries> Function()`, where `SelectEntries` is `Set<SelectEntry>`). Pass exactly one of `entries` / `entriesLoader`; sync data is fixed for a delegate's lifetime — create a new delegate when the data changes.
 
 ## Selection semantics (memorize)
 
@@ -73,7 +73,7 @@ Read these on demand; do not guess APIs:
 | Entry points (view, bar, button, dialog, sheet), controllers, callbacks | [references/entry-points.md](references/entry-points.md) |
 | Delegates, per-category `layout`, shared delegate parameters | [references/delegates.md](references/delegates.md) |
 | Entry tree (`SelectEntry` types, "Any", `immediate`, headers/footers) | [references/entries.md](references/entries.md) |
-| Async loading, initial selection, skeletons, search, serialization | [references/async-search.md](references/async-search.md) |
+| Data loading (sync/async), initial selection, skeletons, search, serialization | [references/loading-search.md](references/loading-search.md) |
 | Theming (`SelectThemeData`, theme extensions) and i18n | [references/theming-i18n.md](references/theming-i18n.md) |
 
 Package: <https://pub.dev/packages/fl_select> · Playground: <https://flselect.zeaon.dev/>

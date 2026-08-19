@@ -1,8 +1,23 @@
-# Async loading, search, and serialization
+# Data loading, search, and serialization
 
-## entriesLoader — async-first
+## Data loading — sync or async
 
-Every delegate loads data through `entriesLoader`, a `Future<SelectEntries> Function()` where `SelectEntries` is `Set<SelectEntry>`:
+**Sync (static data)**: pass `entries` directly. It renders on the first frame with no skeleton pass; `selectedEntries` / `resetEntries` seed the initial and "Reset" selection the same way, without loaders.
+
+```dart
+ListSelectDelegate(
+  entries: {
+    SelectTextEntry.name(id: 'any', name: 'Any'),
+    SelectTextEntry.name(id: 'a', name: 'A'),
+  },
+  selectedEntries: {SelectTextEntry.name(id: 'a', name: 'A')}, // optional
+  resetEntries: {SelectTextEntry.name(id: 'a', name: 'A')},    // optional
+);
+```
+
+Mutual exclusion (assert-enforced): exactly one of `entries` / `entriesLoader`; at most one of `selectedEntries` / `selectedEntriesLoader` and of `resetEntries` / `resetEntriesLoader`. Sync data is fixed for a delegate's lifetime — create a new delegate when the data changes.
+
+**Async**: pass `entriesLoader`, a `Future<SelectEntries> Function()` where `SelectEntries` is `Set<SelectEntry>`:
 
 ```dart
 Future<SelectEntries> _fetchNeighborhood() async {

@@ -1,6 +1,6 @@
 # Delegates
 
-A `SelectDelegate` controls both data loading (`entriesLoader`) and how the body is rendered. It is passed to every entry point. The four built-ins:
+A `SelectDelegate` controls both data loading (`entries` directly or `entriesLoader` async) and how the body is rendered. It is passed to every entry point. The four built-ins:
 
 | Delegate | Body |
 | --- | --- |
@@ -21,11 +21,22 @@ PopupSelectBar(
 
 ## Shared constructor parameters (all delegates)
 
-**Data**
-- `entriesLoader` (required): `Future<SelectEntries> Function()` — async-first, every load is async.
+**Data** (sync values are fixed for a delegate's lifetime — create a new delegate when the data changes)
+- `entries`: `SelectEntries` passed directly — static data rendered on the first frame with no skeleton. Exactly one of `entries` / `entriesLoader` is required (enforced by assert).
+- `entriesLoader`: `Future<SelectEntries> Function()` — async loading, the alternative to `entries`.
+- `selectedEntries`: `SelectEntries` passed directly — initial selection without invoking a loader. At most one of `selectedEntries` / `selectedEntriesLoader`.
 - `selectedEntriesLoader`: `Future<SelectEntries?> Function()` — async initial selection (e.g. restore from a saved filter).
-- `resetEntriesLoader`: `Future<SelectEntries?> Function()` — selection to restore after "Reset"; defaults to the initial load.
+- `resetEntries`: `SelectEntries` passed directly — selection restored after "Reset". At most one of `resetEntries` / `resetEntriesLoader`.
+- `resetEntriesLoader`: `Future<SelectEntries?> Function()` — async "Reset" target; defaults to the initial load.
 - `selectionMode`: delegate-level fallback when a category doesn't set its own.
+
+```dart
+ListSelectDelegate(
+  entries: {...},          // static data, first frame
+  selectedEntries: {...},  // optional initial selection
+  resetEntries: {...},     // optional "Reset" target
+);
+```
 
 **Search**
 - `searchEnabled` — renders a `SelectSearchBar` above the body.
@@ -37,7 +48,7 @@ PopupSelectBar(
 - `actionBarBuilder` — replace the action bar entirely.
 
 **Loading / error states**
-- `skeletonBuilder`, `errorBuilder` — see [async-search.md](async-search.md).
+- `skeletonBuilder`, `errorBuilder` — see [loading-search.md](loading-search.md).
 
 **Styling** (details in [theming-i18n.md](theming-i18n.md))
 - `selectedColor`, `onSelectedColor`.
