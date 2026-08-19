@@ -52,12 +52,12 @@ Widget _checkboxBuilder(BuildContext context, bool selected) =>
 /// delegate family. Keeping them together lets the playground swap the whole demo
 /// data set (Zillow ↔ Leyoujia) behind one interface.
 class DelegateLoaders {
-  final Future<SelectEntries> Function() entries;
-  final SelectEntries? Function() selected;
-  final SelectEntries? Function() reset;
+  final Future<SelectEntries> Function() entriesLoader;
+  final SelectEntries? selected;
+  final SelectEntries? reset;
 
   const DelegateLoaders({
-    required this.entries,
+    required this.entriesLoader,
     required this.selected,
     required this.reset,
   });
@@ -83,24 +83,25 @@ class PlaygroundDataSource {
   factory PlaygroundDataSource.zillow(zillow.HouseFiltersRepository repo) {
     return PlaygroundDataSource(
       cascading: DelegateLoaders(
-        entries: repo.fetchNeighborhoodData,
-        selected: repo.fetchNeighborhoodSelectedData,
-        reset: repo.fetchNeighborhoodResetData,
+        entriesLoader: repo.fetchNeighborhoodData,
+        selected: repo.neighborhoodSelectedData,
+        reset: repo.neighborhoodResetData,
       ),
       grid: DelegateLoaders(
-        entries: repo.fetchRoomsData,
-        selected: repo.fetchRoomsSelectedData,
-        reset: repo.fetchRoomsResetData,
+        entriesLoader: repo.fetchRoomsData,
+        selected: repo.roomsSelectedData,
+        reset: repo.roomsResetData,
       ),
       flatten: DelegateLoaders(
-        entries: () => _flattenEntriesWithoutFixedLayout(repo.fetchMoreData),
-        selected: repo.fetchMoreSelectedData,
-        reset: repo.fetchMoreResetData,
+        entriesLoader: () =>
+            _flattenEntriesWithoutFixedLayout(repo.fetchMoreData),
+        selected: repo.moreSelectedData,
+        reset: repo.moreResetData,
       ),
       list: DelegateLoaders(
-        entries: repo.fetchSortData,
-        selected: repo.fetchSortSelectedData,
-        reset: repo.fetchSortResetData,
+        entriesLoader: repo.fetchSortData,
+        selected: repo.sortSelectedData,
+        reset: repo.sortResetData,
       ),
     );
   }
@@ -109,24 +110,24 @@ class PlaygroundDataSource {
   factory PlaygroundDataSource.leyoujia(leyoujia.HouseFiltersRepository repo) {
     return PlaygroundDataSource(
       cascading: DelegateLoaders(
-        entries: repo.fetchRegionData,
-        selected: repo.fetchRegionSelectedData,
-        reset: repo.fetchRegionResetData,
+        entriesLoader: repo.fetchRegionData,
+        selected: repo.regionSelectedData,
+        reset: repo.regionResetData,
       ),
       grid: DelegateLoaders(
-        entries: repo.fetchBuyPriceData,
-        selected: repo.fetchBuyPriceSelectedData,
-        reset: repo.fetchBuyPriceResetData,
+        entriesLoader: repo.fetchBuyPriceData,
+        selected: repo.buyPriceSelectedData,
+        reset: repo.buyPriceResetData,
       ),
       flatten: DelegateLoaders(
-        entries: repo.fetchFloorPlanBuyData,
-        selected: repo.fetchFloorPlanBuySelectedData,
-        reset: repo.fetchFloorPlanBuyResetData,
+        entriesLoader: repo.fetchFloorPlanBuyData,
+        selected: repo.floorPlanBuySelectedData,
+        reset: repo.floorPlanBuyResetData,
       ),
       list: DelegateLoaders(
-        entries: repo.fetchSortBuyData,
-        selected: repo.fetchSortBuySelectedData,
-        reset: repo.fetchSortBuyResetData,
+        entriesLoader: repo.fetchSortBuyData,
+        selected: repo.sortBuySelectedData,
+        reset: repo.sortBuyResetData,
       ),
     );
   }
@@ -197,9 +198,9 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
   switch (p.delegate) {
     case Delegate.cascading:
       return CascadingSelectDelegate(
-        entriesLoader: data.cascading.entries,
-        selectedEntriesLoader: data.cascading.selected,
-        resetEntriesLoader: data.cascading.reset,
+        entriesLoader: data.cascading.entriesLoader,
+        selectedEntries: data.cascading.selected,
+        resetEntries: data.cascading.reset,
         selectionMode: p.selectionMode,
         radioBuilder: _radioBuilder,
         checkboxBuilder: _checkboxBuilder,
@@ -210,9 +211,9 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
       // Grid / Flatten delegates use the default radio & checkbox widgets, so
       // the custom [MyRadio]/[MyCheckbox] builders are not forwarded here.
       return GridSelectDelegate(
-        entriesLoader: data.grid.entries,
-        selectedEntriesLoader: data.grid.selected,
-        resetEntriesLoader: data.grid.reset,
+        entriesLoader: data.grid.entriesLoader,
+        selectedEntries: data.grid.selected,
+        resetEntries: data.grid.reset,
         selectionMode: p.selectionMode,
         crossAxisCount: p.crossAxisCount,
         childAspectRatio: p.childAspectRatio,
@@ -224,9 +225,9 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
       );
     case Delegate.flatten:
       return FlattenSelectDelegate(
-        entriesLoader: data.flatten.entries,
-        selectedEntriesLoader: data.flatten.selected,
-        resetEntriesLoader: data.flatten.reset,
+        entriesLoader: data.flatten.entriesLoader,
+        selectedEntries: data.flatten.selected,
+        resetEntries: data.flatten.reset,
         selectionMode: p.selectionMode,
         gridTileTheme:
             SelectGridTileTheme(variant: _gridVariant(p.tileVariant)),
@@ -235,9 +236,9 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
       );
     case Delegate.list:
       return ListSelectDelegate(
-        entriesLoader: data.list.entries,
-        selectedEntriesLoader: data.list.selected,
-        resetEntriesLoader: data.list.reset,
+        entriesLoader: data.list.entriesLoader,
+        selectedEntries: data.list.selected,
+        resetEntries: data.list.reset,
         selectionMode: p.selectionMode,
         listTileTheme: const SelectListTileTheme(),
         radioBuilder: _radioBuilder,

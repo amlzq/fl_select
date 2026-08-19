@@ -486,8 +486,8 @@ class _BuyPageState extends State<BuyPage> {
               selectDelegates: [
                 CascadingSelectDelegate(
                   entriesLoader: _filtersRepo.fetchRegionData,
-                  selectedEntriesLoader: _filtersRepo.fetchRegionSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchRegionResetData,
+                  selectedEntries: _filtersRepo.regionSelectedData,
+                  resetEntries: _filtersRepo.regionResetData,
                   selectionMode: SelectionMode.single,
                   radioBuilder: (context, selected) {
                     return MyRadio(value: selected);
@@ -498,8 +498,8 @@ class _BuyPageState extends State<BuyPage> {
                 ),
                 GridSelectDelegate(
                   entriesLoader: _filtersRepo.fetchBuyPriceData,
-                  selectedEntriesLoader: _filtersRepo.fetchBuyPriceSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchBuyPriceResetData,
+                  selectedEntries: _filtersRepo.buyPriceSelectedData,
+                  resetEntries: _filtersRepo.buyPriceResetData,
                   selectionMode: SelectionMode.multiple,
                   crossAxisCount: 4,
                   childAspectRatio: 2.5,
@@ -515,9 +515,8 @@ class _BuyPageState extends State<BuyPage> {
                 ),
                 FlattenSelectDelegate(
                   entriesLoader: _filtersRepo.fetchFloorPlanBuyData,
-                  selectedEntriesLoader:
-                      _filtersRepo.fetchFloorPlanBuySelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchFloorPlanBuyResetData,
+                  selectedEntries: _filtersRepo.floorPlanBuySelectedData,
+                  resetEntries: _filtersRepo.floorPlanBuyResetData,
                   selectionMode: SelectionMode.multiple,
                   sideBarTheme: const SelectSideBarTheme(width: 98),
                   actionBarBuilder: (
@@ -534,8 +533,8 @@ class _BuyPageState extends State<BuyPage> {
                 ),
                 FlattenSelectDelegate(
                   entriesLoader: _filtersRepo.fetchMoreBuyData,
-                  selectedEntriesLoader: _filtersRepo.fetchMoreBuySelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchMoreBuyResetData,
+                  selectedEntries: _filtersRepo.moreBuySelectedData,
+                  resetEntries: _filtersRepo.moreBuyResetData,
                   selectionMode: SelectionMode.multiple,
                   sideBarTheme: const SelectSideBarTheme(width: 98),
                   actionBarBuilder: (
@@ -552,8 +551,8 @@ class _BuyPageState extends State<BuyPage> {
                 ),
                 ListSelectDelegate(
                   entriesLoader: _filtersRepo.fetchSortBuyData,
-                  selectedEntriesLoader: _filtersRepo.fetchSortBuySelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchSortBuyResetData,
+                  selectedEntries: _filtersRepo.sortBuySelectedData,
+                  resetEntries: _filtersRepo.sortBuyResetData,
                   selectionMode: SelectionMode.single,
                   radioBuilder: (context, selected) {
                     return MyRadio(value: selected);

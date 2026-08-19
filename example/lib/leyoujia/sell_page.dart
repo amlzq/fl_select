@@ -218,8 +218,8 @@ class _SellPageState extends State<SellPage> {
                 CascadingSelectDelegate(
                   isScrollable: true,
                   entriesLoader: _filtersRepo.fetchRegionData,
-                  selectedEntriesLoader: _filtersRepo.fetchRegionSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchRegionResetData,
+                  selectedEntries: _filtersRepo.regionSelectedData,
+                  resetEntries: _filtersRepo.regionResetData,
                   selectionMode: SelectionMode.single,
                   // skeletonBuilder: (_) => const Center(
                   //     child: CircularProgressIndicator(
@@ -233,9 +233,8 @@ class _SellPageState extends State<SellPage> {
                 ),
                 GridSelectDelegate(
                   entriesLoader: _filtersRepo.fetchSellPriceData,
-                  selectedEntriesLoader:
-                      _filtersRepo.fetchSellPriceSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchSellPriceResetData,
+                  selectedEntries: _filtersRepo.sellPriceSelectedData,
+                  resetEntries: _filtersRepo.sellPriceResetData,
                   selectionMode: SelectionMode.multiple,
                   crossAxisCount: 4,
                   childAspectRatio: 2.5,
@@ -244,16 +243,15 @@ class _SellPageState extends State<SellPage> {
                 ),
                 FlattenSelectDelegate(
                   entriesLoader: _filtersRepo.fetchFloorPlanSellData,
-                  selectedEntriesLoader:
-                      _filtersRepo.fetchFloorPlanSellSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchFloorPlanSellResetData,
+                  selectedEntries: _filtersRepo.floorPlanSellSelectedData,
+                  resetEntries: _filtersRepo.floorPlanSellResetData,
                   selectionMode: SelectionMode.multiple,
                   sideBarTheme: const SelectSideBarTheme(width: 98),
                 ),
                 ListSelectDelegate(
                   entriesLoader: _filtersRepo.fetchSortSellData,
-                  selectedEntriesLoader: _filtersRepo.fetchSortSellSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchSortSellResetData,
+                  selectedEntries: _filtersRepo.sortSellSelectedData,
+                  resetEntries: _filtersRepo.sortSellResetData,
                   selectionMode: SelectionMode.single,
                   radioBuilder: (context, selected) {
                     return MyRadio(value: selected);

@@ -42,9 +42,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: CascadingSelectDelegate(
                     entriesLoader: _filtersRepo.fetchNeighborhoodData,
-                    selectedEntriesLoader:
-                        _filtersRepo.fetchNeighborhoodSelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchNeighborhoodResetData,
+                    selectedEntries: _filtersRepo.neighborhoodSelectedData,
+                    resetEntries: _filtersRepo.neighborhoodResetData,
                     selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 150),
                     isScrollable: true,
@@ -77,7 +76,7 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: GridSelectDelegate(
                     entriesLoader: _filtersRepo.fetchPriceData,
-                    selectedEntriesLoader: _filtersRepo.fetchPriceSelectedData,
+                    selectedEntries: _filtersRepo.priceSelectedData,
                     selectionMode: SelectionMode.multiple,
                     crossAxisCount: 3,
                     childAspectRatio: 2.5,
@@ -110,7 +109,7 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: FlattenSelectDelegate(
                     entriesLoader: _filtersRepo.fetchRoomsData,
-                    selectedEntriesLoader: _filtersRepo.fetchRoomsSelectedData,
+                    selectedEntries: _filtersRepo.roomsSelectedData,
                     selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 90),
                     panelTheme: const SelectPanelTheme(
@@ -140,8 +139,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: ListSelectDelegate(
                     entriesLoader: _filtersRepo.fetchMoreData,
-                    selectedEntriesLoader: _filtersRepo.fetchMoreSelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchMoreResetData,
+                    selectedEntries: _filtersRepo.moreSelectedData,
+                    resetEntries: _filtersRepo.moreResetData,
                     selectionMode: SelectionMode.multiple,
                     gridTileTheme: const SelectGridTileTheme(
                       variant: SelectGridTileVariant.outlined,
@@ -179,8 +178,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: ListSelectDelegate(
                     entriesLoader: _filtersRepo.fetchSortData,
-                    selectedEntriesLoader: _filtersRepo.fetchSortSelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchSortResetData,
+                    selectedEntries: _filtersRepo.sortSelectedData,
+                    resetEntries: _filtersRepo.sortResetData,
                     selectionMode: SelectionMode.single,
                     radioBuilder: (context, selected) {
                       return MyRadio(value: selected);
@@ -224,9 +223,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: CascadingSelectDelegate(
                     entriesLoader: _filtersRepo.fetchNeighborhoodData,
-                    selectedEntriesLoader:
-                        _filtersRepo.fetchNeighborhoodSelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchNeighborhoodResetData,
+                    selectedEntries: _filtersRepo.neighborhoodSelectedData,
+                    resetEntries: _filtersRepo.neighborhoodResetData,
                     selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 150),
                     isScrollable: true,
@@ -259,7 +257,7 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: GridSelectDelegate(
                     entriesLoader: _filtersRepo.fetchPriceData,
-                    selectedEntriesLoader: _filtersRepo.fetchPriceSelectedData,
+                    selectedEntries: _filtersRepo.priceSelectedData,
                     selectionMode: SelectionMode.multiple,
                     crossAxisCount: 4,
                     childAspectRatio: 2.5,
@@ -295,7 +293,7 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: FlattenSelectDelegate(
                     entriesLoader: _filtersRepo.fetchRoomsData,
-                    selectedEntriesLoader: _filtersRepo.fetchRoomsSelectedData,
+                    selectedEntries: _filtersRepo.roomsSelectedData,
                     selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 90),
                   ),
@@ -323,8 +321,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: ListSelectDelegate(
                     entriesLoader: _filtersRepo.fetchMoreData,
-                    selectedEntriesLoader: _filtersRepo.fetchMoreSelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchMoreResetData,
+                    selectedEntries: _filtersRepo.moreSelectedData,
+                    resetEntries: _filtersRepo.moreResetData,
                     selectionMode: SelectionMode.multiple,
                     gridTileTheme: const SelectGridTileTheme(
                       variant: SelectGridTileVariant.outlined,
@@ -357,8 +355,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: ListSelectDelegate(
                     entriesLoader: _filtersRepo.fetchSortData,
-                    selectedEntriesLoader: _filtersRepo.fetchSortSelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchSortResetData,
+                    selectedEntries: _filtersRepo.sortSelectedData,
+                    resetEntries: _filtersRepo.sortResetData,
                     selectionMode: SelectionMode.single,
                     radioBuilder: (context, selected) {
                       return MyRadio(value: selected);

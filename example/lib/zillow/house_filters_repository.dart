@@ -37,10 +37,10 @@ class HouseFiltersRepository {
     )
   };
 
-  SelectEntries? fetchNeighborhoodSelectedData() =>
+  SelectEntries? get neighborhoodSelectedData =>
       neighborhoodResult ?? neighborhoodIniteialSelected;
 
-  SelectEntries? fetchNeighborhoodResetData() => neighborhoodIniteialSelected;
+  SelectEntries? get neighborhoodResetData => neighborhoodIniteialSelected;
 
   Future<SelectEntries> fetchNeighborhoodData() async {
     // simulate network delay
@@ -88,7 +88,7 @@ class HouseFiltersRepository {
 
   SelectEntries? priceResult;
 
-  SelectEntries? fetchPriceSelectedData() => priceResult;
+  SelectEntries? get priceSelectedData => priceResult;
 
   Future<SelectEntries> fetchPriceData() async {
     // simulate network delay
@@ -143,10 +143,10 @@ class HouseFiltersRepository {
     ),
   };
 
-  SelectEntries? fetchRoomsSelectedData() =>
+  SelectEntries? get roomsSelectedData =>
       roomsResult; // ?? roomsIniteialSelected;
 
-  SelectEntries? fetchRoomsResetData() => roomsIniteialSelected;
+  SelectEntries? get roomsResetData => roomsIniteialSelected;
 
   Future<SelectEntries> fetchRoomsData() async {
     // simulate network delay
@@ -189,9 +189,9 @@ class HouseFiltersRepository {
 
   final moreIniteialSelected = <SelectCategoryEntry>{};
 
-  SelectEntries? fetchMoreSelectedData() => moreResult ?? moreIniteialSelected;
+  SelectEntries? get moreSelectedData => moreResult ?? moreIniteialSelected;
 
-  SelectEntries? fetchMoreResetData() => moreIniteialSelected;
+  SelectEntries? get moreResetData => moreIniteialSelected;
 
   Future<SelectEntries> fetchMoreData() async {
     // simulate network delay
@@ -270,9 +270,9 @@ class HouseFiltersRepository {
     SelectTextEntry.id(id: 'comprehensive_sort')
   };
 
-  SelectEntries? fetchSortSelectedData() => sortResult ?? sortIniteialSelected;
+  SelectEntries? get sortSelectedData => sortResult ?? sortIniteialSelected;
 
-  SelectEntries? fetchSortResetData() => sortIniteialSelected;
+  SelectEntries? get sortResetData => sortIniteialSelected;
 
   Future<SelectEntries> fetchSortData() async {
     // simulate network delay

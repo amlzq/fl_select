@@ -46,10 +46,10 @@ class HouseFiltersRepository {
     )
   };
 
-  SelectEntries? fetchRegionSelectedData() =>
+  SelectEntries? get regionSelectedData =>
       regionResult ?? regionIniteialSelected;
 
-  SelectEntries? fetchRegionResetData() => regionIniteialSelected;
+  SelectEntries? get regionResetData => regionIniteialSelected;
 
   Future<SelectEntries> fetchRegionData({bool singleAll = false}) async {
     // 模拟网络延迟
@@ -151,11 +151,11 @@ class HouseFiltersRepository {
     ),
   };
 
-  SelectEntries? fetchBuyPriceSelectedData() =>
+  SelectEntries? get buyPriceSelectedData =>
       buyPriceResult; // ?? buyPriceIniteialSelected;
 
   /// 重置按钮的选中项
-  SelectEntries? fetchBuyPriceResetData() => {
+  SelectEntries? get buyPriceResetData => {
         SelectCategoryEntry(
           id: 'total',
           name: '',
@@ -232,10 +232,10 @@ class HouseFiltersRepository {
         )
       };
 
-  SelectEntries? fetchSellPriceSelectedData() =>
+  SelectEntries? get sellPriceSelectedData =>
       sellPriceResult ?? sellPriceIniteialSelected;
 
-  SelectEntries? fetchSellPriceResetData() => sellPriceIniteialSelected;
+  SelectEntries? get sellPriceResetData => sellPriceIniteialSelected;
 
   Future<SelectEntries> fetchSellPriceData() async {
     // 模拟网络延迟
@@ -303,10 +303,10 @@ class HouseFiltersRepository {
         )
       };
 
-  SelectEntries? fetchRentalSelectedData() =>
+  SelectEntries? get fetchRentalSelectedData =>
       rentalResult ?? rentalIniteialSelected;
 
-  SelectEntries? fetchRentalResetData() => rentalIniteialSelected;
+  SelectEntries? get fetchRentalResetData => rentalIniteialSelected;
 
   Future<SelectEntries> fetchRentalData() async {
     // 模拟网络延迟
@@ -362,10 +362,10 @@ class HouseFiltersRepository {
 
   final floorPlanBuyIniteialSelected = <SelectCategoryEntry>{};
 
-  SelectEntries? fetchFloorPlanBuySelectedData() =>
+  SelectEntries? get floorPlanBuySelectedData =>
       floorPlanBuyResult ?? floorPlanBuyIniteialSelected;
 
-  SelectEntries? fetchFloorPlanBuyResetData() => floorPlanBuyIniteialSelected;
+  SelectEntries? get floorPlanBuyResetData => floorPlanBuyIniteialSelected;
 
   Future<SelectEntries> fetchFloorPlanBuyData() async {
     // 模拟网络延迟
@@ -425,10 +425,10 @@ class HouseFiltersRepository {
 
   final floorPlanSellIniteialSelected = <SelectCategoryEntry>{};
 
-  SelectEntries? fetchFloorPlanSellSelectedData() =>
+  SelectEntries? get floorPlanSellSelectedData =>
       floorPlanSellResult ?? floorPlanSellIniteialSelected;
 
-  SelectEntries? fetchFloorPlanSellResetData() => floorPlanSellIniteialSelected;
+  SelectEntries? get floorPlanSellResetData => floorPlanSellIniteialSelected;
 
   Future<SelectEntries> fetchFloorPlanSellData() async {
     // 模拟网络延迟
@@ -488,10 +488,10 @@ class HouseFiltersRepository {
 
   final floorPlanRentIniteialSelected = <SelectCategoryEntry>{};
 
-  SelectEntries? fetchFloorPlanRentSelectedData() =>
+  SelectEntries? get floorPlanRentSelectedData =>
       floorPlanRentResult ?? floorPlanRentIniteialSelected;
 
-  SelectEntries? fetchFloorPlanRentResetData() => floorPlanRentIniteialSelected;
+  SelectEntries? get floorPlanRentResetData => floorPlanRentIniteialSelected;
 
   Future<SelectEntries> fetchFloorPlanRentData({bool singleAll = false}) async {
     // 模拟网络延迟
@@ -540,10 +540,10 @@ class HouseFiltersRepository {
 
   final moreBuyIniteialSelected = <SelectTextEntry>{};
 
-  SelectEntries? fetchMoreBuySelectedData() =>
+  SelectEntries? get moreBuySelectedData =>
       moreBuyResult ?? moreBuyIniteialSelected;
 
-  SelectEntries? fetchMoreBuyResetData() => moreBuyIniteialSelected;
+  SelectEntries? get moreBuyResetData => moreBuyIniteialSelected;
 
   Future<SelectEntries> fetchMoreBuyData() async {
     // 模拟网络延迟
@@ -583,10 +583,10 @@ class HouseFiltersRepository {
     SelectTextEntry.id(id: 'default_sort')
   };
 
-  SelectEntries? fetchSortBuySelectedData() =>
+  SelectEntries? get sortBuySelectedData =>
       sortBuyResult ?? sortBuyIniteialSelected;
 
-  SelectEntries? fetchSortBuyResetData() => sortBuyIniteialSelected;
+  SelectEntries? get sortBuyResetData => sortBuyIniteialSelected;
 
   Future<SelectEntries> fetchSortBuyData() async {
     // 模拟网络延迟
@@ -612,10 +612,10 @@ class HouseFiltersRepository {
     SelectTextEntry.id(id: 'comprehensive_sort')
   };
 
-  SelectEntries? fetchSortSellSelectedData() =>
+  SelectEntries? get sortSellSelectedData =>
       sortSellResult ?? sortSellIniteialSelected;
 
-  SelectEntries? fetchSortSellResetData() => sortSellIniteialSelected;
+  SelectEntries? get sortSellResetData => sortSellIniteialSelected;
 
   Future<SelectEntries> fetchSortSellData() async {
     // 模拟网络延迟
@@ -641,10 +641,10 @@ class HouseFiltersRepository {
     SelectTextEntry.id(id: 'comprehensive_sort')
   };
 
-  SelectEntries? fetchSortRentSelectedData() =>
+  SelectEntries? get sortRentSelectedData =>
       sortRentResult ?? sortRentIniteialSelected;
 
-  SelectEntries? fetchSortRentResetData() => sortRentIniteialSelected;
+  SelectEntries? get sortRentResetData => sortRentIniteialSelected;
 
   Future<SelectEntries> fetchSortRentData() async {
     // 模拟网络延迟

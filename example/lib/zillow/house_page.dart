@@ -458,9 +458,8 @@ class _HousePageState extends State<HousePage> {
                 // Neighborhood filter
                 CascadingSelectDelegate(
                   entriesLoader: _filtersRepo.fetchNeighborhoodData,
-                  selectedEntriesLoader:
-                      _filtersRepo.fetchNeighborhoodSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchNeighborhoodResetData,
+                  selectedEntries: _filtersRepo.neighborhoodSelectedData,
+                  resetEntries: _filtersRepo.neighborhoodResetData,
                   selectionMode: SelectionMode.multiple,
                   sideBarTheme: const SelectSideBarTheme(width: 150),
                   isScrollable: true,
@@ -468,8 +467,8 @@ class _HousePageState extends State<HousePage> {
                 // Price filter
                 GridSelectDelegate(
                   entriesLoader: _filtersRepo.fetchPriceData,
-                  selectedEntriesLoader: _filtersRepo.fetchPriceSelectedData,
-                  // resetEntriesLoader: _filtersRepo.fetchPriceResetData,
+                  selectedEntries: _filtersRepo.priceSelectedData,
+                  // resetEntries: _filtersRepo.priceResetData,
                   selectionMode: SelectionMode.multiple,
                   crossAxisCount: 1,
                   childAspectRatio: 10,
@@ -482,8 +481,8 @@ class _HousePageState extends State<HousePage> {
                 // Rooms filter
                 GridSelectDelegate(
                   entriesLoader: _filtersRepo.fetchRoomsData,
-                  selectedEntriesLoader: _filtersRepo.fetchRoomsSelectedData,
-                  // resetEntriesLoader: _filtersRepo.fetchRoomsResetData,
+                  selectedEntries: _filtersRepo.roomsSelectedData,
+                  // resetEntries: _filtersRepo.roomsResetData,
                   selectionMode: SelectionMode.multiple,
                   crossAxisCount: 4,
                   childAspectRatio: 2.5,
@@ -499,8 +498,8 @@ class _HousePageState extends State<HousePage> {
                 // More filter
                 ListSelectDelegate(
                   entriesLoader: _filtersRepo.fetchMoreData,
-                  selectedEntriesLoader: _filtersRepo.fetchMoreSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchMoreResetData,
+                  selectedEntries: _filtersRepo.moreSelectedData,
+                  resetEntries: _filtersRepo.moreResetData,
                   selectionMode: SelectionMode.multiple,
                   resetText: AppLocalizations.of(context)?.reset ?? '',
                   applyText: AppLocalizations.of(context)?.apply ?? '',
@@ -508,8 +507,8 @@ class _HousePageState extends State<HousePage> {
                 // Sort filter
                 ListSelectDelegate(
                   entriesLoader: _filtersRepo.fetchSortData,
-                  selectedEntriesLoader: _filtersRepo.fetchSortSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchSortResetData,
+                  selectedEntries: _filtersRepo.sortSelectedData,
+                  resetEntries: _filtersRepo.sortResetData,
                   selectionMode: SelectionMode.single,
                 ),
               ],

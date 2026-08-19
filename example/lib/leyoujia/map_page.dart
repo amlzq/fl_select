@@ -235,13 +235,13 @@ class _MapPageState extends State<MapPage> {
             selectDelegates: [
               CascadingSelectDelegate(
                 entriesLoader: _filtersRepo.fetchRegionData,
-                selectedEntriesLoader: _filtersRepo.fetchRegionSelectedData,
-                resetEntriesLoader: _filtersRepo.fetchRegionResetData,
+                selectedEntries: _filtersRepo.regionSelectedData,
+                resetEntries: _filtersRepo.regionResetData,
                 selectionMode: SelectionMode.single,
               ),
               GridSelectDelegate(
                 entriesLoader: _filtersRepo.fetchBuyPriceData,
-                selectedEntriesLoader: _filtersRepo.fetchBuyPriceSelectedData,
+                selectedEntries: _filtersRepo.buyPriceSelectedData,
                 selectionMode: SelectionMode.single,
                 crossAxisCount: 4,
                 childAspectRatio: 2.5,
@@ -256,15 +256,14 @@ class _MapPageState extends State<MapPage> {
               ),
               FlattenSelectDelegate(
                 entriesLoader: _filtersRepo.fetchFloorPlanBuyData,
-                selectedEntriesLoader:
-                    _filtersRepo.fetchFloorPlanBuySelectedData,
-                resetEntriesLoader: _filtersRepo.fetchFloorPlanBuyResetData,
+                selectedEntries: _filtersRepo.floorPlanBuySelectedData,
+                resetEntries: _filtersRepo.floorPlanBuyResetData,
                 selectionMode: SelectionMode.multiple,
               ),
               ListSelectDelegate(
                 entriesLoader: _filtersRepo.fetchSortBuyData,
-                selectedEntriesLoader: _filtersRepo.fetchSortBuySelectedData,
-                resetEntriesLoader: _filtersRepo.fetchSortBuyResetData,
+                selectedEntries: _filtersRepo.sortBuySelectedData,
+                resetEntries: _filtersRepo.sortBuyResetData,
                 selectionMode: SelectionMode.single,
               ),
             ],

@@ -255,8 +255,8 @@ class _RentPageState extends State<RentPage> {
                 CascadingSelectDelegate(
                   entriesLoader: () =>
                       _filtersRepo.fetchRegionData(singleAll: true),
-                  selectedEntriesLoader: _filtersRepo.fetchRegionSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchRegionResetData,
+                  selectedEntries: _filtersRepo.regionSelectedData,
+                  resetEntries: _filtersRepo.regionResetData,
                   selectionMode: SelectionMode.single,
                   // skeletonBuilder: (_) => const Center(
                   //     child: CircularProgressIndicator(
@@ -273,8 +273,8 @@ class _RentPageState extends State<RentPage> {
                 ),
                 GridSelectDelegate(
                   entriesLoader: _filtersRepo.fetchRentalData,
-                  selectedEntriesLoader: _filtersRepo.fetchRentalSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchRentalResetData,
+                  selectedEntries: _filtersRepo.fetchRentalSelectedData,
+                  resetEntries: _filtersRepo.fetchRentalResetData,
                   selectionMode: SelectionMode.single,
                   crossAxisCount: 4,
                   childAspectRatio: 2.5,
@@ -290,9 +290,8 @@ class _RentPageState extends State<RentPage> {
                 FlattenSelectDelegate(
                   entriesLoader: () =>
                       _filtersRepo.fetchFloorPlanRentData(singleAll: true),
-                  selectedEntriesLoader:
-                      _filtersRepo.fetchFloorPlanRentSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchFloorPlanRentResetData,
+                  selectedEntries: _filtersRepo.floorPlanRentSelectedData,
+                  resetEntries: _filtersRepo.floorPlanRentResetData,
                   selectionMode: SelectionMode.single,
                   actionBarBuilder: (
                     context, {
@@ -308,8 +307,8 @@ class _RentPageState extends State<RentPage> {
                 ),
                 ListSelectDelegate(
                   entriesLoader: _filtersRepo.fetchSortRentData,
-                  selectedEntriesLoader: _filtersRepo.fetchSortRentSelectedData,
-                  resetEntriesLoader: _filtersRepo.fetchSortRentResetData,
+                  selectedEntries: _filtersRepo.sortRentSelectedData,
+                  resetEntries: _filtersRepo.sortRentResetData,
                   selectionMode: SelectionMode.single,
                   radioBuilder: (context, selected) {
                     return MyRadio(value: selected);

@@ -42,8 +42,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: CascadingSelectDelegate(
                     entriesLoader: _filtersRepo.fetchRegionData,
-                    selectedEntriesLoader: _filtersRepo.fetchRegionResetData,
-                    resetEntriesLoader: _filtersRepo.fetchRegionResetData,
+                    selectedEntries: _filtersRepo.regionResetData,
+                    resetEntries: _filtersRepo.regionResetData,
                     selectionMode: SelectionMode.single,
                     radioBuilder: (context, selected) {
                       return MyRadio(value: selected);
@@ -78,9 +78,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: GridSelectDelegate(
                     entriesLoader: _filtersRepo.fetchBuyPriceData,
-                    selectedEntriesLoader:
-                        _filtersRepo.fetchBuyPriceSelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchBuyPriceResetData,
+                    selectedEntries: _filtersRepo.buyPriceSelectedData,
+                    resetEntries: _filtersRepo.buyPriceResetData,
                     selectionMode: SelectionMode.multiple,
                     crossAxisCount: 3,
                     childAspectRatio: 2.5,
@@ -115,9 +114,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: FlattenSelectDelegate(
                     entriesLoader: _filtersRepo.fetchFloorPlanBuyData,
-                    selectedEntriesLoader:
-                        _filtersRepo.fetchFloorPlanBuySelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchFloorPlanBuyResetData,
+                    selectedEntries: _filtersRepo.floorPlanBuySelectedData,
+                    resetEntries: _filtersRepo.floorPlanBuyResetData,
                     selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 90),
                     panelTheme: const SelectPanelTheme(
@@ -146,9 +144,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: FlattenSelectDelegate(
                     entriesLoader: _filtersRepo.fetchMoreBuyData,
-                    selectedEntriesLoader:
-                        _filtersRepo.fetchMoreBuySelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchMoreBuyResetData,
+                    selectedEntries: _filtersRepo.moreBuySelectedData,
+                    resetEntries: _filtersRepo.moreBuyResetData,
                     selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 98),
                   ),
@@ -175,9 +172,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: ListSelectDelegate(
                     entriesLoader: _filtersRepo.fetchSortBuyData,
-                    selectedEntriesLoader:
-                        _filtersRepo.fetchSortBuySelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchSortBuyResetData,
+                    selectedEntries: _filtersRepo.sortBuySelectedData,
+                    resetEntries: _filtersRepo.sortBuyResetData,
                     selectionMode: SelectionMode.single,
                     radioBuilder: (context, selected) {
                       return MyRadio(value: selected);
@@ -216,8 +212,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: CascadingSelectDelegate(
                     entriesLoader: _filtersRepo.fetchRegionData,
-                    selectedEntriesLoader: _filtersRepo.fetchRegionResetData,
-                    resetEntriesLoader: _filtersRepo.fetchRegionResetData,
+                    selectedEntries: _filtersRepo.regionResetData,
+                    resetEntries: _filtersRepo.regionResetData,
                     selectionMode: SelectionMode.single,
                     radioBuilder: (context, selected) {
                       return MyRadio(value: selected);
@@ -249,9 +245,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: GridSelectDelegate(
                     entriesLoader: _filtersRepo.fetchBuyPriceData,
-                    selectedEntriesLoader:
-                        _filtersRepo.fetchBuyPriceSelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchBuyPriceResetData,
+                    selectedEntries: _filtersRepo.buyPriceSelectedData,
+                    resetEntries: _filtersRepo.buyPriceResetData,
                     selectionMode: SelectionMode.multiple,
                     crossAxisCount: 4,
                     childAspectRatio: 2.5,
@@ -286,9 +281,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: FlattenSelectDelegate(
                     entriesLoader: _filtersRepo.fetchFloorPlanBuyData,
-                    selectedEntriesLoader:
-                        _filtersRepo.fetchFloorPlanBuySelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchFloorPlanBuyResetData,
+                    selectedEntries: _filtersRepo.floorPlanBuySelectedData,
+                    resetEntries: _filtersRepo.floorPlanBuyResetData,
                     selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 90),
                   ),
@@ -315,9 +309,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: FlattenSelectDelegate(
                     entriesLoader: _filtersRepo.fetchMoreBuyData,
-                    selectedEntriesLoader:
-                        _filtersRepo.fetchMoreBuySelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchMoreBuyResetData,
+                    selectedEntries: _filtersRepo.moreBuySelectedData,
+                    resetEntries: _filtersRepo.moreBuyResetData,
                     selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 98),
                     panelTheme: const SelectPanelTheme(
@@ -346,9 +339,8 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                   context: context,
                   delegate: ListSelectDelegate(
                     entriesLoader: _filtersRepo.fetchSortBuyData,
-                    selectedEntriesLoader:
-                        _filtersRepo.fetchSortBuySelectedData,
-                    resetEntriesLoader: _filtersRepo.fetchSortBuyResetData,
+                    selectedEntries: _filtersRepo.sortBuySelectedData,
+                    resetEntries: _filtersRepo.sortBuyResetData,
                     selectionMode: SelectionMode.single,
                     radioBuilder: (context, selected) {
                       return MyRadio(value: selected);
