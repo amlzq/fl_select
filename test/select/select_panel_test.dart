@@ -367,4 +367,45 @@ void main() {
       expect(captured!.selectedEntries!.any((e) => e.id == 'a'), isTrue);
     });
   });
+
+  group('SelectPanel height shrink-wrap', () {
+    Widget host({required double bodyHeight, double maxHeight = 600}) =>
+        MaterialApp(
+          home: Scaffold(
+            body: Align(
+              alignment: Alignment.topCenter,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(maxHeight: maxHeight),
+                child: SelectPanel(
+                  delegate: _TestDelegate(
+                    entriesLoader: () async => <SelectEntry<dynamic>>{},
+                    bodyBuilder: (_, __, ___) =>
+                        SizedBox(height: bodyHeight),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+
+    testWidgets('shrinks to its content height within a loose bounded '
+        'constraint instead of stretching to the cap', (tester) async {
+      await tester.pumpWidget(host(bodyHeight: 100));
+      await tester.pumpAndSettle();
+
+      final height = tester.getSize(find.byType(SelectPanel)).height;
+      // Mirrors Flexible(fit: loose) in dialog/bottom-sheet hosts: the panel
+      // previously stretched to the 600px cap; it must now wrap its content.
+      expect(height, closeTo(100, 0.1));
+    });
+
+    testWidgets('caps at the incoming maxHeight when content is taller',
+        (tester) async {
+      await tester.pumpWidget(host(bodyHeight: 5000));
+      await tester.pumpAndSettle();
+
+      final height = tester.getSize(find.byType(SelectPanel)).height;
+      expect(height, closeTo(600, 0.1));
+    });
+  });
 }

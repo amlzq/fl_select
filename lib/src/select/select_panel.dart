@@ -251,6 +251,13 @@ class _SelectPanelState extends State<SelectPanel> {
         FocusScope.of(context).unfocus();
       },
       child: Column(
+        // Shrink-wrap the panel to its content height: dialog and bottom
+        // sheet hosts pass a loose bounded constraint (Flexible(fit: loose)),
+        // and a default MainAxisSize.max column would stretch to that cap and
+        // leave empty space below short content. The Flexible below still
+        // caps the body at the incoming maxHeight, so tall content scrolls
+        // internally and the action bar stays pinned to the bottom.
+        mainAxisSize: MainAxisSize.min,
         children: [
           if (widget.delegate.searchEnabled)
             SelectSearchBar(
@@ -260,7 +267,8 @@ class _SelectPanelState extends State<SelectPanel> {
               onChanged: _onSearchChanged,
               theme: widget.delegate.searchBarTheme,
             ),
-          Expanded(
+          Flexible(
+            fit: FlexFit.loose,
             child: widget.delegate.buildBody(
               context,
               entries,

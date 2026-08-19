@@ -4,6 +4,8 @@
 
 - **FEATURE** add synchronous data support to `SelectDelegate`: every delegate now accepts `entries`, `selectedEntries` and `resetEntries` directly, as mutually exclusive alternatives to the `entriesLoader` / `selectedEntriesLoader` / `resetEntriesLoader` callbacks (enforced by asserts). Synchronous `entries` render on the first frame with no loading-skeleton pass; passing `selectedEntries` / `resetEntries` seeds the restore/reset selection without invoking their loaders. Data is fixed for a delegate's lifetime — create a new delegate when the data changes.
 
+- **BUGFIX** make `SelectPanel` shrink-wrap its height to the content again. The `Column` that hosts the optional search bar above the body stretched to the incoming height cap (`Expanded` + `MainAxisSize.max`), so dialogs and bottom sheets showed a fixed 0.7×/0.9×-screen panel with empty space below short content. The body is now wrapped in a `Flexible(fit: FlexFit.loose)` within a `MainAxisSize.min` column: short content sizes the panel to its intrinsic height, tall content still caps at the incoming maxHeight (scrolling internally), and the action bar stays pinned to the bottom.
+
 ## 0.8.0
 
 - **FEATURE** add `toQueryMap()` and `toQueryParameters()` extensions on `SelectEntries` to serialize a selection tree into URL query parameters. Each category contributes key/value pairs keyed by its own id with the deepest selected leaf ids as values; header/footer subtrees are keyed by their own ids; an "any" leaf resolves to its parent id; and a custom `SelectRangeEntry` formats as `min-max`.
