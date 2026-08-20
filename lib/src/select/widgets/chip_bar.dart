@@ -7,6 +7,8 @@ import '../select_theme_data.dart';
 import 'chip_bar_theme.dart';
 import 'constants.dart';
 import 'extensions.dart';
+import 'field_tile.dart';
+import 'field_tile_theme.dart';
 
 /// Default height for [SelectChipBar].
 const kSelectChipBarHeight = 44.0;
@@ -16,10 +18,16 @@ const kSelectChipBarHeight = 44.0;
 /// Renders all [SelectEntry] subtypes as chips using their [SelectEntry.name]
 /// as the label. This widget is commonly used as a "quick filter" row (e.g.
 /// showing children of a selected entry). Selection state is provided by
-/// [selectedEntries] and user interactions are reported via [onItemTap].
+/// [selectedEntries] and user interactions are reported via [onChanged].
+///
+/// A custom range entry (a [SelectRangeEntry] with the special id `custom`,
+/// see [SelectRangeEntryExt.isCustom]) placed first or last in [entries] is
+/// not rendered as a chip. Instead it is rendered as a min/max input field
+/// above or below the chip group, mirroring [SelectGridView]. The committed
+/// value is reported through [onChanged] once both fields lose focus.
 ///
 /// This is the canonical render target for [SelectChipLayout].
-class SelectChipBar extends StatelessWidget {
+class SelectChipBar extends StatefulWidget {
   const SelectChipBar({
     super.key,
     this.category,
@@ -34,10 +42,12 @@ class SelectChipBar extends StatelessWidget {
     this.backgroundColor,
     this.padding,
     this.variant,
+    this.fieldVariant,
     this.chipColor,
     this.selectedChipColor,
     this.labelStyle,
     this.selectedLabelStyle,
+    this.toText = '-',
     required this.onChanged,
   });
 
@@ -102,6 +112,10 @@ class SelectChipBar extends StatelessWidget {
   /// [SelectChipVariant.filled].
   final SelectChipVariant? variant;
 
+  /// The visual variant of the custom range input field, if [entries] contains
+  /// a custom range entry.
+  final SelectFieldTileVariant? fieldVariant;
+
   /// The color of an unselected chip.
   ///
   /// When [variant] is [SelectChipVariant.filled] this is used as the chip's
@@ -127,32 +141,213 @@ class SelectChipBar extends StatelessWidget {
   /// default is used.
   final TextStyle? selectedLabelStyle;
 
-  /// Called when the user taps a chip.
+  /// Text rendered between the two custom range input fields.
+  ///
+  /// Only used when [entries] contains a custom range entry. Defaults to `'-'`.
+  final String toText;
+
+  /// Called when the user taps a chip or commits the custom range input.
   ///
   /// The [index] of the tapped entry within [entries] and the tapped entry
   /// itself are passed to the callback.
   final OnChanged onChanged;
 
   @override
+  State<SelectChipBar> createState() => _SelectChipBarState();
+}
+
+class _SelectChipBarState extends State<SelectChipBar> {
+  SelectRangeEntry? _firstCustomEntry;
+  SelectRangeEntry? _lastCustomEntry;
+
+  TextEditingController? _minController;
+  TextEditingController? _maxController;
+
+  FocusNode? _minFocusNode;
+  FocusNode? _maxFocusNode;
+
+  late SelectEntries _selectedEntries;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _selectedEntries = widget.selectedEntries ?? {};
+
+    _firstCustomEntry = widget.entries.firstCustomOrNull;
+    _lastCustomEntry = widget.entries.lastCustomOrNull;
+    if (_firstCustomEntry != null || _lastCustomEntry != null) {
+      _minController ??= TextEditingController();
+      _maxController ??= TextEditingController();
+      _minFocusNode ??= FocusNode();
+      _maxFocusNode ??= FocusNode();
+    }
+
+    // Restore selection state for custom items.
+    _restoreCustomSelectionToInputs();
+
+    _minFocusNode?.addListener(_focusListener);
+    _maxFocusNode?.addListener(_focusListener);
+  }
+
+  /// Whether [e] is this bar's own custom range entry.
+  ///
+  /// In a multi-category tree, every category shares the same level-1
+  /// selection set and custom entries all use the same id (`custom`). We must
+  /// therefore scope restoration to the entry owned by this bar's category
+  /// ([widget.category].id) so a value committed in one category never leaks
+  /// into another category's input fields.
+  bool _isOwnCustom(SelectRangeEntry e) {
+    final categoryId = widget.category?.id;
+    if (categoryId == null) return e.isCustom;
+    return e.isCustom && e.parentId == categoryId;
+  }
+
+  void _restoreCustomSelectionToInputs() {
+    for (var selectedEntry in _selectedEntries) {
+      if (selectedEntry is SelectRangeEntry && _isOwnCustom(selectedEntry)) {
+        _minController?.text = selectedEntry.min?.toString() ?? '';
+        _maxController?.text = selectedEntry.max?.toString() ?? '';
+      }
+    }
+  }
+
+  @override
+  void didUpdateWidget(covariant SelectChipBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    _selectedEntries = widget.selectedEntries ?? {};
+
+    _firstCustomEntry = widget.entries.firstCustomOrNull;
+    _lastCustomEntry = widget.entries.lastCustomOrNull;
+    if (_firstCustomEntry != null || _lastCustomEntry != null) {
+      _minController ??= TextEditingController();
+      _maxController ??= TextEditingController();
+      _minFocusNode ??= FocusNode();
+      _maxFocusNode ??= FocusNode();
+    }
+
+    // Restore selection state for custom items.
+    _restoreCustomSelectionToInputs();
+
+    // When the custom range was selected and is now removed (e.g. tapping a
+    // preset or clicking reset), clear the input fields so stale values are not
+    // left behind. We only react to this transition (not every rebuild) to
+    // avoid clobbering text the user is actively typing.
+    final oldHadCustom = (oldWidget.selectedEntries ?? {})
+        .whereType<SelectRangeEntry>()
+        .any(_isOwnCustom);
+    final newHasCustom =
+        _selectedEntries.whereType<SelectRangeEntry>().any(_isOwnCustom);
+    if (oldHadCustom && !newHasCustom) {
+      _clearAllInput();
+      _unfocusAllInput();
+    }
+  }
+
+  @override
+  void dispose() {
+    _minFocusNode?.removeListener(_focusListener);
+    _maxFocusNode?.removeListener(_focusListener);
+
+    _minController?.dispose();
+    _maxController?.dispose();
+    _minFocusNode?.dispose();
+    _maxFocusNode?.dispose();
+
+    super.dispose();
+  }
+
+  void _focusListener() {
+    if (!(_minFocusNode?.hasFocus == true) &&
+        !(_maxFocusNode?.hasFocus == true)) {
+      _commitCustomRange(_firstCustomEntry);
+      _commitCustomRange(_lastCustomEntry);
+    }
+  }
+
+  /// Parses the current min/max input, normalizes it onto [custom], and
+  /// notifies the listener via [SelectChipBar.onChanged].
+  void _commitCustomRange(SelectRangeEntry? custom) {
+    if (custom == null) return;
+    final minText = _minController!.text;
+    final maxText = _maxController!.text;
+    var minInt = int.tryParse(minText) ?? 0;
+    var maxInt = int.tryParse(maxText) ?? 0;
+    // Only normalize an inverted range when both bounds have actually been
+    // entered. Otherwise an empty field (parsed as 0) would spuriously trigger
+    // a swap and push a freshly-typed min value into the max field (or clear
+    // the min field), losing the user's input.
+    final bothEntered = minText.isNotEmpty && maxText.isNotEmpty;
+    final swapped = bothEntered && minInt > maxInt;
+    if (swapped) {
+      final temp = minInt;
+      minInt = maxInt;
+      maxInt = temp;
+    }
+    custom.min = (minInt == 0) ? null : minInt;
+    custom.max = (maxInt == 0) ? null : maxInt;
+    // Reflect the canonical (swapped) order back into the fields so the display
+    // immediately shows "left small, right big" instead of the raw typed order.
+    if (swapped) {
+      _minController?.text = custom.min?.toString() ?? '';
+      _maxController?.text = custom.max?.toString() ?? '';
+    }
+    final index = widget.entries.indexOf(custom);
+    widget.onChanged(index, custom);
+  }
+
+  bool get inputNotEmpty =>
+      (_minController?.text.isNotEmpty ?? false) ||
+      (_maxController?.text.isNotEmpty ?? false);
+
+  void _clearAllInput() {
+    if (inputNotEmpty) {
+      _minController?.clear();
+      _maxController?.clear();
+    }
+  }
+
+  bool get inputHasFocus =>
+      (_minFocusNode?.hasFocus ?? false) || (_maxFocusNode?.hasFocus ?? false);
+
+  void _unfocusAllInput() {
+    if (inputHasFocus) {
+      _minFocusNode?.unfocus();
+      _maxFocusNode?.unfocus();
+    }
+  }
+
+  void _onItemTap(int index, SelectEntry item) {
+    // Clear custom input
+    _clearAllInput();
+    _unfocusAllInput();
+    widget.onChanged(index, item);
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = SelectChipBarTheme.of(context);
 
     final effectiveVariant =
-        variant ?? theme.variant ?? SelectChipVariant.filled;
+        widget.variant ?? theme.variant ?? SelectChipVariant.filled;
 
     final defaults = _SelectChipBarDefaults(context, effectiveVariant);
 
-    final effectiveBackgroundColor =
-        backgroundColor ?? theme.backgroundColor ?? defaults.backgroundColor!;
+    final effectiveBackgroundColor = widget.backgroundColor ??
+        theme.backgroundColor ??
+        defaults.backgroundColor!;
 
-    final effectivePadding = padding ??
+    final effectivePadding = widget.padding ??
         theme.padding ??
-        (isWrapable ? defaults.padding! : const EdgeInsets.only(left: 12));
+        (widget.isWrapable
+            ? defaults.padding!
+            : const EdgeInsets.only(left: 12));
 
     final effectiveChipColor =
-        chipColor ?? theme.chipColor ?? defaults.chipColor!;
+        widget.chipColor ?? theme.chipColor ?? defaults.chipColor!;
 
-    final effectiveSelectedChipColor = selectedChipColor ??
+    final effectiveSelectedChipColor = widget.selectedChipColor ??
         theme.selectedChipColor ??
         defaults.selectedChipColor!;
 
@@ -164,99 +359,145 @@ class SelectChipBar extends StatelessWidget {
         : effectiveSelectedChipColor;
 
     final effectiveLabelStyle =
-        (labelStyle ?? theme.labelStyle ?? defaults.labelStyle!)
+        (widget.labelStyle ?? theme.labelStyle ?? defaults.labelStyle!)
             .copyWith(inherit: true);
 
-    final effectiveSelectedLabelStyle = (selectedLabelStyle ??
+    final effectiveSelectedLabelStyle = (widget.selectedLabelStyle ??
             theme.selectedLabelStyle ??
             defaults.selectedLabelStyle!)
         .copyWith(inherit: true, color: selectedTextColor);
 
+    // Custom entries render as input fields, not chips; their original indexes
+    // are preserved for the [onChanged] callback.
     final children = [
-      for (final entry in entries.asMap().entries)
-        (() {
-          final index = entry.key;
-          final item = entry.value;
-          final selected = (selectedEntries?.contains(item) ?? false);
-          return _Chip(
-            label: item.name ?? '',
-            selected: selected,
-            variant: effectiveVariant,
-            color: effectiveChipColor,
-            selectedColor: effectiveSelectedChipColor,
-            labelStyle: effectiveLabelStyle,
-            selectedLabelStyle: effectiveSelectedLabelStyle,
-            enabled: item.enabled,
-            onTap: () => onChanged(index, item),
-          );
-        })(),
+      for (final entry in widget.entries.asMap().entries)
+        if (testNotCustomItem(entry.value))
+          (() {
+            final index = entry.key;
+            final item = entry.value;
+            final selected = _selectedEntries.contains(item);
+            return _Chip(
+              label: item.name ?? '',
+              selected: selected,
+              variant: effectiveVariant,
+              color: effectiveChipColor,
+              selectedColor: effectiveSelectedChipColor,
+              labelStyle: effectiveLabelStyle,
+              selectedLabelStyle: effectiveSelectedLabelStyle,
+              enabled: item.enabled,
+              onTap: () => _onItemTap(index, item),
+            );
+          })(),
     ];
 
-    final chipGroup = isWrapable
-        ? Wrap(spacing: spacing, runSpacing: runSpacing, children: children)
+    final chipGroup = widget.isWrapable
+        ? Wrap(
+            spacing: widget.spacing,
+            runSpacing: widget.runSpacing,
+            children: children,
+          )
         : SingleChildScrollView(
             padding: EdgeInsets.zero,
             physics: const ClampingScrollPhysics(),
             scrollDirection: Axis.horizontal,
             child: Row(
-              children: children.separateWith(SizedBox(width: spacing)),
+              children: children.separateWith(SizedBox(width: widget.spacing)),
             ),
           );
 
     // In vertical layout the title sits above the chip group, so the bar
     // height must grow to fit the chips rather than being fixed.
-    final useVertical = direction == Axis.vertical;
-    final isFixedHeight = !isWrapable && !useVertical;
+    final useVertical = widget.direction == Axis.vertical;
+    final hasCustom = _firstCustomEntry != null || _lastCustomEntry != null;
+    final isFixedHeight = !widget.isWrapable && !useVertical && !hasCustom;
+
+    Widget content = useVertical
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Category label
+              if (widget.showTitle && widget.category?.name != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: DefaultTextStyle.merge(
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ) ??
+                        const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                    child: Text(widget.category?.name ?? ''),
+                  ),
+                ),
+              chipGroup,
+            ],
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Category label
+              if (widget.showTitle && widget.category?.name != null)
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: DefaultTextStyle.merge(
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              fontWeight: FontWeight.w600,
+                            ) ??
+                        const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                    child: Text(widget.category?.name ?? ''),
+                  ),
+                ),
+              Expanded(child: chipGroup),
+              const SizedBox(width: 12),
+            ],
+          );
+
+    // A custom range entry renders as a min/max input field around the chip
+    // group (header above, footer below), mirroring [SelectGridView].
+    if (hasCustom) {
+      content = Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // An input item at header
+          if (_firstCustomEntry != null)
+            SelectFieldTile(
+              _firstCustomEntry!,
+              padding: const EdgeInsets.only(bottom: 10.0),
+              minController: _minController,
+              maxController: _maxController,
+              minFocusNode: _minFocusNode,
+              maxFocusNode: _maxFocusNode,
+              variant: widget.fieldVariant,
+              separator: widget.toText,
+            ),
+          content,
+          // An input item at footer
+          if (_lastCustomEntry != null)
+            SelectFieldTile(
+              _lastCustomEntry!,
+              padding: const EdgeInsets.only(top: 10.0),
+              minController: _minController,
+              maxController: _maxController,
+              minFocusNode: _minFocusNode,
+              maxFocusNode: _maxFocusNode,
+              variant: widget.fieldVariant,
+              separator: widget.toText,
+            ),
+        ],
+      );
+    }
 
     return Container(
       height: isFixedHeight ? kSelectChipBarHeight : null,
       color: effectiveBackgroundColor,
       padding: effectivePadding,
-      child: useVertical
-          ? Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Category label
-                if (showTitle && category?.name != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: DefaultTextStyle.merge(
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ) ??
-                          const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                      child: Text(category?.name ?? ''),
-                    ),
-                  ),
-                chipGroup,
-              ],
-            )
-          : Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                // Category label
-                if (showTitle && category?.name != null)
-                  Padding(
-                    padding: const EdgeInsets.only(right: 10),
-                    child: DefaultTextStyle.merge(
-                      style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                fontWeight: FontWeight.w600,
-                              ) ??
-                          const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                          ),
-                      child: Text(category?.name ?? ''),
-                    ),
-                  ),
-                Expanded(child: chipGroup),
-                const SizedBox(width: 12),
-              ],
-            ),
+      child: content,
     );
   }
 }
