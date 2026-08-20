@@ -24,6 +24,8 @@ import 'widgets/widgets.dart';
 ///   `layout` (defaulting to a wrapable [SelectChipBar]).
 /// - At most two levels are rendered; levels nested deeper than the second
 ///   are not rendered.
+/// - A category's `header`/`footer` entries (if any) are rendered as chip
+///   bars above/below that category's content, mirroring [CascadingSelect].
 /// - Child selection mode is determined per category by [SelectCategoryEntry.selectionMode].
 /// - The right-side content is scroll-synced with the left category list.
 /// - Custom range entries ([SelectRangeEntry.custom]) are rendered as an input
@@ -382,6 +384,33 @@ class FlattenSelectState extends State<FlattenSelect> {
     }
   }
 
+  SelectEntries _headerSelectedFor(String categoryId) =>
+      controller?.selectedHeaderEntriesFor(categoryId) ?? <SelectEntry>{};
+
+  SelectEntries _footerSelectedFor(String categoryId) =>
+      controller?.selectedFooterEntriesFor(categoryId) ?? <SelectEntry>{};
+
+  void _onHeaderOrFooterItemTap(
+    SelectCategoryEntry category,
+    bool isHeader,
+    int chipIndex,
+    SelectChildEntry entry,
+  ) {
+    // Unlike [GridSelect], every category is visible at once here, so the
+    // tapped header/footer entry is resolved against its owning category
+    // instead of the focused one.
+    final selectionMode =
+        isHeader ? category.headerSelectionMode : category.footerSelectionMode;
+    controller?.toggleHeaderOrFooterEntry(
+      categoryId: category.id,
+      entry: entry,
+      selectionMode: selectionMode,
+      isHeader: isHeader,
+    );
+
+    _setStateOrImmediateApply(entry);
+  }
+
   void _onResetTap() {
     controller?.resetState(initializeAnyIfEmpty: true);
     _tempSelectedCategoryIndex = 0;
@@ -485,13 +514,54 @@ class FlattenSelectState extends State<FlattenSelect> {
         ),
     };
 
+    final categoryHeader = category.header;
+    final categoryFooter = category.footer;
+    final hasHeader = categoryHeader != null && categoryHeader.children != null;
+    final hasFooter = categoryFooter != null && categoryFooter.children != null;
+
     // The outer ListView handles vertical scrolling; the inner view must not
     // add another vertical scrollable in the same axis. Every branch above
     // either is non-scrollable (chip/range/counter) or self-sizes its internal
     // scroll view (list/grid), so nesting is safe.
     return Padding(
       padding: EdgeInsets.only(top: 18, bottom: isLast ? 18 : 0),
-      child: view,
+      child: hasHeader || hasFooter
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (hasHeader)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: SelectChipBar(
+                      category: categoryHeader,
+                      entries: categoryHeader.children!.toList(),
+                      selectedEntries: _headerSelectedFor(category.id),
+                      variant: SelectChipVariant.filled,
+                      isWrapable: false,
+                      onChanged: (index, entry) =>
+                          _onHeaderOrFooterItemTap.call(
+                              category, true, index, entry as SelectChildEntry),
+                    ),
+                  ),
+                view,
+                if (hasFooter)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: SelectChipBar(
+                      category: categoryFooter,
+                      entries: categoryFooter.children!.toList(),
+                      selectedEntries: _footerSelectedFor(category.id),
+                      variant: SelectChipVariant.filled,
+                      isWrapable: false,
+                      onChanged: (index, entry) =>
+                          _onHeaderOrFooterItemTap.call(category, false, index,
+                              entry as SelectChildEntry),
+                    ),
+                  ),
+              ],
+            )
+          : view,
     );
   }
 
