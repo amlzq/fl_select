@@ -23,6 +23,9 @@ import 'widgets/widgets.dart';
 /// - At most two levels are rendered; levels nested deeper than the second
 ///   are not rendered.
 /// - If a category contains an "Any" child entry, it may be selected by default.
+/// - A category's `header`/`footer` entries (if any) are rendered as chip
+///   bars above/below the focused category's content, mirroring
+///   [CascadingSelect].
 /// - If a category contains a custom range entry ([SelectRangeEntry.custom]),
 ///   two numeric fields are shown for min/max input.
 /// - When an entry's `immediate` is true, selection is applied immediately
@@ -234,6 +237,32 @@ class GridSelectState extends State<GridSelect> {
     }
   }
 
+  SelectEntries _headerSelectedFor(String categoryId) =>
+      controller?.selectedHeaderEntriesFor(categoryId) ?? <SelectEntry>{};
+
+  SelectEntries _footerSelectedFor(String categoryId) =>
+      controller?.selectedFooterEntriesFor(categoryId) ?? <SelectEntry>{};
+
+  void _onHeaderOrFooterItemTap(
+    bool isHeader,
+    int chipIndex,
+    SelectChildEntry entry,
+  ) {
+    final category = _effectiveSelectedCategory;
+    if (category == null) return;
+
+    final selectionMode =
+        isHeader ? category.headerSelectionMode : category.footerSelectionMode;
+    controller?.toggleHeaderOrFooterEntry(
+      categoryId: category.id,
+      entry: entry,
+      selectionMode: selectionMode,
+      isHeader: isHeader,
+    );
+
+    _setStateOrImmediateApply(entry);
+  }
+
   void _onResetTap() {
     if (!_isCategoryTree) {
       controller?.resetState(initializeAnyIfEmpty: true);
@@ -422,6 +451,11 @@ class GridSelectState extends State<GridSelect> {
     /// Focused category index
     final tempSelectedCategoryIndex = _displayEntries.indexOf(category);
 
+    final categoryHeader = category.header;
+    final categoryFooter = category.footer;
+    final headerSelected = _headerSelectedFor(category.id);
+    final footerSelected = _footerSelectedFor(category.id);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -437,9 +471,43 @@ class GridSelectState extends State<GridSelect> {
         Flexible(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-            child: _buildCategoryView(
-              category,
-              index: tempSelectedCategoryIndex,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (categoryHeader != null && categoryHeader.children != null)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 10),
+                    child: SelectChipBar(
+                      category: categoryHeader,
+                      entries: categoryHeader.children!.toList(),
+                      selectedEntries: headerSelected,
+                      variant: SelectChipVariant.filled,
+                      isWrapable: true,
+                      onChanged: (index, entry) => _onHeaderOrFooterItemTap
+                          .call(true, index, entry as SelectChildEntry),
+                    ),
+                  ),
+                Flexible(
+                  child: _buildCategoryView(
+                    category,
+                    index: tempSelectedCategoryIndex,
+                  ),
+                ),
+                if (categoryFooter != null && categoryFooter.children != null)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: SelectChipBar(
+                      category: categoryFooter,
+                      entries: categoryFooter.children!.toList(),
+                      selectedEntries: footerSelected,
+                      variant: SelectChipVariant.filled,
+                      isWrapable: true,
+                      onChanged: (index, entry) => _onHeaderOrFooterItemTap
+                          .call(false, index, entry as SelectChildEntry),
+                    ),
+                  ),
+              ],
             ),
           ),
         ),
