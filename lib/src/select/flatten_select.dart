@@ -26,6 +26,9 @@ import 'widgets/widgets.dart';
 ///   are not rendered.
 /// - A category's `header`/`footer` entries (if any) are rendered as chip
 ///   bars above/below that category's content, mirroring [CascadingSelect].
+/// - Each category's name is rendered as a single title above its content by
+///   the view itself; the inner layout views are created with
+///   `showTitle: false` so titles never duplicate.
 /// - Child selection mode is determined per category by [SelectCategoryEntry.selectionMode].
 /// - The right-side content is scroll-synced with the left category list.
 /// - Custom range entries ([SelectRangeEntry.custom]) are rendered as an input
@@ -390,6 +393,30 @@ class FlattenSelectState extends State<FlattenSelect> {
   SelectEntries _footerSelectedFor(String categoryId) =>
       controller?.selectedFooterEntriesFor(categoryId) ?? <SelectEntry>{};
 
+  /// Renders the category name above each category's content.
+  ///
+  /// The inner layout views are created with `showTitle: false` so the title
+  /// is rendered exactly once by this method, with a single consistent style
+  /// regardless of the category's layout.
+  Widget? _buildCategoryTitle(SelectCategoryEntry category) {
+    final name = category.name;
+    if (name == null) return null;
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: DefaultTextStyle.merge(
+        style: Theme.of(context)
+                .textTheme
+                .titleSmall
+                ?.copyWith(fontWeight: FontWeight.w600) ??
+            const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+        child: Text(name),
+      ),
+    );
+  }
+
   void _onHeaderOrFooterItemTap(
     SelectCategoryEntry category,
     bool isHeader,
@@ -439,7 +466,7 @@ class FlattenSelectState extends State<FlattenSelect> {
       SelectListLayout(:final toText) => SelectListView(
           key: ValueKey('category_$index'),
           category: category,
-          showTitle: true,
+          showTitle: false,
           entries: entries,
           selectedEntries: selectedEntries,
           onChanged: (_, entry) =>
@@ -462,7 +489,7 @@ class FlattenSelectState extends State<FlattenSelect> {
           tileVariant: delegate.gridTileTheme?.variant,
           fieldVariant: delegate.fieldTileTheme?.variant,
           category: category,
-          showTitle: true,
+          showTitle: false,
           entries: entries,
           selectedEntries: selectedEntries,
           onChanged: (_, entry) =>
@@ -478,7 +505,7 @@ class FlattenSelectState extends State<FlattenSelect> {
           category: category,
           entries: entries,
           selectedEntries: selectedEntries,
-          showTitle: true,
+          showTitle: false,
           isWrapable: true,
           direction: Axis.vertical,
           spacing: spacing,
@@ -495,7 +522,7 @@ class FlattenSelectState extends State<FlattenSelect> {
       SelectRangeLayout(:final toText) => SelectRangeView(
           key: ValueKey('category_$index'),
           category: category,
-          showTitle: true,
+          showTitle: false,
           toText: toText,
           entries: entries,
           selectedEntries: selectedEntries,
@@ -506,7 +533,7 @@ class FlattenSelectState extends State<FlattenSelect> {
       SelectCounterLayout() => SelectCounter(
           key: ValueKey('category_$index'),
           category: category,
-          showTitle: true,
+          showTitle: false,
           entries: entries,
           selectedEntries: selectedEntries,
           onChanged: (_, entry) =>
@@ -514,6 +541,7 @@ class FlattenSelectState extends State<FlattenSelect> {
         ),
     };
 
+    final categoryTitle = _buildCategoryTitle(category);
     final categoryHeader = category.header;
     final categoryFooter = category.footer;
     final hasHeader = categoryHeader != null && categoryHeader.children != null;
@@ -525,11 +553,12 @@ class FlattenSelectState extends State<FlattenSelect> {
     // scroll view (list/grid), so nesting is safe.
     return Padding(
       padding: EdgeInsets.only(top: 18, bottom: isLast ? 18 : 0),
-      child: hasHeader || hasFooter
+      child: (categoryTitle != null || hasHeader || hasFooter)
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
+                if (categoryTitle != null) categoryTitle,
                 if (hasHeader)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),

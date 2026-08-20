@@ -293,6 +293,35 @@ void main() {
       );
     });
 
+    testWidgets('renders the category title once above the header chips',
+        (tester) async {
+      await tester.pumpWidget(_flattenHarness({categoryWithHeaderFooter()}));
+      await tester.pumpAndSettle();
+
+      // 'C1' appears twice: once in the side bar and once as the category
+      // title rendered by the flatten view itself.
+      expect(find.text('C1'), findsNWidgets(2));
+
+      // The inner list view renders no title of its own (showTitle: false).
+      expect(
+        find.descendant(
+          of: find.byType(SelectListView),
+          matching: find.text('C1'),
+        ),
+        findsNothing,
+      );
+
+      // Vertical order: category title -> header chips -> content -> footer.
+      expect(
+        tester.getTopLeft(find.text('C1').last).dy,
+        lessThan(tester.getTopLeft(find.text('H1')).dy),
+      );
+      expect(
+        tester.getTopLeft(find.text('H1')).dy,
+        lessThan(tester.getTopLeft(find.text('One')).dy),
+      );
+    });
+
     testWidgets('tapping header/footer children applies their selections',
         (tester) async {
       final applied = <Set<SelectEntry>>[];
