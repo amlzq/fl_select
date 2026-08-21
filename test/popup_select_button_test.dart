@@ -116,12 +116,20 @@ void main() {
       expect(find.text('1 selected'), findsOneWidget);
     });
 
-    testWidgets('renders outlined and elevated variants', (tester) async {
+    testWidgets('renders filled, outlined and elevated variants',
+        (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             body: Wrap(
               children: [
+                PopupSelectButton.filled(
+                  label: 'Filled',
+                  selectDelegate: ListSelectDelegate(
+                    entriesLoader: () async => <SelectEntry<dynamic>>{},
+                  ),
+                  onApplied: (_) {},
+                ),
                 PopupSelectButton.elevated(
                   label: 'Elevated',
                   selectDelegate: ListSelectDelegate(
@@ -142,8 +150,39 @@ void main() {
         ),
       );
 
+      expect(find.text('Filled'), findsOneWidget);
       expect(find.text('Elevated'), findsOneWidget);
       expect(find.text('Outlined'), findsOneWidget);
+    });
+
+    testWidgets('default constructor renders the text variant',
+        (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PopupSelectButton(
+              label: 'Text',
+              selectDelegate: ListSelectDelegate(
+                entriesLoader: () async => <SelectEntry<dynamic>>{},
+              ),
+              onApplied: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      // The text variant paints no filled surface: the trigger renders on a
+      // transparent Material, like a TextButton.
+      final materials = tester.widgetList<Material>(
+        find.descendant(
+          of: find.byType(PopupSelectButton),
+          matching: find.byType(Material),
+        ),
+      );
+      expect(
+        materials.any((material) => material.type == MaterialType.transparency),
+        isTrue,
+      );
     });
   });
 }

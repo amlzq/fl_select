@@ -6,7 +6,7 @@ import 'select_overlay_style.dart';
 /// Theme extension for [PopupSelectButton].
 ///
 /// Add this extension to your app theme to override the default visuals of the
-/// three button variants (elevated / filled / outlined) and the overlay/select
+/// four button variants (elevated / filled / outlined / text) and the
 /// styles used when the panel is opened.
 @immutable
 class PopupSelectButtonTheme extends ThemeExtension<PopupSelectButtonTheme> {

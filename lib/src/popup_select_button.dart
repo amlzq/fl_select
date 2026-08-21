@@ -23,6 +23,9 @@ enum PopupSelectButtonVariant {
   /// A button with a transparent background and an outline border
   /// (like [OutlinedButton]).
   outlined,
+
+  /// A button with a transparent background and no border (like [TextButton]).
+  text,
 }
 
 /// Callback invoked with the selected entries only — used by
@@ -46,11 +49,11 @@ const kPopupSelectButtonHeight = 40.0;
 /// or [child] for the trigger. The trailing [icon] rotates while the overlay is
 /// open. After an apply, the button label is updated with the resulting label.
 class PopupSelectButton extends StatefulWidget {
-  /// Creates a filled button (the default variant).
+  /// Creates a text button (the default variant).
   const PopupSelectButton({
     super.key,
     required this.selectDelegate,
-    this.variant = PopupSelectButtonVariant.filled,
+    this.variant = PopupSelectButtonVariant.text,
     this.label,
     this.child,
     this.icon,
@@ -65,6 +68,26 @@ class PopupSelectButton extends StatefulWidget {
     this.labelLoader,
     this.direction = PopupSelectDirection.below,
   });
+
+  /// Creates a filled button. The [variant] is fixed to
+  /// [PopupSelectButtonVariant.filled].
+  const PopupSelectButton.filled({
+    super.key,
+    required this.selectDelegate,
+    this.label,
+    this.child,
+    this.icon,
+    this.overlayStyle,
+    this.onSelectShowed,
+    this.onSelectHidden,
+    this.onSelectWillShow,
+    this.onSelectWillHide,
+    this.onChanged,
+    required this.onApplied,
+    this.onReset,
+    this.labelLoader,
+    this.direction = PopupSelectDirection.below,
+  }) : variant = PopupSelectButtonVariant.filled;
 
   /// Creates an elevated button. The [variant] is fixed to
   /// [PopupSelectButtonVariant.elevated].
@@ -348,7 +371,8 @@ class _PopupSelectButtonState extends State<PopupSelectButton>
       shadowColor: resolved.shadowColor,
       surfaceTintColor: resolved.surfaceTintColor,
       shape: shape,
-      type: widget.variant == PopupSelectButtonVariant.outlined
+      type: widget.variant == PopupSelectButtonVariant.outlined ||
+              widget.variant == PopupSelectButtonVariant.text
           ? MaterialType.transparency
           : MaterialType.button,
       child: InkWell(
@@ -391,6 +415,7 @@ class _PopupSelectButtonDefaults extends PopupSelectButtonTheme {
       case PopupSelectButtonVariant.filled:
         return _colors.primary;
       case PopupSelectButtonVariant.outlined:
+      case PopupSelectButtonVariant.text:
         return Colors.transparent;
     }
   }
@@ -403,6 +428,7 @@ class _PopupSelectButtonDefaults extends PopupSelectButtonTheme {
       case PopupSelectButtonVariant.filled:
         return _colors.onPrimary;
       case PopupSelectButtonVariant.outlined:
+      case PopupSelectButtonVariant.text:
         return _colors.primary;
     }
   }

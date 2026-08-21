@@ -152,7 +152,7 @@ PopupSelectBar(
 
 #### PopupSelectButton
 
-A single-trigger alternative to `PopupSelectBar` — opens a select overlay on tap, like `PopupMenuButton`. It takes one `selectDelegate` and a `label`/`child`. Three variants: filled (default), `.elevated(...)`, and `.outlined(...)`.
+A single-trigger alternative to `PopupSelectBar` — opens a select overlay on tap, like `PopupMenuButton`. It takes one `selectDelegate` and a `label`/`child`. Four variants: text (default), `.filled(...)`, `.elevated(...)`, and `.outlined(...)`.
 
 ```dart
 PopupSelectButton(

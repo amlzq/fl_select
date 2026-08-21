@@ -25,5 +25,6 @@ export 'src/select/select_theme.dart';
 export 'src/select/select_theme_data.dart';
 export 'src/select/widgets/widgets.dart';
 export 'src/select_label_state.dart';
+export 'src/select_overlay.dart' show PopupSelectDirection;
 export 'src/select_overlay_style.dart';
 export 'src/select_view.dart';

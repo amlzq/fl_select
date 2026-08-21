@@ -1,5 +1,50 @@
 # Migration Guide
 
+## MIGRATE TO Next
+
+### `PopupSelectButton` default variant changed to `text`
+
+`PopupSelectButtonVariant` gains a `text` variant — a trigger with a
+transparent background and no border, styled like `TextButton` — and the
+`PopupSelectButton` default constructor now uses it as the default
+`variant`, aligning the unnamed constructor with the least-emphasis
+Material button. A new `PopupSelectButton.filled` named constructor
+(mirroring the existing `.elevated` / `.outlined` constructors) preserves
+the previous default look.
+
+The public API is backward compatible: all existing enum values,
+constructors and parameters keep working, and call sites that pass
+`variant` explicitly render exactly as before. Only call sites that relied
+on the old default without an explicit `variant` are affected — they now
+render a text button.
+
+Migration: pass an explicit `variant` — or use the matching named
+constructor — at every call site that relies on the old filled default.
+
+```dart
+// Before
+PopupSelectButton(
+  label: 'Price',
+  selectDelegate: priceDelegate,
+  onApplied: (selected) { ... },
+);
+
+// After — keep the previous filled look
+PopupSelectButton.filled(
+  label: 'Price',
+  selectDelegate: priceDelegate,
+  onApplied: (selected) { ... },
+);
+
+// or
+PopupSelectButton(
+  variant: PopupSelectButtonVariant.filled,
+  label: 'Price',
+  selectDelegate: priceDelegate,
+  onApplied: (selected) { ... },
+);
+```
+
 ## MIGRATE TO 0.8.0
 
 ### `previousSelected` / `resetSelected` renamed to `selectedEntries` / `resetEntries`
