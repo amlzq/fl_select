@@ -366,7 +366,6 @@ class SelectController extends ChangeNotifier {
     if (entry is! SelectChildEntry) return false;
 
     final path = tree.findPath(id, parentId: parentId);
-    final effectiveSelectionMode = _effectiveSelectionMode();
 
     // A flat structure stores its entries at the top level without a
     // category wrapper. `findPath` returns a single-element path for such an
@@ -386,12 +385,11 @@ class SelectController extends ChangeNotifier {
       if (!alreadySelected) {
         toggleFlatEntry(
           entry,
-          selectionMode: effectiveSelectionMode,
+          selectionMode: selectionMode,
           isCategoryTree: false,
         );
       }
-      if (applyIfImmediate &&
-          (effectiveSelectionMode == SelectionMode.single || entry.immediate)) {
+      if (applyIfImmediate && (!hasMultipleMode || entry.immediate)) {
         applyFromState();
       } else if (emitChange) {
         emitChangeFromState();
@@ -414,15 +412,14 @@ class SelectController extends ChangeNotifier {
         toggleFlatEntry(
           leaf,
           // Delegate-level mode governs cross-category clearing; the mixed
-          // [effectiveSelectionMode] only reflects per-category behavior.
+          // [hasMultipleMode] only reflects per-category behavior.
           selectionMode: selectionMode,
           isCategoryTree: true,
           category: root,
         );
       }
 
-      if (applyIfImmediate &&
-          (effectiveSelectionMode == SelectionMode.single || leaf.immediate)) {
+      if (applyIfImmediate && (!hasMultipleMode || leaf.immediate)) {
         applyFromState();
       } else if (emitChange) {
         emitChangeFromState();
@@ -439,16 +436,15 @@ class SelectController extends ChangeNotifier {
       toggleCascadingEntry(
         leaf,
         // Delegate-level mode governs cross-category clearing; the mixed
-        // [effectiveSelectionMode] only reflects per-category behavior.
+        // [hasMultipleMode] only reflects per-category behavior.
         selectionMode: selectionMode,
-        childrenSelectionMode: root.selectionMode,
+        childrenSelectionMode: root.selectionMode ?? selectionMode,
         focusedPath: focusedPath,
         category: root,
       );
     }
 
-    if (applyIfImmediate &&
-        (effectiveSelectionMode == SelectionMode.single || leaf.immediate)) {
+    if (applyIfImmediate && (!hasMultipleMode || leaf.immediate)) {
       applyFromState();
     } else if (emitChange) {
       emitChangeFromState();
@@ -464,7 +460,6 @@ class SelectController extends ChangeNotifier {
     final entry = tree.findEntry(id, parentId: parentId);
     if (entry == null || entry is! SelectChildEntry) return false;
 
-    final effectiveSelectionMode = _effectiveSelectionMode();
     final path = tree.findPath(id, parentId: parentId);
 
     // Mirror the flat detection in [select]: a root-level flat entry's path is
@@ -475,7 +470,7 @@ class SelectController extends ChangeNotifier {
     if (isFlatRoot) {
       final selected0 = tree.mutableSelectedEntriesAtLevel(0);
       if (!selected0.contains(entry)) return true;
-      if (effectiveSelectionMode == SelectionMode.single) {
+      if (!hasMultipleMode) {
         final any = tree.entries.singleWhereOrNull(testAnyElement);
         selected0
           ..clear()
@@ -499,7 +494,7 @@ class SelectController extends ChangeNotifier {
       final selectedChildren = tree.mutableSelectedEntriesAtLevel(1);
       if (!selectedChildren.contains(leaf)) return true;
 
-      if (root.selectionMode == SelectionMode.single) {
+      if ((root.selectionMode ?? selectionMode) == SelectionMode.single) {
         final any = root.children?.singleWhereOrNull(testAnyElement);
         selectedChildren
             .removeWhere((e) => e is SelectChildEntry && e.parentId == root.id);
@@ -513,7 +508,7 @@ class SelectController extends ChangeNotifier {
         toggleFlatEntry(
           leaf,
           // Delegate-level mode governs cross-category clearing; the mixed
-          // [effectiveSelectionMode] only reflects per-category behavior.
+          // [hasMultipleMode] only reflects per-category behavior.
           selectionMode: selectionMode,
           isCategoryTree: true,
           category: root,
@@ -531,7 +526,7 @@ class SelectController extends ChangeNotifier {
     final selectedAtLevel = tree.mutableSelectedEntriesAtLevel(level);
     if (!selectedAtLevel.contains(leaf)) return true;
 
-    if (root.selectionMode == SelectionMode.single) {
+    if ((root.selectionMode ?? selectionMode) == SelectionMode.single) {
       final parent = focusedPath.last;
       final any = parent.children
           ?.whereType<SelectChildEntry>()
@@ -548,7 +543,7 @@ class SelectController extends ChangeNotifier {
       // Delegate-level mode; the mixed mode only reflects per-category
       // behavior. (No clearing happens on unselect anyway.)
       selectionMode: selectionMode,
-      childrenSelectionMode: root.selectionMode,
+      childrenSelectionMode: root.selectionMode ?? selectionMode,
       focusedPath: focusedPath,
       category: root,
     );
@@ -556,15 +551,27 @@ class SelectController extends ChangeNotifier {
     return true;
   }
 
-  SelectionMode _effectiveSelectionMode() {
-    if (selectionMode == SelectionMode.multiple) return SelectionMode.multiple;
+  /// Whether multiple selection is enabled at any level of this select.
+  ///
+  /// True when the delegate-level [selectionMode] is multiple or when any
+  /// top-level category explicitly opts into multiple via
+  /// [SelectCategoryEntry.selectionMode].
+  ///
+  /// Drives panel-level UX decisions: whether the action bar (apply/reset)
+  /// is visible, whether a selection applies immediately on tap (single
+  /// applies without waiting for the apply action), the flat-tree toggle
+  /// semantics, and the unselect fallback to the "any" entry. It is not the
+  /// mode used for cross-category clearing, which always follows the
+  /// delegate-level [selectionMode].
+  bool get hasMultipleMode {
+    if (selectionMode == SelectionMode.multiple) return true;
     for (final entry in tree.entries) {
       if (entry is SelectCategoryEntry &&
           entry.selectionMode == SelectionMode.multiple) {
-        return SelectionMode.multiple;
+        return true;
       }
     }
-    return SelectionMode.single;
+    return false;
   }
 
   bool selectHeaderChild(
@@ -582,7 +589,8 @@ class SelectController extends ChangeNotifier {
     toggleHeaderOrFooterEntry(
       categoryId: categoryId,
       entry: child,
-      selectionMode: category?.headerSelectionMode ?? SelectionMode.single,
+      selectionMode: category?.effectiveHeaderSelectionMode(selectionMode) ??
+          selectionMode,
       isHeader: true,
     );
     if (emitChange) emitChangeFromState();
@@ -604,7 +612,8 @@ class SelectController extends ChangeNotifier {
     toggleHeaderOrFooterEntry(
       categoryId: categoryId,
       entry: child,
-      selectionMode: category?.footerSelectionMode ?? SelectionMode.single,
+      selectionMode: category?.effectiveFooterSelectionMode(selectionMode) ??
+          selectionMode,
       isHeader: false,
     );
     if (emitChange) emitChangeFromState();

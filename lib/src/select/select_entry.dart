@@ -783,11 +783,11 @@ SelectEntry<E> _injectParentId<E>(SelectEntry<E> entry, String parentId) {
 /// A category entry (i.e. a root node).
 class SelectCategoryEntry<E> extends SelectEntry<E> {
   SelectCategoryEntry({
-    this.selectionMode = SelectionMode.single,
+    this.selectionMode,
     this.header,
-    this.headerSelectionMode = SelectionMode.single,
+    this.headerSelectionMode,
     this.footer,
-    this.footerSelectionMode = SelectionMode.single,
+    this.footerSelectionMode,
     this.layout,
     required super.id,
     required super.name,
@@ -824,11 +824,11 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
   /// carry the correct `parentId`), use the default [SelectCategoryEntry]
   /// constructor directly.
   factory SelectCategoryEntry.children({
-    SelectionMode selectionMode = SelectionMode.single,
+    SelectionMode? selectionMode,
     SelectEntry<E>? header,
-    SelectionMode headerSelectionMode = SelectionMode.single,
+    SelectionMode? headerSelectionMode,
     SelectEntry<E>? footer,
-    SelectionMode footerSelectionMode = SelectionMode.single,
+    SelectionMode? footerSelectionMode,
     SelectLayout? layout,
     required String id,
     required String name,
@@ -858,24 +858,49 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
 
   /// The selection mode applied to this category's children.
   ///
-  /// Defaults to [SelectionMode.single].
-  final SelectionMode selectionMode;
+  /// [SelectionMode.single] keeps at most one entry selected within this
+  /// category's subtree — picking a new entry clears the category's other
+  /// selections and applies immediately. [SelectionMode.multiple] lets the
+  /// user accumulate selections until applied (unless an entry is
+  /// [SelectChildEntry.immediate]). The mode never affects other
+  /// categories; cross-category exclusion is governed by the delegate-level
+  /// [SelectDelegate.selectionMode].
+  ///
+  /// When null (the default), the category inherits the delegate-level
+  /// [SelectDelegate.selectionMode]; an explicit value overrides it for this
+  /// category's subtree.
+  ///
+  /// Resolve the non-null mode with
+  /// [SelectCategoryEntryExtension.effectiveSelectionMode].
+  final SelectionMode? selectionMode;
 
   /// An optional header entry rendered above this category's children.
   SelectEntry<E>? header;
 
   /// The selection mode applied to [header].
   ///
-  /// Defaults to [SelectionMode.single].
-  final SelectionMode headerSelectionMode;
+  /// [SelectionMode.single] keeps at most one header entry selected —
+  /// picking a new one replaces it, and tapping the selected entry again
+  /// deselects it. [SelectionMode.multiple] accumulates selections.
+  ///
+  /// When null (the default), the header inherits the category's effective
+  /// selection mode ([selectionMode], falling back to the delegate-level
+  /// mode); an explicit value overrides it.
+  final SelectionMode? headerSelectionMode;
 
   /// An optional footer entry rendered below this category's children.
   SelectEntry<E>? footer;
 
   /// The selection mode applied to [footer].
   ///
-  /// Defaults to [SelectionMode.single].
-  final SelectionMode footerSelectionMode;
+  /// [SelectionMode.single] keeps at most one footer entry selected —
+  /// picking a new one replaces it, and tapping the selected entry again
+  /// deselects it. [SelectionMode.multiple] accumulates selections.
+  ///
+  /// When null (the default), the footer inherits the category's effective
+  /// selection mode ([selectionMode], falling back to the delegate-level
+  /// mode); an explicit value overrides it.
+  final SelectionMode? footerSelectionMode;
 
   /// The layout used to render this category's children.
   ///
@@ -932,7 +957,31 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
       'SelectCategoryEntry(id: $id, name: $name, selectionMode: $selectionMode, header: $header, footer: $footer, layout: $layout, children: $children)';
 }
 
+/// Extensions on [SelectCategoryEntry]: resolving the effective (non-null)
+/// selection modes against a delegate-level fallback, and custom range
+/// entry lookups.
 extension SelectCategoryEntryExtension on SelectCategoryEntry {
+  /// The effective selection mode for this category's children.
+  ///
+  /// Returns [selectionMode] when set, otherwise [fallback] (typically the
+  /// delegate-level mode).
+  SelectionMode effectiveSelectionMode(SelectionMode fallback) =>
+      selectionMode ?? fallback;
+
+  /// The effective selection mode for this category's header.
+  ///
+  /// Returns [headerSelectionMode] when set, otherwise the category's
+  /// effective selection mode (see [effectiveSelectionMode]).
+  SelectionMode effectiveHeaderSelectionMode(SelectionMode fallback) =>
+      headerSelectionMode ?? selectionMode ?? fallback;
+
+  /// The effective selection mode for this category's footer.
+  ///
+  /// Returns [footerSelectionMode] when set, otherwise the category's
+  /// effective selection mode (see [effectiveSelectionMode]).
+  SelectionMode effectiveFooterSelectionMode(SelectionMode fallback) =>
+      footerSelectionMode ?? selectionMode ?? fallback;
+
   bool get hasCustomOrNull =>
       firstCustomOrNull != null || lastCustomOrNull != null;
 

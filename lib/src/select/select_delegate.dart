@@ -81,7 +81,16 @@ abstract class SelectDelegate {
           'Provide at most one of resetEntries or resetEntriesLoader.',
         );
 
-  /// Selection mode applied to category entries.
+  /// The panel-wide selection mode.
+  ///
+  /// Governs flat (non-categorized) entries directly and acts as the
+  /// fallback for any [SelectCategoryEntry] that leaves its
+  /// [SelectCategoryEntry.selectionMode] null.
+  ///
+  /// In [SelectionMode.single], selecting a leaf deselects every other
+  /// category's selections (cross-category exclusion) and applies
+  /// immediately instead of waiting for the apply action. In
+  /// [SelectionMode.multiple], selections accumulate until applied.
   final SelectionMode selectionMode;
 
   final SelectEntries? _entries;
@@ -285,7 +294,7 @@ class CascadingSelectDelegate extends SelectDelegate {
     this.checkboxBuilder,
     this.radioBuilder,
     this.isScrollable = false,
-    super.selectionMode = SelectionMode.single,
+    super.selectionMode,
     super.entries,
     super.entriesLoader,
     super.selectedEntries,
@@ -374,7 +383,7 @@ class ListSelectDelegate extends SelectDelegate {
   ListSelectDelegate({
     this.checkboxBuilder,
     this.radioBuilder,
-    super.selectionMode = SelectionMode.single,
+    super.selectionMode,
     super.entries,
     super.entriesLoader,
     super.selectedEntries,
@@ -458,7 +467,7 @@ class GridSelectDelegate extends SelectDelegate {
     this.childAspectRatio = 1.0,
     this.checkboxBuilder,
     this.radioBuilder,
-    super.selectionMode = SelectionMode.single,
+    super.selectionMode,
     super.entries,
     super.entriesLoader,
     super.selectedEntries,
@@ -571,7 +580,7 @@ class FlattenSelectDelegate extends SelectDelegate {
       'Use SelectGridLayout.childAspectRatio on SelectCategoryEntry.layout instead.',
     )
     this.childAspectRatio = 1.0,
-    super.selectionMode = SelectionMode.single,
+    super.selectionMode,
     super.entries,
     super.entriesLoader,
     super.selectedEntries,

@@ -95,7 +95,9 @@ class SelectionRules {
         (e) => e is SelectChildEntry && e.parentId == item.parentId && e.isAny,
       );
 
-      if (SelectionMode.single == category.selectionMode) {
+      // A category without an explicit selectionMode inherits the
+      // delegate-level mode.
+      if (SelectionMode.single == (category.selectionMode ?? selectionMode)) {
         if (selectedEntries.contains(item)) return;
         selectedEntries
             .removeWhere((e) => testSameParentElement(e, item.parentId));
@@ -176,8 +178,7 @@ class SelectionRules {
     for (var i = 1; i < tree.levelCount; i++) {
       tree.mutableSelectedEntriesAtLevel(i).removeWhere(
             (e) =>
-                e is SelectChildEntry &&
-                subtreeParentIds.contains(e.parentId),
+                e is SelectChildEntry && subtreeParentIds.contains(e.parentId),
           );
     }
 

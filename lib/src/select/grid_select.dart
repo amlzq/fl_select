@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'action_bar_visibility.dart';
-import 'constants.dart';
 import 'select_controller.dart';
 import 'select_delegate.dart';
 import 'select_entry.dart';
@@ -140,31 +139,12 @@ class GridSelectState extends State<GridSelect> {
     if (mounted) setState(() {});
   }
 
-  /// Selection Mode for category entries
-  SelectionMode? get categorySelectionMode => delegate.selectionMode;
-
-  /// Selection Mode for the selected category sub-items
-  SelectionMode get childrenSelectionMode =>
-      _tempSelectedCategory?.selectionMode ?? SelectionMode.single;
-
-  /// Selection Mode for delegate.
-  /// It is jointly determined by the category selection mode and the sub-item selection mode.
-  SelectionMode? get selectSelectionMode {
-    if (SelectionMode.multiple == categorySelectionMode) {
-      return SelectionMode.multiple;
-    }
-    if (widget.entries.firstWhereOrNull(testMultipleElement) != null) {
-      return SelectionMode.multiple;
-    }
-    return SelectionMode.single;
-  }
-
   void _onCategoryItemTap(SelectCategoryEntry entry) {
     if (entry == _tempSelectedCategory) return;
     _tempSelectedCategory = entry;
     controller?.focusCategoryEntry(
       entry,
-      selectionMode: categorySelectionMode ?? SelectionMode.single,
+      selectionMode: delegate.selectionMode,
     );
     setState(() {});
   }
@@ -181,7 +161,7 @@ class GridSelectState extends State<GridSelect> {
       } else {
         controller?.toggleFlatEntry(
           entry,
-          selectionMode: selectSelectionMode ?? SelectionMode.single,
+          selectionMode: delegate.selectionMode,
           isCategoryTree: false,
         );
       }
@@ -215,10 +195,7 @@ class GridSelectState extends State<GridSelect> {
     } else {
       controller?.toggleFlatEntry(
         entry,
-        // Cross-category clearing must follow the delegate-level mode. The
-        // mixed [selectSelectionMode] reports multiple as soon as any
-        // category opts into multiple, which would disable the clearing.
-        selectionMode: categorySelectionMode ?? SelectionMode.single,
+        selectionMode: delegate.selectionMode,
         isCategoryTree: true,
         category: category,
       );
@@ -228,7 +205,7 @@ class GridSelectState extends State<GridSelect> {
   }
 
   void _setStateOrImmediateApply(SelectChildEntry entry) {
-    if (SelectionMode.single == selectSelectionMode || entry.immediate) {
+    if (controller?.hasMultipleMode != true || entry.immediate) {
       // No need to tap "Apply"; return result immediately
       _onApplyTap();
     } else {
@@ -251,8 +228,9 @@ class GridSelectState extends State<GridSelect> {
     final category = _effectiveSelectedCategory;
     if (category == null) return;
 
-    final selectionMode =
-        isHeader ? category.headerSelectionMode : category.footerSelectionMode;
+    final selectionMode = isHeader
+        ? category.effectiveHeaderSelectionMode(delegate.selectionMode)
+        : category.effectiveFooterSelectionMode(delegate.selectionMode);
     controller?.toggleHeaderOrFooterEntry(
       categoryId: category.id,
       entry: entry,
@@ -403,7 +381,7 @@ class GridSelectState extends State<GridSelect> {
               ),
             ),
           ),
-          if (SelectionMode.multiple == selectSelectionMode &&
+          if (controller?.hasMultipleMode == true &&
               !SelectActionBarVisibility.isHidden(context))
             delegate.actionBarBuilder?.call(
                   context,
@@ -429,7 +407,7 @@ class GridSelectState extends State<GridSelect> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Flexible(child: Center(child: Text('No results'))),
-          if (SelectionMode.multiple == selectSelectionMode &&
+          if (controller?.hasMultipleMode == true &&
               !SelectActionBarVisibility.isHidden(context))
             delegate.actionBarBuilder?.call(
                   context,
@@ -511,7 +489,7 @@ class GridSelectState extends State<GridSelect> {
             ),
           ),
         ),
-        if (SelectionMode.multiple == selectSelectionMode &&
+        if (controller?.hasMultipleMode == true &&
             !SelectActionBarVisibility.isHidden(context))
           delegate.actionBarBuilder?.call(
                 context,

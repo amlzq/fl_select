@@ -8,19 +8,29 @@ typedef SelectCallback = void Function(SelectEntries selected);
 /// Badge rendering style.
 enum BadgeStyle {
   number,
+
   dot,
 }
 
 /// Selection mode for a category or select.
 enum SelectionMode {
+  /// At most one entry may be selected; picking a new entry replaces the
+  /// previous one.
   single,
+
+  /// Any number of entries may be selected; selections accumulate until
+  /// applied (see [SelectChildEntry.immediate] for the per-entry override).
   multiple,
 }
 
 /// Builds a skeleton widget while select data is loading.
 typedef SkeletonBuilder = Widget Function(BuildContext context);
 
-/// Returns true if the entry is a multi-selection category.
+/// Returns true if the entry is a category explicitly configured with
+/// [SelectionMode.multiple].
+///
+/// Categories that leave [SelectCategoryEntry.selectionMode] null inherit
+/// the delegate-level mode instead and are not matched by this predicate.
 bool testMultipleElement(SelectEntry e) =>
     e is SelectCategoryEntry && e.selectionMode == SelectionMode.multiple;
 

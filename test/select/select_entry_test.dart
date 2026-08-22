@@ -625,13 +625,60 @@ void main() {
       expect(a, isNot(equals(b)));
     });
 
-    test('default values for selection modes', () {
-      final c = _category('c', 'C', children: {_text('c', 'a', 'A')});
+    test('selection modes default to null (inherit the delegate mode)', () {
+      final c = SelectCategoryEntry<dynamic>(
+        id: 'c',
+        name: 'C',
+        children: {_text('c', 'a', 'A')},
+      );
 
-      expect(c.selectionMode, SelectionMode.single);
-      expect(c.headerSelectionMode, SelectionMode.single);
-      expect(c.footerSelectionMode, SelectionMode.single);
+      expect(c.selectionMode, isNull);
+      expect(c.headerSelectionMode, isNull);
+      expect(c.footerSelectionMode, isNull);
       expect(c.layout, isNull);
+    });
+
+    test('effective selection modes resolve the inheritance chain', () {
+      // All modes null: everything falls back to the delegate-level mode.
+      final inherited = SelectCategoryEntry<dynamic>(
+        id: 'c1',
+        name: 'C1',
+        children: {_text('c1', 'a', 'A')},
+      );
+      expect(inherited.effectiveSelectionMode(SelectionMode.multiple),
+          SelectionMode.multiple);
+      expect(inherited.effectiveHeaderSelectionMode(SelectionMode.multiple),
+          SelectionMode.multiple);
+      expect(inherited.effectiveFooterSelectionMode(SelectionMode.multiple),
+          SelectionMode.multiple);
+
+      // selectionMode set, header/footer null: header/footer follow the
+      // category's effective mode.
+      final mixed = SelectCategoryEntry<dynamic>(
+        id: 'c2',
+        name: 'C2',
+        children: {_text('c2', 'a', 'A')},
+        selectionMode: SelectionMode.single,
+      );
+      expect(mixed.effectiveSelectionMode(SelectionMode.multiple),
+          SelectionMode.single);
+      expect(mixed.effectiveHeaderSelectionMode(SelectionMode.multiple),
+          SelectionMode.single);
+      expect(mixed.effectiveFooterSelectionMode(SelectionMode.multiple),
+          SelectionMode.single);
+
+      // Explicit header/footer modes override the inheritance chain.
+      final explicit = SelectCategoryEntry<dynamic>(
+        id: 'c3',
+        name: 'C3',
+        children: {_text('c3', 'a', 'A')},
+        headerSelectionMode: SelectionMode.single,
+        footerSelectionMode: SelectionMode.multiple,
+      );
+      expect(explicit.effectiveHeaderSelectionMode(SelectionMode.multiple),
+          SelectionMode.single);
+      expect(explicit.effectiveFooterSelectionMode(SelectionMode.single),
+          SelectionMode.multiple);
     });
 
     test('copyWith creates copy with modified selectionMode', () {

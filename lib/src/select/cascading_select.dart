@@ -472,23 +472,9 @@ class CascadingSelectState extends State<CascadingSelect> {
   SelectCategoryEntry get tempSelectedCategory =>
       _tempSelectedEntryPerLevel.first as SelectCategoryEntry;
 
-  /// Selection Mode for category entries
-  SelectionMode? get categorySelectionMode => delegate.selectionMode;
-
   /// Selection Mode for the selected category sub-items
-  SelectionMode get childrenSelectionMode => tempSelectedCategory.selectionMode;
-
-  /// Selection Mode for delegate.
-  /// It is jointly determined by the category selection mode and the sub-item selection mode.
-  SelectionMode? get selectSelectionMode {
-    if (SelectionMode.multiple == categorySelectionMode) {
-      return SelectionMode.multiple;
-    }
-    if (_effectiveEntries.firstWhereOrNull(testMultipleElement) != null) {
-      return SelectionMode.multiple;
-    }
-    return SelectionMode.single;
-  }
+  SelectionMode get childrenSelectionMode =>
+      tempSelectedCategory.selectionMode ?? delegate.selectionMode;
 
   /// Tap handler for a category item
   void _onCategoryItemTap(SelectCategoryEntry newCategoryEntry) {
@@ -587,8 +573,8 @@ class CascadingSelectState extends State<CascadingSelect> {
       _currentLevel = level;
       controller?.toggleCascadingEntry(
         entry,
-        // Cross-category clearing must follow the delegate-level mode. The
-        // mixed [selectSelectionMode] would report multiple as soon as any
+        // Cross-category clearing must follow the delegate-level mode.
+        // [SelectController.hasMultipleMode] turns true as soon as any
         // category opts into multiple, disabling the clearing.
         selectionMode: controller?.selectionMode ?? SelectionMode.single,
         childrenSelectionMode: childrenSelectionMode,
@@ -612,7 +598,7 @@ class CascadingSelectState extends State<CascadingSelect> {
   }
 
   void _setStateOrImmediateApply(SelectChildEntry entry) {
-    if (SelectionMode.single == selectSelectionMode || entry.immediate) {
+    if (controller?.hasMultipleMode != true || entry.immediate) {
       // No need to tap "Apply"; return result immediately
       _onApplyTap();
     } else {
@@ -627,8 +613,10 @@ class CascadingSelectState extends State<CascadingSelect> {
     SelectChildEntry entry,
   ) {
     final selectionMode = isHeader
-        ? tempSelectedCategory.headerSelectionMode
-        : tempSelectedCategory.footerSelectionMode;
+        ? tempSelectedCategory
+            .effectiveHeaderSelectionMode(delegate.selectionMode)
+        : tempSelectedCategory
+            .effectiveFooterSelectionMode(delegate.selectionMode);
     controller?.toggleHeaderOrFooterEntry(
       categoryId: tempSelectedCategory.id,
       entry: entry,
@@ -735,7 +723,7 @@ class CascadingSelectState extends State<CascadingSelect> {
         mainAxisSize: MainAxisSize.min,
         children: [
           const Expanded(child: Center(child: Text('No results'))),
-          if (SelectionMode.multiple == selectSelectionMode &&
+          if (controller?.hasMultipleMode == true &&
               !SelectActionBarVisibility.isHidden(context))
             delegate.actionBarBuilder?.call(
                   context,
@@ -880,7 +868,7 @@ class CascadingSelectState extends State<CascadingSelect> {
             ],
           ),
         ),
-        if (SelectionMode.multiple == selectSelectionMode &&
+        if (controller?.hasMultipleMode == true &&
             !SelectActionBarVisibility.isHidden(context))
           delegate.actionBarBuilder?.call(
                 context,

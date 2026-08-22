@@ -22,10 +22,10 @@ SelectCategoryEntry<dynamic> _category(
   String name, {
   required Set<SelectEntry<dynamic>> children,
   SelectEntry<dynamic>? header,
-  SelectionMode headerSelectionMode = SelectionMode.single,
+  SelectionMode? headerSelectionMode,
   SelectEntry<dynamic>? footer,
-  SelectionMode footerSelectionMode = SelectionMode.single,
-  SelectionMode selectionMode = SelectionMode.single,
+  SelectionMode? footerSelectionMode,
+  SelectionMode? selectionMode,
 }) {
   return SelectCategoryEntry<dynamic>(
     id: id,
@@ -608,6 +608,47 @@ void main() {
 
       expect(tree.selectedEntriesAtLevel(1).contains(any), isFalse);
       expect(tree.selectedEntriesAtLevel(1).contains(a), isTrue);
+    });
+
+    // Regression test: a category that leaves selectionMode null inherits
+    // the delegate-level mode. Before selectionMode became nullable, the
+    // implicit single default swallowed the delegate-level multiple mode,
+    // so tapping an already-selected leaf could not deselect it.
+    test(
+        'delegate multiple mode: category without explicit mode inherits it and toggles off',
+        () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final a = _text('c', 'a', 'A');
+      final b = _text('c', 'b', 'B');
+      final c = _category('c', 'C', children: {a, b}, selectionMode: null);
+      tree.bind([c], initializeAnyIfEmpty: false);
+
+      tree.ensureLevels(2);
+      tree.mutableSelectedEntriesAtLevel(0).add(c);
+      tree.mutableSelectedEntriesAtLevel(1).add(a);
+
+      // Add b under the inherited multiple mode.
+      rules.toggleFlatLeaf(
+        tree,
+        b,
+        selectionMode: SelectionMode.multiple,
+        isCategoryTree: true,
+        category: c,
+      );
+      expect(tree.selectedEntriesAtLevel(1).contains(a), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(b), isTrue);
+
+      // Toggle the already-selected a: it must deselect.
+      rules.toggleFlatLeaf(
+        tree,
+        a,
+        selectionMode: SelectionMode.multiple,
+        isCategoryTree: true,
+        category: c,
+      );
+      expect(tree.selectedEntriesAtLevel(1).contains(a), isFalse);
+      expect(tree.selectedEntriesAtLevel(1).contains(b), isTrue);
     });
   });
 

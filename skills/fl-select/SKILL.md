@@ -22,7 +22,7 @@ Data reaches the delegate either synchronously (`entries`, `selectedEntries`, `r
 
 - `SelectionMode.single` (default): tapping an item **applies immediately** (dialogs/sheets close and return the selection).
 - `SelectionMode.multiple`: the action bar's "Apply" confirms; "Reset" clears without closing. An entry with `immediate: true` applies on tap and skips the action bar.
-- `SelectionMode` is set per category (`SelectCategoryEntry.selectionMode`) or as a delegate-level fallback (`delegate.selectionMode`).
+- Category-level modes are nullable and inherit: `SelectCategoryEntry.selectionMode` / `headerSelectionMode` / `footerSelectionMode` default to null — `selectionMode` inherits `delegate.selectionMode`, while header/footer modes inherit the category's effective mode; an explicit value overrides. Resolve non-null modes via `category.effectiveSelectionMode(delegate.selectionMode)` (also `effectiveHeaderSelectionMode` / `effectiveFooterSelectionMode`).
 
 ## Quick start
 

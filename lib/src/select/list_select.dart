@@ -94,18 +94,6 @@ class ListSelectState extends State<ListSelect> {
     if (mounted) setState(() {});
   }
 
-  SelectionMode? get selectSelectionMode {
-    if (SelectionMode.multiple == categorySelectionMode) {
-      return SelectionMode.multiple;
-    }
-    if (widget.entries.firstWhereOrNull(testMultipleElement) != null) {
-      return SelectionMode.multiple;
-    }
-    return SelectionMode.single;
-  }
-
-  SelectionMode? get categorySelectionMode => controller?.selectionMode;
-
   SelectCategoryEntry? get selectedCategory {
     final entry = widget.entries.elementAtOrNull(_tempSelectedCategoryIndex);
     return entry is SelectCategoryEntry ? entry : null;
@@ -127,7 +115,7 @@ class ListSelectState extends State<ListSelect> {
     if (!isCategoryTree) {
       controller?.toggleFlatEntry(
         item,
-        selectionMode: selectSelectionMode ?? SelectionMode.single,
+        selectionMode: delegate.selectionMode,
         isCategoryTree: false,
       );
       _setStateOrImmediateApply(item);
@@ -151,10 +139,7 @@ class ListSelectState extends State<ListSelect> {
     final category = categoryEntry;
     controller?.toggleFlatEntry(
       item,
-      // Cross-category clearing must follow the delegate-level mode. The
-      // mixed [selectSelectionMode] reports multiple as soon as any
-      // category opts into multiple, which would disable the clearing.
-      selectionMode: categorySelectionMode ?? SelectionMode.single,
+      selectionMode: delegate.selectionMode,
       isCategoryTree: true,
       category: category,
     );
@@ -162,7 +147,7 @@ class ListSelectState extends State<ListSelect> {
   }
 
   void _setStateOrImmediateApply(SelectChildEntry item) {
-    if (SelectionMode.single == selectSelectionMode || item.immediate) {
+    if (controller?.hasMultipleMode != true || item.immediate) {
       // No need to tap "Apply"; return result immediately
       _onApplyTap();
     } else {
@@ -186,8 +171,10 @@ class ListSelectState extends State<ListSelect> {
   ) {
     // Every category is visible at once here, so the tapped header/footer
     // entry is resolved against its owning category.
-    final selectionMode =
-        isHeader ? category.headerSelectionMode : category.footerSelectionMode;
+    final delegateMode = controller?.selectionMode ?? SelectionMode.single;
+    final selectionMode = isHeader
+        ? category.effectiveHeaderSelectionMode(delegateMode)
+        : category.effectiveFooterSelectionMode(delegateMode);
     controller?.toggleHeaderOrFooterEntry(
       categoryId: category.id,
       entry: entry,

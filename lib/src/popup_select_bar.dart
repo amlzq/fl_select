@@ -265,8 +265,8 @@ class _PopupSelectBarState extends State<PopupSelectBar>
         : await widget.onSelectWillHide?.call(tabData) ?? true;
     if (!proceed) return;
 
-    final select = widget.selectDelegates.elementAt(tabData.index);
-    _controller!.previousSelectDelegate = select;
+    final delegate = widget.selectDelegates.elementAt(tabData.index);
+    _controller!.previousSelectDelegate = delegate;
 
     _controller!.toggleSelect(index: tabData.index);
 

@@ -45,6 +45,49 @@ PopupSelectButton(
 );
 ```
 
+### Category selection modes are nullable and inherit the delegate level
+
+`SelectCategoryEntry.selectionMode`, `headerSelectionMode` and
+`footerSelectionMode` are now nullable and default to null (inherit):
+
+- a null `selectionMode` inherits the delegate-level
+  `delegate.selectionMode` (which still defaults to `SelectionMode.single`);
+- a null `headerSelectionMode` / `footerSelectionMode` inherits the
+  category's effective selection mode (`selectionMode`, falling back to the
+  delegate-level mode).
+
+The public API is backward compatible: all existing constructors and
+parameters keep working, explicitly passed modes keep their exact behavior,
+and categories that omit the modes behave identically whenever the
+delegate-level mode is single (its default). Only call sites that combine a
+multi-mode delegate with categories that omit `selectionMode` change
+behavior — those categories now inherit multiple instead of silently
+defaulting to single, which also fixes tapping an already-selected leaf not
+deselecting under a multi-mode delegate.
+
+Migration: pass an explicit mode at every call site that must keep the old
+implicit single default under a multi-mode delegate, and switch code that
+reads the fields directly to the new `effectiveSelectionMode` /
+`effectiveHeaderSelectionMode` / `effectiveFooterSelectionMode` extensions.
+
+```dart
+// Before — the implicit default was SelectionMode.single, so a category
+// under a multiple delegate silently behaved as single.
+final mode = category.selectionMode; // non-null, implicitly single
+
+// After — unset modes are null (inherit); resolve the effective value.
+final SelectionMode? configured = category.selectionMode;
+final mode = category.effectiveSelectionMode(SelectionMode.multiple);
+
+// Keep the old implicit single default under a multi-mode delegate.
+SelectCategoryEntry(
+  id: 'brand',
+  name: 'Brand',
+  selectionMode: SelectionMode.single,
+  children: { ... },
+);
+```
+
 ## MIGRATE TO 0.8.0
 
 ### `previousSelected` / `resetSelected` renamed to `selectedEntries` / `resetEntries`

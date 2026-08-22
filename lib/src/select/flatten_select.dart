@@ -2,7 +2,6 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'action_bar_visibility.dart';
-import 'constants.dart';
 import 'select_controller.dart';
 import 'select_delegate.dart';
 import 'select_entry.dart';
@@ -172,21 +171,6 @@ class FlattenSelectState extends State<FlattenSelect> {
     if (mounted) setState(() {});
   }
 
-  /// Selection Mode for delegate.
-  /// It is jointly determined by the category selection mode and the sub-item selection mode.
-  SelectionMode? get selectSelectionMode {
-    if (SelectionMode.multiple == categorySelectionMode) {
-      return SelectionMode.multiple;
-    }
-    if (widget.entries.firstWhereOrNull(testMultipleElement) != null) {
-      return SelectionMode.multiple;
-    }
-    return SelectionMode.single;
-  }
-
-  /// Selection Mode for category entries
-  SelectionMode? get categorySelectionMode => delegate.selectionMode;
-
   /// Whether the entries form a two-level (category -> children) tree.
   bool get _isCategoryTree => widget.entries.firstOrNull is SelectCategoryEntry;
 
@@ -280,7 +264,7 @@ class FlattenSelectState extends State<FlattenSelect> {
     final category = _displayEntries[index] as SelectCategoryEntry;
     controller?.focusCategoryEntry(
       category,
-      selectionMode: categorySelectionMode ?? SelectionMode.single,
+      selectionMode: delegate.selectionMode,
     );
 
     setState(() {
@@ -331,7 +315,7 @@ class FlattenSelectState extends State<FlattenSelect> {
       } else {
         controller?.toggleFlatEntry(
           item,
-          selectionMode: selectSelectionMode ?? SelectionMode.single,
+          selectionMode: delegate.selectionMode,
           isCategoryTree: false,
         );
       }
@@ -365,10 +349,7 @@ class FlattenSelectState extends State<FlattenSelect> {
     } else {
       controller?.toggleFlatEntry(
         item,
-        // Cross-category clearing must follow the delegate-level mode. The
-        // mixed [selectSelectionMode] reports multiple as soon as any
-        // category opts into multiple, which would disable the clearing.
-        selectionMode: categorySelectionMode ?? SelectionMode.single,
+        selectionMode: delegate.selectionMode,
         isCategoryTree: true,
         category: category,
       );
@@ -378,7 +359,7 @@ class FlattenSelectState extends State<FlattenSelect> {
   }
 
   void _setStateOrImmediateApply(SelectChildEntry item) {
-    if (SelectionMode.single == selectSelectionMode || item.immediate) {
+    if (controller?.hasMultipleMode != true || item.immediate) {
       // No need to tap "Apply"; return result immediately
       _onApplyTap();
     } else {
@@ -426,8 +407,9 @@ class FlattenSelectState extends State<FlattenSelect> {
     // Unlike [GridSelect], every category is visible at once here, so the
     // tapped header/footer entry is resolved against its owning category
     // instead of the focused one.
-    final selectionMode =
-        isHeader ? category.headerSelectionMode : category.footerSelectionMode;
+    final selectionMode = isHeader
+        ? category.effectiveHeaderSelectionMode(delegate.selectionMode)
+        : category.effectiveFooterSelectionMode(delegate.selectionMode);
     controller?.toggleHeaderOrFooterEntry(
       categoryId: category.id,
       entry: entry,
@@ -598,7 +580,7 @@ class FlattenSelectState extends State<FlattenSelect> {
   Widget build(BuildContext context) {
     final theme = SelectTheme.of(context);
 
-    final actionBar = SelectionMode.multiple == selectSelectionMode &&
+    final actionBar = controller?.hasMultipleMode == true &&
             !SelectActionBarVisibility.isHidden(context)
         ? (delegate.actionBarBuilder?.call(
               context,

@@ -69,9 +69,12 @@ SelectCategoryEntry(
 
 ## Selection mode
 
-- `SelectCategoryEntry.selectionMode` — per category.
-- `delegate.selectionMode` — fallback for categories that don't set one.
-- Default: `SelectionMode.single`.
+- `SelectCategoryEntry.selectionMode` — per category; nullable.
+- `delegate.selectionMode` — fallback for categories that leave it null.
+- Default (null): inherit the delegate-level mode; an explicit value overrides it for the category's subtree.
+- Headers/footers: null inherits the category's effective mode (its `selectionMode`, or the delegate-level mode).
+- Resolve the effective (non-null) mode with `category.effectiveSelectionMode(delegate.selectionMode)` (also `effectiveHeaderSelectionMode` / `effectiveFooterSelectionMode`).
+- Panel-wide: `controller.hasMultipleMode` — true when the delegate-level mode is multiple or any top-level category opts into multiple; drives the action bar visibility and apply-immediately behavior.
 
 ## Special behaviors
 
@@ -96,4 +99,4 @@ SelectCategoryEntry(
 );
 ```
 
-`header`/`footer` are `SelectChildEntry`s rendered alongside (but separately from) `children`; `headerSelectionMode`/`footerSelectionMode` control their selection behavior (default `SelectionMode.single`).
+`header`/`footer` are `SelectChildEntry`s rendered alongside (but separately from) `children`; `headerSelectionMode`/`footerSelectionMode` control their selection behavior (default: inherit the category's effective mode).

@@ -396,18 +396,18 @@ class PopupSelectController extends ChangeNotifier {
   /// Any previously created controller is disposed first.
   void _createSelectController() {
     _disposeSelectController();
-    final select = previousSelectDelegate;
-    if (select == null) return;
-    final ctrl = SelectController(
-      selectionMode: select.selectionMode,
-      selectedEntries: select.selectedEntries,
-      resetEntries: select.resetEntries,
+    final delegate = previousSelectDelegate;
+    if (delegate == null) return;
+    final controller = SelectController(
+      selectionMode: delegate.selectionMode,
+      selectedEntries: delegate.selectedEntries,
+      resetEntries: delegate.resetEntries,
     );
-    ctrl.addChangeListener(handleChange);
-    ctrl.addApplyListener(
+    controller.addChangeListener(handleChange);
+    controller.addApplyListener(
         (selected) => handleApply(selected, applyMultipleText ?? 'Multiple'));
-    ctrl.addResetListener(handleReset);
-    _selectController = ctrl;
+    controller.addResetListener(handleReset);
+    _selectController = controller;
   }
 
   /// Disposes the current [SelectController], if any.
@@ -482,10 +482,10 @@ class PopupSelectController extends ChangeNotifier {
     if (labelState is! PopupTabData) return false;
     final tabData = labelState;
 
-    final select = _selectDelegateAt(tabIndex);
-    if (select == null) return false;
+    final delegate = _selectDelegateAt(tabIndex);
+    if (delegate == null) return false;
 
-    final entriesFuture = select.asyncEntries;
+    final entriesFuture = delegate.asyncEntries;
     if (entriesFuture == null) return false;
 
     late final SelectEntries entries;
@@ -514,15 +514,15 @@ class PopupSelectController extends ChangeNotifier {
     if (_isDisposed) return false;
     if (labelStateMap[tabIndex] is! PopupTabData) return false;
 
-    final select = _selectDelegateAt(tabIndex);
-    if (select == null) return false;
+    final delegate = _selectDelegateAt(tabIndex);
+    if (delegate == null) return false;
 
-    previousSelectDelegate = select;
+    previousSelectDelegate = delegate;
 
-    final entriesFuture = select.asyncEntries;
+    final entriesFuture = delegate.asyncEntries;
     if (entriesFuture == null) return false;
 
-    select.resetEntries;
+    delegate.resetEntries;
 
     late final SelectEntries entries;
     try {
@@ -536,7 +536,7 @@ class PopupSelectController extends ChangeNotifier {
     if (ctx.invalidCategoryHit) return false;
     if (ctx.invalidCustomHit) return false;
 
-    select.selectedEntries = selected;
+    delegate.selectedEntries = selected;
     _showSelect(tabIndex);
     handleChange(selected);
     return true;
