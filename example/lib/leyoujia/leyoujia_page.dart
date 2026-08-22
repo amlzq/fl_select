@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../generated/l10n/app_localizations.dart';
-import '../select_view_example.dart';
 import '../theme_mode.dart';
 import 'button.dart';
 import 'buy_page.dart';
@@ -15,9 +14,10 @@ class LeyoujiaPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Example'),
+        title: Text(l10n?.leyoujia ?? 'Leyoujia'),
         actions: const [ThemeModeButton()],
       ),
       body: Center(
@@ -33,16 +33,6 @@ class LeyoujiaPage extends StatelessWidget {
                 );
               },
               child: const Text('PopupSelectButton'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => const SelectViewExamplePage()),
-                );
-              },
-              child: const Text('SelectView Example'),
             ),
             TextButton(
               onPressed: () {

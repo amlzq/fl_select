@@ -34,7 +34,7 @@ class SelectViewExamplePage extends StatelessWidget {
                         children: {
                           SelectTextEntry.children(
                             id: 'l1-a',
-                            name: 'A',
+                            name: 'Sport',
                             children: {
                               SelectTextEntry.any(
                                   parentId: 'l1-a', name: 'Any'),
@@ -48,9 +48,20 @@ class SelectViewExamplePage extends StatelessWidget {
                                   id: 'l2-d', name: 'Swimming'),
                             },
                           ),
-                          SelectTextEntry.name(id: 'l1-b', name: 'B'),
-                          SelectTextEntry.name(id: 'l1-c', name: 'C'),
-                          SelectTextEntry.name(id: 'l1-d', name: 'D'),
+                          SelectTextEntry.name(id: 'l1-b', name: 'Cooking'),
+                          SelectTextEntry.name(id: 'l1-c', name: 'Art'),
+                          SelectTextEntry.children(
+                            id: 'l1-d',
+                            name: 'Music',
+                            children: {
+                              SelectTextEntry.any(
+                                  parentId: 'l1-d', name: 'Any'),
+                              SelectTextEntry.name(id: 'l2-a', name: 'Blues'),
+                              SelectTextEntry.name(id: 'l2-b', name: 'Jazz'),
+                              SelectTextEntry.name(id: 'l2-c', name: 'Hip hop'),
+                              SelectTextEntry.name(id: 'l2-d', name: 'Rock'),
+                            },
+                          ),
                         },
                         selectionMode: SelectionMode.multiple,
                       ),
@@ -89,50 +100,47 @@ class SelectViewExamplePage extends StatelessWidget {
                         },
                         footer: SelectTextEntry.children(
                           id: 'c3-f',
-                          name: 'Footer',
+                          name: 'Letter Grade',
                           children: {
-                            SelectTextEntry.name(id: 'f-a', name: 'Blue'),
-                            SelectTextEntry.name(id: 'f-b', name: 'Red'),
-                            SelectTextEntry.name(id: 'f-c', name: 'Green'),
-                            SelectTextEntry.name(id: 'f-d', name: 'Yellow'),
+                            SelectTextEntry.name(id: 'f-a', name: 'A'),
+                            SelectTextEntry.name(id: 'f-b', name: 'B'),
+                            SelectTextEntry.name(id: 'f-c', name: 'C'),
+                            SelectTextEntry.name(id: 'f-d', name: 'D'),
                           },
                         ),
-                        footerSelectionMode: SelectionMode.single,
                       ),
                       SelectCategoryEntry.children(
                         id: 'cate4',
                         name: 'Cate 4',
                         header: SelectTextEntry.children(
                           id: 'c4-h',
-                          name: 'Header',
+                          name: 'Letter Grade',
                           children: {
-                            SelectTextEntry.name(id: 'h-a', name: 'Football'),
-                            SelectTextEntry.name(id: 'h-b', name: 'Basketball'),
-                            SelectTextEntry.name(id: 'h-c', name: 'Baseball'),
-                            SelectTextEntry.name(id: 'h-d', name: 'Swimming'),
+                            SelectTextEntry.name(id: 'h-a', name: 'A'),
+                            SelectTextEntry.name(id: 'h-b', name: 'B'),
+                            SelectTextEntry.name(id: 'h-c', name: 'C'),
+                            SelectTextEntry.name(id: 'h-d', name: 'D'),
                           },
                         ),
-                        headerSelectionMode: SelectionMode.single,
                         children: {
-                          SelectTextEntry.name(id: 'a', name: 'A'),
-                          SelectTextEntry.name(id: 'b', name: 'B'),
-                          SelectTextEntry.name(id: 'c', name: 'C'),
-                          SelectTextEntry.name(id: 'd', name: 'D'),
+                          SelectTextEntry.name(id: 'a', name: 'Mathematics'),
+                          SelectTextEntry.name(id: 'b', name: 'Language'),
+                          SelectTextEntry.name(id: 'c', name: 'Science'),
+                          SelectTextEntry.name(id: 'd', name: 'History'),
                         },
                       ),
                       SelectCategoryEntry.children(
                         id: 'cate5',
                         name: 'Cate 5',
                         children: {
-                          SelectTextEntry.name(id: 'a', name: '1'),
-                          SelectTextEntry.name(id: 'b', name: '2'),
-                          SelectTextEntry.name(id: 'c', name: '3'),
-                          SelectTextEntry.name(id: 'd', name: '4'),
-                          SelectTextEntry.name(id: 'e', name: '5'),
+                          SelectTextEntry.name(id: 'a', name: 'North'),
+                          SelectTextEntry.name(id: 'b', name: 'South'),
+                          SelectTextEntry.name(id: 'c', name: 'East'),
+                          SelectTextEntry.name(id: 'd', name: 'West'),
+                          SelectTextEntry.name(id: 'e', name: 'Center'),
                         },
                       ),
                     },
-                    selectionMode: SelectionMode.single,
                     sideBarTheme: const SelectSideBarTheme(width: 100),
                     isScrollable: true,
                     radioBuilder: (context, selected) {
@@ -195,7 +203,6 @@ class SelectViewExamplePage extends StatelessWidget {
                       // SelectTextEntry.name(id: 'c', name: 'Bear'),
                       // SelectTextEntry.name(id: 'd', name: 'Elephant'),
                     },
-                    selectionMode: SelectionMode.single,
                     sideBarTheme: const SelectSideBarTheme(width: 100),
                     isScrollable: true,
                     radioBuilder: (context, selected) {
@@ -204,12 +211,6 @@ class SelectViewExamplePage extends StatelessWidget {
                     checkboxBuilder: (context, selected) {
                       return MyCheckbox(value: selected);
                     },
-                    searchEnabled: true,
-                    searchHintText: 'Search items...',
-                    searchPredicate: (entry, query) {
-                      return entry.name?.contains(query) == true;
-                    },
-                    searchDebounceDuration: const Duration(milliseconds: 300),
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
@@ -229,16 +230,16 @@ class SelectViewExamplePage extends StatelessWidget {
                   delegate: GridSelectDelegate(
                     entries: {
                       SelectRangeEntry.custom(),
-                      SelectTextEntry.name(id: 'a', name: 'A'),
-                      SelectTextEntry.name(id: 'b', name: 'B'),
-                      SelectTextEntry.name(id: 'c', name: 'C'),
-                      SelectTextEntry.name(id: 'd', name: 'D'),
+                      SelectTextEntry.name(id: 'a', name: '0-100'),
+                      SelectTextEntry.name(id: 'b', name: '100-500'),
+                      SelectTextEntry.name(id: 'c', name: '500-1000'),
+                      SelectTextEntry.name(id: 'd', name: '1000-2000'),
                     },
                     crossAxisCount: 3,
                     childAspectRatio: 3,
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
-                    // selectionMode: SelectionMode.multiple,
+                    selectionMode: SelectionMode.multiple,
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
@@ -260,13 +261,13 @@ class SelectViewExamplePage extends StatelessWidget {
                         id: 'cate1',
                         name: 'Cate 1',
                         children: {
-                          SelectTextEntry.name(id: 'a', name: 'A'),
-                          SelectTextEntry.name(id: 'b', name: 'B'),
-                          SelectTextEntry.name(id: 'c', name: 'C'),
-                          SelectTextEntry.name(id: 'd', name: 'D'),
+                          SelectTextEntry.name(id: 'a', name: '0-100'),
+                          SelectTextEntry.name(id: 'b', name: '100-500'),
+                          SelectTextEntry.name(id: 'c', name: '500-1000'),
+                          SelectTextEntry.name(id: 'd', name: '1000-2000'),
                           SelectRangeEntry.custom(),
                         },
-                        // selectionMode: SelectionMode.single,
+                        selectionMode: SelectionMode.single,
                       ),
                       SelectCategoryEntry.children(
                         id: 'cate2',
@@ -290,23 +291,56 @@ class SelectViewExamplePage extends StatelessWidget {
                           SelectTextEntry.name(id: 'p', name: 'Sheep'),
                           SelectTextEntry.name(id: 'q', name: 'Cow'),
                         },
-                        // selectionMode: SelectionMode.single,
                         layout: const SelectChipLayout(),
                       ),
                       SelectCategoryEntry.children(
                         id: 'cate3',
                         name: 'Cate 3',
                         children: {
-                          SelectTextEntry.name(id: 'a', name: 'A'),
-                          SelectTextEntry.name(id: 'b', name: 'B'),
-                          SelectTextEntry.name(id: 'c', name: 'C'),
-                          SelectTextEntry.name(id: 'd', name: 'D'),
+                          SelectTextEntry.name(id: 'a', name: 'Football'),
+                          SelectTextEntry.name(id: 'b', name: 'Basketball'),
+                          SelectTextEntry.name(id: 'c', name: 'Baseball'),
+                          SelectTextEntry.name(id: 'd', name: 'Tennis'),
                         },
+                        selectionMode: SelectionMode.single,
+                        footer: SelectTextEntry.children(
+                          id: 'c3-f',
+                          name: 'Letter Grade',
+                          children: {
+                            SelectTextEntry.name(id: 'f-a', name: 'A'),
+                            SelectTextEntry.name(id: 'f-b', name: 'B'),
+                            SelectTextEntry.name(id: 'f-c', name: 'C'),
+                            SelectTextEntry.name(id: 'f-d', name: 'D'),
+                          },
+                        ),
+                        footerSelectionMode: SelectionMode.single,
                         layout: const SelectListLayout(),
                       ),
                       SelectCategoryEntry.children(
                         id: 'cate4',
                         name: 'Cate 4',
+                        header: SelectTextEntry.children(
+                          id: 'c4-h',
+                          name: 'Letter Grade',
+                          children: {
+                            SelectTextEntry.name(id: 'h-a', name: 'A'),
+                            SelectTextEntry.name(id: 'h-b', name: 'B'),
+                            SelectTextEntry.name(id: 'h-c', name: 'C'),
+                            SelectTextEntry.name(id: 'h-d', name: 'D'),
+                          },
+                        ),
+                        headerSelectionMode: SelectionMode.single,
+                        children: {
+                          SelectTextEntry.name(id: 'a', name: 'Mathematics'),
+                          SelectTextEntry.name(id: 'b', name: 'Language'),
+                          SelectTextEntry.name(id: 'c', name: 'Science'),
+                          SelectTextEntry.name(id: 'd', name: 'History'),
+                        },
+                        selectionMode: SelectionMode.single,
+                      ),
+                      SelectCategoryEntry.children(
+                        id: 'cate5',
+                        name: 'Cate 5',
                         children: {
                           SelectRangeEntry(
                             id: 'a',
@@ -320,8 +354,8 @@ class SelectViewExamplePage extends StatelessWidget {
                         layout: const SelectRangeLayout(),
                       ),
                       SelectCategoryEntry.children(
-                        id: 'cate5',
-                        name: 'Cate 5',
+                        id: 'cate6',
+                        name: 'Cate 6',
                         children: {
                           SelectTextEntry.name(id: 'a', name: '1'),
                           SelectTextEntry.name(id: 'b', name: '2'),
@@ -379,6 +413,7 @@ class SelectViewExamplePage extends StatelessWidget {
                       SelectTextEntry.name(id: 'p', name: 'Sheep'),
                       SelectTextEntry.name(id: 'q', name: 'Cow'),
                     },
+                    selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 90),
                   ),
                   onChanged: (SelectEntries selected) {
@@ -401,23 +436,25 @@ class SelectViewExamplePage extends StatelessWidget {
                         id: 'cate1',
                         name: 'Cate 1',
                         children: {
+                          SelectTextEntry.name(id: 'a', name: '0-100'),
+                          SelectTextEntry.name(id: 'b', name: '100-500'),
+                          SelectTextEntry.name(id: 'c', name: '500-1000'),
+                          SelectTextEntry.name(id: 'd', name: '1000-2000'),
+                          SelectRangeEntry.custom(),
+                        },
+                        selectionMode: SelectionMode.single,
+                      ),
+                      SelectCategoryEntry.children(
+                        id: 'cate2',
+                        name: 'Cate 2',
+                        children: {
                           SelectTextEntry.name(id: 'a', name: 'Tiger'),
                           SelectTextEntry.name(id: 'b', name: 'Lion'),
                           SelectTextEntry.name(id: 'c', name: 'Bear'),
                           SelectTextEntry.name(id: 'd', name: 'Elephant'),
                           SelectTextEntry.name(id: 'e', name: 'Monkey'),
                           SelectTextEntry.name(id: 'f', name: 'Dog'),
-                        },
-                      ),
-                      SelectCategoryEntry.children(
-                        id: 'cate2',
-                        name: 'Cate 2',
-                        children: {
-                          SelectRangeEntry.custom(),
-                          SelectTextEntry.name(id: 'a', name: 'A'),
-                          SelectTextEntry.name(id: 'b', name: 'B'),
-                          SelectTextEntry.name(id: 'c', name: 'C'),
-                          SelectTextEntry.name(id: 'd', name: 'D'),
+                          SelectTextEntry.name(id: 'g', name: 'Cat'),
                         },
                         layout: const SelectGridLayout(
                           crossAxisCount: 2,
@@ -429,18 +466,57 @@ class SelectViewExamplePage extends StatelessWidget {
                       SelectCategoryEntry.children(
                         id: 'cate3',
                         name: 'Cate 3',
+                        header: SelectTextEntry.children(
+                          id: 'c3-h',
+                          name: 'Letter Grade',
+                          children: {
+                            SelectTextEntry.name(id: 'h-a', name: 'A'),
+                            SelectTextEntry.name(id: 'h-b', name: 'B'),
+                            SelectTextEntry.name(id: 'h-c', name: 'C'),
+                            SelectTextEntry.name(id: 'h-d', name: 'D'),
+                          },
+                        ),
+                        headerSelectionMode: SelectionMode.single,
                         children: {
-                          SelectTextEntry.name(id: 'a', name: 'A'),
-                          SelectTextEntry.name(id: 'b', name: 'B'),
-                          SelectTextEntry.name(id: 'c', name: 'C'),
-                          SelectTextEntry.name(id: 'd', name: 'D'),
-                          SelectRangeEntry.custom(),
+                          SelectTextEntry.name(id: 'a', name: 'Football'),
+                          SelectTextEntry.name(id: 'b', name: 'Basketball'),
+                          SelectTextEntry.name(id: 'c', name: 'Baseball'),
+                          SelectTextEntry.name(id: 'd', name: 'Tennis'),
                         },
+                        selectionMode: SelectionMode.single,
                         layout: const SelectListLayout(),
                       ),
                       SelectCategoryEntry.children(
                         id: 'cate4',
                         name: 'Cate 4',
+                        children: {
+                          SelectTextEntry.name(id: 'a', name: 'Mathematics'),
+                          SelectTextEntry.name(id: 'b', name: 'Language'),
+                          SelectTextEntry.name(id: 'c', name: 'Science'),
+                          SelectTextEntry.name(id: 'd', name: 'History'),
+                        },
+                        selectionMode: SelectionMode.single,
+                        footer: SelectTextEntry.children(
+                          id: 'c4-f',
+                          name: 'Letter Grade',
+                          children: {
+                            SelectTextEntry.name(id: 'f-a', name: 'A'),
+                            SelectTextEntry.name(id: 'f-b', name: 'B'),
+                            SelectTextEntry.name(id: 'f-c', name: 'C'),
+                            SelectTextEntry.name(id: 'f-d', name: 'D'),
+                          },
+                        ),
+                        footerSelectionMode: SelectionMode.single,
+                        layout: const SelectGridLayout(
+                          crossAxisCount: 2,
+                          childAspectRatio: 3.2,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                        ),
+                      ),
+                      SelectCategoryEntry.children(
+                        id: 'cate5',
+                        name: 'Cate 5',
                         children: {
                           SelectRangeEntry(
                             id: 'a',
@@ -454,8 +530,8 @@ class SelectViewExamplePage extends StatelessWidget {
                         layout: const SelectRangeLayout(),
                       ),
                       SelectCategoryEntry.children(
-                        id: 'cate5',
-                        name: 'Cate 5',
+                        id: 'cate6',
+                        name: 'Cate 6',
                         children: {
                           SelectTextEntry.name(id: 'a', name: '1'),
                           SelectTextEntry.name(id: 'b', name: '2'),
@@ -519,11 +595,11 @@ class SelectViewExamplePage extends StatelessWidget {
                         id: 'cate1',
                         name: 'Cate 1',
                         children: {
+                          SelectTextEntry.name(id: 'a', name: '0-100'),
+                          SelectTextEntry.name(id: 'b', name: '100-500'),
+                          SelectTextEntry.name(id: 'c', name: '500-1000'),
+                          SelectTextEntry.name(id: 'd', name: '1000-2000'),
                           SelectRangeEntry.custom(),
-                          SelectTextEntry.name(id: 'a', name: 'A'),
-                          SelectTextEntry.name(id: 'b', name: 'B'),
-                          SelectTextEntry.name(id: 'c', name: 'C'),
-                          SelectTextEntry.name(id: 'd', name: 'D'),
                         },
                       ),
                       SelectCategoryEntry.children(
@@ -537,39 +613,60 @@ class SelectViewExamplePage extends StatelessWidget {
                           SelectTextEntry.name(id: 'e', name: 'Monkey'),
                           SelectTextEntry.name(id: 'f', name: 'Dog'),
                           SelectTextEntry.name(id: 'g', name: 'Cat'),
-                          SelectTextEntry.name(id: 'h', name: 'Pig'),
-                          SelectTextEntry.name(id: 'i', name: 'Horse'),
-                          SelectTextEntry.name(id: 'j', name: 'Sheep'),
-                          SelectTextEntry.name(id: 'k', name: 'Cow'),
-                          SelectTextEntry.name(id: 'l', name: 'Chicken'),
-                          SelectTextEntry.name(id: 'm', name: 'Duck'),
-                          SelectTextEntry.name(id: 'n', name: 'Pig'),
-                          SelectTextEntry.name(id: 'o', name: 'Horse'),
-                          SelectTextEntry.name(id: 'p', name: 'Sheep'),
-                          SelectTextEntry.name(id: 'q', name: 'Cow'),
                         },
+                        selectionMode: SelectionMode.multiple,
                         layout: const SelectChipLayout(),
                       ),
                       SelectCategoryEntry.children(
                         id: 'cate3',
                         name: 'Cate 3',
-                        children: {
-                          SelectTextEntry.name(id: 'a', name: 'A'),
-                          SelectTextEntry.name(id: 'b', name: 'B'),
-                          SelectTextEntry.name(id: 'c', name: 'C'),
-                          SelectTextEntry.name(id: 'd', name: 'D'),
-                          SelectRangeEntry.custom(),
-                        },
-                        layout: const SelectGridLayout(
-                          crossAxisCount: 3,
-                          childAspectRatio: 2.8,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 10,
+                        header: SelectTextEntry.children(
+                          id: 'c3-h',
+                          name: 'Letter Grade',
+                          children: {
+                            SelectTextEntry.name(id: 'h-a', name: 'A'),
+                            SelectTextEntry.name(id: 'h-b', name: 'B'),
+                            SelectTextEntry.name(id: 'h-c', name: 'C'),
+                            SelectTextEntry.name(id: 'h-d', name: 'D'),
+                          },
                         ),
+                        children: {
+                          SelectTextEntry.name(id: 'a', name: 'Football'),
+                          SelectTextEntry.name(id: 'b', name: 'Basketball'),
+                          SelectTextEntry.name(id: 'c', name: 'Baseball'),
+                          SelectTextEntry.name(id: 'd', name: 'Tennis'),
+                        },
+                        layout: const SelectListLayout(),
                       ),
                       SelectCategoryEntry.children(
                         id: 'cate4',
                         name: 'Cate 4',
+                        children: {
+                          SelectTextEntry.name(id: 'a', name: 'Mathematics'),
+                          SelectTextEntry.name(id: 'b', name: 'Language'),
+                          SelectTextEntry.name(id: 'c', name: 'Science'),
+                          SelectTextEntry.name(id: 'd', name: 'History'),
+                        },
+                        footer: SelectTextEntry.children(
+                          id: 'c4-f',
+                          name: 'Letter Grade',
+                          children: {
+                            SelectTextEntry.name(id: 'f-a', name: 'A'),
+                            SelectTextEntry.name(id: 'f-b', name: 'B'),
+                            SelectTextEntry.name(id: 'f-c', name: 'C'),
+                            SelectTextEntry.name(id: 'f-d', name: 'D'),
+                          },
+                        ),
+                        layout: const SelectGridLayout(
+                          crossAxisCount: 3,
+                          childAspectRatio: 3,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                        ),
+                      ),
+                      SelectCategoryEntry.children(
+                        id: 'cate5',
+                        name: 'Cate 5',
                         children: {
                           SelectRangeEntry(
                             id: 'a',
@@ -583,8 +680,8 @@ class SelectViewExamplePage extends StatelessWidget {
                         layout: const SelectRangeLayout(),
                       ),
                       SelectCategoryEntry.children(
-                        id: 'cate5',
-                        name: 'Cate 5',
+                        id: 'cate6',
+                        name: 'Cate 6',
                         children: {
                           SelectTextEntry.name(id: 'a', name: '1'),
                           SelectTextEntry.name(id: 'b', name: '2'),
@@ -595,7 +692,6 @@ class SelectViewExamplePage extends StatelessWidget {
                         layout: const SelectCounterLayout(),
                       ),
                     },
-                    selectionMode: SelectionMode.single,
                     searchEnabled: true,
                     searchHintText: 'Search items...',
                     searchPredicate: (entry, query) {

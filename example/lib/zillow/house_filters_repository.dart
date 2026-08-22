@@ -92,7 +92,7 @@ class HouseFiltersRepository {
 
   Future<SelectEntries> fetchPriceData() async {
     // simulate network delay
-    await Future.delayed(const Duration(milliseconds: 250));
+    await Future.delayed(const Duration(milliseconds: 350));
     final prices = priceFromJson(await loadJsonData('price.json'));
     SelectEntries entries = prices
         .map(
@@ -150,7 +150,7 @@ class HouseFiltersRepository {
 
   Future<SelectEntries> fetchRoomsData() async {
     // simulate network delay
-    await Future.delayed(const Duration(milliseconds: 250));
+    await Future.delayed(const Duration(milliseconds: 450));
 
     final rooms = roomsFromJson(await loadJsonData('rooms.json'));
 
@@ -195,7 +195,7 @@ class HouseFiltersRepository {
 
   Future<SelectEntries> fetchMoreData() async {
     // simulate network delay
-    await Future.delayed(const Duration(milliseconds: 250));
+    await Future.delayed(const Duration(milliseconds: 850));
     final more = moreFromJson(await loadJsonData('more.json'));
     debugPrint('more length: ${more.length}');
 

@@ -481,10 +481,10 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // gridSelect: filled style (default), centered.
+                      // gridSelect: filled style, centered.
                       Align(
                         alignment: Alignment.center,
-                        child: PopupSelectButton(
+                        child: PopupSelectButton.filled(
                           selectDelegate: _tabDelegate(Delegate.grid),
                           label: l10n.titleGridSelect,
                           onChanged: (selected) => _onChanged(selected),
