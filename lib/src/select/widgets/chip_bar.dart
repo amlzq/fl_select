@@ -338,11 +338,8 @@ class _SelectChipBarState extends State<SelectChipBar> {
         theme.backgroundColor ??
         defaults.backgroundColor!;
 
-    final effectivePadding = widget.padding ??
-        theme.padding ??
-        (widget.isWrapable
-            ? defaults.padding!
-            : const EdgeInsets.only(left: 12));
+    final effectivePadding =
+        widget.padding ?? theme.padding ?? defaults.padding!;
 
     final effectiveChipColor =
         widget.chipColor ?? theme.chipColor ?? defaults.chipColor!;
@@ -421,13 +418,8 @@ class _SelectChipBarState extends State<SelectChipBar> {
                 Padding(
                   padding: const EdgeInsets.only(bottom: 10),
                   child: DefaultTextStyle.merge(
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ) ??
-                        const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    style: Theme.of(context).textTheme.titleSmall ??
+                        const TextStyle(fontSize: 16),
                     child: Text(widget.category?.name ?? ''),
                   ),
                 ),
@@ -442,13 +434,8 @@ class _SelectChipBarState extends State<SelectChipBar> {
                 Padding(
                   padding: const EdgeInsets.only(right: 10),
                   child: DefaultTextStyle.merge(
-                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ) ??
-                        const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                        ),
+                    style: Theme.of(context).textTheme.titleSmall ??
+                        const TextStyle(fontSize: 16),
                     child: Text(widget.category?.name ?? ''),
                   ),
                 ),

@@ -285,13 +285,8 @@ class SelectListViewState extends State<SelectListView>
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: DefaultTextStyle.merge(
-                style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ) ??
-                    const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                style: Theme.of(context).textTheme.titleSmall ??
+                    const TextStyle(fontSize: 16),
                 child: Text(widget.category?.name ?? ''),
               ),
             ),
