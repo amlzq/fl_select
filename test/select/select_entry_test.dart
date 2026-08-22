@@ -100,7 +100,11 @@ void main() {
       expect(a.hashCode, isNot(equals(b.hashCode)));
     });
 
-    test('== and hashCode: different name makes entries unequal', () {
+    test('== and hashCode: name does not participate in identity', () {
+      // `name` is mutable presentation state (e.g. the custom range entry
+      // rewrites it on every commit), so it must not be part of equality —
+      // otherwise an entry mutated while sitting in a Set can no longer be
+      // found by contains/remove.
       final a = SelectChildEntry<dynamic>(
         parentId: 'p',
         id: 'e',
@@ -112,7 +116,14 @@ void main() {
         name: 'B',
       );
 
-      expect(a, isNot(equals(b)));
+      expect(a, equals(b));
+      expect(a.hashCode, equals(b.hashCode));
+
+      // Renaming an entry already inside a set keeps it addressable.
+      final set = <SelectChildEntry<dynamic>>{a};
+      a.name = 'C';
+      expect(set.contains(a), isTrue);
+      expect(set.remove(a), isTrue);
     });
 
     test('== and hashCode: different id makes entries unequal', () {
@@ -291,7 +302,8 @@ void main() {
       expect(grandchild.parentId, 'g');
     });
 
-    test('multi-level category tree passes SelectController.validateEntries', () {
+    test('multi-level category tree passes SelectController.validateEntries',
+        () {
       final category = SelectCategoryEntry<dynamic>.children(
         id: 'c1',
         name: 'Cate 1',

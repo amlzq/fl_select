@@ -114,8 +114,16 @@ class StateTree {
     _selectedEntriesPerLevel[0].add(category);
   }
 
+  /// A snapshot of the currently selected entries at [level].
+  ///
+  /// Returns a defensive copy: widget layers hand this set to leaf views
+  /// (e.g. [SelectRangeView]) whose `didUpdateWidget` diffs the old and new
+  /// snapshots to detect selection transitions. Returning the internal live
+  /// set would alias both snapshots to the same mutated collection, so a
+  /// deselection would look like "no change" and the view would never reset.
+  /// Mutations must go through [mutableSelectedEntriesAtLevel] instead.
   SelectEntries selectedEntriesAtLevel(int level) {
-    return _selectedEntriesPerLevel.elementAtOrNull(level) ?? {};
+    return {...(_selectedEntriesPerLevel.elementAtOrNull(level) ?? const {})};
   }
 
   SelectEntries selectedEntriesForParent(String parentId,

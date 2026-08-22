@@ -709,12 +709,18 @@ class SelectChildEntry<E> extends SelectEntry<E> {
         other is SelectChildEntry<E> &&
             runtimeType == other.runtimeType &&
             other.id == id &&
-            other.parentId == parentId &&
-            other.name == name;
+            other.parentId == parentId;
   }
 
+  /// Identity is defined by the stable `(id, parentId)` pair only.
+  ///
+  /// [name] — and for [SelectRangeEntry] the min/max bounds — are mutable
+  /// presentation state: `SelectRangeView` rewrites the custom entry's name
+  /// (e.g. `'500000-1000000'`) on every commit. Participating fields of
+  /// `hashCode` must never change while the entry sits in a `Set`, otherwise
+  /// hash-bucket lookups (contains/remove) silently fail after a mutation.
   @override
-  int get hashCode => Object.hash(id, parentId, name);
+  int get hashCode => Object.hash(id, parentId);
 
   @override
   String toString() =>
