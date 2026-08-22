@@ -1,0 +1,72 @@
+name: Feature request
+description: Suggest a new feature or an improvement to an existing one
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature!
+
+        Before opening an issue, please:
+        - Check the [README](https://github.com/amlzq/fl_select#features) and [playground](https://flselect.zeaon.dev/) — it may already be supported.
+        - Search existing issues to avoid duplicates.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Which API or component is this about?
+      options:
+        - PopupSelectBar
+        - PopupSelectButton
+        - SelectView
+        - showSelect
+        - showModalBottomSelect
+        - CascadingSelectDelegate
+        - GridSelectDelegate
+        - ListSelectDelegate
+        - FlattenSelectDelegate
+        - Search (SelectSearchBar / search filtering)
+        - Entries (SelectCategoryEntry / SelectTextEntry / SelectRangeEntry)
+        - Serialization (toQueryMap / toQueryParameters)
+        - Theming (SelectThemeData / PopupSelectBarTheme / PopupSelectButtonTheme)
+        - Localization (SelectLocalizationsDelegate)
+        - New entry point / delegate / entry type
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem statement
+      description: What are you trying to build, and what stops you today? Ex: "I can't show a range slider category in a cascading menu because [...]"
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed solution
+      description: How should it work? A short API sketch helps a lot.
+      placeholder: |
+        e.g.
+
+        FlattenSelectDelegate(
+          ...,
+          someNewParameter: ...,
+        );
+      render: dart
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives you've considered
+      description: Workarounds with the current API, other packages, or custom delegates.
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional context
+      description: Screenshots, mockups, or links that illustrate the idea.
