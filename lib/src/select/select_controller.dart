@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'constants.dart';
 import 'select_entry.dart';
+import 'select_layout.dart';
 import 'state/selection_rules.dart';
 import 'state/state_snapshot.dart';
 import 'state/state_tree.dart';
@@ -438,7 +439,7 @@ class SelectController extends ChangeNotifier {
         // Delegate-level mode governs cross-category clearing; the mixed
         // [hasMultipleMode] only reflects per-category behavior.
         selectionMode: selectionMode,
-        childrenSelectionMode: root.selectionMode ?? selectionMode,
+        childrenSelectionMode: root.effectiveSelectionMode(selectionMode),
         focusedPath: focusedPath,
         category: root,
       );
@@ -494,7 +495,7 @@ class SelectController extends ChangeNotifier {
       final selectedChildren = tree.mutableSelectedEntriesAtLevel(1);
       if (!selectedChildren.contains(leaf)) return true;
 
-      if ((root.selectionMode ?? selectionMode) == SelectionMode.single) {
+      if (root.effectiveSelectionMode(selectionMode) == SelectionMode.single) {
         final any = root.children?.singleWhereOrNull(testAnyElement);
         selectedChildren
             .removeWhere((e) => e is SelectChildEntry && e.parentId == root.id);
@@ -526,7 +527,7 @@ class SelectController extends ChangeNotifier {
     final selectedAtLevel = tree.mutableSelectedEntriesAtLevel(level);
     if (!selectedAtLevel.contains(leaf)) return true;
 
-    if ((root.selectionMode ?? selectionMode) == SelectionMode.single) {
+    if (root.effectiveSelectionMode(selectionMode) == SelectionMode.single) {
       final parent = focusedPath.last;
       final any = parent.children
           ?.whereType<SelectChildEntry>()
@@ -543,7 +544,7 @@ class SelectController extends ChangeNotifier {
       // Delegate-level mode; the mixed mode only reflects per-category
       // behavior. (No clearing happens on unselect anyway.)
       selectionMode: selectionMode,
-      childrenSelectionMode: root.selectionMode ?? selectionMode,
+      childrenSelectionMode: root.effectiveSelectionMode(selectionMode),
       focusedPath: focusedPath,
       category: root,
     );
@@ -567,7 +568,11 @@ class SelectController extends ChangeNotifier {
     if (selectionMode == SelectionMode.multiple) return true;
     for (final entry in tree.entries) {
       if (entry is SelectCategoryEntry &&
-          entry.selectionMode == SelectionMode.multiple) {
+          entry.selectionMode == SelectionMode.multiple &&
+          // Counter and range layouts pin their effective mode to single,
+          // so an explicit multiple on them is void.
+          entry.layout is! SelectCounterLayout &&
+          entry.layout is! SelectRangeLayout) {
         return true;
       }
     }

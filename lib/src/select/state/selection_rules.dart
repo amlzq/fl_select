@@ -95,9 +95,11 @@ class SelectionRules {
         (e) => e is SelectChildEntry && e.parentId == item.parentId && e.isAny,
       );
 
-      // A category without an explicit selectionMode inherits the
+      // Counter and range layouts pin the effective mode to single; a
+      // category without an explicit selectionMode otherwise inherits the
       // delegate-level mode.
-      if (SelectionMode.single == (category.selectionMode ?? selectionMode)) {
+      if (SelectionMode.single ==
+          category.effectiveSelectionMode(selectionMode)) {
         if (selectedEntries.contains(item)) return;
         selectedEntries
             .removeWhere((e) => testSameParentElement(e, item.parentId));

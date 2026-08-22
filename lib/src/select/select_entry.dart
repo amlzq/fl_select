@@ -870,8 +870,10 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
   /// [SelectDelegate.selectionMode]; an explicit value overrides it for this
   /// category's subtree.
   ///
-  /// Resolve the non-null mode with
-  /// [SelectCategoryEntryExtension.effectiveSelectionMode].
+  /// Ignored when [layout] is a [SelectCounterLayout] or a
+  /// [SelectRangeLayout]: those layouts are inherently single-valued, so the
+  /// effective mode is pinned to [SelectionMode.single] (see
+  /// [SelectCategoryEntryExtension.effectiveSelectionMode]).
   final SelectionMode? selectionMode;
 
   /// An optional header entry rendered above this category's children.
@@ -965,8 +967,20 @@ extension SelectCategoryEntryExtension on SelectCategoryEntry {
   ///
   /// Returns [selectionMode] when set, otherwise [fallback] (typically the
   /// delegate-level mode).
-  SelectionMode effectiveSelectionMode(SelectionMode fallback) =>
-      selectionMode ?? fallback;
+  ///
+  /// Counter ([SelectCounterLayout]) and range ([SelectRangeLayout]) layouts
+  /// are inherently single-valued controls — a stepper or a slider always
+  /// represents exactly one value. For those layouts the effective mode is
+  /// pinned to [SelectionMode.single]: [selectionMode] is ignored and
+  /// [fallback] is not inherited.
+  SelectionMode effectiveSelectionMode(SelectionMode fallback) {
+    final effectiveLayout = layout;
+    if (effectiveLayout is SelectCounterLayout ||
+        effectiveLayout is SelectRangeLayout) {
+      return SelectionMode.single;
+    }
+    return selectionMode ?? fallback;
+  }
 
   /// The effective selection mode for this category's header.
   ///

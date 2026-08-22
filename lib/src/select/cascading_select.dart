@@ -474,7 +474,7 @@ class CascadingSelectState extends State<CascadingSelect> {
 
   /// Selection Mode for the selected category sub-items
   SelectionMode get childrenSelectionMode =>
-      tempSelectedCategory.selectionMode ?? delegate.selectionMode;
+      tempSelectedCategory.effectiveSelectionMode(delegate.selectionMode);
 
   /// Tap handler for a category item
   void _onCategoryItemTap(SelectCategoryEntry newCategoryEntry) {
