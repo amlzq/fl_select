@@ -1,6 +1,6 @@
 # Migration Guide
 
-## MIGRATE TO Next
+## MIGRATE TO 0.9.0
 
 ### `PopupSelectButton` default variant changed to `text`
 
