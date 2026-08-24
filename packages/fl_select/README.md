@@ -14,7 +14,7 @@ Install it with:
 npx skills add amlzq/fl_select
 ```
 
-Then just ask your agent to build a filter bar or select UI with `fl_select`. The skill lives in [`skills/fl-select`](skills/fl-select).
+Then just ask your agent to build a filter bar or select UI with `fl_select`. The skill lives in [`skills/fl-select`](https://github.com/amlzq/fl_select/tree/main/skills/fl-select).
 
 ### Features
 
