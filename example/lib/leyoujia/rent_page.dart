@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:example/leyoujia/house_filters_repository.dart';
+import 'package:example/widgets/house_list_footer.dart';
 import 'package:example/widgets/my_widgets.dart';
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
@@ -323,11 +324,14 @@ class _RentPageState extends State<RentPage> {
               },
               onChanged: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onChanged: tabData=$tabData, selected=$selected');
+                largePrint('onChanged: toQueryMap=${selected.toQueryMap()}');
                 _handleSelectChange(tabData, selected);
                 showSelectResult(context, selected);
               },
               onApplied: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onApplied: tabData=$tabData, selected=$selected');
+                largePrint(
+                    'onApplied: toQueryParameters=${selected.toQueryParameters()}');
                 _handleSelectApply(tabData, selected);
                 if (tabData.index == 2) {
                   _floorPlanApplyTextDebounce?.cancel();

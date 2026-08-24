@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:example/log.dart';
-import 'package:example/widgets/my_widgets.dart';
+import 'package:example/widgets/house_list_footer.dart';
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

@@ -595,11 +595,15 @@ class _BuyPageState extends State<BuyPage> {
               },
               onChanged: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onChanged: $tabData, $selected');
+                largePrint('onChanged: toQueryMap=${selected.toQueryMap()}');
+
                 _handleSelectChange(tabData, selected);
                 showSelectResult(context, selected);
               },
               onApplied: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onApplied: $tabData, $selected');
+                largePrint(
+                    'onApplied: toQueryParameters=${selected.toQueryParameters()}');
                 _handleSelectApply(tabData, selected);
                 if (tabData.index == 2) {
                   _floorPlanApplyTextDebounce?.cancel();

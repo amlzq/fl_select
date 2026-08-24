@@ -54,7 +54,6 @@ class _DialogBottomSheetDemoPageState extends State<DialogBottomSheetDemoPage> {
                       return MyCheckbox(value: selected);
                     },
                   ),
-                  title: const Text('Neighborhood'),
                 );
                 if (result == null) return;
                 largePrint('result: $result');

@@ -13,9 +13,7 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('BottomSheet'),
-      ),
+      appBar: AppBar(title: const Text('BottomSheet')),
       body: Column(
         children: [
           TextButton(

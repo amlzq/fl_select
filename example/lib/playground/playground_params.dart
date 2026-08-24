@@ -13,9 +13,9 @@ enum EntryPoint {
 /// Select delegate family.
 enum Delegate {
   cascading,
+  list,
   grid,
   flatten,
-  list,
 }
 
 /// Visual style of grid / chip tiles.
@@ -29,9 +29,9 @@ enum TileVariant {
 /// respectively); the others fall back to 4.
 const Map<Delegate, int> defaultCrossAxisCountByDelegate = <Delegate, int>{
   Delegate.cascading: 4,
+  Delegate.list: 4,
   Delegate.grid: 4,
   Delegate.flatten: 2,
-  Delegate.list: 4,
 };
 
 /// Default [PlaygroundParams.childAspectRatio] per [Delegate]. Only the grid
@@ -40,9 +40,9 @@ const Map<Delegate, int> defaultCrossAxisCountByDelegate = <Delegate, int>{
 const Map<Delegate, double> defaultChildAspectRatioByDelegate =
     <Delegate, double>{
   Delegate.cascading: 2.5,
+  Delegate.list: 2.5,
   Delegate.grid: 2.5,
   Delegate.flatten: 3.0,
-  Delegate.list: 2.5,
 };
 
 /// All tunable parameters of the interactive demo, held in a single immutable
@@ -118,3 +118,89 @@ const List<Color> seedColorPresets = <Color>[
   Colors.pink,
   Colors.indigo,
 ];
+
+/// One tunable control exposed by the playground controls panel.
+enum PlaygroundControl {
+  /// Inline delegate family picker.
+  delegate,
+
+  /// Single vs. multiple selection.
+  selectionMode,
+
+  /// Filled vs. outlined tiles.
+  tileVariant,
+
+  /// Grid column count.
+  crossAxisCount,
+
+  /// Grid tile aspect ratio.
+  childAspectRatio,
+
+  /// Grid gutter between tiles.
+  spacing,
+
+  /// Theme seed color swatches.
+  seedColor,
+
+  /// Light / dark brightness of the preview.
+  brightness,
+
+  /// Material 3 switch.
+  useMaterial3,
+}
+
+/// Declares which [PlaygroundControl]s the controls panel shows, scoped along
+/// two axes:
+///
+/// - common (公共): controls shared by every entry point — selection mode,
+///   tile variant and the theme controls.
+/// - entry-point private (私有): the delegate picker only drives the inline
+///   [SelectView]; the popup / dialog entry points render all four delegate
+///   families at once with their own per-family defaults.
+/// - delegate private (私有): the grid geometry sliders (Columns / Aspect
+///   Ratio) belong to the column-based delegates only — [Delegate.grid] and
+///   [Delegate.flatten]. [Delegate.cascading] and [Delegate.list] carry no
+///   such parameters, so the sliders hide while they are active.
+abstract final class PlaygroundControlSpec {
+  const PlaygroundControlSpec._();
+
+  /// Controls shared by every entry point, in panel display order.
+  static const List<PlaygroundControl> commonControls = <PlaygroundControl>[
+    PlaygroundControl.selectionMode,
+    PlaygroundControl.tileVariant,
+    PlaygroundControl.brightness,
+    PlaygroundControl.seedColor,
+    PlaygroundControl.useMaterial3,
+  ];
+
+  /// Controls private to specific entry points, in panel display order.
+  /// Entry points missing from this map expose the common controls only.
+  static const Map<EntryPoint, List<PlaygroundControl>>
+      entryPointPrivateControls = <EntryPoint, List<PlaygroundControl>>{
+    EntryPoint.view: <PlaygroundControl>[PlaygroundControl.delegate],
+  };
+
+  /// Controls private to the column-based delegates, in panel display order.
+  static const List<PlaygroundControl> columnBasedDelegateControls =
+      <PlaygroundControl>[
+    PlaygroundControl.crossAxisCount,
+    PlaygroundControl.childAspectRatio,
+  ];
+
+  /// Whether [delegate] renders a column-based grid that owns the
+  /// Columns / Aspect Ratio / Spacing parameters.
+  static bool isColumnBased(Delegate delegate) =>
+      delegate == Delegate.grid || delegate == Delegate.flatten;
+
+  /// Whether the Columns / Aspect Ratio sliders take effect: they only drive
+  /// the inline view's column-based delegate (the popup / dialog entry points
+  /// pin per-family defaults instead).
+  static bool isGeometryActive(PlaygroundParams params) =>
+      params.entryPoint == EntryPoint.view && isColumnBased(params.delegate);
+
+  /// Whether the spacing slider takes effect: every non-view entry point
+  /// embeds grid-family samples that read it, while the inline view limits it
+  /// to the column-based delegates.
+  static bool isSpacingActive(PlaygroundParams params) =>
+      params.entryPoint != EntryPoint.view || isColumnBased(params.delegate);
+}

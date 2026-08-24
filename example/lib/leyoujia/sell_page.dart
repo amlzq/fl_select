@@ -1,6 +1,7 @@
 import 'package:example/leyoujia/house_filters_repository.dart';
 import 'package:example/leyoujia/house_repository.dart';
 import 'package:example/leyoujia/utils.dart';
+import 'package:example/widgets/house_list_footer.dart';
 import 'package:example/widgets/my_widgets.dart';
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
@@ -266,6 +267,7 @@ class _SellPageState extends State<SellPage> {
               },
               onChanged: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onChanged: tabData=$tabData, selected=$selected');
+                largePrint('onChanged: toQueryMap=${selected.toQueryMap()}');
                 final conditions = '${selected.flatten()}';
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
@@ -277,6 +279,8 @@ class _SellPageState extends State<SellPage> {
               },
               onApplied: (PopupTabData tabData, SelectEntries selected) {
                 largePrint('onApplied: tabData=$tabData, selected=$selected');
+                largePrint(
+                    'onApplied: toQueryParameters=${selected.toQueryParameters()}');
                 _handleSelectApply(tabData, selected);
                 final conditions = '${selected.flatten()}';
                 ScaffoldMessenger.of(context).showSnackBar(

@@ -269,10 +269,13 @@ class _MapPageState extends State<MapPage> {
             ],
             onChanged: (PopupTabData tabData, SelectEntries selected) {
               largePrint('onChanged: tabData=$tabData, selected=$selected');
+              largePrint('onChanged: toQueryMap=${selected.toQueryMap()}');
               _handleSelectChange(tabData, selected);
             },
             onApplied: (PopupTabData tabData, SelectEntries selected) {
               largePrint('onApplied: tabData=$tabData, selected=$selected');
+              largePrint(
+                  'onApplied: toQueryParameters=${selected.toQueryParameters()}');
               _handleSelectApply(tabData, selected);
             },
             onReset: () {
