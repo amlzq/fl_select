@@ -155,8 +155,7 @@ void main() {
       expect(find.text('Outlined'), findsOneWidget);
     });
 
-    testWidgets('default constructor renders the text variant',
-        (tester) async {
+    testWidgets('default constructor renders the text variant', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

@@ -51,8 +51,7 @@ class _HousePager<H> {
   int get totalCount => _totalCount;
 
   /// 总页数（3~9）。
-  int get totalPages =>
-      _totalCount == 0 ? 0 : (_totalCount / pageSize).ceil();
+  int get totalPages => _totalCount == 0 ? 0 : (_totalCount / pageSize).ceil();
 
   /// 已加载条数。
   int get loadedCount => _displayed.length;

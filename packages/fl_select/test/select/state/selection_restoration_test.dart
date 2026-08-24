@@ -81,8 +81,7 @@ void main() {
       expect(controller.isSelectShowing, isTrue);
       expect(controller.selectController, isNotNull);
       expect(
-          controller.selectController!.selectedEntries!
-              .any((e) => e.id == 'a'),
+          controller.selectController!.selectedEntries!.any((e) => e.id == 'a'),
           isTrue);
     });
   });

@@ -379,8 +379,7 @@ void main() {
                 child: SelectPanel(
                   delegate: _TestDelegate(
                     entriesLoader: () async => <SelectEntry<dynamic>>{},
-                    bodyBuilder: (_, __, ___) =>
-                        SizedBox(height: bodyHeight),
+                    bodyBuilder: (_, __, ___) => SizedBox(height: bodyHeight),
                   ),
                 ),
               ),
@@ -388,7 +387,8 @@ void main() {
           ),
         );
 
-    testWidgets('shrinks to its content height within a loose bounded '
+    testWidgets(
+        'shrinks to its content height within a loose bounded '
         'constraint instead of stretching to the cap', (tester) async {
       await tester.pumpWidget(host(bodyHeight: 100));
       await tester.pumpAndSettle();

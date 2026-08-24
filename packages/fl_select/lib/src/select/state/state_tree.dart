@@ -46,8 +46,8 @@ class StateTree {
     required bool initializeAnyIfEmpty,
   }) {
     final isSameEntries = _entryListEquality.equals(_entries, entries);
-    final isSamePrevious = _entrySetEquality.equals(
-        _selectedEntries ?? {}, selectedEntries ?? {});
+    final isSamePrevious =
+        _entrySetEquality.equals(_selectedEntries ?? {}, selectedEntries ?? {});
     final isSameReset =
         _entrySetEquality.equals(_resetEntries ?? {}, resetEntries ?? {});
     if (isSameEntries && isSamePrevious && isSameReset) {

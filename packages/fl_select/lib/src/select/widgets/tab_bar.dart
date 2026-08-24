@@ -441,8 +441,7 @@ class _SelectTabBarDefaults extends SelectTabBarTheme {
   EdgeInsetsGeometry? get indicatorPadding => EdgeInsets.zero;
 
   @override
-  SelectTabBarIndicatorSize? get indicatorSize =>
-      SelectTabBarIndicatorSize.tab;
+  SelectTabBarIndicatorSize? get indicatorSize => SelectTabBarIndicatorSize.tab;
 
   @override
   Duration? get indicatorAnimationDuration => const Duration(milliseconds: 200);

@@ -224,8 +224,7 @@ void main() {
       );
     });
 
-    test('selectedEntries supplied via the constructor is returned as-is',
-        () {
+    test('selectedEntries supplied via the constructor is returned as-is', () {
       final selected = <SelectEntry<dynamic>>{
         SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
       };

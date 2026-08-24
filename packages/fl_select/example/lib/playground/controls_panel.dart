@@ -38,9 +38,9 @@ class ControlsPanel extends StatelessWidget {
   Widget build(BuildContext context) {
     // Private controls of the active entry point, then of the active
     // delegate; controls unsupported by either are hidden entirely.
-    final entryPointControls = PlaygroundControlSpec
-        .entryPointPrivateControls[params.entryPoint] ??
-        const <PlaygroundControl>[];
+    final entryPointControls =
+        PlaygroundControlSpec.entryPointPrivateControls[params.entryPoint] ??
+            const <PlaygroundControl>[];
     final delegateControls = <PlaygroundControl>[
       if (_gridGeometryActive)
         ...PlaygroundControlSpec.columnBasedDelegateControls,

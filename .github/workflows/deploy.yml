@@ -26,11 +26,11 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        working-directory: example
+        working-directory: packages/fl_select/example
         run: flutter pub get
 
       - name: Build web
-        working-directory: example
+        working-directory: packages/fl_select/example
         run: flutter build web --release
 
       - name: Deploy to Cloudflare Pages
@@ -39,5 +39,5 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: flselect
-          directory: example/build/web
+          directory: packages/fl_select/example/build/web
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
