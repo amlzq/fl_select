@@ -1,0 +1,19 @@
+name: example
+description: "Demo of fl_select_genui: rendering an agent-authored SelectFilter."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.4
+
+dependencies:
+  fl_select:
+    path: ../../fl_select
+  fl_select_genui:
+    path: ../
+  flutter:
+    sdk: flutter
+  genui: ^0.10.2
+
+flutter:
+  uses-material-design: true

@@ -1,6 +1,6 @@
 ---
 name: fl-select
-description: A customizable Flutter select widget (the fl_select package) for filter bars, cascading menus, and pickers with single/multiple selection, sync (static `entries`) or async data loading, search filtering, theming, and i18n. Use this skill when building filter UIs, dropdown menus with categories, cascading/grid/list/chip selects, range pickers, or whenever working with fl_select APIs (SelectView, PopupSelectBar, PopupSelectButton, showSelect, showModalBottomSelect, SelectDelegate, SelectEntry).
+description: A customizable Flutter select widget (the fl_select package) for filter bars, cascading menus, and pickers with single/multiple selection, sync (static `entries`) or async data loading, search filtering, theming, and i18n. Includes a JSON entry-tree codec (SelectEntryCodec) and a GenUI/A2UI bridge package (fl_select_genui) for AI-agent-rendered filter UIs. Use this skill when building filter UIs, dropdown menus with categories, cascading/grid/list/chip selects, range pickers, or whenever working with fl_select APIs (SelectView, PopupSelectBar, PopupSelectButton, showSelect, showModalBottomSelect, SelectDelegate, SelectEntry) or fl_select_genui.
 ---
 
 # fl_select
@@ -63,6 +63,12 @@ final SelectEntries? selected = await showSelect(
 - Use `SelectTextEntry.name(...)` / `SelectIntEntry.name(...)` (parentless leaves) for flat single-level lists.
 - An "Any" entry (`.any(...)`) clears its category; in `toQueryMap()` it resolves to the parent id.
 - Serialize results with `selected.toQueryMap()` / `selected.toQueryParameters(arrayFormat: ...)` — do not hand-walk the tree.
+
+## JSON codec & GenUI bridge
+
+- The repo is a melos + pub-workspace monorepo: core package at `packages/fl_select`, GenUI bridge at `packages/fl_select_genui`.
+- `SelectEntryCodec.fromJson(list)` / `toJson(entries)` convert entry trees to/from declarative JSON (`type`: category / text / range / any / custom; `layout.kind`: list / grid / chip / counter / range). Prefer the codec over hand-building `SelectEntry` objects from dynamic data; it throws `FormatException` / `UnsupportedError` on bad payloads instead of silently dropping data.
+- `fl_select_genui` wraps the codec as a GenUI (A2UI) `CatalogItem` (`FlSelectCatalogItems.selectFilter`) so AI agents can emit the JSON and get a live fl_select panel; selections are written back as a `Map<String, List<String>>` at `<id>.value`.
 
 ## Reference index
 

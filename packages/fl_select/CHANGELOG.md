@@ -2,6 +2,8 @@
 
 - **NOTE** the repository has been restructured into a monorepo managed with [melos](https://melos.invertase.dev/) on top of Dart pub workspaces. The package now lives at [`packages/fl_select`](https://github.com/amlzq/fl_select/tree/main/packages/fl_select) — update any links (issues, changelog, migration guide) accordingly; `pubspec.yaml` metadata has been updated. No API or behavior changes.
 
+- **FEATURE** add `SelectEntryCodec` — declarative JSON import/export for entry trees (`fromJson` / `toJson`) with `type`-discriminated nodes (category / text / range / any / custom), `layout` support, automatic `parentId` injection and `enabled` / `immediate` flags. Powers the new GenUI bridge package [`fl_select_genui`](https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui).
+
 ## 0.9.0
 
 - **BREAKING** remove the deprecated `onSelector*` lifecycle aliases and `PopupSelectController` `hideSelector` / `toggleSelector` / `isSelectorShowing` members; use the `onSelect*` names and `hideSelect` / `toggleSelect` / `isSelectShowing` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-070)).
