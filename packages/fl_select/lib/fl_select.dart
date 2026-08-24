@@ -17,6 +17,7 @@ export 'src/select/constants.dart';
 export 'src/select/select_controller.dart';
 export 'src/select/select_delegate.dart';
 export 'src/select/select_entry.dart';
+export 'src/select/select_entry_codec.dart';
 export 'src/select/select_layout.dart';
 export 'src/select/select_panel.dart';
 export 'src/select/select_panel_theme.dart';

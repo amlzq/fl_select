@@ -1,0 +1,28 @@
+name: fl_select_genui
+description: >-
+  GenUI SDK (A2UI) integration for fl_select. Provides ready-made
+  CatalogItems so conversational AI agents can render fl_select filter
+  widgets inside chat surfaces and receive user selections as structured
+  query data.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ^3.5.4
+  flutter: ">=1.17.0"
+
+# This package is resolved via the repository root pub workspace (melos).
+resolution: workspace
+
+dependencies:
+  fl_select:
+    path: ../fl_select
+  flutter:
+    sdk: flutter
+  genui: ^0.10.2
+  json_schema_builder: ^0.1.6
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter

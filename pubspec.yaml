@@ -7,11 +7,17 @@ environment:
 # (Melos 7+ requires this instead of the legacy melos.yaml.)
 workspace:
   - packages/fl_select
+  - packages/fl_select_genui
 
 dev_dependencies:
   melos: ^8.3.0
 
 melos:
+  commands:
+    test:
+      exec:
+        run: flutter test
+        concurrency: 1
   scripts:
     example:run:
       description: Run the fl_select example app (debug mode).
