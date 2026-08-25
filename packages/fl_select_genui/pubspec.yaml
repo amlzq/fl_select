@@ -5,6 +5,8 @@ description: >-
   widgets inside chat surfaces and receive user selections as structured
   query data.
 version: 0.1.0
+repository: https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui
+issue_tracker: https://github.com/amlzq/fl_select/issues
 
 environment:
   sdk: ^3.5.4
