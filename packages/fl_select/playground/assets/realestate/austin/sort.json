@@ -1,0 +1,34 @@
+[
+    {
+        "id": "11",
+        "name": "Homes for you"
+    },
+    {
+        "id": "12",
+        "name": "Price (High to Low)"
+    },
+    {
+        "id": "13",
+        "name": "Price (Low to High)"
+    },
+    {
+        "id": "14",
+        "name": "Newest"
+    },
+    {
+        "id": "15",
+        "name": "Bedrooms"
+    },
+    {
+        "id": "16",
+        "name": "Bathrooms"
+    },
+    {
+        "id": "17",
+        "name": "Square Feet"
+    },
+    {
+        "id": "18",
+        "name": "Lot Size"
+    }
+]

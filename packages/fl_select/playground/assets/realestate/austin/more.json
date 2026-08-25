@@ -1,0 +1,200 @@
+[
+    {
+        "id": "home_type",
+        "name": "Home type",
+        "data": [
+            {
+                "id": "single_family",
+                "name": "House"
+            },
+            {
+                "id": "condo",
+                "name": "Condo"
+            },
+            {
+                "id": "townhouse",
+                "name": "Townhouse"
+            },
+            {
+                "id": "multi_family",
+                "name": "Multi-family"
+            },
+            {
+                "id": "manufactured",
+                "name": "Manufactured"
+            },
+            {
+                "id": "land",
+                "name": "Lot/Land"
+            },
+            {
+                "id": "new_construction",
+                "name": "New construction"
+            }
+        ]
+    },
+    {
+        "id": "lists_details",
+        "name": "Lists details",
+        "data": [
+            {
+                "id": "open_house",
+                "name": "Open house"
+            },
+            {
+                "id": "new_listing",
+                "name": "New listings"
+            },
+            {
+                "id": "price_reduced",
+                "name": "Price reduced"
+            },
+            {
+                "id": "pending",
+                "name": "Pending / Under contract"
+            },
+            {
+                "id": "foreclosure",
+                "name": "Foreclosure"
+            },
+            {
+                "id": "auction",
+                "name": "Auction"
+            }
+        ]
+    },
+    {
+        "id": "square_feet",
+        "name": "Square feet",
+        "data": [
+            {
+                "id": "sqft_500",
+                "name": "500+ sqft"
+            },
+            {
+                "id": "sqft_750",
+                "name": "750+ sqft"
+            },
+            {
+                "id": "sqft_1000",
+                "name": "1,000+ sqft"
+            },
+            {
+                "id": "sqft_1500",
+                "name": "1,500+ sqft"
+            },
+            {
+                "id": "sqft_2000",
+                "name": "2,000+ sqft"
+            },
+            {
+                "id": "sqft_3000",
+                "name": "3,000+ sqft"
+            }
+        ]
+    },
+    {
+        "id": "lot_size",
+        "name": "Lot size",
+        "data": [
+            {
+                "id": "lot_0_25",
+                "name": "0.25 acre+"
+            },
+            {
+                "id": "lot_0_5",
+                "name": "0.5 acre+"
+            },
+            {
+                "id": "lot_1",
+                "name": "1 acre+"
+            },
+            {
+                "id": "lot_2",
+                "name": "2 acres+"
+            },
+            {
+                "id": "lot_5",
+                "name": "5 acres+"
+            }
+        ]
+    },
+    {
+        "id": "home_features",
+        "name": "Home features",
+        "data": [
+            {
+                "id": "pool",
+                "name": "Pool"
+            },
+            {
+                "id": "garage",
+                "name": "Garage parking"
+            },
+            {
+                "id": "central_air",
+                "name": "Central air"
+            },
+            {
+                "id": "fireplace",
+                "name": "Fireplace"
+            },
+            {
+                "id": "basement",
+                "name": "Basement"
+            },
+            {
+                "id": "waterfront",
+                "name": "Waterfront"
+            },
+            {
+                "id": "view",
+                "name": "View"
+            },
+            {
+                "id": "solar",
+                "name": "Solar panels"
+            }
+        ]
+    },
+    {
+        "id": "commute",
+        "name": "Commute time",
+        "data": [
+            {
+                "id": "ct_15",
+                "name": "Up to 15 minutes"
+            },
+            {
+                "id": "ct_30",
+                "name": "Up to 30 minutes"
+            },
+            {
+                "id": "ct_45",
+                "name": "Up to 45 minutes"
+            },
+            {
+                "id": "ct_60",
+                "name": "Up to 60 minutes"
+            }
+        ]
+    },
+    {
+        "id": "expanded_search",
+        "name": "Expanded search",
+        "data": [
+            {
+                "id": "include_nearby",
+                "name": "Include nearby areas"
+            },
+            {
+                "id": "include_pending",
+                "name": "Include pending / under contract"
+            },
+            {
+                "id": "include_off_market",
+                "name": "Include off-market"
+            }
+        ]
+    }
+]

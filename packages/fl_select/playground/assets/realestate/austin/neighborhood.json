@@ -1,0 +1,382 @@
+[
+  {
+    "id": "ca",
+    "name": "Central Austin",
+    "data": [
+      {
+        "id": "ca_downtown",
+        "name": "Downtown Austin",
+        "data": [
+          {
+            "id": "ca_downtown_rainey",
+            "name": "Rainey Street"
+          },
+          {
+            "id": "ca_downtown_warehouse",
+            "name": "Warehouse District"
+          },
+          {
+            "id": "ca_downtown_sixth",
+            "name": "Sixth Street"
+          },
+          {
+            "id": "ca_downtown_second",
+            "name": "Second Street District"
+          }
+        ]
+      },
+      {
+        "id": "ca_eastaustin",
+        "name": "East Austin",
+        "data": [
+          {
+            "id": "ca_eastaustin_french",
+            "name": "French Place"
+          },
+          {
+            "id": "ca_eastaustin_holly",
+            "name": "Holly"
+          },
+          {
+            "id": "ca_eastaustin_govalle",
+            "name": "Govalle"
+          },
+          {
+            "id": "ca_eastaustin_chestnut",
+            "name": "Chestnut"
+          }
+        ]
+      },
+      {
+        "id": "ca_mueller",
+        "name": "Mueller"
+      },
+      {
+        "id": "ca_hydepark",
+        "name": "Hyde Park",
+        "data": [
+          {
+            "id": "ca_hydepark_northloop",
+            "name": "North Loop"
+          },
+          {
+            "id": "ca_hydepark_hancock",
+            "name": "Hancock"
+          }
+        ]
+      },
+      {
+        "id": "ca_cherrywood",
+        "name": "Cherrywood"
+      },
+      {
+        "id": "ca_clarksville",
+        "name": "Clarksville"
+      },
+      {
+        "id": "ca_tarrytown",
+        "name": "Tarrytown"
+      },
+      {
+        "id": "ca_brykerwoods",
+        "name": "Bryker Woods"
+      },
+      {
+        "id": "ca_oldwest",
+        "name": "Old West Austin"
+      },
+      {
+        "id": "ca_westcampus",
+        "name": "West Campus"
+      },
+      {
+        "id": "ca_zilker",
+        "name": "Zilker"
+      },
+      {
+        "id": "ca_bouldin",
+        "name": "Bouldin Creek"
+      },
+      {
+        "id": "ca_southcongress",
+        "name": "South Congress"
+      },
+      {
+        "id": "ca_travisheights",
+        "name": "Travis Heights"
+      },
+      {
+        "id": "ca_bartonhills",
+        "name": "Barton Hills"
+      }
+    ]
+  },
+  {
+    "id": "na",
+    "name": "North Austin",
+    "data": [
+      {
+        "id": "na_allandale",
+        "name": "Allandale"
+      },
+      {
+        "id": "na_crestview",
+        "name": "Crestview"
+      },
+      {
+        "id": "na_wooten",
+        "name": "Wooten"
+      },
+      {
+        "id": "na_northburnet",
+        "name": "North Burnet"
+      },
+      {
+        "id": "na_domain",
+        "name": "The Domain"
+      },
+      {
+        "id": "na_arboretum",
+        "name": "Arboretum"
+      },
+      {
+        "id": "na_rosedale",
+        "name": "Rosedale"
+      },
+      {
+        "id": "na_gracywoods",
+        "name": "Gracywoods"
+      },
+      {
+        "id": "na_wellsbranch",
+        "name": "Wells Branch"
+      }
+    ]
+  },
+  {
+    "id": "nea",
+    "name": "Northeast Austin",
+    "data": [
+      {
+        "id": "nea_walnutcreek",
+        "name": "Walnut Creek"
+      },
+      {
+        "id": "nea_georgian",
+        "name": "Georgian Acres"
+      },
+      {
+        "id": "nea_stjohn",
+        "name": "St. John"
+      },
+      {
+        "id": "nea_highland",
+        "name": "Highland"
+      },
+      {
+        "id": "nea_pioneer",
+        "name": "Pioneer Crossing"
+      },
+      {
+        "id": "nea_windsorpark",
+        "name": "Windsor Park"
+      }
+    ]
+  },
+  {
+    "id": "nwa",
+    "name": "Northwest Austin",
+    "data": [
+      {
+        "id": "nwa_greathills",
+        "name": "Great Hills"
+      },
+      {
+        "id": "nwa_jollyville",
+        "name": "Jollyville"
+      },
+      {
+        "id": "nwa_andersonmill",
+        "name": "Anderson Mill"
+      },
+      {
+        "id": "nwa_spicewood",
+        "name": "Spicewood Springs"
+      },
+      {
+        "id": "nwa_balcones",
+        "name": "Balcones Woods"
+      },
+      {
+        "id": "nwa_canyoncreek",
+        "name": "Canyon Creek"
+      },
+      {
+        "id": "nwa_milwood",
+        "name": "Milwood"
+      }
+    ]
+  },
+  {
+    "id": "sa",
+    "name": "South Austin",
+    "data": [
+      {
+        "id": "sa_dovesprings",
+        "name": "Dove Springs"
+      },
+      {
+        "id": "sa_circlec",
+        "name": "Circle C Ranch"
+      },
+      {
+        "id": "sa_oakhill",
+        "name": "Oak Hill"
+      },
+      {
+        "id": "sa_westgate",
+        "name": "Westgate"
+      },
+      {
+        "id": "sa_southmanchaca",
+        "name": "South Manchaca"
+      },
+      {
+        "id": "sa_sunsetvalley",
+        "name": "Sunset Valley"
+      },
+      {
+        "id": "sa_eastriverside",
+        "name": "East Riverside"
+      },
+      {
+        "id": "sa_southpark",
+        "name": "Southpark Meadows"
+      }
+    ]
+  },
+  {
+    "id": "sea",
+    "name": "Southeast Austin",
+    "data": [
+      {
+        "id": "sea_montopolis",
+        "name": "Montopolis"
+      },
+      {
+        "id": "sea_pleasantvalley",
+        "name": "Pleasant Valley"
+      },
+      {
+        "id": "sea_franklinpark",
+        "name": "Franklin Park"
+      },
+      {
+        "id": "sea_colonypark",
+        "name": "Colony Park"
+      },
+      {
+        "id": "sea_elmont",
+        "name": "Elmont"
+      }
+    ]
+  },
+  {
+    "id": "wa",
+    "name": "West Austin",
+    "data": [
+      {
+        "id": "wa_westlake",
+        "name": "West Lake Hills"
+      },
+      {
+        "id": "wa_rollingwood",
+        "name": "Rollingwood"
+      },
+      {
+        "id": "wa_davenport",
+        "name": "Davenport Ranch"
+      },
+      {
+        "id": "wa_steiner",
+        "name": "Steiner Ranch",
+        "data": [
+          {
+            "id": "wa_steiner_falconhead",
+            "name": "Falconhead West"
+          },
+          {
+            "id": "wa_steiner_lakedistrict",
+            "name": "Lake District"
+          }
+        ]
+      },
+      {
+        "id": "wa_lakeway",
+        "name": "Lakeway"
+      },
+      {
+        "id": "wa_beecave",
+        "name": "Bee Cave"
+      },
+      {
+        "id": "wa_riverplace",
+        "name": "River Place"
+      }
+    ]
+  },
+  {
+    "id": "ga",
+    "name": "Greater Austin",
+    "data": [
+      {
+        "id": "ga_roundrock",
+        "name": "Round Rock"
+      },
+      {
+        "id": "ga_pflugerville",
+        "name": "Pflugerville"
+      },
+      {
+        "id": "ga_cedarpark",
+        "name": "Cedar Park"
+      },
+      {
+        "id": "ga_leander",
+        "name": "Leander"
+      },
+      {
+        "id": "ga_georgetown",
+        "name": "Georgetown"
+      },
+      {
+        "id": "ga_kyle",
+        "name": "Kyle"
+      },
+      {
+        "id": "ga_buda",
+        "name": "Buda"
+      },
+      {
+        "id": "ga_drippingsprings",
+        "name": "Dripping Springs"
+      },
+      {
+        "id": "ga_hutto",
+        "name": "Hutto"
+      },
+      {
+        "id": "ga_manor",
+        "name": "Manor"
+      },
+      {
+        "id": "ga_elgin",
+        "name": "Elgin"
+      },
+      {
+        "id": "ga_taylor",
+        "name": "Taylor"
+      }
+    ]
+  }
+]

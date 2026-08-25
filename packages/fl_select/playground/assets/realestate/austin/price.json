@@ -1,0 +1,28 @@
+[
+    {
+        "id": "list_price",
+        "name": "List price",
+        "data": [
+            {
+                "id": "lp_range",
+                "name": "$0-$10M+",
+                "min": 0,
+                "max": 10000000,
+                "divisions": 80
+            }
+        ]
+    },
+    {
+        "id": "monthly_payment",
+        "name": "Monthly payment",
+        "data": [
+            {
+                "id": "mp_range",
+                "name": "$1,500-$10M+",
+                "min": 1500,
+                "max": 10000000,
+                "divisions": 80
+            }
+        ]
+    }
+]

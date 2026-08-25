@@ -8,7 +8,6 @@ import 'package:flutter_web_plugins/url_strategy.dart';
 import '../generated/l10n/app_localizations.dart';
 import 'bottom_sheet_example.dart';
 import 'dialog_example.dart';
-import 'playground/playground_page.dart';
 import 'popup_select_bar_example.dart';
 import 'popup_select_button_example.dart';
 import 'select_view_example.dart';
@@ -107,7 +106,7 @@ class _MyAppState extends State<MyApp> {
                 child: child ?? const SizedBox.shrink(),
               );
             },
-            home: kIsWeb ? const PlaygroundPage() : const MyHomePage(),
+            home: const MyHomePage(),
           );
         },
       ),

@@ -1,0 +1,30 @@
+name: playground
+description: "Interactive playground for the fl_select package."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.10.9
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  flutter_web_plugins:
+    sdk: flutter
+  intl: any
+  fl_select:
+    path: ../
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+  assets:
+    - assets/realestate/austin/
+    - assets/realestate/shenzhen/

@@ -40,6 +40,12 @@
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
+        },
+        {
+            "name": "playground",
+            "request": "launch",
+            "type": "dart",
+            "program": "packages/fl_select/playground/lib/main.dart"
         }
     ]
 }
