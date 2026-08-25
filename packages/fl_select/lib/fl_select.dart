@@ -2,7 +2,7 @@
 ///
 /// This library re-exports the core select configuration types (e.g. [SelectDelegate])
 /// and the UI widgets used to render and control selection panels.
-library fl_select;
+library;
 
 export 'src/bottom_sheet.dart';
 export 'src/dialog.dart';

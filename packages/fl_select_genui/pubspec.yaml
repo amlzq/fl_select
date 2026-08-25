@@ -5,7 +5,6 @@ description: >-
   widgets inside chat surfaces and receive user selections as structured
   query data.
 version: 0.1.0
-publish_to: none
 
 environment:
   sdk: ^3.5.4
@@ -15,14 +14,13 @@ environment:
 resolution: workspace
 
 dependencies:
-  fl_select:
-    path: ../fl_select
+  fl_select: ^0.9.0
   flutter:
     sdk: flutter
   genui: ^0.10.2
   json_schema_builder: ^0.1.6
 
 dev_dependencies:
-  flutter_lints: ^4.0.0
   flutter_test:
     sdk: flutter
+  flutter_lints: ^6.0.0
