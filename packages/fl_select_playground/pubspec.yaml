@@ -1,10 +1,13 @@
-name: playground
+name: fl_select_playground
 description: "Interactive playground for the fl_select package."
 publish_to: "none"
 version: 0.1.0
 
 environment:
   sdk: ^3.10.9
+
+# Resolved via the repository root pub workspace (melos).
+resolution: workspace
 
 dependencies:
   flutter:
@@ -14,8 +17,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   intl: any
-  fl_select:
-    path: ../
+  fl_select: ^0.9.0
 
 dev_dependencies:
   flutter_test:

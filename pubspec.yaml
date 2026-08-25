@@ -8,6 +8,7 @@ environment:
 workspace:
   - packages/fl_select
   - packages/fl_select_genui
+  - packages/fl_select_playground
 
 dev_dependencies:
   melos: ^8.3.0
@@ -23,5 +24,11 @@ melos:
       description: Run the fl_select example app (debug mode).
       run: cd packages/fl_select/example && flutter run
     example:build-web:
-      description: Build the example app for web (what CI deploys).
+      description: Build the example app for web.
       run: cd packages/fl_select/example && flutter build web --release
+    playground:run:
+      description: Run the fl_select playground app (debug mode).
+      run: cd packages/fl_select_playground && flutter run
+    playground:build-web:
+      description: Build the playground app for web (what CI deploys).
+      run: cd packages/fl_select_playground && flutter build web --release

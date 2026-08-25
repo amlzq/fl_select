@@ -26,11 +26,11 @@ jobs:
           cache: true
 
       - name: Install dependencies
-        working-directory: packages/fl_select/playground
+        working-directory: packages/fl_select_playground
         run: flutter pub get
 
       - name: Build web
-        working-directory: packages/fl_select/playground
+        working-directory: packages/fl_select_playground
         run: flutter build web --release
 
       - name: Deploy to Cloudflare Pages
@@ -39,5 +39,5 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: flselect
-          directory: packages/fl_select/playground/build/web
+          directory: packages/fl_select_playground/build/web
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}

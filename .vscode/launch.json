@@ -42,10 +42,10 @@
             "flutterMode": "release"
         },
         {
-            "name": "playground",
+            "name": "fl_select_playground",
+            "cwd": "packages/fl_select_playground",
             "request": "launch",
-            "type": "dart",
-            "program": "packages/fl_select/playground/lib/main.dart"
+            "type": "dart"
         }
     ]
 }
