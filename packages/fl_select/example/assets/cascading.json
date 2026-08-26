@@ -1,0 +1,426 @@
+[
+  {
+    "id": "animals",
+    "name": "Animal Kingdom",
+    "data": [
+      {
+        "id": "1",
+        "name": "Chordata",
+        "data": [
+          {
+            "id": "11",
+            "name": "Mammalia",
+            "data": [
+              {
+                "id": "111",
+                "name": "Carnivora",
+                "data": [
+                  {
+                    "id": "1111",
+                    "name": "Felidae"
+                  },
+                  {
+                    "id": "1112",
+                    "name": "Canidae"
+                  },
+                  {
+                    "id": "1113",
+                    "name": "Ursidae"
+                  }
+                ]
+              },
+              {
+                "id": "112",
+                "name": "Primates",
+                "data": [
+                  {
+                    "id": "1121",
+                    "name": "Hominidae"
+                  },
+                  {
+                    "id": "1122",
+                    "name": "Cercopithecidae"
+                  }
+                ]
+              },
+              {
+                "id": "113",
+                "name": "Rodentia"
+              },
+              {
+                "id": "114",
+                "name": "Chiroptera"
+              },
+              {
+                "id": "115",
+                "name": "Cetartiodactyla"
+              }
+            ]
+          },
+          {
+            "id": "12",
+            "name": "Aves",
+            "data": [
+              {
+                "id": "121",
+                "name": "Passeriformes"
+              },
+              {
+                "id": "122",
+                "name": "Psittaciformes"
+              },
+              {
+                "id": "123",
+                "name": "Falconiformes"
+              },
+              {
+                "id": "124",
+                "name": "Strigiformes"
+              },
+              {
+                "id": "125",
+                "name": "Sphenisciformes"
+              }
+            ]
+          },
+          {
+            "id": "13",
+            "name": "Reptilia",
+            "data": [
+              {
+                "id": "131",
+                "name": "Squamata"
+              },
+              {
+                "id": "132",
+                "name": "Testudines"
+              },
+              {
+                "id": "133",
+                "name": "Crocodilia"
+              }
+            ]
+          },
+          {
+            "id": "14",
+            "name": "Amphibia"
+          },
+          {
+            "id": "15",
+            "name": "Actinopterygii",
+            "data": [
+              {
+                "id": "151",
+                "name": "Perciformes"
+              },
+              {
+                "id": "152",
+                "name": "Cypriniformes"
+              },
+              {
+                "id": "153",
+                "name": "Salmoniformes"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "name": "Arthropoda",
+        "data": [
+          {
+            "id": "21",
+            "name": "Insecta",
+            "data": [
+              {
+                "id": "211",
+                "name": "Coleoptera"
+              },
+              {
+                "id": "212",
+                "name": "Lepidoptera"
+              },
+              {
+                "id": "213",
+                "name": "Hymenoptera"
+              },
+              {
+                "id": "214",
+                "name": "Diptera"
+              },
+              {
+                "id": "215",
+                "name": "Orthoptera"
+              },
+              {
+                "id": "216",
+                "name": "Odonata"
+              }
+            ]
+          },
+          {
+            "id": "22",
+            "name": "Arachnida"
+          },
+          {
+            "id": "23",
+            "name": "Crustacea",
+            "enabled": false
+          },
+          {
+            "id": "24",
+            "name": "Myriapoda"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "name": "Mollusca"
+      },
+      {
+        "id": "4",
+        "name": "Echinodermata"
+      }
+    ]
+  },
+  {
+    "id": "plants",
+    "name": "Plant Kingdom",
+    "data": [
+      {
+        "id": "1",
+        "name": "Angiosperms",
+        "data": [
+          {
+            "id": "11",
+            "name": "Eudicots",
+            "data": [
+              {
+                "id": "111",
+                "name": "Rosales",
+                "data": [
+                  {
+                    "id": "1111",
+                    "name": "Rosaceae"
+                  },
+                  {
+                    "id": "1112",
+                    "name": "Ulmaceae"
+                  }
+                ]
+              },
+              {
+                "id": "112",
+                "name": "Fabales"
+              },
+              {
+                "id": "113",
+                "name": "Fagales"
+              },
+              {
+                "id": "114",
+                "name": "Solanales"
+              },
+              {
+                "id": "115",
+                "name": "Asterales"
+              },
+              {
+                "id": "116",
+                "name": "Apiales"
+              }
+            ]
+          },
+          {
+            "id": "12",
+            "name": "Monocots",
+            "data": [
+              {
+                "id": "121",
+                "name": "Poales"
+              },
+              {
+                "id": "122",
+                "name": "Asparagales"
+              },
+              {
+                "id": "123",
+                "name": "Liliales"
+              },
+              {
+                "id": "124",
+                "name": "Arecales"
+              },
+              {
+                "id": "125",
+                "name": "Zingiberales"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "name": "Gymnosperms",
+        "data": [
+          {
+            "id": "21",
+            "name": "Pinopsida"
+          },
+          {
+            "id": "22",
+            "name": "Cycadopsida"
+          },
+          {
+            "id": "23",
+            "name": "Ginkgoopsida"
+          },
+          {
+            "id": "24",
+            "name": "Gnetopsida"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "name": "Pteridophytes"
+      },
+      {
+        "id": "4",
+        "name": "Bryophytes"
+      }
+    ]
+  },
+  {
+    "id": "fungi",
+    "name": "Fungi Kingdom",
+    "data": [
+      {
+        "id": "1",
+        "name": "Basidiomycota",
+        "data": [
+          {
+            "id": "11",
+            "name": "Agaricomycetes",
+            "data": [
+              {
+                "id": "111",
+                "name": "Agaricales"
+              },
+              {
+                "id": "112",
+                "name": "Boletales"
+              },
+              {
+                "id": "113",
+                "name": "Russulales"
+              }
+            ]
+          },
+          {
+            "id": "12",
+            "name": "Ustilaginomycetes"
+          },
+          {
+            "id": "13",
+            "name": "Tremellomycetes"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "name": "Ascomycota",
+        "data": [
+          {
+            "id": "21",
+            "name": "Saccharomycetes"
+          },
+          {
+            "id": "22",
+            "name": "Eurotiomycetes"
+          },
+          {
+            "id": "23",
+            "name": "Sordariomycetes"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "name": "Zygomycota",
+        "enabled": false
+      },
+      {
+        "id": "4",
+        "name": "Chytridiomycota"
+      }
+    ]
+  },
+  {
+    "id": "microbes",
+    "name": "Microorganisms",
+    "data": [
+      {
+        "id": "1",
+        "name": "Bacteria",
+        "data": [
+          {
+            "id": "11",
+            "name": "Proteobacteria",
+            "data": [
+              {
+                "id": "111",
+                "name": "Gammaproteobacteria"
+              },
+              {
+                "id": "112",
+                "name": "Alphaproteobacteria"
+              }
+            ]
+          },
+          {
+            "id": "12",
+            "name": "Firmicutes"
+          },
+          {
+            "id": "13",
+            "name": "Actinobacteria"
+          },
+          {
+            "id": "14",
+            "name": "Cyanobacteria"
+          }
+        ]
+      },
+      {
+        "id": "2",
+        "name": "Archaea",
+        "data": [
+          {
+            "id": "21",
+            "name": "Euryarchaeota"
+          },
+          {
+            "id": "22",
+            "name": "Crenarchaeota"
+          }
+        ]
+      },
+      {
+        "id": "3",
+        "name": "Protists",
+        "data": [
+          {
+            "id": "31",
+            "name": "Protozoa"
+          },
+          {
+            "id": "32",
+            "name": "Algae"
+          }
+        ]
+      }
+    ]
+  }
+]

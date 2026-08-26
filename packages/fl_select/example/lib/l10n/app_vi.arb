@@ -1,0 +1,13 @@
+{
+  "@@locale": "vi",
+  "appTitle": "Ví dụ Flselect",
+  "selectViewExample": "Ví dụ SelectView",
+  "popupSelectButtonExample": "Ví dụ PopupSelectButton",
+  "popupSelectBarExample": "Ví dụ PopupSelectBar",
+  "showSelectExample": "Ví dụ showSelect",
+  "showModalBottomSelectExample": "Ví dụ showModalBottomSelect",
+  "theme": "Chủ đề",
+  "themeModeSystem": "Hệ thống",
+  "themeModeLight": "Sáng",
+  "themeModeDark": "Tối"
+}

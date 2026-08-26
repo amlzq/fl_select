@@ -31,7 +31,7 @@ class _DialogExampleState extends State<DialogExample> {
               );
               largePrint('result: $result');
             },
-            child: const Text('AlertDialog'),
+            child: const Text('showSelect'),
           ),
         ],
       ),

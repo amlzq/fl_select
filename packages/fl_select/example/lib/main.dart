@@ -1,21 +1,17 @@
-import 'package:example/leyoujia/leyoujia_page.dart';
+import 'package:example/generated/l10n/app_localizations.dart';
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_web_plugins/url_strategy.dart';
 
-import '../generated/l10n/app_localizations.dart';
+import 'bar_example.dart';
 import 'bottom_sheet_example.dart';
+import 'button_example.dart';
 import 'dialog_example.dart';
-import 'popup_select_bar_example.dart';
-import 'popup_select_button_example.dart';
-import 'select_view_example.dart';
 import 'theme_mode.dart';
-import 'zillow/zillow_page.dart';
+import 'view_example.dart';
 
 void main() {
-  usePathUrlStrategy();
   if (kReleaseMode) {
     debugPrint = (String? message, {int? wrapWidth}) {};
   }
@@ -62,8 +58,7 @@ class _MyAppState extends State<MyApp> {
         valueListenable: _themeModeController,
         builder: (context, themeMode, _) {
           return MaterialApp(
-            onGenerateTitle: (context) =>
-                AppLocalizations.of(context)?.appName ?? '',
+            onGenerateTitle: (context) => 'Select Example',
             theme: lightTheme,
             darkTheme: darkTheme,
             themeMode: themeMode,
@@ -74,21 +69,7 @@ class _MyAppState extends State<MyApp> {
               GlobalCupertinoLocalizations.delegate,
               SelectLocalizationsDelegate(),
             ],
-            supportedLocales: const [
-              Locale('en'),
-              Locale.fromSubtags(languageCode: 'zh'),
-              Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
-              Locale.fromSubtags(
-                languageCode: 'zh',
-                scriptCode: 'Hant',
-                countryCode: 'TW',
-              ),
-              Locale.fromSubtags(
-                languageCode: 'zh',
-                scriptCode: 'Hant',
-                countryCode: 'HK',
-              ),
-            ],
+            supportedLocales: AppLocalizations.supportedLocales,
             builder: (context, child) {
               final baseTheme = Theme.of(context);
               final theme = baseTheme.copyWith(
@@ -119,10 +100,12 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('Flselect Example'),
+        title: Text(l10n.appTitle),
+        actions: const [ThemeModeButton()],
       ),
       body: Center(
         child: Column(
@@ -135,7 +118,7 @@ class MyHomePage extends StatelessWidget {
                       builder: (context) => const SelectViewExamplePage()),
                 );
               },
-              child: const Text('SelectView Example'),
+              child: Text(l10n.selectViewExample),
             ),
             TextButton(
               onPressed: () {
@@ -145,7 +128,7 @@ class MyHomePage extends StatelessWidget {
                       builder: (context) => const PopupSelectButtonExample()),
                 );
               },
-              child: const Text('PopupSelectButton Example'),
+              child: Text(l10n.popupSelectButtonExample),
             ),
             TextButton(
               onPressed: () {
@@ -155,7 +138,7 @@ class MyHomePage extends StatelessWidget {
                       builder: (context) => const PopupSelectBarExample()),
                 );
               },
-              child: const Text('PopupSelectBar Example'),
+              child: Text(l10n.popupSelectBarExample),
             ),
             TextButton(
               onPressed: () {
@@ -165,7 +148,7 @@ class MyHomePage extends StatelessWidget {
                       builder: (context) => const DialogExample()),
                 );
               },
-              child: const Text('Dialog Example'),
+              child: Text(l10n.showSelectExample),
             ),
             TextButton(
               onPressed: () {
@@ -175,25 +158,7 @@ class MyHomePage extends StatelessWidget {
                       builder: (context) => const BottomSheetExample()),
                 );
               },
-              child: const Text('BottomSheet Example'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ZillowPage()),
-                );
-              },
-              child: const Text('Zillow'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const LeyoujiaPage()),
-                );
-              },
-              child: const Text('Leyoujia'),
+              child: Text(l10n.showModalBottomSelectExample),
             ),
           ],
         ),

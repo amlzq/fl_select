@@ -1,6 +1,5 @@
+import 'package:example/generated/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
-
-import '../generated/l10n/app_localizations.dart';
 
 /// Shares an application-wide [ThemeMode] [ValueNotifier] through the widget
 /// tree so any page can read and update the current theme mode.
@@ -28,27 +27,27 @@ class ThemeModeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context);
     final controller = ThemeModeScope.of(context);
+    final l10n = AppLocalizations.of(context)!;
     return PopupMenuButton<ThemeMode>(
       initialValue: controller.value,
       onSelected: (mode) => controller.value = mode,
       itemBuilder: (context) => [
         PopupMenuItem(
           value: ThemeMode.system,
-          child: Text(l10n?.themeSystem ?? 'System'),
+          child: Text(l10n.themeModeSystem),
         ),
         PopupMenuItem(
           value: ThemeMode.light,
-          child: Text(l10n?.themeLight ?? 'Light'),
+          child: Text(l10n.themeModeLight),
         ),
         PopupMenuItem(
           value: ThemeMode.dark,
-          child: Text(l10n?.themeDark ?? 'Dark'),
+          child: Text(l10n.themeModeDark),
         ),
       ],
       icon: const Icon(Icons.brightness_6_outlined),
-      tooltip: l10n?.themeMode ?? 'Theme',
+      tooltip: l10n.theme,
     );
   }
 }

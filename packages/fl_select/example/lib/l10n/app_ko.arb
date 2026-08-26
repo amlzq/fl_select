@@ -1,0 +1,13 @@
+{
+  "@@locale": "ko",
+  "appTitle": "Flselect 예제",
+  "selectViewExample": "SelectView 예제",
+  "popupSelectButtonExample": "PopupSelectButton 예제",
+  "popupSelectBarExample": "PopupSelectBar 예제",
+  "showSelectExample": "showSelect 예제",
+  "showModalBottomSelectExample": "showModalBottomSelect 예제",
+  "theme": "테마",
+  "themeModeSystem": "시스템",
+  "themeModeLight": "라이트",
+  "themeModeDark": "다크"
+}

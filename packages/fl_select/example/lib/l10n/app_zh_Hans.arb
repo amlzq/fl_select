@@ -1,5 +1,5 @@
 {
-  "@@locale": "zh",
+  "@@locale": "zh_Hans",
   "appTitle": "Flselect 示例",
   "selectViewExample": "SelectView 示例",
   "popupSelectButtonExample": "PopupSelectButton 示例",

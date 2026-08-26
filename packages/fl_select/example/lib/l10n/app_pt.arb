@@ -1,0 +1,13 @@
+{
+  "@@locale": "pt",
+  "appTitle": "Exemplo de Flselect",
+  "selectViewExample": "Exemplo de SelectView",
+  "popupSelectButtonExample": "Exemplo de PopupSelectButton",
+  "popupSelectBarExample": "Exemplo de PopupSelectBar",
+  "showSelectExample": "Exemplo de showSelect",
+  "showModalBottomSelectExample": "Exemplo de showModalBottomSelect",
+  "theme": "Tema",
+  "themeModeSystem": "Sistema",
+  "themeModeLight": "Claro",
+  "themeModeDark": "Escuro"
+}

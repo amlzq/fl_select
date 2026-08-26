@@ -1,0 +1,13 @@
+{
+  "@@locale": "ja",
+  "appTitle": "Flselect サンプル",
+  "selectViewExample": "SelectView サンプル",
+  "popupSelectButtonExample": "PopupSelectButton サンプル",
+  "popupSelectBarExample": "PopupSelectBar サンプル",
+  "showSelectExample": "showSelect サンプル",
+  "showModalBottomSelectExample": "showModalBottomSelect サンプル",
+  "theme": "テーマ",
+  "themeModeSystem": "システム",
+  "themeModeLight": "ライト",
+  "themeModeDark": "ダーク"
+}

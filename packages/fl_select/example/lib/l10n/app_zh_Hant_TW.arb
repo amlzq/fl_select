@@ -1,0 +1,13 @@
+{
+  "@@locale": "zh_Hant_TW",
+  "appTitle": "Flselect 範例",
+  "selectViewExample": "SelectView 範例",
+  "popupSelectButtonExample": "PopupSelectButton 範例",
+  "popupSelectBarExample": "PopupSelectBar 範例",
+  "showSelectExample": "showSelect 範例",
+  "showModalBottomSelectExample": "showModalBottomSelect 範例",
+  "theme": "主題",
+  "themeModeSystem": "跟隨系統",
+  "themeModeLight": "淺色",
+  "themeModeDark": "深色"
+}

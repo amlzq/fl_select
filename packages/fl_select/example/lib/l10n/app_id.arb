@@ -1,0 +1,13 @@
+{
+  "@@locale": "id",
+  "appTitle": "Contoh Flselect",
+  "selectViewExample": "Contoh SelectView",
+  "popupSelectButtonExample": "Contoh PopupSelectButton",
+  "popupSelectBarExample": "Contoh PopupSelectBar",
+  "showSelectExample": "Contoh showSelect",
+  "showModalBottomSelectExample": "Contoh showModalBottomSelect",
+  "theme": "Tema",
+  "themeModeSystem": "Sistem",
+  "themeModeLight": "Terang",
+  "themeModeDark": "Gelap"
+}
