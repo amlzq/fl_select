@@ -44,6 +44,30 @@ final category = SelectCategoryEntry(
 );
 ```
 
+### `SelectController` deprecated `previousSelected` / `resetSelected` aliases removed
+
+The deprecated `SelectController` constructor parameters and getters
+(`previousSelected`, `resetSelected`) — deprecated since 0.8.0 in favor of
+`selectedEntries` / `resetEntries` — are removed.
+
+Migration: pass `selectedEntries` / `resetEntries` instead.
+
+```dart
+// Before
+SelectController(
+  selectionMode: SelectionMode.single,
+  previousSelected: { ... },
+  resetSelected: { ... },
+);
+
+// After
+SelectController(
+  selectionMode: SelectionMode.single,
+  selectedEntries: { ... },
+  resetEntries: { ... },
+);
+```
+
 ## MIGRATE TO 0.9.0
 
 ### `PopupSelectButton` default variant changed to `text`
@@ -157,11 +181,11 @@ the four `Select*` widgets:
 | `GridSelect.previousSelected`                            | `GridSelect.selectedEntries`                             |
 | `FlattenSelect.previousSelected`                         | `FlattenSelect.selectedEntries`                          |
 
-Only the public-facing `SelectController` constructor parameters and getters
-retain the old names as deprecated aliases for backward compatibility; they
-**will be removed in a future minor version**. All other renamed members (on
+The old names were kept as deprecated aliases on the public-facing
+`SelectController` constructor parameters and getters for backward
+compatibility; they have since been **removed**. All other renamed members (on
 `StateTree`, `bindState`, `SelectDelegate.buildBody`, and the four `Select*`
-widgets) are internal and have been renamed without aliases — update call sites
+widgets) are internal and were renamed without aliases — update call sites
 directly. No behavior changes.
 
 > Note: `SelectDelegate.buildBody` is a positional parameter, so the rename is

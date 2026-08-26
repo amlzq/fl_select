@@ -36,16 +36,6 @@ class SelectController extends ChangeNotifier {
   /// If null, reset falls back to [selectedEntries] (or no selection).
   final SelectEntries? resetEntries;
 
-  /// @nodoc
-  @Deprecated(
-      'Use selectedEntries instead. This will be removed in a future minor version.')
-  SelectEntries? get previousSelected => selectedEntries;
-
-  /// @nodoc
-  @Deprecated(
-      'Use resetEntries instead. This will be removed in a future minor version.')
-  SelectEntries? get resetSelected => resetEntries;
-
   /// The underlying state tree holding the bound entries and their selection
   /// state.
   final StateTree tree = StateTree();
@@ -58,20 +48,9 @@ class SelectController extends ChangeNotifier {
 
   SelectController({
     required this.selectionMode,
-    SelectEntries? selectedEntries,
-    SelectEntries? resetEntries,
-    @Deprecated(
-        'Use selectedEntries instead. This will be removed in a future minor version.')
-    SelectEntries? previousSelected,
-    @Deprecated(
-        'Use resetEntries instead. This will be removed in a future minor version.')
-    SelectEntries? resetSelected,
-  })  : selectedEntries = selectedEntries ?? previousSelected,
-        resetEntries = resetEntries ?? resetSelected,
-        assert(selectedEntries == null || previousSelected == null,
-            'Either provide selectedEntries or previousSelected, not both.'),
-        assert(resetEntries == null || resetSelected == null,
-            'Either provide resetEntries or resetSelected, not both.');
+    this.selectedEntries,
+    this.resetEntries,
+  });
 
   /// Registers a listener to be called when the selection changes.
   ///

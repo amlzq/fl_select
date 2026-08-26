@@ -436,7 +436,7 @@ class PopupSelectController extends ChangeNotifier {
     // Persist the applied selection back onto the delegate so that reopening
     // the select (PopupSelectBar / PopupSelectButton / showSelect
     // / showModalBottomSelect) reconstructs its SelectController with
-    // `previousSelected = selected`. Without this write-back, `selectedData`
+    // `selectedEntries = selected`. Without this write-back, `selectedData`
     // keeps the initial `selectedEntriesLoader` value and the previous selection
     // is lost on reopen — even though `selectedEntriesLoader` was supplied.
     previousSelectDelegate?.selectedEntries = selected;

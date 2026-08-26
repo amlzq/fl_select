@@ -6,6 +6,8 @@
 
 - **BREAKING** remove the deprecated `FlattenSelectDelegate` grid parameters (`crossAxisCount` / `mainAxisSpacing` / `crossAxisSpacing` / `childAspectRatio`) and the matching `FlattenSelect` widget parameters; since 0.7.2 these no longer affect rendering — set a `SelectGridLayout` on `SelectCategoryEntry.layout` instead. `FlattenSelectSkeleton.crossAxisCount` is now optional and defaults to `2` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
 
+- **BREAKING** remove the deprecated `SelectController` `previousSelected` / `resetSelected` aliases (constructor parameters and getters), deprecated since 0.8.0 — pass `selectedEntries` / `resetEntries` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+
 ## 0.9.0
 
 - **BREAKING** remove the deprecated `onSelector*` lifecycle aliases and `PopupSelectController` `hideSelector` / `toggleSelector` / `isSelectorShowing` members; use the `onSelect*` names and `hideSelect` / `toggleSelect` / `isSelectShowing` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-070)).
