@@ -1,0 +1,106 @@
+name: Bug report (fl_select_playground)
+description: Report a problem with the live playground at flselect.zeaon.dev
+labels: [bug, package:fl_select_playground]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting a problem with the [playground](https://flselect.zeaon.dev/)!
+
+        Before opening an issue, please:
+        - Search existing issues to avoid duplicates.
+        - Hard-refresh the page (Ctrl/Cmd+Shift+R) to rule out a stale cached build.
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Which part of the playground is affected?
+      options:
+        - Example / demo rendering (delegates, entries)
+        - Documentation text on the site
+        - Navigation / layout / styling
+        - Performance / loading
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: input
+    id: page-url
+    attributes:
+      label: Page URL
+      description: Link to the page where the problem occurs.
+      placeholder: https://flselect.zeaon.dev/...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: also-in-package
+    attributes:
+      label: Does the same problem exist when using the fl_select package directly?
+      description: This helps us know whether the bug is in the site or in the package itself.
+      options:
+        - "Yes"
+        - "No"
+        - "Not sure / haven't tried"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of the problem.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      placeholder: |
+        1. Open ...
+        2. Tap ...
+        3. Observe that...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected results
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual results
+    validations:
+      required: true
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Screenshots / additional context
+      description: You can paste screenshots directly here.
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Browser console output
+      description: Any errors or warnings from the browser devtools console. This is formatted as code.
+      render: shell
+
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browsers affected
+      multiple: true
+      options:
+        - Chrome
+        - Edge
+        - Firefox
+        - Safari
+        - Other
+    validations:
+      required: true

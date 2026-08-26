@@ -3,3 +3,6 @@ contact_links:
   - name: Live playground
     url: https://flselect.zeaon.dev/
     about: Try every delegate and entry point live in the browser before opening an issue.
+  - name: Questions & discussions
+    url: https://github.com/amlzq/fl_select/discussions
+    about: Usage questions and ideas — issues are for bugs and feature requests only.

@@ -12,28 +12,43 @@ body:
         - Search existing issues to avoid duplicates.
 
   - type: dropdown
+    id: package
+    attributes:
+      label: Which package is this about?
+      options:
+        - fl_select (the Flutter package)
+        - fl_select_genui (GenUI / A2UI integration)
+        - fl_select_playground (the live playground site)
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: dropdown
     id: component
     attributes:
-      label: Which API or component is this about?
+      label: Which fl_select API or component is this about?
+      description: Only relevant when the package is fl_select — otherwise pick "Other / not sure".
       options:
         - PopupSelectBar
         - PopupSelectButton
         - SelectView
-        - showSelect
-        - showModalBottomSelect
-        - CascadingSelectDelegate
-        - GridSelectDelegate
+        - showSelect / showModalBottomSelect
+        - Controllers (SelectController / PopupSelectController)
         - ListSelectDelegate
+        - GridSelectDelegate
+        - CascadingSelectDelegate
         - FlattenSelectDelegate
-        - Search (SelectSearchBar / search filtering)
+        - Panel widgets (SelectPanel / SelectListView / SelectGridView / SelectSideBar)
+        - Search (SelectSearchBar / SelectSearchFilter)
         - Entries (SelectCategoryEntry / SelectTextEntry / SelectRangeEntry)
-        - Serialization (toQueryMap / toQueryParameters)
+        - Serialization (SelectEntryCodec / toQueryMap / toQueryParameters)
         - Theming (SelectThemeData / PopupSelectBarTheme / PopupSelectButtonTheme)
+        - Overlay (PopupSelectDirection / SelectOverlayStyle)
         - Localization (SelectLocalizationsDelegate)
         - New entry point / delegate / entry type
         - Other / not sure
     validations:
-      required: true
+      required: false
 
   - type: textarea
     id: problem

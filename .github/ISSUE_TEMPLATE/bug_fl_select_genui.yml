@@ -1,0 +1,142 @@
+name: Bug report (fl_select_genui)
+description: Report something in the fl_select_genui (GenUI / A2UI integration) package that isn't working as expected
+labels: [bug, package:fl_select_genui]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug in `fl_select_genui`!
+
+        This package integrates fl_select with the GenUI SDK (A2UI) so AI agents
+        can render filter widgets inside chat surfaces.
+
+        Before opening an issue, please:
+        - Search existing issues to avoid duplicates.
+        - Check whether the bug is actually in `fl_select` itself — if the same
+          behavior breaks in plain Flutter code, use the fl_select template instead.
+        - Reproduce the problem with the smallest possible code sample.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Which part is affected?
+      options:
+        - FlSelectCatalogItems (catalog registration / CatalogItem setup)
+        - selectFilter widget rendering (inside a chat / agent surface)
+        - SelectEntrySchema (JSON schema generation)
+        - Structured selection output (query data sent back to the agent)
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of the bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: What did you do? Be exact — small details matter.
+      placeholder: |
+        1. Register FlSelectCatalogItems.all in the catalog...
+        2. Ask the agent to render a select filter...
+        3. Observe that...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected results
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual results
+      description: What actually happened? If there is an exception, paste the full message below.
+    validations:
+      required: true
+
+  - type: textarea
+    id: code
+    attributes:
+      label: Code sample
+      description: A minimal, self-contained sample that reproduces the bug.
+      render: dart
+      value: |
+        import 'package:fl_select_genui/fl_select_genui.dart';
+        import 'package:genui/genui.dart';
+
+        void main() {
+          // e.g. catalog registration that reproduces the issue
+          // catalogs: [
+          //   CoreCatalogItems.asCatalog()
+          //       .copyWith(newItems: FlSelectCatalogItems.all),
+          // ]
+        }
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: Any console output, exceptions, or stack traces. This is formatted as code.
+      render: shell
+
+  - type: input
+    id: genui-version
+    attributes:
+      label: fl_select_genui version
+      description: Run `flutter pub deps` or check pubspec.lock if unsure.
+      placeholder: e.g. 0.1.0
+    validations:
+      required: true
+
+  - type: input
+    id: fl-select-version
+    attributes:
+      label: fl_select version (dependency)
+      description: Combination bugs between the two packages are common — please include this.
+      placeholder: e.g. 0.9.0
+    validations:
+      required: true
+
+  - type: input
+    id: genui-sdk-version
+    attributes:
+      label: genui SDK version (optional)
+      placeholder: e.g. 0.10.2
+
+  - type: textarea
+    id: flutter-doctor
+    attributes:
+      label: Flutter doctor output
+      description: Paste the output of running `flutter doctor -v` in a terminal.
+      render: shell
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platforms affected
+      description: Select every platform where you can reproduce the bug.
+      multiple: true
+      options:
+        - Android
+        - iOS
+        - Web
+        - macOS
+        - Windows
+        - Linux
+        - Not platform-specific
+    validations:
+      required: true

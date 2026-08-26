@@ -1,11 +1,11 @@
-name: Bug report
-description: Report something in fl_select that isn't working as expected
-labels: [bug]
+name: Bug report (fl_select)
+description: Report something in the fl_select package that isn't working as expected
+labels: [bug, package:fl_select]
 body:
   - type: markdown
     attributes:
       value: |
-        Thanks for taking the time to report a bug!
+        Thanks for taking the time to report a bug in `fl_select`!
 
         Before opening an issue, please:
         - Search existing issues to avoid duplicates.
@@ -13,23 +13,25 @@ body:
         - Reproduce the problem with the smallest possible code sample.
 
   - type: dropdown
-    id: component
+    id: entry-point
     attributes:
       label: Which API or component is affected?
       options:
         - PopupSelectBar
         - PopupSelectButton
         - SelectView
-        - showSelect
-        - showModalBottomSelect
-        - CascadingSelectDelegate
-        - GridSelectDelegate
+        - showSelect / showModalBottomSelect
+        - Controllers (SelectController / PopupSelectController)
         - ListSelectDelegate
+        - GridSelectDelegate
+        - CascadingSelectDelegate
         - FlattenSelectDelegate
-        - Search (SelectSearchBar / search filtering)
+        - Panel widgets (SelectPanel / SelectListView / SelectGridView / SelectSideBar)
+        - Search (SelectSearchBar / SelectSearchFilter)
         - Entries (SelectCategoryEntry / SelectTextEntry / SelectRangeEntry)
-        - Serialization (toQueryMap / toQueryParameters)
+        - Serialization (SelectEntryCodec / toQueryMap / toQueryParameters)
         - Theming (SelectThemeData / PopupSelectBarTheme / PopupSelectButtonTheme)
+        - Overlay (PopupSelectDirection / SelectOverlayStyle)
         - Localization (SelectLocalizationsDelegate)
         - Other / not sure
     validations:
@@ -97,6 +99,13 @@ body:
     validations:
       required: true
 
+  - type: input
+    id: playground-link
+    attributes:
+      label: Playground reproduction (optional)
+      description: If the bug is reproducible on the playground, paste the URL of the page where it happens.
+      placeholder: https://flselect.zeaon.dev/...
+
   - type: textarea
     id: logs
     attributes:
@@ -118,7 +127,7 @@ body:
     attributes:
       label: fl_select version
       description: Run `flutter pub deps` or check pubspec.lock if unsure.
-      placeholder: e.g. 0.8.0
+      placeholder: e.g. 0.9.0
     validations:
       required: true
 
