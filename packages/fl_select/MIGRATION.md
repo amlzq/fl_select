@@ -2,6 +2,48 @@
 
 ## MIGRATE TO Next
 
+### `FlattenSelectDelegate` grid parameters removed
+
+The `FlattenSelectDelegate` grid parameters (`crossAxisCount`,
+`mainAxisSpacing`, `crossAxisSpacing`, `childAspectRatio`) and the matching
+`FlattenSelect` widget parameters — deprecated since 0.7.2 — are removed.
+`FlattenSelect` falls back to `SelectChipLayout` when
+`SelectCategoryEntry.layout` is null, so these parameters no longer affect
+rendering; grid geometry now comes exclusively from the `SelectGridLayout`
+set on each `SelectCategoryEntry.layout`.
+
+`FlattenSelectSkeleton.crossAxisCount` becomes optional and defaults to `2`,
+so the built-in skeleton keeps its previous look. Customize it via
+`SelectDelegate.skeletonBuilder` if you need a different preview.
+
+Migration: drop the removed parameters and set a `SelectGridLayout` on the
+categories that should render as a grid.
+
+```dart
+// Before
+FlattenSelectDelegate(
+  crossAxisCount: 3,
+  mainAxisSpacing: 8,
+  crossAxisSpacing: 8,
+  childAspectRatio: 1.2,
+);
+
+// After
+FlattenSelectDelegate();
+
+final category = SelectCategoryEntry(
+  id: 'brand',
+  name: 'Brand',
+  children: brands,
+  layout: SelectGridLayout(
+    crossAxisCount: 3,
+    mainAxisSpacing: 8,
+    crossAxisSpacing: 8,
+    childAspectRatio: 1.2,
+  ),
+);
+```
+
 ## MIGRATE TO 0.9.0
 
 ### `PopupSelectButton` default variant changed to `text`

@@ -4,6 +4,8 @@
 
 - **FEATURE** add `SelectEntryCodec` — declarative JSON import/export for entry trees (`fromJson` / `toJson`) with `type`-discriminated nodes (category / text / range / any / custom), `layout` support, automatic `parentId` injection and `enabled` / `immediate` flags. Powers the new GenUI bridge package [`fl_select_genui`](https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui).
 
+- **BREAKING** remove the deprecated `FlattenSelectDelegate` grid parameters (`crossAxisCount` / `mainAxisSpacing` / `crossAxisSpacing` / `childAspectRatio`) and the matching `FlattenSelect` widget parameters; since 0.7.2 these no longer affect rendering — set a `SelectGridLayout` on `SelectCategoryEntry.layout` instead. `FlattenSelectSkeleton.crossAxisCount` is now optional and defaults to `2` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+
 ## 0.9.0
 
 - **BREAKING** remove the deprecated `onSelector*` lifecycle aliases and `PopupSelectController` `hideSelector` / `toggleSelector` / `isSelectorShowing` members; use the `onSelect*` names and `hideSelect` / `toggleSelect` / `isSelectShowing` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-070)).

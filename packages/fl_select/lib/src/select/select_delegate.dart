@@ -564,22 +564,6 @@ class GridSelectDelegate extends SelectDelegate {
 /// (cascading) data.
 class FlattenSelectDelegate extends SelectDelegate {
   FlattenSelectDelegate({
-    @Deprecated(
-      'Use SelectGridLayout.crossAxisCount on SelectCategoryEntry.layout instead.',
-    )
-    this.crossAxisCount = 2,
-    @Deprecated(
-      'Use SelectGridLayout.mainAxisSpacing on SelectCategoryEntry.layout instead.',
-    )
-    this.mainAxisSpacing = 0.0,
-    @Deprecated(
-      'Use SelectGridLayout.crossAxisSpacing on SelectCategoryEntry.layout instead.',
-    )
-    this.crossAxisSpacing = 0.0,
-    @Deprecated(
-      'Use SelectGridLayout.childAspectRatio on SelectCategoryEntry.layout instead.',
-    )
-    this.childAspectRatio = 1.0,
     super.selectionMode,
     super.entries,
     super.entriesLoader,
@@ -615,46 +599,6 @@ class FlattenSelectDelegate extends SelectDelegate {
     super.errorBuilder,
   });
 
-  /// Number of columns in the flattened grid.
-  ///
-  /// Deprecated: `FlattenSelect` no longer uses the delegate's grid
-  /// parameters. Set a [SelectGridLayout] on
-  /// [SelectCategoryEntry.layout] instead.
-  @Deprecated(
-    'Use SelectGridLayout.crossAxisCount on SelectCategoryEntry.layout instead.',
-  )
-  final int crossAxisCount;
-
-  /// Spacing between rows.
-  ///
-  /// Deprecated: `FlattenSelect` no longer uses the delegate's grid
-  /// parameters. Set a [SelectGridLayout] on
-  /// [SelectCategoryEntry.layout] instead.
-  @Deprecated(
-    'Use SelectGridLayout.mainAxisSpacing on SelectCategoryEntry.layout instead.',
-  )
-  final double mainAxisSpacing;
-
-  /// Spacing between columns.
-  ///
-  /// Deprecated: `FlattenSelect` no longer uses the delegate's grid
-  /// parameters. Set a [SelectGridLayout] on
-  /// [SelectCategoryEntry.layout] instead.
-  @Deprecated(
-    'Use SelectGridLayout.crossAxisSpacing on SelectCategoryEntry.layout instead.',
-  )
-  final double crossAxisSpacing;
-
-  /// Child aspect ratio for each tile.
-  ///
-  /// Deprecated: `FlattenSelect` no longer uses the delegate's grid
-  /// parameters. Set a [SelectGridLayout] on
-  /// [SelectCategoryEntry.layout] instead.
-  @Deprecated(
-    'Use SelectGridLayout.childAspectRatio on SelectCategoryEntry.layout instead.',
-  )
-  final double childAspectRatio;
-
   @override
   Widget buildBody(
     BuildContext context,
@@ -668,14 +612,6 @@ class FlattenSelectDelegate extends SelectDelegate {
       selectedEntries: selectedEntries,
       searchQuery: searchQuery,
       searchPredicate: searchPredicate,
-      // ignore: deprecated_member_use_from_same_package
-      crossAxisCount: crossAxisCount,
-      // ignore: deprecated_member_use_from_same_package
-      mainAxisSpacing: mainAxisSpacing,
-      // ignore: deprecated_member_use_from_same_package
-      crossAxisSpacing: crossAxisSpacing,
-      // ignore: deprecated_member_use_from_same_package
-      childAspectRatio: childAspectRatio,
     );
   }
 
@@ -684,14 +620,6 @@ class FlattenSelectDelegate extends SelectDelegate {
     return skeletonBuilder?.call(context) ??
         FlattenSelectSkeleton(
           sideBarWidth: sideBarTheme?.width,
-          // ignore: deprecated_member_use_from_same_package
-          crossAxisCount: crossAxisCount,
-          // ignore: deprecated_member_use_from_same_package
-          mainAxisSpacing: mainAxisSpacing,
-          // ignore: deprecated_member_use_from_same_package
-          crossAxisSpacing: crossAxisSpacing,
-          // ignore: deprecated_member_use_from_same_package
-          childAspectRatio: childAspectRatio,
         );
   }
 }
