@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
@@ -9,6 +11,7 @@ import 'constants.dart';
 import 'extensions.dart';
 import 'field_tile.dart';
 import 'field_tile_theme.dart';
+import 'skeleton_view.dart';
 
 /// Default height for [SelectChipBar].
 const kSelectChipBarHeight = 44.0;
@@ -606,4 +609,149 @@ class _SelectChipBarDefaults extends SelectChipBarTheme {
   TextStyle? get selectedLabelStyle => _textTheme.labelLarge?.copyWith(
         color: _theme.onSelectedColor,
       );
+}
+
+/// Loading skeleton for [SelectChipBar].
+///
+/// Renders [itemCount] placeholder chips shaped like real chips (a small
+/// rounded rectangle, see [_Chip]) plus an optional title placeholder,
+/// mirroring the layout that [SelectChipBar] produces for the same arguments.
+class SelectChipBarSkeleton extends StatelessWidget {
+  const SelectChipBarSkeleton({
+    super.key,
+    this.itemCount = 4,
+    this.isWrapable = false,
+    this.showTitle = true,
+    this.direction = Axis.horizontal,
+    this.spacing = 12,
+    this.runSpacing = 12,
+    this.backgroundColor,
+    this.padding,
+  });
+
+  /// The number of placeholder chips to render.
+  ///
+  /// Defaults to `4`.
+  final int itemCount;
+
+  /// Whether the placeholder chips wrap onto multiple rows.
+  ///
+  /// Mirrors [SelectChipBar.isWrapable]. Defaults to false, which renders a
+  /// single non-wrapping row.
+  final bool isWrapable;
+
+  /// Whether to render a placeholder for the category title.
+  ///
+  /// Defaults to true, matching [SelectChipBar.showTitle].
+  final bool showTitle;
+
+  /// The direction of the title placeholder relative to the chip group.
+  ///
+  /// Defaults to [Axis.horizontal], which lays the title placeholder to the
+  /// left of the chips in a single row. Set to [Axis.vertical] to stack the
+  /// title placeholder above the chips.
+  final Axis direction;
+
+  /// Horizontal spacing between placeholder chips.
+  ///
+  /// Defaults to 12, matching [SelectChipBar.spacing].
+  final double spacing;
+
+  /// Vertical spacing between wrapped placeholder chip rows.
+  ///
+  /// Defaults to 12, matching [SelectChipBar.runSpacing].
+  final double runSpacing;
+
+  /// The background color of the skeleton.
+  ///
+  /// If null, [SelectChipBarTheme.backgroundColor] is used. If that is also
+  /// null, the value is [Colors.transparent].
+  final Color? backgroundColor;
+
+  /// The padding around the skeleton's contents.
+  ///
+  /// If null, [SelectChipBarTheme.padding] is used. If that is also null, the
+  /// value is [EdgeInsets.zero].
+  final EdgeInsetsGeometry? padding;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = SelectChipBarTheme.of(context);
+    final defaults = _SelectChipBarDefaults(context);
+
+    final effectiveBackgroundColor =
+        backgroundColor ?? theme.backgroundColor ?? defaults.backgroundColor!;
+
+    final effectivePadding = padding ?? theme.padding ?? defaults.padding!;
+
+    // [SkeletonTile.random] widths start at half the screen width, which is
+    // far too wide for chips; generate small chip-like widths instead.
+    final random = Random();
+    final chips = [
+      for (var i = 0; i < itemCount; i++)
+        SkeletonTile(
+          width: (random.nextInt(48) + 48).toDouble(),
+          height: 30,
+          borderRadius: BorderRadius.circular(4),
+        ),
+    ];
+
+    final chipGroup = isWrapable
+        ? Wrap(
+            spacing: spacing,
+            runSpacing: runSpacing,
+            children: chips,
+          )
+        : SingleChildScrollView(
+            padding: EdgeInsets.zero,
+            physics: const ClampingScrollPhysics(),
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              children: chips.separateWith(SizedBox(width: spacing)),
+            ),
+          );
+
+    Widget content = direction == Axis.vertical
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (showTitle)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: SkeletonTile(
+                    width: (random.nextInt(72) + 72).toDouble(),
+                    height: 24,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              chipGroup,
+            ],
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (showTitle)
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: SkeletonTile(
+                    width: 60,
+                    height: 24,
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                ),
+              Expanded(child: chipGroup),
+              const SizedBox(width: 12),
+            ],
+          );
+
+    return Container(
+      height: (!isWrapable && direction == Axis.horizontal)
+          ? kSelectChipBarHeight
+          : null,
+      color: effectiveBackgroundColor,
+      padding: effectivePadding,
+      child: SkeletonView(child: content),
+    );
+  }
 }
