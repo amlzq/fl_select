@@ -1,16 +1,18 @@
-# example
+# fl_select example
 
-A new Flutter project.
+A demo app covering every entry point of `fl_select`:
 
-## Getting Started
+- `SelectView` — a select embedded in a page body (`view_example.dart`)
+- `PopupSelectBar` — a tab bar opening overlay selects (`bar_example.dart`)
+- `PopupSelectButton` — a single-trigger button (`button_example.dart`)
+- `showSelect` — a select in a modal dialog (`dialog_example.dart`)
+- `showModalBottomSelect` — a select in a modal bottom sheet (`bottom_sheet_example.dart`)
 
-This project is a starting point for a Flutter application.
+Each demo combines the built-in delegates (`CascadingSelectDelegate`, `GridSelectDelegate`, `ListSelectDelegate`, `FlattenSelectDelegate`) with async `entriesLoader` data, search filtering, theming, and i18n.
 
-A few resources to get you started if this is your first Flutter project:
+## Run
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```bash
+cd example
+flutter run
+```

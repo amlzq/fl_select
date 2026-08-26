@@ -1,12 +1,10 @@
 ## Next
 
-- **NOTE** the repository has been restructured into a monorepo managed with [melos](https://melos.invertase.dev/) on top of Dart pub workspaces. The package now lives at [`packages/fl_select`](https://github.com/amlzq/fl_select/tree/main/packages/fl_select) — update any links (issues, changelog, migration guide) accordingly; `pubspec.yaml` metadata has been updated. No API or behavior changes.
+- **FEATURE** add `SelectEntryCodec` — declarative JSON import/export for entry trees (`fromJson` / `toJson`), powering the new GenUI bridge package [`fl_select_genui`](https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui).
 
-- **FEATURE** add `SelectEntryCodec` — declarative JSON import/export for entry trees (`fromJson` / `toJson`) with `type`-discriminated nodes (category / text / range / any / custom), `layout` support, automatic `parentId` injection and `enabled` / `immediate` flags. Powers the new GenUI bridge package [`fl_select_genui`](https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui).
+- **BREAKING** remove the deprecated `FlattenSelectDelegate` grid parameters and the matching `FlattenSelect` widget parameters (no effect since 0.7.2); set a `SelectGridLayout` on `SelectCategoryEntry.layout` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
 
-- **BREAKING** remove the deprecated `FlattenSelectDelegate` grid parameters (`crossAxisCount` / `mainAxisSpacing` / `crossAxisSpacing` / `childAspectRatio`) and the matching `FlattenSelect` widget parameters; since 0.7.2 these no longer affect rendering — set a `SelectGridLayout` on `SelectCategoryEntry.layout` instead. `FlattenSelectSkeleton.crossAxisCount` is now optional and defaults to `2` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
-
-- **BREAKING** remove the deprecated `SelectController` `previousSelected` / `resetSelected` aliases (constructor parameters and getters), deprecated since 0.8.0 — pass `selectedEntries` / `resetEntries` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+- **BREAKING** remove the deprecated `SelectController` `previousSelected` / `resetSelected` aliases (deprecated since 0.8.0); pass `selectedEntries` / `resetEntries` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
 
 ## 0.9.0
 
