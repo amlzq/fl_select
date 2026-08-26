@@ -26,7 +26,8 @@ double haversineDistance({
   final dLat = _degToRad(lat2 - lat1);
   final dLon = _degToRad(lon2 - lon1);
 
-  final a = math.sin(dLat / 2) * math.sin(dLat / 2) +
+  final a =
+      math.sin(dLat / 2) * math.sin(dLat / 2) +
       math.cos(_degToRad(lat1)) *
           math.cos(_degToRad(lat2)) *
           math.sin(dLon / 2) *
