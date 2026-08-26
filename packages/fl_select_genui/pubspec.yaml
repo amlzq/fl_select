@@ -4,13 +4,14 @@ description: >-
   CatalogItems so conversational AI agents can render fl_select filter
   widgets inside chat surfaces and receive user selections as structured
   query data.
-version: 0.1.0
+version: 0.0.1
 repository: https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui
 issue_tracker: https://github.com/amlzq/fl_select/issues
+topics: [ui, widget, ai, chatbot, select, menu, picker]
 
 environment:
-  sdk: ^3.5.4
-  flutter: ">=1.17.0"
+  sdk: ^3.10.0
+  flutter: ">=3.35.7"
 
 # This package is resolved via the repository root pub workspace (melos).
 resolution: workspace

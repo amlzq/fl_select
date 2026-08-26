@@ -65,8 +65,3 @@ Node `type`s: `category` (group, optional `selectionMode` / `layout`),
 `custom` (user-typed range). See `SelectEntrySchema` for the generated
 JSON Schema and `FlSelectCatalogItems.systemPromptFragment` for the
 agent-facing documentation.
-
-## Status
-
-Experimental (`0.1.0`, `publish_to: none`). The API tracks
-[GenUI SDK](https://pub.dev/packages/genui) releases.
