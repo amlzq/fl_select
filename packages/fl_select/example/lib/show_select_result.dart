@@ -8,7 +8,6 @@ import 'package:flutter/material.dart';
 const Duration _resultDebounceInterval = Duration(seconds: 1);
 
 Timer? _debounceTimer;
-SelectEntries? _latestResult;
 
 /// Shows a snack bar that displays the selected filter result.
 ///
@@ -24,44 +23,46 @@ void showSelectResult(
   SelectEntries result, {
   Duration debounceInterval = _resultDebounceInterval,
 }) {
-  _latestResult = result;
   _debounceTimer?.cancel();
   _debounceTimer = Timer(debounceInterval, () {
+    _debounceTimer = null;
     if (context.mounted) {
-      _showSnackBar(context, _latestResult!);
+      _showSnackBar(context, result);
     }
   });
 }
 
 void _showSnackBar(BuildContext context, SelectEntries result) {
-  ScaffoldMessenger.of(context).showSnackBar(
-    SnackBar(
-      content: Text('Selection updated'),
-      action: SnackBarAction(
-        label: 'View',
-        onPressed: () {
-          if (context.mounted) {
-            showModalBottomSheet<void>(
-              context: context,
-              isScrollControlled: true,
-              builder: (context) {
-                return SafeArea(
-                  child: FractionallySizedBox(
-                    widthFactor: 1,
-                    heightFactor: 0.8,
-                    child: Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: SingleChildScrollView(
-                        child: SelectableText('Result: $result'),
+  ScaffoldMessenger.of(context)
+    ..clearSnackBars()
+    ..showSnackBar(
+      SnackBar(
+        content: Text('Selection updated'),
+        action: SnackBarAction(
+          label: 'View',
+          onPressed: () {
+            if (context.mounted) {
+              showModalBottomSheet<void>(
+                context: context,
+                isScrollControlled: true,
+                builder: (context) {
+                  return SafeArea(
+                    child: FractionallySizedBox(
+                      widthFactor: 1,
+                      heightFactor: 0.8,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: SingleChildScrollView(
+                          child: SelectableText('Result: $result'),
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            );
-          }
-        },
+                  );
+                },
+              );
+            }
+          },
+        ),
       ),
-    ),
-  );
+    );
 }
