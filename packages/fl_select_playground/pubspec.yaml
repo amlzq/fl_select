@@ -1,7 +1,7 @@
 name: fl_select_playground
 description: "Interactive playground for the fl_select package."
 publish_to: "none"
-version: 0.9.0
+version: 0.10.0
 
 environment:
   sdk: ^3.10.9
@@ -17,7 +17,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   intl: any
-  fl_select: ^0.9.0
+  fl_select: ^0.10.0
 
 dev_dependencies:
   flutter_test:
