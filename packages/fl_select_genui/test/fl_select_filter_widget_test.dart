@@ -17,14 +17,14 @@ Future<DataContext> pumpFilter(
     data: data,
     id: id,
     type: 'SelectFilter',
-    buildChild: (_, [__]) => const SizedBox.shrink(),
+    buildChild: (_, [_]) => const SizedBox.shrink(),
     dispatchEvent: (_) {},
     buildContext: tester.element(find.byType(Placeholder)),
     dataContext: context,
     getComponent: (_) => null,
     getCatalogItem: (_) => null,
     surfaceId: 'test-surface',
-    reportError: (_, __) {},
+    reportError: (_, _) {},
   );
 
   await tester.pumpWidget(
