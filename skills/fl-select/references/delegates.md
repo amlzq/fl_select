@@ -1,13 +1,23 @@
 # Delegates
 
-A `SelectDelegate` controls both data loading (`entries` directly or `entriesLoader` async) and how the body is rendered. It is passed to every entry point. The four built-ins:
+A `SelectDelegate` controls both data loading (`entries` directly or `entriesLoader` async) and how the body is rendered. It is passed to every entry point. The seven built-ins are single-purpose by data shape — each asserts on the data shape it does not support, so a mis-migration surfaces immediately.
+
+**Flat data** — parentless `.name(...)` leaves:
+
+| Delegate | Body |
+| --- | --- |
+| `ListSelectDelegate` | Single-column list. |
+| `GridSelectDelegate` | Grid body (`crossAxisCount` required). |
+| `WrapSelectDelegate` | Wrapable chip bar — the go-to for filter bars. |
+
+**Two-level (category) data** — a tree of `SelectCategoryEntry` roots:
 
 | Delegate | Body |
 | --- | --- |
 | `CascadingSelectDelegate` | Tree select: categories on the left, cascading list on the right. Ignores `category.layout`. |
-| `GridSelectDelegate` | Grid body (`crossAxisCount` required). Each category's children follow `category.layout` (default grid). |
-| `ListSelectDelegate` | Single-column list. Use `.name(...)` leaves for a flat list; children follow `category.layout` (default list). |
-| `FlattenSelectDelegate` | Renders children by `category.layout` (default chips) under a category sidebar synced to the scrolling column. Best with `SelectionMode.multiple` and an "Any" entry. |
+| `TabNavSelectDelegate` | Category tabs on top drive the content below; the tab bar hides with a single category. |
+| `SideNavSelectDelegate` | Category sidebar on the left scrolls the single right column to the matching section. Best with `SelectionMode.multiple` and an "Any" entry. |
+| `ExpandableSelectDelegate` | One expandable group per category; header/footer entries render as chip bars around the expanded content. |
 
 ```dart
 PopupSelectBar(
@@ -81,7 +91,7 @@ SelectCategoryEntry(
 );
 ```
 
-Default per delegate: `GridSelectDelegate` → grid, `ListSelectDelegate` → list, `FlattenSelectDelegate` → chips. A category can override the default with any layout, mixing layouts within one select.
+Resolution order: the category's `layout` → the two-level delegate's `defaultLayout` (`TabNavSelectDelegate` → 3-column grid, `SideNavSelectDelegate` → chips, `ExpandableSelectDelegate` → list). A category can override with any layout, mixing layouts within one select.
 
 ## Custom delegates
 

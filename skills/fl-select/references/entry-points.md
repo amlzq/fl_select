@@ -33,7 +33,7 @@ PopupSelectBar(
   selectDelegates: [
     CascadingSelectDelegate(entriesLoader: _fetchNeighborhood),
     GridSelectDelegate(crossAxisCount: 3, entriesLoader: _fetchPrice),
-    FlattenSelectDelegate(entriesLoader: _fetchRooms),
+    SideNavSelectDelegate(entriesLoader: _fetchRooms),
   ],
   onApplied: (tabData, selected) { /* PopupTabData + SelectEntries */ },
 );
@@ -72,7 +72,7 @@ Variants: default constructor (filled), `.elevated(...)`, `.outlined(...)` (or p
 ```dart
 final SelectEntries? selected = await showSelect(
   context: context,
-  delegate: FlattenSelectDelegate(entriesLoader: _fetchRooms),
+  delegate: SideNavSelectDelegate(entriesLoader: _fetchRooms),
   title: const Text('Rooms'),
 );
 ```

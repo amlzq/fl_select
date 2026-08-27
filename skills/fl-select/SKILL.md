@@ -11,8 +11,8 @@ A Flutter package for building filter bars, cascading menus, and pickers.
 
 1. **Entry points** decide *where* the select appears:
    `SelectView` (inline) · `PopupSelectBar` (filter-bar tabs) · `PopupSelectButton` (single trigger) · `showSelect` (dialog) · `showModalBottomSelect` (bottom sheet).
-2. **Delegates** decide *how* entries are laid out:
-   `CascadingSelectDelegate` · `GridSelectDelegate` · `ListSelectDelegate` · `FlattenSelectDelegate`.
+2. **Delegates** decide *how* entries are laid out — seven single-purpose styles:
+   flat data: `ListSelectDelegate` · `GridSelectDelegate` · `WrapSelectDelegate`; two-level (category) data: `CascadingSelectDelegate` · `TabNavSelectDelegate` · `SideNavSelectDelegate` · `ExpandableSelectDelegate`.
 
 Any delegate plugs into any entry point — there is exactly one delegate parameter, no per-entry-point variants. Custom layouts come from subclassing `SelectDelegate`, not from new entry points.
 
@@ -50,7 +50,7 @@ SelectView(
 // Dialog — returns null when dismissed
 final SelectEntries? selected = await showSelect(
   context: context,
-  delegate: FlattenSelectDelegate(entriesLoader: _fetchPrice),
+  delegate: SideNavSelectDelegate(entriesLoader: _fetchPrice),
   title: const Text('Price'),
 );
 ```
@@ -58,7 +58,7 @@ final SelectEntries? selected = await showSelect(
 ## Common pitfalls
 
 - `GridSelectDelegate` requires `crossAxisCount`.
-- Only `CascadingSelectDelegate` navigates a tree; the other three delegates lay out each category's `children` according to `category.layout` (list / grid / chips / range slider / counter).
+- Only `CascadingSelectDelegate` navigates a tree; the other two-level delegates lay out each category's `children` according to `category.layout` (list / grid / chips / range slider / counter).
 - `SelectChildEntry` is identified by its `parentId`. Prefer the `SelectCategoryEntry(children: {...})` factory, which injects `parentId` automatically.
 - Use `SelectTextEntry.name(...)` / `SelectIntEntry.name(...)` (parentless leaves) for flat single-level lists.
 - An "Any" entry (`.any(...)`) clears its category; in `toQueryMap()` it resolves to the parent id.
