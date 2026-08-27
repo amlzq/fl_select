@@ -25,51 +25,52 @@ abstract final class FlSelectCatalogItems {
   /// delegate type; user selections are written back to the data model as a
   /// `Map<String, List<String>>` (same shape as `toQueryMap`).
   static CatalogItem get selectFilter => CatalogItem(
-        name: 'SelectFilter',
-        dataSchema: S.object(
-          description: 'A filter panel with categories, options, sliders and '
-              'range pickers. Use it whenever the user should narrow down a '
-              'result set by several criteria at once.',
-          properties: {
-            'delegate': S.string(
-              description: 'Body layout.',
-              enumValues: ['list', 'grid', 'flatten', 'cascading'],
-            ),
-            'selectionMode': S.string(
-              description: 'Per panel; default multiple.',
-              enumValues: ['single', 'multiple'],
-            ),
-            'crossAxisCount': S.integer(
-              description: 'Grid delegate only: columns.',
-            ),
-            'search': S.boolean(description: 'Enable search field.'),
-            'entries': SelectEntrySchema.tree(),
-          },
-          required: const ['delegate', 'entries'],
+    name: 'SelectFilter',
+    dataSchema: S.object(
+      description:
+          'A filter panel with categories, options, sliders and '
+          'range pickers. Use it whenever the user should narrow down a '
+          'result set by several criteria at once.',
+      properties: {
+        'delegate': S.string(
+          description: 'Body layout.',
+          enumValues: ['list', 'grid', 'flatten', 'cascading'],
         ),
-        isImplicitlyFlexible: true,
-        exampleData: [
-          () =>
-              '{"delegate":"flatten","selectionMode":"multiple","entries":['
-              '{"type":"category","id":"price","name":"Price","children":['
-              '{"type":"any","name":"Any"},'
-              '{"type":"range","id":"0-100","name":"\$0 - \$100","min":0,"max":100},'
-              '{"type":"range","id":"100-300","name":"\$100 - \$300","min":100,"max":300},'
-              '{"type":"custom","name":"Custom","min":0,"max":1000}]},'
-              '{"type":"category","id":"amenities","name":"Amenities","children":['
-              '{"type":"text","id":"wifi","name":"Wi-Fi"},'
-              '{"type":"text","id":"parking","name":"Parking"},'
-              '{"type":"text","id":"pool","name":"Pool"}]}]}',
-        ],
-        widgetBuilder: (itemContext) {
-          final data = itemContext.data;
-          final path = data is JsonMap && data['path'] is String
-              ? data['path']! as String
-              : '${itemContext.id}.value';
+        'selectionMode': S.string(
+          description: 'Per panel; default multiple.',
+          enumValues: ['single', 'multiple'],
+        ),
+        'crossAxisCount': S.integer(
+          description: 'Grid delegate only: columns.',
+        ),
+        'search': S.boolean(description: 'Enable search field.'),
+        'entries': SelectEntrySchema.tree(),
+      },
+      required: const ['delegate', 'entries'],
+    ),
+    isImplicitlyFlexible: true,
+    exampleData: [
+      () =>
+          '{"delegate":"flatten","selectionMode":"multiple","entries":['
+          '{"type":"category","id":"price","name":"Price","children":['
+          '{"type":"any","name":"Any"},'
+          '{"type":"range","id":"0-100","name":"\$0 - \$100","min":0,"max":100},'
+          '{"type":"range","id":"100-300","name":"\$100 - \$300","min":100,"max":300},'
+          '{"type":"custom","name":"Custom","min":0,"max":1000}]},'
+          '{"type":"category","id":"amenities","name":"Amenities","children":['
+          '{"type":"text","id":"wifi","name":"Wi-Fi"},'
+          '{"type":"text","id":"parking","name":"Parking"},'
+          '{"type":"text","id":"pool","name":"Pool"}]}]}',
+    ],
+    widgetBuilder: (itemContext) {
+      final data = itemContext.data;
+      final path = data is JsonMap && data['path'] is String
+          ? data['path']! as String
+          : '${itemContext.id}.value';
 
-          return _SelectFilterWidget(itemContext: itemContext, dataPath: path);
-        },
-      );
+      return _SelectFilterWidget(itemContext: itemContext, dataPath: path);
+    },
+  );
 
   /// System-prompt fragment documenting the entry-tree JSON format for
   /// agents using [selectFilter]. Append it to your agent instructions.
@@ -108,7 +109,9 @@ class _SelectFilterWidget extends StatelessWidget {
 
     final entriesJson = data['entries'];
     if (entriesJson is! List || entriesJson.isEmpty) {
-      return const _SchemaError('SelectFilter requires a non-empty "entries" array.');
+      return const _SchemaError(
+        'SelectFilter requires a non-empty "entries" array.',
+      );
     }
 
     Set<SelectEntry> entries;
@@ -144,22 +147,19 @@ class _SelectFilterWidget extends StatelessWidget {
     };
     return switch (delegateName) {
       'grid' => GridSelectDelegate(
-          crossAxisCount: data['crossAxisCount'] as int? ?? 3,
-          selectionMode: selectionMode,
-          entries: entries,
-        ),
+        crossAxisCount: data['crossAxisCount'] as int? ?? 3,
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
       'flatten' => FlattenSelectDelegate(
-          selectionMode: selectionMode,
-          entries: entries,
-        ),
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
       'cascading' => CascadingSelectDelegate(
-          selectionMode: selectionMode,
-          entries: entries,
-        ),
-      _ => ListSelectDelegate(
-          selectionMode: selectionMode,
-          entries: entries,
-        ),
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
+      _ => ListSelectDelegate(selectionMode: selectionMode, entries: entries),
     };
   }
 
@@ -190,8 +190,10 @@ class _SchemaError extends StatelessWidget {
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
-            Icon(Icons.warning_amber_rounded,
-                color: Theme.of(context).colorScheme.onErrorContainer),
+            Icon(
+              Icons.warning_amber_rounded,
+              color: Theme.of(context).colorScheme.onErrorContainer,
+            ),
             const SizedBox(width: 8),
             Expanded(child: Text(message)),
           ],

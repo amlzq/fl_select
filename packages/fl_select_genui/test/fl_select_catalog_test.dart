@@ -17,8 +17,10 @@ void main() {
       expect(entries.first, isA<SelectCategoryEntry>());
     }
 
-    final merged = const Catalog(<CatalogItem>[], catalogId: 'base')
-        .copyWith(newItems: FlSelectCatalogItems.all);
+    final merged = const Catalog(
+      <CatalogItem>[],
+      catalogId: 'base',
+    ).copyWith(newItems: FlSelectCatalogItems.all);
     expect(merged.items.length, 1);
   });
 }

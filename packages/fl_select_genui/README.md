@@ -1,5 +1,3 @@
-# fl_select_genui
-
 [GenUI SDK](https://pub.dev/packages/genui) (A2UI) integration for
 [fl_select](https://pub.dev/packages/fl_select): exposes fl_select filter
 panels as `CatalogItem`s so conversational AI agents can render real,

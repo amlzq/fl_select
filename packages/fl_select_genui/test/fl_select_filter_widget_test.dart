@@ -52,10 +52,7 @@ const _entries = [
 
 void main() {
   testWidgets('renders entries authored by an agent', (tester) async {
-    await pumpFilter(tester, {
-      'delegate': 'flatten',
-      'entries': _entries,
-    });
+    await pumpFilter(tester, {'delegate': 'flatten', 'entries': _entries});
 
     expect(find.text('More'), findsWidgets);
     expect(find.text('A 1'), findsOneWidget);
@@ -72,13 +69,15 @@ void main() {
     await tester.tap(find.text('A 2'));
     await tester.pumpAndSettle();
 
-    final value = context
-        .getValue<dynamic>(DataPath('filter1.value')) as Map<dynamic, dynamic>;
+    final value =
+        context.getValue<dynamic>(DataPath('filter1.value'))
+            as Map<dynamic, dynamic>;
     expect(value['more'], ['a2']);
   });
 
-  testWidgets('shows an error card instead of crashing on bad entries',
-      (tester) async {
+  testWidgets('shows an error card instead of crashing on bad entries', (
+    tester,
+  ) async {
     await pumpFilter(tester, {'delegate': 'flatten', 'entries': <Object?>[]});
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
 
@@ -98,8 +97,11 @@ void main() {
         'crossAxisCount': 2,
         'entries': _entries,
       });
-      expect(find.byIcon(Icons.warning_amber_rounded), findsNothing,
-          reason: '$delegate delegate should render');
+      expect(
+        find.byIcon(Icons.warning_amber_rounded),
+        findsNothing,
+        reason: '$delegate delegate should render',
+      );
     }
   });
 }

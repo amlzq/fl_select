@@ -1,13 +1,12 @@
 name: fl_select_genui
 description: >-
-  GenUI SDK (A2UI) integration for fl_select. Provides ready-made
-  CatalogItems so conversational AI agents can render fl_select filter
-  widgets inside chat surfaces and receive user selections as structured
-  query data.
+  GenUI SDK (A2UI) integration for fl_select: ready-made CatalogItems so
+  AI agents can render fl_select filters in chat and get selections back
+  as structured query data.
 version: 0.0.1
 repository: https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui
 issue_tracker: https://github.com/amlzq/fl_select/issues
-topics: [ui, widget, ai, chatbot, select]
+topics: [multiselect, dropdown, cascade, select, genui]
 
 environment:
   sdk: ^3.10.0

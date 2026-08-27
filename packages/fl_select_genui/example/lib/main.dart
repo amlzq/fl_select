@@ -72,7 +72,10 @@ class _FlSelectGenuiDemoState extends State<FlSelectGenuiDemo> {
               child: Text(
                 agentPayload,
                 style: const TextStyle(
-                    fontFamily: 'monospace', fontSize: 12, height: 1.4),
+                  fontFamily: 'monospace',
+                  fontSize: 12,
+                  height: 1.4,
+                ),
               ),
             ),
             _Section(
@@ -101,14 +104,18 @@ class _FlSelectGenuiDemoState extends State<FlSelectGenuiDemo> {
             _Section(
               title: '3. Selection written back to the data model',
               child: ValueListenableBuilder(
-                valueListenable:
-                    _model.subscribe<dynamic>(DataPath('root.demo.value')),
+                valueListenable: _model.subscribe<dynamic>(
+                  DataPath('root.demo.value'),
+                ),
                 builder: (context, value, _) => SelectableText(
                   value == null
                       ? '(nothing selected yet — tap a filter above)'
                       : const JsonEncoder.withIndent('  ').convert(value),
                   style: const TextStyle(
-                      fontFamily: 'monospace', fontSize: 12, height: 1.4),
+                    fontFamily: 'monospace',
+                    fontSize: 12,
+                    height: 1.4,
+                  ),
                 ),
               ),
             ),
