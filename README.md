@@ -9,15 +9,17 @@ A monorepo for **fl_select** — a customizable Flutter select widget for buildi
 | Package | Pub | Description |
 | --- | --- | --- |
 | [`packages/fl_select`](packages/fl_select) | [![pub package](https://img.shields.io/pub/v/fl_select.svg)](https://pub.dev/packages/fl_select) | Core select/filter widgets: `SelectView`, `ListSelectDelegate`, `GridSelectDelegate`, `FlattenSelectDelegate`, `CascadingSelectDelegate`, popup bar/button, dialogs, and bottom sheets. |
-| `packages/fl_select_genui` | 🚧 planned | [GenUI SDK](https://pub.dev/packages/genui) / A2UI integration: ready-made `CatalogItem`s so conversational AI agents can render fl_select widgets and receive selections as structured data. |
+| [`packages/fl_select_genui`](packages/fl_select_genui) | [![pub package](https://img.shields.io/pub/v/fl_select_genui.svg)](https://pub.dev/packages/fl_select_genui) | [GenUI SDK](https://pub.dev/packages/genui) / A2UI integration: ready-made `CatalogItem`s so conversational AI agents can render fl_select widgets and receive selections as structured data. |
+| [`packages/fl_select_playground`](packages/fl_select_playground) | — | Interactive playground for fl_select: live preview of `SelectView`, `PopupSelectBar`, `PopupSelectButton`, etc. with a control panel for behavior/appearance params and Zillow / 乐有家 demo data sources. Not published to pub. |
 
 ## Repository structure
 
 ```
 fl_select/
 ├── packages/
-│   ├── fl_select/          # Core package (lib / test / example)
-│   └── fl_select_genui/    # GenUI bridge (planned)
+│   ├── fl_select/            # Core package (lib / test / example)
+│   ├── fl_select_genui/      # GenUI bridge
+│   └── fl_select_playground/ # Interactive playground (not published)
 ├── screenshots/            # GIFs and images used by docs
 ├── skills/                 # Agent skills for AI coding assistants
 └── pubspec.yaml            # Pub workspace root (managed with melos)
@@ -26,8 +28,10 @@ fl_select/
 ## Documentation
 
 - Full documentation, delegate reference, and live playground: [`packages/fl_select/README.md`](packages/fl_select/README.md)
-- Migration guide: [`packages/fl_select/MIGRATION.md`](packages/fl_select/MIGRATION.md)
 - Changelog: [`packages/fl_select/CHANGELOG.md`](packages/fl_select/CHANGELOG.md)
+- Migration guide: [`packages/fl_select/MIGRATION.md`](packages/fl_select/MIGRATION.md)
+- GenUI integration docs: [`packages/fl_select_genui/README.md`](packages/fl_select_genui/README.md)
+- Playground quickstart: [`packages/fl_select_playground/README.md`](packages/fl_select_playground/README.md)
 
 ## Development
 
