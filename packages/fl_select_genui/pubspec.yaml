@@ -7,7 +7,7 @@ description: >-
 version: 0.0.1
 repository: https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui
 issue_tracker: https://github.com/amlzq/fl_select/issues
-topics: [ui, widget, ai, chatbot, select, menu, picker]
+topics: [ui, widget, ai, chatbot, select]
 
 environment:
   sdk: ^3.10.0
