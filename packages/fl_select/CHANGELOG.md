@@ -1,4 +1,4 @@
-## Next
+## 0.10.0
 
 - **FEATURE** add `SelectEntryCodec` — declarative JSON import/export for entry trees (`fromJson` / `toJson`), powering the new GenUI bridge package [`fl_select_genui`](https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui).
 

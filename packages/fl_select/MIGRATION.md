@@ -1,6 +1,6 @@
 # Migration Guide
 
-## MIGRATE TO Next
+## MIGRATE TO 0.10.0
 
 ### `FlattenSelectDelegate` grid parameters removed
 
