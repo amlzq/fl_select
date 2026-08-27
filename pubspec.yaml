@@ -20,6 +20,45 @@ melos:
         run: flutter test
         concurrency: 1
   scripts:
+    check:format:
+      description: Fail if any Dart file (whole workspace) is not formatted.
+      run: dart format --set-exit-if-changed .
+    check:analyze:
+      description: >-
+        Run dart analyze on the whole workspace (warnings/errors are fatal;
+        infos like playground's deprecated API demos are allowed).
+      run: flutter analyze --no-fatal-infos
+    check:pana:
+      description: >-
+        Pre-publish score gate: run pana (pub.dev's scorer) on publishable
+        packages. Fails when (max points - granted points) exceeds the
+        threshold. Current known loss: fl_select_genui loses 10 points on
+        platform support via transitive video_player from genui
+        (upstream flutter/genui#734) — tighten the threshold once that is
+        resolved.
+      run: |-
+        set -e
+        dart pub global activate pana
+        for pkg in fl_select fl_select_genui; do
+          echo "==> pana: packages/$pkg"
+          (cd "packages/$pkg" && "$HOME/.pub-cache/bin/pana" . --exit-code-threshold 10)
+        done
+    check:publish:
+      description: Validate publishing (dart publish --dry-run) for publishable packages.
+      run: |-
+        set -e
+        for pkg in fl_select fl_select_genui; do
+          echo "==> dry-run: packages/$pkg"
+          (cd "packages/$pkg" && dart pub publish --dry-run)
+        done
+    check:
+      description: Run all pre-publish gates (format, analyze, test, pana score, publish dry-run).
+      run: >-
+        melos run check:format &&
+        melos run check:analyze &&
+        melos test &&
+        melos run check:pana &&
+        melos run check:publish
     example:run:
       description: Run the fl_select example app (debug mode).
       run: cd packages/fl_select/example && flutter run
