@@ -34,7 +34,7 @@ class HouseFiltersRepository {
       id: 'neighborhood',
       name: '',
       children: {SelectTextEntry.any(parentId: 'neighborhood', name: '')},
-    )
+    ),
   };
 
   SelectEntries? get neighborhoodSelectedData =>
@@ -45,8 +45,9 @@ class HouseFiltersRepository {
   Future<SelectEntries> fetchNeighborhoodData() async {
     // simulate network delay
     await Future.delayed(const Duration(milliseconds: 250));
-    final neighborhood =
-        neighborhoodFromJson(await loadJsonData('neighborhood.json'));
+    final neighborhood = neighborhoodFromJson(
+      await loadJsonData('neighborhood.json'),
+    );
     debugPrint('neighborhood length: ${neighborhood.length}');
     SelectEntries entries = neighborhood
         .map(
@@ -54,20 +55,24 @@ class HouseFiltersRepository {
             id: category.id!,
             name: category.name!,
             children: category.data
-                ?.map((l1) => SelectTextEntry(
-                      parentId: category.id!,
-                      id: l1.id!,
-                      name: l1.name!,
-                      enabled: l1.enabled ?? true,
-                      children: l1.data
-                          ?.map((l2) => SelectTextEntry(
-                                parentId: l1.id!,
-                                id: l2.id!,
-                                name: l2.name!,
-                                enabled: l2.enabled ?? true,
-                              ))
-                          .toSet(),
-                    ))
+                ?.map(
+                  (l1) => SelectTextEntry(
+                    parentId: category.id!,
+                    id: l1.id!,
+                    name: l1.name!,
+                    enabled: l1.enabled ?? true,
+                    children: l1.data
+                        ?.map(
+                          (l2) => SelectTextEntry(
+                            parentId: l1.id!,
+                            id: l2.id!,
+                            name: l2.name!,
+                            enabled: l2.enabled ?? true,
+                          ),
+                        )
+                        .toSet(),
+                  ),
+                )
                 .toSet(),
             selectionMode: SelectionMode.multiple,
           ),
@@ -77,9 +82,13 @@ class HouseFiltersRepository {
     // insert any entry
     for (SelectEntry category in entries) {
       category.children?.insert(
-          0,
-          SelectTextEntry.any(
-              parentId: category.id, name: anyEntryText, immediate: true));
+        0,
+        SelectTextEntry.any(
+          parentId: category.id,
+          name: anyEntryText,
+          immediate: true,
+        ),
+      );
     }
 
     debugPrint('neighborhood length: ${entries.length}');
@@ -100,14 +109,16 @@ class HouseFiltersRepository {
             id: category.id!,
             name: category.name!,
             children: category.data
-                ?.map((l1) => SelectIntEntry(
-                      parentId: category.id!,
-                      id: l1.id!,
-                      name: l1.name,
-                      min: l1.min,
-                      max: l1.max,
-                      divisions: l1.divisions,
-                    ))
+                ?.map(
+                  (l1) => SelectIntEntry(
+                    parentId: category.id!,
+                    id: l1.id!,
+                    name: l1.name,
+                    min: l1.min,
+                    max: l1.max,
+                    divisions: l1.divisions,
+                  ),
+                )
                 .toSet(),
             selectionMode: SelectionMode.multiple,
             layout: const SelectRangeLayout(toText: 'to'),
@@ -118,10 +129,13 @@ class HouseFiltersRepository {
     // Add some special entries
     for (SelectEntry category in entries) {
       // Add the "Custom" entry
-      category.children?.add(SelectIntEntry.custom(
+      category.children?.add(
+        SelectIntEntry.custom(
           parentId: category.id,
           minHintText: noMinHintText,
-          maxHintText: noMaxHintText));
+          maxHintText: noMaxHintText,
+        ),
+      );
     }
 
     debugPrint('prices length: ${entries.length}');
@@ -160,11 +174,13 @@ class HouseFiltersRepository {
             id: category.id!,
             name: category.name!,
             children: category.data
-                ?.map((l1) => SelectTextEntry(
-                      parentId: category.id!,
-                      id: l1.id!,
-                      name: l1.name,
-                    ))
+                ?.map(
+                  (l1) => SelectTextEntry(
+                    parentId: category.id!,
+                    id: l1.id!,
+                    name: l1.name,
+                  ),
+                )
                 .toSet(),
             selectionMode: SelectionMode.single,
             layout: const SelectCounterLayout(),
@@ -176,9 +192,13 @@ class HouseFiltersRepository {
     for (SelectEntry category in entries) {
       // Insert the "Any" entry
       category.children?.insert(
-          0,
-          SelectTextEntry.any(
-              parentId: category.id, name: anyEntryText, immediate: false));
+        0,
+        SelectTextEntry.any(
+          parentId: category.id,
+          name: anyEntryText,
+          immediate: false,
+        ),
+      );
     }
 
     debugPrint('rooms length: ${entries.length}');
@@ -237,20 +257,23 @@ class HouseFiltersRepository {
             id: category.id!,
             name: category.name!,
             children: category.data
-                ?.map((l1) =>
-                    (category.id == 'square_feet' || category.id == 'lot_size')
-                        ? SelectRangeEntry(
-                            parentId: category.id!,
-                            id: l1.id!,
-                            name: l1.name,
-                            min: l1.min,
-                            max: l1.max,
-                          )
-                        : SelectTextEntry(
-                            parentId: category.id!,
-                            id: l1.id!,
-                            name: l1.name,
-                          ))
+                ?.map(
+                  (l1) =>
+                      (category.id == 'square_feet' ||
+                          category.id == 'lot_size')
+                      ? SelectRangeEntry(
+                          parentId: category.id!,
+                          id: l1.id!,
+                          name: l1.name,
+                          min: l1.min,
+                          max: l1.max,
+                        )
+                      : SelectTextEntry(
+                          parentId: category.id!,
+                          id: l1.id!,
+                          name: l1.name,
+                        ),
+                )
                 .toSet(),
             selectionMode: category.id == 'expanded_search'
                 ? SelectionMode.single
@@ -267,7 +290,7 @@ class HouseFiltersRepository {
   SelectEntries? sortResult;
 
   final sortIniteialSelected = <SelectTextEntry>{
-    SelectTextEntry.id(id: 'comprehensive_sort')
+    SelectTextEntry.id(id: 'comprehensive_sort'),
   };
 
   SelectEntries? get sortSelectedData => sortResult ?? sortIniteialSelected;
@@ -280,11 +303,10 @@ class HouseFiltersRepository {
     final sort = sortFromJson(await loadJsonData('sort.json'));
     debugPrint('sort length: ${sort.length}');
     SelectEntries entries = sort
-        .map((e) => SelectTextEntry.name(
-              id: e.id!,
-              name: e.name!,
-              immediate: true,
-            ))
+        .map(
+          (e) =>
+              SelectTextEntry.name(id: e.id!, name: e.name!, immediate: true),
+        )
         .toSet();
 
     debugPrint('sort length: ${entries.length}');
@@ -294,7 +316,8 @@ class HouseFiltersRepository {
 
 List<NeighborhoodData> neighborhoodFromJson(String str) =>
     List<NeighborhoodData>.from(
-        json.decode(str).map((x) => NeighborhoodData.fromJson(x)));
+      json.decode(str).map((x) => NeighborhoodData.fromJson(x)),
+    );
 
 String neighborhoodToJson(List<NeighborhoodData> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));

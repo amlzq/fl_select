@@ -152,10 +152,7 @@ class PlaygroundDataSource {
 /// The delegate is still cached so that changing *other* params (e.g. seed
 /// color, theme) does not discard the applied selection stored in
 /// [SelectDelegate.selectedData]; only the params in this key recreate it.
-String _delegateKey(
-  PlaygroundLanguage language,
-  PlaygroundParams p,
-) =>
+String _delegateKey(PlaygroundLanguage language, PlaygroundParams p) =>
     '${language.name}|${p.delegate}|${p.selectionMode}|${p.tileVariant}|'
     '${p.crossAxisCount}|${p.childAspectRatio}|${p.spacing}';
 
@@ -237,8 +234,9 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
         childAspectRatio: p.childAspectRatio,
         crossAxisSpacing: p.spacing,
         mainAxisSpacing: p.spacing,
-        gridTileTheme:
-            SelectGridTileTheme(variant: _gridVariant(p.tileVariant)),
+        gridTileTheme: SelectGridTileTheme(
+          variant: _gridVariant(p.tileVariant),
+        ),
         chipBarTheme: chipBarTheme,
       );
     case Delegate.flatten:
@@ -252,8 +250,9 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
         selectedEntries: data.flatten.selected,
         resetEntries: data.flatten.reset,
         selectionMode: p.selectionMode,
-        gridTileTheme:
-            SelectGridTileTheme(variant: _gridVariant(p.tileVariant)),
+        gridTileTheme: SelectGridTileTheme(
+          variant: _gridVariant(p.tileVariant),
+        ),
         chipBarTheme: chipBarTheme,
         sideBarTheme: const SelectSideBarTheme(width: 110),
       );
@@ -427,8 +426,10 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
                     '${p.tileVariant}',
                   ),
                   delegate: widget.delegate,
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   onChanged: (SelectEntries selected) {
                     // SelectView applies immediately: change == apply.
                     _onChanged(selected);
@@ -587,11 +588,7 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
 /// Footer panel that shows the most recent `onChanged` / `onApplied` values
 /// for the active entry point.
 class _ResultPanel extends StatelessWidget {
-  const _ResultPanel({
-    required this.l10n,
-    this.changed,
-    this.applied,
-  });
+  const _ResultPanel({required this.l10n, this.changed, this.applied});
 
   final PlaygroundL10n l10n;
   final Object? changed;

@@ -2,27 +2,13 @@ import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
 
 /// Where the select is rendered inside the simulated phone.
-enum EntryPoint {
-  view,
-  popupBar,
-  popupButton,
-  dialog,
-  bottomSheet,
-}
+enum EntryPoint { view, popupBar, popupButton, dialog, bottomSheet }
 
 /// Select delegate family.
-enum Delegate {
-  cascading,
-  list,
-  grid,
-  flatten,
-}
+enum Delegate { cascading, list, grid, flatten }
 
 /// Visual style of grid / chip tiles.
-enum TileVariant {
-  filled,
-  outlined,
-}
+enum TileVariant { filled, outlined }
 
 /// Default [PlaygroundParams.crossAxisCount] per [Delegate]. Only the grid and
 /// flatten delegates are column-based, so they get dedicated defaults (4 and 2
@@ -39,11 +25,11 @@ const Map<Delegate, int> defaultCrossAxisCountByDelegate = <Delegate, int>{
 /// (2.5 and 2.8 respectively); the others fall back to 2.5.
 const Map<Delegate, double> defaultChildAspectRatioByDelegate =
     <Delegate, double>{
-  Delegate.cascading: 2.5,
-  Delegate.list: 2.5,
-  Delegate.grid: 2.5,
-  Delegate.flatten: 3.0,
-};
+      Delegate.cascading: 2.5,
+      Delegate.list: 2.5,
+      Delegate.grid: 2.5,
+      Delegate.flatten: 3.0,
+    };
 
 /// All tunable parameters of the interactive demo, held in a single immutable
 /// value so the controls panel can replace it in one [setState] call.
@@ -176,16 +162,16 @@ abstract final class PlaygroundControlSpec {
   /// Controls private to specific entry points, in panel display order.
   /// Entry points missing from this map expose the common controls only.
   static const Map<EntryPoint, List<PlaygroundControl>>
-      entryPointPrivateControls = <EntryPoint, List<PlaygroundControl>>{
+  entryPointPrivateControls = <EntryPoint, List<PlaygroundControl>>{
     EntryPoint.view: <PlaygroundControl>[PlaygroundControl.delegate],
   };
 
   /// Controls private to the column-based delegates, in panel display order.
   static const List<PlaygroundControl> columnBasedDelegateControls =
       <PlaygroundControl>[
-    PlaygroundControl.crossAxisCount,
-    PlaygroundControl.childAspectRatio,
-  ];
+        PlaygroundControl.crossAxisCount,
+        PlaygroundControl.childAspectRatio,
+      ];
 
   /// Whether [delegate] renders a column-based grid that owns the
   /// Columns / Aspect Ratio / Spacing parameters.

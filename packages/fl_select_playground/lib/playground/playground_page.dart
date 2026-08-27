@@ -100,12 +100,8 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
     // select popup ignore the dark/light toggle.
     final paramThemeWithExtensions = paramTheme.copyWith(
       extensions: <ThemeExtension<dynamic>>[
-        PopupSelectBarTheme(
-          selectTheme: SelectThemeData(paramTheme),
-        ),
-        PopupSelectButtonTheme(
-          selectTheme: SelectThemeData(paramTheme),
-        ),
+        PopupSelectBarTheme(selectTheme: SelectThemeData(paramTheme)),
+        PopupSelectButtonTheme(selectTheme: SelectThemeData(paramTheme)),
       ],
     );
 

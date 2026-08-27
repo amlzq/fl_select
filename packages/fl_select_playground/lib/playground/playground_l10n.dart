@@ -2,10 +2,7 @@ import 'package:flutter/widgets.dart';
 
 /// Supported languages for the playground. Each maps to a demo data set:
 /// English uses the Zillow data, Simplified Chinese uses the Leyoujia data.
-enum PlaygroundLanguage {
-  english,
-  simplifiedChinese,
-}
+enum PlaygroundLanguage { english, simplifiedChinese }
 
 extension PlaygroundLanguageX on PlaygroundLanguage {
   /// The [Locale] injected via [Localizations.override] so the

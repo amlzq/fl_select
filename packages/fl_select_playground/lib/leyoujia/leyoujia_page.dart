@@ -39,7 +39,8 @@ class LeyoujiaPage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const DialogBottomSheetDemoPage()),
+                    builder: (context) => const DialogBottomSheetDemoPage(),
+                  ),
                 );
               },
               child: const Text('Dialog & BottomSheet'),

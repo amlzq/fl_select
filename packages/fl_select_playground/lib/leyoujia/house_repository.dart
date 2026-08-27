@@ -34,8 +34,8 @@ class _HousePager<H> {
     this.pageSize = 20,
     this.minPages = 3,
     this.maxPages = 9,
-  })  : assert(minPages <= maxPages),
-        assert(pageSize > 0);
+  }) : assert(minPages <= maxPages),
+       assert(pageSize > 0);
 
   List<H>? _pool;
   List<H> _displayed = const [];
@@ -130,8 +130,10 @@ class HouseRepository {
     try {
       _baseHouses = houseFromJson(await loadJsonData('house.json'));
       final firstPage = _paging.applyFilter();
-      debugPrint('initial houses.length: ${firstPage.length}, '
-          'totalCount: ${_paging.totalCount}');
+      debugPrint(
+        'initial houses.length: ${firstPage.length}, '
+        'totalCount: ${_paging.totalCount}',
+      );
       _controller.add(firstPage);
     } catch (e, st) {
       _controller.addError(e, st);
@@ -151,8 +153,10 @@ class HouseRepository {
     await Future.delayed(const Duration(milliseconds: 250));
     try {
       final firstPage = _paging.applyFilter(filter: filterParams);
-      debugPrint('refreshData totalCount: ${_paging.totalCount}, '
-          'firstPage: ${firstPage.length}');
+      debugPrint(
+        'refreshData totalCount: ${_paging.totalCount}, '
+        'firstPage: ${firstPage.length}',
+      );
       _controller.add(firstPage);
     } catch (e, st) {
       _controller.addError(e, st);
@@ -165,8 +169,10 @@ class HouseRepository {
     await Future.delayed(const Duration(milliseconds: 300));
     try {
       final next = _paging.loadNextPage();
-      debugPrint('loadNextPage loaded: ${_paging.loadedCount}/'
-          '${_paging.totalCount}');
+      debugPrint(
+        'loadNextPage loaded: ${_paging.loadedCount}/'
+        '${_paging.totalCount}',
+      );
       _controller.add(next);
     } catch (e, st) {
       _controller.addError(e, st);
@@ -285,33 +291,34 @@ class House {
   String? decoration;
   String? builtYear;
 
-  House(
-      {this.id,
-      this.picture,
-      this.title,
-      this.second,
-      this.price,
-      this.unitPrice,
-      this.address,
-      this.city,
-      this.cityId,
-      this.district,
-      this.districtId,
-      this.subdistrict,
-      this.subdistrictId,
-      this.community,
-      this.line,
-      this.lineId,
-      this.stationId,
-      this.station,
-      this.lat,
-      this.lon,
-      this.floor,
-      this.area,
-      this.type,
-      this.orientation,
-      this.decoration,
-      this.builtYear});
+  House({
+    this.id,
+    this.picture,
+    this.title,
+    this.second,
+    this.price,
+    this.unitPrice,
+    this.address,
+    this.city,
+    this.cityId,
+    this.district,
+    this.districtId,
+    this.subdistrict,
+    this.subdistrictId,
+    this.community,
+    this.line,
+    this.lineId,
+    this.stationId,
+    this.station,
+    this.lat,
+    this.lon,
+    this.floor,
+    this.area,
+    this.type,
+    this.orientation,
+    this.decoration,
+    this.builtYear,
+  });
 
   House.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -374,31 +381,31 @@ class House {
   }
 
   House copyWith({String? id}) => House(
-        id: id ?? this.id,
-        picture: picture,
-        title: title,
-        second: second,
-        price: price,
-        unitPrice: unitPrice,
-        address: address,
-        city: city,
-        cityId: cityId,
-        district: district,
-        districtId: districtId,
-        subdistrict: subdistrict,
-        subdistrictId: subdistrictId,
-        community: community,
-        line: line,
-        lineId: lineId,
-        stationId: stationId,
-        station: station,
-        lat: lat,
-        lon: lon,
-        floor: floor,
-        area: area,
-        type: type,
-        orientation: orientation,
-        decoration: decoration,
-        builtYear: builtYear,
-      );
+    id: id ?? this.id,
+    picture: picture,
+    title: title,
+    second: second,
+    price: price,
+    unitPrice: unitPrice,
+    address: address,
+    city: city,
+    cityId: cityId,
+    district: district,
+    districtId: districtId,
+    subdistrict: subdistrict,
+    subdistrictId: subdistrictId,
+    community: community,
+    line: line,
+    lineId: lineId,
+    stationId: stationId,
+    station: station,
+    lat: lat,
+    lon: lon,
+    floor: floor,
+    area: area,
+    type: type,
+    orientation: orientation,
+    decoration: decoration,
+    builtYear: builtYear,
+  );
 }

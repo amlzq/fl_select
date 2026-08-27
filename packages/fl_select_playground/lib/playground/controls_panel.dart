@@ -40,7 +40,7 @@ class ControlsPanel extends StatelessWidget {
     // delegate; controls unsupported by either are hidden entirely.
     final entryPointControls =
         PlaygroundControlSpec.entryPointPrivateControls[params.entryPoint] ??
-            const <PlaygroundControl>[];
+        const <PlaygroundControl>[];
     final delegateControls = <PlaygroundControl>[
       if (_gridGeometryActive)
         ...PlaygroundControlSpec.columnBasedDelegateControls,
@@ -73,8 +73,9 @@ class ControlsPanel extends StatelessWidget {
     );
   }
 
-  List<Widget> _buildControls(Iterable<PlaygroundControl> controls) =>
-      <Widget>[for (final control in controls) _buildControl(control)];
+  List<Widget> _buildControls(Iterable<PlaygroundControl> controls) => <Widget>[
+    for (final control in controls) _buildControl(control),
+  ];
 
   Widget _buildControl(PlaygroundControl control) {
     return switch (control) {
@@ -101,9 +102,13 @@ class ControlsPanel extends StatelessWidget {
               onChanged(params.copyWith(selectionMode: set.first)),
           segments: <ButtonSegment<SelectionMode>>[
             ButtonSegment(
-                value: SelectionMode.single, label: Text(l10n.single)),
+              value: SelectionMode.single,
+              label: Text(l10n.single),
+            ),
             ButtonSegment(
-                value: SelectionMode.multiple, label: Text(l10n.multiple)),
+              value: SelectionMode.multiple,
+              label: Text(l10n.multiple),
+            ),
           ],
         ),
         const SizedBox(height: 16),
@@ -123,7 +128,9 @@ class ControlsPanel extends StatelessWidget {
           segments: <ButtonSegment<TileVariant>>[
             ButtonSegment(value: TileVariant.filled, label: Text(l10n.filled)),
             ButtonSegment(
-                value: TileVariant.outlined, label: Text(l10n.outlined)),
+              value: TileVariant.outlined,
+              label: Text(l10n.outlined),
+            ),
           ],
         ),
         const SizedBox(height: 16),
@@ -140,10 +147,12 @@ class ControlsPanel extends StatelessWidget {
           selected: {params.brightness},
           onSelectionChanged: (set) {
             final brightness = set.first;
-            onChanged(params.copyWith(
-              brightness: brightness,
-              clearBrightness: brightness == null,
-            ));
+            onChanged(
+              params.copyWith(
+                brightness: brightness,
+                clearBrightness: brightness == null,
+              ),
+            );
           },
           segments: <ButtonSegment<Brightness?>>[
             ButtonSegment(value: null, label: Text(l10n.follow)),
@@ -200,11 +209,13 @@ class ControlsPanel extends StatelessWidget {
             Delegate.grid: l10n.layoutGrid,
             Delegate.flatten: l10n.layoutFlatten,
           },
-          onChanged: (v) => onChanged(params.copyWith(
-            delegate: v,
-            crossAxisCount: defaultCrossAxisCountByDelegate[v],
-            childAspectRatio: defaultChildAspectRatioByDelegate[v],
-          )),
+          onChanged: (v) => onChanged(
+            params.copyWith(
+              delegate: v,
+              crossAxisCount: defaultCrossAxisCountByDelegate[v],
+              childAspectRatio: defaultChildAspectRatioByDelegate[v],
+            ),
+          ),
         ),
         const SizedBox(height: 16),
       ],
@@ -234,7 +245,8 @@ class ControlsPanel extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         _SectionTitle(
-            l10n.aspectRatio(params.childAspectRatio.toStringAsFixed(1))),
+          l10n.aspectRatio(params.childAspectRatio.toStringAsFixed(1)),
+        ),
         Slider(
           value: params.childAspectRatio,
           min: 1.0,
@@ -278,9 +290,9 @@ class _SectionTitle extends StatelessWidget {
       child: Text(
         text,
         style: Theme.of(context).textTheme.labelMedium?.copyWith(
-              color: scheme.primary,
-              fontWeight: FontWeight.w600,
-            ),
+          color: scheme.primary,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

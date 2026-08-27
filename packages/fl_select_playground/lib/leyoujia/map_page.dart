@@ -59,7 +59,9 @@ class _MapPageState extends State<MapPage> {
   }
 
   HouseFilter? _popupSelectResultParser(
-      PopupTabData tabData, SelectEntries selected) {
+    PopupTabData tabData,
+    SelectEntries selected,
+  ) {
     final filter = HouseFilter(cityId: userCityId);
     if (tabData.index == 0) {
       // 区域
@@ -69,24 +71,19 @@ class _MapPageState extends State<MapPage> {
         // 行政区
         filter.district = selected
             .cascadingPairsOf('region')
-            .map((p) => {
-                  "district_id": p.id,
-                  "subdistrict_id": p.childIds,
-                })
+            .map((p) => {"district_id": p.id, "subdistrict_id": p.childIds})
             .toList(growable: false);
       } else if (category.id == 'metro') {
         // 地铁
         filter.metro = selected
             .cascadingPairsOf('metro')
-            .map((p) => {
-                  "line_id": p.id,
-                  "station_id": p.childIds,
-                })
+            .map((p) => {"line_id": p.id, "station_id": p.childIds})
             .toList(growable: false);
       } else if (category.id == 'nearby') {
         // 附近
-        final nearbyRadiusMeters =
-            selected.findIdsAtLevel(category, 1).firstOrNull;
+        final nearbyRadiusMeters = selected
+            .findIdsAtLevel(category, 1)
+            .firstOrNull;
         filter.nearbyRadiusMeters = nearbyRadiusMeters;
         filter.userLatLon = userLatLon;
       }
@@ -98,21 +95,13 @@ class _MapPageState extends State<MapPage> {
         // 总价
         filter.totalPrice = selected
             .childRangesOf('total')
-            .map((e) => {
-                  "id": e.id,
-                  "min": e.min,
-                  "max": e.max,
-                })
+            .map((e) => {"id": e.id, "min": e.min, "max": e.max})
             .toList(growable: false);
       } else if (category.id == 'unit') {
         // 单价
         filter.unitPrice = selected
             .childRangesOf('unit')
-            .map((e) => {
-                  "id": e.id,
-                  "min": e.min,
-                  "max": e.max,
-                })
+            .map((e) => {"id": e.id, "min": e.min, "max": e.max})
             .toList(growable: false);
       }
     } else if (tabData.index == 2) {
@@ -122,11 +111,7 @@ class _MapPageState extends State<MapPage> {
       filter.balcony = selected.childIdsOf('balcony');
       filter.area = selected
           .childRangesOf('area')
-          .map((e) => {
-                "id": e.id,
-                "min": e.min,
-                "max": e.max,
-              })
+          .map((e) => {"id": e.id, "min": e.min, "max": e.max})
           .toList(growable: false);
     } else if (tabData.index == 3) {
       // 排序筛选
@@ -139,9 +124,9 @@ class _MapPageState extends State<MapPage> {
     final l10n = AppLocalizations.of(context);
     _filter = _popupSelectResultParser(tabData, selected);
     if (_filter == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n?.resultParseFailed ?? '')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n?.resultParseFailed ?? '')));
       return;
     }
     if (tabData.index == 2) {
@@ -187,9 +172,9 @@ class _MapPageState extends State<MapPage> {
     final l10n = AppLocalizations.of(context);
     _filter = _popupSelectResultParser(tabData, selected);
     if (_filter == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n?.resultParseFailed ?? '')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n?.resultParseFailed ?? '')));
       return;
     }
 
@@ -199,8 +184,9 @@ class _MapPageState extends State<MapPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final PopupSelectBarTheme dropdownTabBarTheme =
-        PopupSelectBarTheme.maybeOf(context)!;
+    final PopupSelectBarTheme dropdownTabBarTheme = PopupSelectBarTheme.maybeOf(
+      context,
+    )!;
     return Theme(
       data: Theme.of(context).copyWith(
         extensions: <ThemeExtension<dynamic>>[
@@ -275,7 +261,8 @@ class _MapPageState extends State<MapPage> {
             onApplied: (PopupTabData tabData, SelectEntries selected) {
               largePrint('onApplied: tabData=$tabData, selected=$selected');
               largePrint(
-                  'onApplied: toQueryParameters=${selected.toQueryParameters()}');
+                'onApplied: toQueryParameters=${selected.toQueryParameters()}',
+              );
               _handleSelectApply(tabData, selected);
             },
             onReset: () {
@@ -303,8 +290,10 @@ class _MapPageState extends State<MapPage> {
               itemBuilder: (context, index) {
                 final house = houses[index];
                 return Card(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   child: ListTile(
                     leading: AspectRatio(
                       aspectRatio: 120 / 80,

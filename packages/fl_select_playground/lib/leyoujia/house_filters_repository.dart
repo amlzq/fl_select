@@ -43,7 +43,7 @@ class HouseFiltersRepository {
       id: 'community',
       name: '',
       children: {SelectTextEntry.any(parentId: 'community', name: '')},
-    )
+    ),
   };
 
   SelectEntries? get regionSelectedData =>
@@ -57,16 +57,19 @@ class HouseFiltersRepository {
 
     // 板块/地段
     // 是地产板块（ neighborhood/community ），而不是行政区
-    final community =
-        RegionData.fromJson(json.decode(await loadJsonData('community.json')));
+    final community = RegionData.fromJson(
+      json.decode(await loadJsonData('community.json')),
+    );
     debugPrint('community length: ${community.data?.length}');
 
-    final metro =
-        RegionData.fromJson(json.decode(await loadJsonData('metro.json')));
+    final metro = RegionData.fromJson(
+      json.decode(await loadJsonData('metro.json')),
+    );
     debugPrint('metro length: ${metro.data?.length}');
 
-    final nearby =
-        RegionData.fromJson(json.decode(await loadJsonData('nearby.json')));
+    final nearby = RegionData.fromJson(
+      json.decode(await loadJsonData('nearby.json')),
+    );
     debugPrint('nearby length: ${nearby.data?.length}');
 
     final region = [community, metro, nearby];
@@ -77,29 +80,35 @@ class HouseFiltersRepository {
             id: category.id!,
             name: category.name!,
             children: category.data
-                ?.map((l1) => SelectTextEntry(
-                      parentId: category.id!,
-                      id: l1.id!,
-                      name: l1.name!,
-                      enabled: l1.enabled ?? true,
-                      children: l1.data
-                          ?.map((l2) => SelectTextEntry(
-                                parentId: l1.id!,
-                                id: l2.id!,
-                                name: l2.name!,
-                                enabled: l2.enabled ?? true,
-                                children: l2.data
-                                    ?.map((l3) => SelectTextEntry(
-                                          parentId: l2.id!,
-                                          id: l3.id!,
-                                          name: l3.name!,
-                                          enabled: l3.enabled ?? true,
-                                        ))
-                                    .toSet(),
-                              ))
-                          .toSet(),
-                      immediate: category.id == 'nearby',
-                    ))
+                ?.map(
+                  (l1) => SelectTextEntry(
+                    parentId: category.id!,
+                    id: l1.id!,
+                    name: l1.name!,
+                    enabled: l1.enabled ?? true,
+                    children: l1.data
+                        ?.map(
+                          (l2) => SelectTextEntry(
+                            parentId: l1.id!,
+                            id: l2.id!,
+                            name: l2.name!,
+                            enabled: l2.enabled ?? true,
+                            children: l2.data
+                                ?.map(
+                                  (l3) => SelectTextEntry(
+                                    parentId: l2.id!,
+                                    id: l3.id!,
+                                    name: l3.name!,
+                                    enabled: l3.enabled ?? true,
+                                  ),
+                                )
+                                .toSet(),
+                          ),
+                        )
+                        .toSet(),
+                    immediate: category.id == 'nearby',
+                  ),
+                )
                 .toSet(),
             selectionMode: singleAll || category.id == 'nearby'
                 ? SelectionMode.single
@@ -111,17 +120,22 @@ class HouseFiltersRepository {
     // 将“距地铁”作为地铁类别的 header
     final metroEntry =
         entries.firstWhere((e) => e.id == 'metro') as SelectCategoryEntry;
-    final metroRadiusEntry =
-        metroEntry.children?.firstWhere((e) => e.id == 'metro_radius');
+    final metroRadiusEntry = metroEntry.children?.firstWhere(
+      (e) => e.id == 'metro_radius',
+    );
     metroEntry.children?.remove(metroRadiusEntry);
     metroEntry.header = metroRadiusEntry;
 
     // 插入"不限"选项
     for (SelectEntry category in entries) {
       category.children?.insert(
-          0,
-          SelectTextEntry.any(
-              parentId: category.id, name: anyEntryText, immediate: true));
+        0,
+        SelectTextEntry.any(
+          parentId: category.id,
+          name: anyEntryText,
+          immediate: true,
+        ),
+      );
       for (SelectEntry l1 in category.children ?? []) {
         l1.children?.insert(
           0,
@@ -156,28 +170,30 @@ class HouseFiltersRepository {
 
   /// 重置按钮的选中项
   SelectEntries? get buyPriceResetData => {
-        SelectCategoryEntry(
-          id: 'total',
-          name: '',
-          children: {SelectIntEntry.any(parentId: 'total', name: '')},
-        ),
-        SelectCategoryEntry(
-          id: 'unit',
-          name: '',
-          children: {SelectIntEntry.any(parentId: 'total', name: '')},
-        ),
-      };
+    SelectCategoryEntry(
+      id: 'total',
+      name: '',
+      children: {SelectIntEntry.any(parentId: 'total', name: '')},
+    ),
+    SelectCategoryEntry(
+      id: 'unit',
+      name: '',
+      children: {SelectIntEntry.any(parentId: 'total', name: '')},
+    ),
+  };
 
   Future<SelectEntries> fetchBuyPriceData() async {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 250));
 
-    final totalPrice =
-        PriceData.fromJson(json.decode(await loadJsonData('total_price.json')));
+    final totalPrice = PriceData.fromJson(
+      json.decode(await loadJsonData('total_price.json')),
+    );
     debugPrint('totalPrice length: ${totalPrice.data?.length}');
 
-    final unitPrice =
-        PriceData.fromJson(json.decode(await loadJsonData('unit_price.json')));
+    final unitPrice = PriceData.fromJson(
+      json.decode(await loadJsonData('unit_price.json')),
+    );
     debugPrint('unitPrice length: ${unitPrice.data?.length}');
 
     final prices = [totalPrice, unitPrice];
@@ -187,13 +203,15 @@ class HouseFiltersRepository {
             id: category.id!,
             name: category.name!,
             children: category.data
-                ?.map((l1) => SelectIntEntry(
-                      parentId: category.id!,
-                      id: l1.id!,
-                      name: l1.name,
-                      min: l1.min,
-                      max: l1.max,
-                    ))
+                ?.map(
+                  (l1) => SelectIntEntry(
+                    parentId: category.id!,
+                    id: l1.id!,
+                    name: l1.name,
+                    min: l1.min,
+                    max: l1.max,
+                  ),
+                )
                 .toSet(),
             selectionMode: SelectionMode.multiple,
           ),
@@ -204,17 +222,23 @@ class HouseFiltersRepository {
     for (SelectEntry category in entries) {
       // 插入"不限"选项
       category.children?.insert(
-          0,
-          SelectIntEntry.any(
-              parentId: category.id, name: anyEntryText, immediate: false));
+        0,
+        SelectIntEntry.any(
+          parentId: category.id,
+          name: anyEntryText,
+          immediate: false,
+        ),
+      );
       // 插入"自定义"选项
       category.children?.insert(
-          0,
-          SelectIntEntry.custom(
-              parentId: category.id,
-              inputLabel: customInputLabel,
-              minHintText: minHintText,
-              maxHintText: maxHintText));
+        0,
+        SelectIntEntry.custom(
+          parentId: category.id,
+          inputLabel: customInputLabel,
+          minHintText: minHintText,
+          maxHintText: maxHintText,
+        ),
+      );
     }
 
     debugPrint('prices length: ${entries.length}');
@@ -225,12 +249,12 @@ class HouseFiltersRepository {
   SelectEntries? sellPriceResult;
 
   SelectEntries get sellPriceIniteialSelected => {
-        SelectCategoryEntry(
-          id: 'total',
-          name: '',
-          children: {SelectIntEntry.any(parentId: 'total', name: anyEntryText)},
-        )
-      };
+    SelectCategoryEntry(
+      id: 'total',
+      name: '',
+      children: {SelectIntEntry.any(parentId: 'total', name: anyEntryText)},
+    ),
+  };
 
   SelectEntries? get sellPriceSelectedData =>
       sellPriceResult ?? sellPriceIniteialSelected;
@@ -241,12 +265,14 @@ class HouseFiltersRepository {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 250));
 
-    final totalPrice =
-        PriceData.fromJson(json.decode(await loadJsonData('total_price.json')));
+    final totalPrice = PriceData.fromJson(
+      json.decode(await loadJsonData('total_price.json')),
+    );
     debugPrint('totalPrice length: ${totalPrice.data?.length}');
 
-    final downpay =
-        PriceData.fromJson(json.decode(await loadJsonData('downpay.json')));
+    final downpay = PriceData.fromJson(
+      json.decode(await loadJsonData('downpay.json')),
+    );
     debugPrint('downpay length: ${downpay.data?.length}');
 
     final prices = [totalPrice, downpay];
@@ -256,13 +282,15 @@ class HouseFiltersRepository {
             id: category.id!,
             name: category.name!,
             children: category.data
-                ?.map((l1) => SelectIntEntry(
-                      parentId: category.id!,
-                      id: l1.id!,
-                      name: l1.name,
-                      min: l1.min,
-                      max: l1.max,
-                    ))
+                ?.map(
+                  (l1) => SelectIntEntry(
+                    parentId: category.id!,
+                    id: l1.id!,
+                    name: l1.name,
+                    min: l1.min,
+                    max: l1.max,
+                  ),
+                )
                 .toSet(),
             selectionMode: category.id == 'downpay'
                 ? SelectionMode.single
@@ -275,17 +303,23 @@ class HouseFiltersRepository {
     for (SelectEntry category in entries) {
       // 插入"不限"选项
       category.children?.insert(
-          0,
-          SelectIntEntry.any(
-              parentId: category.id, name: anyEntryText, immediate: false));
+        0,
+        SelectIntEntry.any(
+          parentId: category.id,
+          name: anyEntryText,
+          immediate: false,
+        ),
+      );
       // 插入"自定义"选项
       category.children?.insert(
-          0,
-          SelectIntEntry.custom(
-              parentId: category.id,
-              inputLabel: customInputLabel,
-              minHintText: minHintText,
-              maxHintText: maxHintText));
+        0,
+        SelectIntEntry.custom(
+          parentId: category.id,
+          inputLabel: customInputLabel,
+          minHintText: minHintText,
+          maxHintText: maxHintText,
+        ),
+      );
     }
 
     debugPrint('prices length: ${entries.length}');
@@ -296,12 +330,12 @@ class HouseFiltersRepository {
   SelectEntries? rentalResult;
 
   SelectEntries get rentalIniteialSelected => {
-        SelectCategoryEntry(
-          id: 'rent',
-          name: '',
-          children: {SelectIntEntry.any(parentId: 'total', name: anyEntryText)},
-        )
-      };
+    SelectCategoryEntry(
+      id: 'rent',
+      name: '',
+      children: {SelectIntEntry.any(parentId: 'total', name: anyEntryText)},
+    ),
+  };
 
   SelectEntries? get fetchRentalSelectedData =>
       rentalResult ?? rentalIniteialSelected;
@@ -312,8 +346,9 @@ class HouseFiltersRepository {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 250));
 
-    final rent =
-        PriceData.fromJson(json.decode(await loadJsonData('rental.json')));
+    final rent = PriceData.fromJson(
+      json.decode(await loadJsonData('rental.json')),
+    );
     debugPrint('rent length: ${rent.data?.length}');
 
     final prices = [rent];
@@ -323,13 +358,15 @@ class HouseFiltersRepository {
             id: category.id!,
             name: category.name!,
             children: category.data
-                ?.map((l1) => SelectIntEntry(
-                      parentId: category.id!,
-                      id: l1.id!,
-                      name: l1.name,
-                      min: l1.min,
-                      max: l1.max,
-                    ))
+                ?.map(
+                  (l1) => SelectIntEntry(
+                    parentId: category.id!,
+                    id: l1.id!,
+                    name: l1.name,
+                    min: l1.min,
+                    max: l1.max,
+                  ),
+                )
                 .toSet(),
             selectionMode: SelectionMode.single,
           ),
@@ -340,17 +377,23 @@ class HouseFiltersRepository {
     for (SelectEntry category in entries) {
       // 插入"不限"选项
       category.children?.insert(
-          0,
-          SelectIntEntry.any(
-              parentId: category.id, name: anyEntryText, immediate: false));
+        0,
+        SelectIntEntry.any(
+          parentId: category.id,
+          name: anyEntryText,
+          immediate: false,
+        ),
+      );
       // 插入"自定义"选项
       category.children?.insert(
-          0,
-          SelectIntEntry.custom(
-              parentId: category.id,
-              inputLabel: customInputLabel,
-              minHintText: minHintText,
-              maxHintText: maxHintText));
+        0,
+        SelectIntEntry.custom(
+          parentId: category.id,
+          inputLabel: customInputLabel,
+          minHintText: minHintText,
+          maxHintText: maxHintText,
+        ),
+      );
     }
 
     debugPrint('prices length: ${entries.length}');
@@ -370,8 +413,9 @@ class HouseFiltersRepository {
   Future<SelectEntries> fetchFloorPlanBuyData() async {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 250));
-    final floorPlan =
-        floorPlanFromJson(await loadJsonData('floor_plan_buy.json'));
+    final floorPlan = floorPlanFromJson(
+      await loadJsonData('floor_plan_buy.json'),
+    );
     debugPrint('floorPlan length: ${floorPlan.length}');
     SelectEntries entries = floorPlan
         .map(
@@ -379,19 +423,21 @@ class HouseFiltersRepository {
             id: category.id!,
             name: category.name!,
             children: category.data
-                ?.map((l1) => category.id == 'area'
-                    ? SelectRangeEntry(
-                        parentId: category.id!,
-                        id: l1.id!,
-                        name: l1.name,
-                        min: l1.min,
-                        max: l1.max,
-                      )
-                    : SelectTextEntry(
-                        parentId: category.id!,
-                        id: l1.id!,
-                        name: l1.name,
-                      ))
+                ?.map(
+                  (l1) => category.id == 'area'
+                      ? SelectRangeEntry(
+                          parentId: category.id!,
+                          id: l1.id!,
+                          name: l1.name,
+                          min: l1.min,
+                          max: l1.max,
+                        )
+                      : SelectTextEntry(
+                          parentId: category.id!,
+                          id: l1.id!,
+                          name: l1.name,
+                        ),
+                )
                 .toSet(),
             selectionMode: SelectionMode.multiple,
             layout: const SelectGridLayout(
@@ -407,11 +453,14 @@ class HouseFiltersRepository {
     // 插入"面积自定义"选项
     for (SelectEntry category in entries) {
       if (category.id == 'area') {
-        category.children?.add(SelectIntEntry.custom(
+        category.children?.add(
+          SelectIntEntry.custom(
             parentId: category.id,
             name: customAreaName,
             minHintText: minHintText,
-            maxHintText: maxHintText));
+            maxHintText: maxHintText,
+          ),
+        );
         continue;
       }
     }
@@ -433,8 +482,9 @@ class HouseFiltersRepository {
   Future<SelectEntries> fetchFloorPlanSellData() async {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 250));
-    final floorPlan =
-        floorPlanFromJson(await loadJsonData('floor_plan_sell.json'));
+    final floorPlan = floorPlanFromJson(
+      await loadJsonData('floor_plan_sell.json'),
+    );
     debugPrint('floorPlan length: ${floorPlan.length}');
     SelectEntries entries = floorPlan
         .map(
@@ -442,19 +492,21 @@ class HouseFiltersRepository {
             id: category.id!,
             name: category.name!,
             children: category.data
-                ?.map((l1) => category.id == 'area'
-                    ? SelectRangeEntry(
-                        parentId: category.id!,
-                        id: l1.id!,
-                        name: l1.name,
-                        min: l1.min,
-                        max: l1.max,
-                      )
-                    : SelectTextEntry(
-                        parentId: category.id!,
-                        id: l1.id!,
-                        name: l1.name,
-                      ))
+                ?.map(
+                  (l1) => category.id == 'area'
+                      ? SelectRangeEntry(
+                          parentId: category.id!,
+                          id: l1.id!,
+                          name: l1.name,
+                          min: l1.min,
+                          max: l1.max,
+                        )
+                      : SelectTextEntry(
+                          parentId: category.id!,
+                          id: l1.id!,
+                          name: l1.name,
+                        ),
+                )
                 .toSet(),
             selectionMode: SelectionMode.multiple,
             layout: const SelectGridLayout(
@@ -470,11 +522,14 @@ class HouseFiltersRepository {
     // 插入"面积自定义"选项
     for (SelectEntry category in entries) {
       if (category.id == 'area') {
-        category.children?.add(SelectIntEntry.custom(
+        category.children?.add(
+          SelectIntEntry.custom(
             parentId: category.id,
             name: customAreaName,
             minHintText: minHintText,
-            maxHintText: maxHintText));
+            maxHintText: maxHintText,
+          ),
+        );
         continue;
       }
     }
@@ -496,8 +551,9 @@ class HouseFiltersRepository {
   Future<SelectEntries> fetchFloorPlanRentData({bool singleAll = false}) async {
     // 模拟网络延迟
     await Future.delayed(const Duration(milliseconds: 250));
-    final floorPlan =
-        floorPlanFromJson(await loadJsonData('floor_plan_rent.json'));
+    final floorPlan = floorPlanFromJson(
+      await loadJsonData('floor_plan_rent.json'),
+    );
     debugPrint('floorPlan length: ${floorPlan.length}');
     SelectEntries entries = floorPlan
         .map(
@@ -505,22 +561,25 @@ class HouseFiltersRepository {
             id: category.id!,
             name: category.name!,
             children: category.data
-                ?.map((l1) => category.id == 'area'
-                    ? SelectRangeEntry(
-                        parentId: category.id!,
-                        id: l1.id!,
-                        name: l1.name,
-                        min: l1.min,
-                        max: l1.max,
-                      )
-                    : SelectTextEntry(
-                        parentId: category.id!,
-                        id: l1.id!,
-                        name: l1.name,
-                      ))
+                ?.map(
+                  (l1) => category.id == 'area'
+                      ? SelectRangeEntry(
+                          parentId: category.id!,
+                          id: l1.id!,
+                          name: l1.name,
+                          min: l1.min,
+                          max: l1.max,
+                        )
+                      : SelectTextEntry(
+                          parentId: category.id!,
+                          id: l1.id!,
+                          name: l1.name,
+                        ),
+                )
                 .toSet(),
-            selectionMode:
-                singleAll ? SelectionMode.single : SelectionMode.multiple,
+            selectionMode: singleAll
+                ? SelectionMode.single
+                : SelectionMode.multiple,
             layout: const SelectGridLayout(
               crossAxisCount: 3,
               childAspectRatio: 2.5,
@@ -556,11 +615,13 @@ class HouseFiltersRepository {
             id: category.id!,
             name: category.name!,
             children: category.data
-                ?.map((l1) => SelectTextEntry(
-                      parentId: category.id!,
-                      id: l1.id!,
-                      name: l1.name,
-                    ))
+                ?.map(
+                  (l1) => SelectTextEntry(
+                    parentId: category.id!,
+                    id: l1.id!,
+                    name: l1.name,
+                  ),
+                )
                 .toSet(),
             selectionMode: SelectionMode.multiple,
             layout: const SelectGridLayout(
@@ -580,7 +641,7 @@ class HouseFiltersRepository {
   SelectEntries? sortBuyResult;
 
   final sortBuyIniteialSelected = <SelectTextEntry>{
-    SelectTextEntry.id(id: 'default_sort')
+    SelectTextEntry.id(id: 'default_sort'),
   };
 
   SelectEntries? get sortBuySelectedData =>
@@ -594,11 +655,10 @@ class HouseFiltersRepository {
     final sort = sortFromJson(await loadJsonData('sort_buy.json'));
     debugPrint('sort length: ${sort.length}');
     SelectEntries entries = sort
-        .map((e) => SelectTextEntry.name(
-              id: e.id!,
-              name: e.name!,
-              immediate: true,
-            ))
+        .map(
+          (e) =>
+              SelectTextEntry.name(id: e.id!, name: e.name!, immediate: true),
+        )
         .toSet();
 
     debugPrint('sort length: ${entries.length}');
@@ -609,7 +669,7 @@ class HouseFiltersRepository {
   SelectEntries? sortSellResult;
 
   final sortSellIniteialSelected = <SelectTextEntry>{
-    SelectTextEntry.id(id: 'comprehensive_sort')
+    SelectTextEntry.id(id: 'comprehensive_sort'),
   };
 
   SelectEntries? get sortSellSelectedData =>
@@ -623,11 +683,10 @@ class HouseFiltersRepository {
     final sort = sortFromJson(await loadJsonData('sort_sell.json'));
     debugPrint('sort length: ${sort.length}');
     SelectEntries entries = sort
-        .map((e) => SelectTextEntry.name(
-              id: e.id!,
-              name: e.name!,
-              immediate: true,
-            ))
+        .map(
+          (e) =>
+              SelectTextEntry.name(id: e.id!, name: e.name!, immediate: true),
+        )
         .toSet();
 
     debugPrint('sort length: ${entries.length}');
@@ -638,7 +697,7 @@ class HouseFiltersRepository {
   SelectEntries? sortRentResult;
 
   final sortRentIniteialSelected = <SelectTextEntry>{
-    SelectTextEntry.id(id: 'comprehensive_sort')
+    SelectTextEntry.id(id: 'comprehensive_sort'),
   };
 
   SelectEntries? get sortRentSelectedData =>
@@ -652,11 +711,10 @@ class HouseFiltersRepository {
     final sort = sortFromJson(await loadJsonData('sort_rent.json'));
     debugPrint('sort length: ${sort.length}');
     SelectEntries entries = sort
-        .map((e) => SelectTextEntry.name(
-              id: e.id!,
-              name: e.name!,
-              immediate: true,
-            ))
+        .map(
+          (e) =>
+              SelectTextEntry.name(id: e.id!, name: e.name!, immediate: true),
+        )
         .toSet();
 
     debugPrint('sort length: ${entries.length}');
@@ -751,7 +809,8 @@ class PriceItem {
 }
 
 List<FloorPlanData> floorPlanFromJson(String str) => List<FloorPlanData>.from(
-    json.decode(str).map((x) => FloorPlanData.fromJson(x)));
+  json.decode(str).map((x) => FloorPlanData.fromJson(x)),
+);
 
 String floorPlanToJson(List<FloorPlanData> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
