@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
 
 import 'cascading_select.dart';
+import 'chip_select.dart';
 import 'constants.dart';
+import 'expandable_select.dart';
 import 'flatten_select.dart';
 import 'grid_select.dart';
 import 'list_select.dart';
 import 'select_entry.dart';
+import 'select_layout.dart';
 import 'select_panel_theme.dart';
 import 'select_search_filter.dart';
+import 'side_nav_select.dart';
+import 'tab_nav_select.dart';
 import 'widgets/widgets.dart';
 
 /// Builds the action bar shown at the bottom of the select panel.
@@ -285,7 +290,7 @@ abstract class SelectDelegate {
 /// (category -> child -> grandchild -> ...).
 ///
 /// Flat (parentless) structures are not supported; use
-/// [ListSelectDelegate], [GridSelectDelegate] or [FlattenSelectDelegate]
+/// [ListSelectDelegate], [GridSelectDelegate] or [WrapSelectDelegate]
 /// for flat data.
 class CascadingSelectDelegate extends SelectDelegate {
   CascadingSelectDelegate({
@@ -431,6 +436,59 @@ class ListSelectDelegate extends SelectDelegate {
     Set<SelectEntry>? selectedEntries, {
     String searchQuery = '',
   }) {
+    if (entries.isNotEmpty && entries.first is SelectCategoryEntry) {
+      assert(() {
+        if (!_didWarnCategoryData) {
+          _didWarnCategoryData = true;
+          debugPrint(
+            'ListSelectDelegate: rendering two-level (category) data is '
+            'deprecated; use ExpandableSelectDelegate instead. '
+            'Will be removed in a future minor version.',
+          );
+        }
+        return true;
+      }());
+      return ExpandableSelect(
+        delegate: ExpandableSelectDelegate(
+          selectionMode: selectionMode,
+          entries: entries.toSet(),
+          selectedEntries: selectedEntries,
+          resetEntries: resetEntries,
+          actionBarBuilder: actionBarBuilder,
+          selectedColor: selectedColor,
+          onSelectedColor: onSelectedColor,
+          backgroundColor: backgroundColor,
+          onBackgroundColor: onBackgroundColor,
+          backgroundColorHigh: backgroundColorHigh,
+          backgroundColorHighest: backgroundColorHighest,
+          onBackgroundColorHighest: onBackgroundColorHighest,
+          resetText: resetText,
+          applyText: applyText,
+          searchEnabled: searchEnabled,
+          searchPredicate: searchPredicate,
+          searchHintText: searchHintText,
+          searchDebounceDuration: searchDebounceDuration,
+          searchBarTheme: searchBarTheme,
+          actionBarTheme: actionBarTheme,
+          sideBarTheme: sideBarTheme,
+          tabBarTheme: tabBarTheme,
+          gridTileTheme: gridTileTheme,
+          listTileTheme: listTileTheme,
+          fieldTileTheme: fieldTileTheme,
+          expansionTileTheme: expansionTileTheme,
+          chipBarTheme: chipBarTheme,
+          panelTheme: panelTheme,
+          skeletonBuilder: skeletonBuilder,
+          errorBuilder: errorBuilder,
+          radioBuilder: radioBuilder,
+          checkboxBuilder: checkboxBuilder,
+        ),
+        entries: entries,
+        selectedEntries: selectedEntries,
+        searchQuery: searchQuery,
+        searchPredicate: searchPredicate,
+      );
+    }
     return ListSelect(
       delegate: this,
       entries: entries,
@@ -440,6 +498,9 @@ class ListSelectDelegate extends SelectDelegate {
     );
   }
 
+  /// Whether the deprecation warning for two-level data has been emitted.
+  static bool _didWarnCategoryData = false;
+
   @override
   Widget buildSkeleton(BuildContext context) {
     return skeletonBuilder?.call(context) ??
@@ -447,14 +508,14 @@ class ListSelectDelegate extends SelectDelegate {
   }
 }
 
-/// A grid select with category tabs.
+/// A grid select for flat (parentless) data.
 ///
-/// Supports both flat and two-level structures:
-/// - Flat: parentless entries render directly in a grid and no category
-///   tabs are shown.
-/// - Two-level: category tabs on top drive which category's children are
-///   shown below, laid out by the category's `layout` (defaulting to a
-///   grid built from this delegate's grid parameters).
+/// The top-level entries render directly in a grid; no category tabs are
+/// shown.
+///
+/// Rendering two-level (category) data through this delegate is deprecated;
+/// use [TabNavSelectDelegate] instead. It will be removed in a future minor
+/// version.
 ///
 /// At most two levels are rendered; levels nested deeper than the second
 /// are not rendered. Use [CascadingSelectDelegate] for multi-level
@@ -527,6 +588,65 @@ class GridSelectDelegate extends SelectDelegate {
     Set<SelectEntry>? selectedEntries, {
     String searchQuery = '',
   }) {
+    if (entries.isNotEmpty && entries.first is SelectCategoryEntry) {
+      assert(() {
+        if (!_didWarnCategoryData) {
+          _didWarnCategoryData = true;
+          debugPrint(
+            'GridSelectDelegate: rendering two-level (category) data is '
+            'deprecated; use TabNavSelectDelegate instead. '
+            'Will be removed in a future minor version.',
+          );
+        }
+        return true;
+      }());
+      return TabNavSelect(
+        delegate: TabNavSelectDelegate(
+          defaultLayout: SelectGridLayout(
+            crossAxisCount: crossAxisCount,
+            childAspectRatio: childAspectRatio,
+            mainAxisSpacing: mainAxisSpacing,
+            crossAxisSpacing: crossAxisSpacing,
+          ),
+          selectionMode: selectionMode,
+          entries: entries.toSet(),
+          selectedEntries: selectedEntries,
+          resetEntries: resetEntries,
+          actionBarBuilder: actionBarBuilder,
+          selectedColor: selectedColor,
+          onSelectedColor: onSelectedColor,
+          backgroundColor: backgroundColor,
+          onBackgroundColor: onBackgroundColor,
+          backgroundColorHigh: backgroundColorHigh,
+          backgroundColorHighest: backgroundColorHighest,
+          onBackgroundColorHighest: onBackgroundColorHighest,
+          resetText: resetText,
+          applyText: applyText,
+          searchEnabled: searchEnabled,
+          searchPredicate: searchPredicate,
+          searchHintText: searchHintText,
+          searchDebounceDuration: searchDebounceDuration,
+          searchBarTheme: searchBarTheme,
+          actionBarTheme: actionBarTheme,
+          sideBarTheme: sideBarTheme,
+          tabBarTheme: tabBarTheme,
+          gridTileTheme: gridTileTheme,
+          listTileTheme: listTileTheme,
+          fieldTileTheme: fieldTileTheme,
+          expansionTileTheme: expansionTileTheme,
+          chipBarTheme: chipBarTheme,
+          panelTheme: panelTheme,
+          skeletonBuilder: skeletonBuilder,
+          errorBuilder: errorBuilder,
+          radioBuilder: radioBuilder,
+          checkboxBuilder: checkboxBuilder,
+        ),
+        entries: entries,
+        selectedEntries: selectedEntries,
+        searchQuery: searchQuery,
+        searchPredicate: searchPredicate,
+      );
+    }
     return GridSelect(
       delegate: this,
       entries: entries,
@@ -535,6 +655,9 @@ class GridSelectDelegate extends SelectDelegate {
       searchPredicate: searchPredicate,
     );
   }
+
+  /// Whether the deprecation warning for two-level data has been emitted.
+  static bool _didWarnCategoryData = false;
 
   @override
   Widget buildSkeleton(BuildContext context) {
@@ -549,19 +672,116 @@ class GridSelectDelegate extends SelectDelegate {
   }
 }
 
-/// A "flatten" select that renders each category's children in a single
-/// scrollable column with a category sidebar on the left.
+/// A tab-nav (top-navigation) select for two-level (category) data.
 ///
-/// Supports both flat and two-level structures:
-/// - Flat: parentless entries render directly as a wrapable chip bar and
-///   no category sidebar is shown.
-/// - Two-level: tapping the left sidebar scrolls the right column to the
-///   category's children, laid out by the category's `layout` (defaulting
-///   to a chip layout).
+/// Category tabs on top drive which category's children are shown below,
+/// laid out by the category's `layout` (defaulting to [defaultLayout], then
+/// to a 3-column grid). When only one category is available, the tab bar is
+/// hidden.
+///
+/// Flat (parentless) structures are not supported; use
+/// [GridSelectDelegate] or [ListSelectDelegate] for flat data.
 ///
 /// At most two levels are rendered; levels nested deeper than the second
 /// are not rendered. Use [CascadingSelectDelegate] for multi-level
 /// (cascading) data.
+class TabNavSelectDelegate extends SelectDelegate {
+  TabNavSelectDelegate({
+    this.defaultLayout,
+    this.checkboxBuilder,
+    this.radioBuilder,
+    super.selectionMode,
+    super.entries,
+    super.entriesLoader,
+    super.selectedEntries,
+    super.selectedEntriesLoader,
+    super.resetEntries,
+    super.resetEntriesLoader,
+    super.actionBarBuilder,
+    super.selectedColor,
+    super.onSelectedColor,
+    super.backgroundColor,
+    super.onBackgroundColor,
+    super.backgroundColorHigh,
+    super.backgroundColorHighest,
+    super.onBackgroundColorHighest,
+    super.resetText,
+    super.applyText,
+    super.searchEnabled,
+    super.searchPredicate,
+    super.searchHintText,
+    super.searchDebounceDuration,
+    super.searchBarTheme,
+    super.actionBarTheme,
+    super.sideBarTheme,
+    super.tabBarTheme,
+    super.gridTileTheme,
+    super.listTileTheme,
+    super.fieldTileTheme,
+    super.expansionTileTheme,
+    super.chipBarTheme,
+    super.panelTheme,
+    super.skeletonBuilder,
+    super.errorBuilder,
+  }) : assert(
+          entries == null ||
+              entries.isEmpty ||
+              entries.first is SelectCategoryEntry,
+          'TabNavSelectDelegate only supports two-level (category) data. '
+          'Use ListSelectDelegate, GridSelectDelegate or '
+          'WrapSelectDelegate for flat data.',
+        );
+
+  /// The layout used by categories that leave their `layout` null,
+  /// defaulting to a 3-column grid (`SelectGridLayout(crossAxisCount: 3)`)
+  /// when null.
+  final SelectLayout? defaultLayout;
+
+  /// Optional custom radio widget builder.
+  final ToggleWidgetBuilder? radioBuilder;
+
+  /// Optional custom checkbox widget builder.
+  final ToggleWidgetBuilder? checkboxBuilder;
+
+  @override
+  Widget buildBody(
+    BuildContext context,
+    List<SelectEntry> entries,
+    Set<SelectEntry>? selectedEntries, {
+    String searchQuery = '',
+  }) {
+    assert(
+      entries.isEmpty || entries.first is SelectCategoryEntry,
+      'TabNavSelectDelegate only supports two-level (category) data. '
+      'Use GridSelectDelegate or ListSelectDelegate for flat data.',
+    );
+    return TabNavSelect(
+      delegate: this,
+      entries: entries,
+      selectedEntries: selectedEntries,
+      searchQuery: searchQuery,
+      searchPredicate: searchPredicate,
+    );
+  }
+
+  @override
+  Widget buildSkeleton(BuildContext context) {
+    return skeletonBuilder?.call(context) ??
+        TabNavSelectSkeleton(
+          itemCount: 15,
+          crossAxisCount: 3,
+        );
+  }
+}
+
+/// Deprecated "flatten" select.
+///
+/// - For two-level (category) data, use [SideNavSelectDelegate] (renamed).
+/// - For flat (parentless) data, use [WrapSelectDelegate].
+@Deprecated(
+  'Use SideNavSelectDelegate for two-level data or WrapSelectDelegate for '
+  'flat data. Will be removed in a future minor version.',
+)
 class FlattenSelectDelegate extends SelectDelegate {
   FlattenSelectDelegate({
     super.selectionMode,
@@ -599,6 +819,76 @@ class FlattenSelectDelegate extends SelectDelegate {
     super.errorBuilder,
   });
 
+  /// Copies this delegate's configuration into a [SideNavSelectDelegate].
+  SideNavSelectDelegate toSideNav() => SideNavSelectDelegate(
+        selectionMode: selectionMode,
+        entries: entries,
+        entriesLoader: entriesLoader,
+        selectedEntries: selectedEntries,
+        selectedEntriesLoader: selectedEntriesLoader,
+        resetEntries: resetEntries,
+        resetEntriesLoader: resetEntriesLoader,
+        actionBarBuilder: actionBarBuilder,
+        selectedColor: selectedColor,
+        onSelectedColor: onSelectedColor,
+        backgroundColor: backgroundColor,
+        onBackgroundColor: onBackgroundColor,
+        backgroundColorHigh: backgroundColorHigh,
+        backgroundColorHighest: backgroundColorHighest,
+        onBackgroundColorHighest: onBackgroundColorHighest,
+        resetText: resetText,
+        applyText: applyText,
+        searchEnabled: searchEnabled,
+        searchPredicate: searchPredicate,
+        searchHintText: searchHintText,
+        searchDebounceDuration: searchDebounceDuration,
+        searchBarTheme: searchBarTheme,
+        actionBarTheme: actionBarTheme,
+        sideBarTheme: sideBarTheme,
+        tabBarTheme: tabBarTheme,
+        gridTileTheme: gridTileTheme,
+        listTileTheme: listTileTheme,
+        fieldTileTheme: fieldTileTheme,
+        expansionTileTheme: expansionTileTheme,
+        chipBarTheme: chipBarTheme,
+        panelTheme: panelTheme,
+      );
+
+  /// Copies this delegate's configuration into a [WrapSelectDelegate].
+  WrapSelectDelegate toWrap() => WrapSelectDelegate(
+        selectionMode: selectionMode,
+        entries: entries,
+        entriesLoader: entriesLoader,
+        selectedEntries: selectedEntries,
+        selectedEntriesLoader: selectedEntriesLoader,
+        resetEntries: resetEntries,
+        resetEntriesLoader: resetEntriesLoader,
+        actionBarBuilder: actionBarBuilder,
+        selectedColor: selectedColor,
+        onSelectedColor: onSelectedColor,
+        backgroundColor: backgroundColor,
+        onBackgroundColor: onBackgroundColor,
+        backgroundColorHigh: backgroundColorHigh,
+        backgroundColorHighest: backgroundColorHighest,
+        onBackgroundColorHighest: onBackgroundColorHighest,
+        resetText: resetText,
+        applyText: applyText,
+        searchEnabled: searchEnabled,
+        searchPredicate: searchPredicate,
+        searchHintText: searchHintText,
+        searchDebounceDuration: searchDebounceDuration,
+        searchBarTheme: searchBarTheme,
+        actionBarTheme: actionBarTheme,
+        sideBarTheme: sideBarTheme,
+        tabBarTheme: tabBarTheme,
+        gridTileTheme: gridTileTheme,
+        listTileTheme: listTileTheme,
+        fieldTileTheme: fieldTileTheme,
+        expansionTileTheme: expansionTileTheme,
+        chipBarTheme: chipBarTheme,
+        panelTheme: panelTheme,
+      );
+
   @override
   Widget buildBody(
     BuildContext context,
@@ -606,6 +896,7 @@ class FlattenSelectDelegate extends SelectDelegate {
     Set<SelectEntry>? selectedEntries, {
     String searchQuery = '',
   }) {
+    // ignore: deprecated_member_use_from_same_package
     return FlattenSelect(
       delegate: this,
       entries: entries,
@@ -618,8 +909,274 @@ class FlattenSelectDelegate extends SelectDelegate {
   @override
   Widget buildSkeleton(BuildContext context) {
     return skeletonBuilder?.call(context) ??
-        FlattenSelectSkeleton(
+        SideNavSelectSkeleton(
           sideBarWidth: sideBarTheme?.width,
+        );
+  }
+}
+
+/// A side-navigation select for two-level (category) data.
+///
+/// Category navigation sits on the left; tapping it scrolls the single
+/// right column to that category's children, laid out by the category's
+/// `layout` (defaulting to [defaultLayout], then to a wrapable chip
+/// layout). Scrolling the right column highlights the left side.
+///
+/// Flat (parentless) structures are not supported; use
+/// [WrapSelectDelegate] for flat data.
+///
+/// At most two levels are rendered; levels nested deeper than the second
+/// are not rendered. Use [CascadingSelectDelegate] for multi-level
+/// (cascading) data.
+class SideNavSelectDelegate extends SelectDelegate {
+  SideNavSelectDelegate({
+    this.defaultLayout,
+    super.selectionMode,
+    super.entries,
+    super.entriesLoader,
+    super.selectedEntries,
+    super.selectedEntriesLoader,
+    super.resetEntries,
+    super.resetEntriesLoader,
+    super.actionBarBuilder,
+    super.selectedColor,
+    super.onSelectedColor,
+    super.backgroundColor,
+    super.onBackgroundColor,
+    super.backgroundColorHigh,
+    super.backgroundColorHighest,
+    super.onBackgroundColorHighest,
+    super.resetText,
+    super.applyText,
+    super.searchEnabled,
+    super.searchPredicate,
+    super.searchHintText,
+    super.searchDebounceDuration,
+    super.searchBarTheme,
+    super.actionBarTheme,
+    super.sideBarTheme,
+    super.tabBarTheme,
+    super.gridTileTheme,
+    super.listTileTheme,
+    super.fieldTileTheme,
+    super.expansionTileTheme,
+    super.chipBarTheme,
+    super.panelTheme,
+    super.skeletonBuilder,
+    super.errorBuilder,
+  }) : assert(
+          entries == null ||
+              entries.isEmpty ||
+              entries.first is SelectCategoryEntry,
+          'SideNavSelectDelegate only supports two-level (category) data. '
+          'Use WrapSelectDelegate for flat data.',
+        );
+
+  final SelectLayout? defaultLayout;
+
+  @override
+  Widget buildBody(
+    BuildContext context,
+    List<SelectEntry> entries,
+    Set<SelectEntry>? selectedEntries, {
+    String searchQuery = '',
+  }) {
+    assert(
+      entries.isEmpty || entries.first is SelectCategoryEntry,
+      'SideNavSelectDelegate only supports two-level (category) data. '
+      'Use WrapSelectDelegate for flat data.',
+    );
+    return SideNavSelect(
+      delegate: this,
+      entries: entries,
+      selectedEntries: selectedEntries,
+      searchQuery: searchQuery,
+      searchPredicate: searchPredicate,
+    );
+  }
+
+  @override
+  Widget buildSkeleton(BuildContext context) {
+    return skeletonBuilder?.call(context) ??
+        SideNavSelectSkeleton(
+          sideBarWidth: sideBarTheme?.width,
+        );
+  }
+}
+
+/// A wrap select for flat (parentless) data.
+///
+/// The top-level entries render directly as a wrapable chip bar; no
+/// category navigation is shown.
+///
+/// Two-level (category) structures are not supported; use
+/// [SideNavSelectDelegate] for two-level data.
+class WrapSelectDelegate extends SelectDelegate {
+  WrapSelectDelegate({
+    super.selectionMode,
+    super.entries,
+    super.entriesLoader,
+    super.selectedEntries,
+    super.selectedEntriesLoader,
+    super.resetEntries,
+    super.resetEntriesLoader,
+    super.actionBarBuilder,
+    super.selectedColor,
+    super.onSelectedColor,
+    super.backgroundColor,
+    super.onBackgroundColor,
+    super.backgroundColorHigh,
+    super.backgroundColorHighest,
+    super.onBackgroundColorHighest,
+    super.resetText,
+    super.applyText,
+    super.searchEnabled,
+    super.searchPredicate,
+    super.searchHintText,
+    super.searchDebounceDuration,
+    super.searchBarTheme,
+    super.actionBarTheme,
+    super.sideBarTheme,
+    super.tabBarTheme,
+    super.gridTileTheme,
+    super.listTileTheme,
+    super.fieldTileTheme,
+    super.expansionTileTheme,
+    super.chipBarTheme,
+    super.panelTheme,
+    super.skeletonBuilder,
+    super.errorBuilder,
+  }) : assert(
+          entries == null ||
+              entries.isEmpty ||
+              entries.first is! SelectCategoryEntry,
+          'WrapSelectDelegate only supports flat (parentless) data. '
+          'Use SideNavSelectDelegate for two-level (category) data.',
+        );
+
+  @override
+  Widget buildBody(
+    BuildContext context,
+    List<SelectEntry> entries,
+    Set<SelectEntry>? selectedEntries, {
+    String searchQuery = '',
+  }) {
+    assert(
+      entries.isEmpty || entries.first is! SelectCategoryEntry,
+      'WrapSelectDelegate only supports flat (parentless) data. '
+      'Use SideNavSelectDelegate for two-level (category) data.',
+    );
+    return ChipSelect(
+      delegate: this,
+      entries: entries,
+      selectedEntries: selectedEntries,
+      searchQuery: searchQuery,
+      searchPredicate: searchPredicate,
+    );
+  }
+
+  @override
+  Widget buildSkeleton(BuildContext context) {
+    return skeletonBuilder?.call(context) ?? const ChipSelectSkeleton();
+  }
+}
+
+/// An expandable-group select for two-level (category) data.
+///
+/// Each category renders as an expandable tile whose children are laid
+/// out by the category's `layout` (defaulting to [defaultLayout], then to
+/// a list layout). A category's `header`/`footer` entries (if any) render
+/// as chip bars above/below that category's expanded content.
+///
+/// Flat (parentless) structures are not supported; use
+/// [ListSelectDelegate] for flat data.
+///
+/// At most two levels are rendered; levels nested deeper than the second
+/// are not rendered. Use [CascadingSelectDelegate] for multi-level
+/// (cascading) data.
+class ExpandableSelectDelegate extends SelectDelegate {
+  ExpandableSelectDelegate({
+    this.defaultLayout,
+    this.radioBuilder,
+    this.checkboxBuilder,
+    super.selectionMode,
+    super.entries,
+    super.entriesLoader,
+    super.selectedEntries,
+    super.selectedEntriesLoader,
+    super.resetEntries,
+    super.resetEntriesLoader,
+    super.actionBarBuilder,
+    super.selectedColor,
+    super.onSelectedColor,
+    super.backgroundColor,
+    super.onBackgroundColor,
+    super.backgroundColorHigh,
+    super.backgroundColorHighest,
+    super.onBackgroundColorHighest,
+    super.resetText,
+    super.applyText,
+    super.searchEnabled,
+    super.searchPredicate,
+    super.searchHintText,
+    super.searchDebounceDuration,
+    super.searchBarTheme,
+    super.actionBarTheme,
+    super.sideBarTheme,
+    super.tabBarTheme,
+    super.gridTileTheme,
+    super.listTileTheme,
+    super.fieldTileTheme,
+    super.expansionTileTheme,
+    super.chipBarTheme,
+    super.panelTheme,
+    super.skeletonBuilder,
+    super.errorBuilder,
+  }) : assert(
+          entries == null ||
+              entries.isEmpty ||
+              entries.first is SelectCategoryEntry,
+          'ExpandableSelectDelegate only supports two-level (category) '
+          'data. Use ListSelectDelegate for flat data.',
+        );
+
+  /// Layout used when a category does not specify its own `layout`.
+  ///
+  /// Defaults to a list layout.
+  final SelectLayout? defaultLayout;
+
+  /// Optional custom radio widget builder.
+  final ToggleWidgetBuilder? radioBuilder;
+
+  /// Optional custom checkbox widget builder.
+  final ToggleWidgetBuilder? checkboxBuilder;
+
+  @override
+  Widget buildBody(
+    BuildContext context,
+    List<SelectEntry> entries,
+    Set<SelectEntry>? selectedEntries, {
+    String searchQuery = '',
+  }) {
+    assert(
+      entries.isEmpty || entries.first is SelectCategoryEntry,
+      'ExpandableSelectDelegate only supports two-level (category) data. '
+      'Use ListSelectDelegate for flat data.',
+    );
+    return ExpandableSelect(
+      delegate: this,
+      entries: entries,
+      selectedEntries: selectedEntries,
+      searchQuery: searchQuery,
+      searchPredicate: searchPredicate,
+    );
+  }
+
+  @override
+  Widget buildSkeleton(BuildContext context) {
+    return skeletonBuilder?.call(context) ??
+        ExpandableSelectSkeleton(
+          selectionMode: selectionMode,
         );
   }
 }

@@ -21,7 +21,7 @@ Then just ask your agent to build a filter bar or select UI with `fl_select`. Th
 Two layers work together: **entry points** decide _where_ the select appears, and **delegates** decide _how_ entries are laid out — any delegate plugs into any entry point.
 
 - **Entry points** — five ways to show a select: `SelectView` , `PopupSelectBar` , `PopupSelectButton` , `showSelect` , `showModalBottomSelect` .
-- **Delegates** — four navigation styles: `CascadingSelectDelegate` , `GridSelectDelegate` , `ListSelectDelegate` , `FlattenSelectDelegate` . In all but the cascading one, each category's children are laid out by `category.layout` — list / grid / chips / range slider / counter.
+- **Delegates** — seven single-purpose styles. Flat data: `ListSelectDelegate` , `GridSelectDelegate` , `WrapSelectDelegate` ; two-level (category) data: `CascadingSelectDelegate` , `TabNavSelectDelegate` , `SideNavSelectDelegate` , `ExpandableSelectDelegate` . In the two-level styles (all but cascading), each category's children are laid out by `category.layout` — list / grid / chips / range slider / counter.
 - Single & multiple selection via `SelectionMode` (per category or as a delegate fallback).
 - Async data loading through `entriesLoader`, or synchronous data via `entries` / `selectedEntries` / `resetEntries` (rendered on the first frame, no skeleton).
 - Search filtering: set `searchEnabled` on any delegate and a `SelectSearchBar` filters entries as you type (debounced, with a customizable predicate and theme).
@@ -50,14 +50,24 @@ import 'package:fl_select/fl_select.dart';
 
 A delegate controls both data loading and how the body is rendered, and any delegate works with every entry point above.
 
-The built-in delegates are:
+Each delegate is single-purpose and asserts on the data shape it does not support, so a mis-migration surfaces immediately.
 
-| Delegate                  | Description                                                                                                             | Preview                                                                                                          |
-| ------------------------- | ----------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `CascadingSelectDelegate` | A tree select: categories on the left, a cascading list on the right.                                                   | ![CascadingSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/cascading.jpg) |
-| `GridSelectDelegate`      | A grid layout (`crossAxisCount` is required; children follow `category.layout`, default grid).                                                                            | ![GridSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/grid.jpg)           |
-| `ListSelectDelegate`      | A single-column list (use `.name(...)` leaves for a flat list; children follow `category.layout`, default list).                                                         | ![ListSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/list.jpg)           |
-| `FlattenSelectDelegate`   | Renders children by `category.layout` (default chips) under a category sidebar synced to the scrolling column. Best with `SelectionMode.multiple` and an "Any" entry. | ![FlattenSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/flatten.jpg)     |
+**Flat data** — parentless leaves created with `.name(...)`:
+
+| Delegate             | Description                                                                 | Preview                                                                                                          |
+| -------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `ListSelectDelegate` | A single-column list.                                                       | ![ListSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/list.jpg)           |
+| `GridSelectDelegate` | A grid layout (`crossAxisCount` is required).                               | ![GridSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/grid.jpg)           |
+| `WrapSelectDelegate` | A wrapable chip bar — the go-to for filter bars.                            | placeholder: ![WrapSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/grid.jpg) |
+
+**Two-level (category) data** — a tree of `SelectCategoryEntry` roots. Children follow `category.layout` — list / grid / chips / range slider / counter:
+
+| Delegate                   | Description                                                                                                                                                | Preview                                                                                                          |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `CascadingSelectDelegate`  | A tree select: categories on the left, a cascading list on the right.                                                                                      | ![CascadingSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/cascading.jpg) |
+| `TabNavSelectDelegate`     | Category tabs on top drive the content below (default `defaultLayout`, a 3-column grid).                                                                   | placeholder: ![TabNavSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/grid.jpg) |
+| `SideNavSelectDelegate`    | A category sidebar on the left scrolls the single right column to the matching section. Best with `SelectionMode.multiple` and an "Any" entry.               | placeholder: ![SideNavSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/flatten.jpg) |
+| `ExpandableSelectDelegate` | One expandable group per category (default list).                                                                                                           | placeholder: ![ExpandableSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/list.jpg) |
 
 #### SelectEntry
 
@@ -137,9 +147,9 @@ PopupSelectBar(
   ],
   selectDelegates: [
     CascadingSelectDelegate(entriesLoader: _fetchNeighborhood),
-    GridSelectDelegate(crossAxisCount: 3, entriesLoader: _fetchPrice),
-    GridSelectDelegate(crossAxisCount: 3, entriesLoader: _fetchRooms),
-    FlattenSelectDelegate(entriesLoader: _fetchMore),
+    TabNavSelectDelegate(entriesLoader: _fetchPrice),
+    TabNavSelectDelegate(entriesLoader: _fetchRooms),
+    SideNavSelectDelegate(entriesLoader: _fetchMore),
     ListSelectDelegate(entriesLoader: _fetchSort),
   ],
   onApplied: (tabData, selected) {
@@ -157,19 +167,24 @@ A single-trigger alternative to `PopupSelectBar` — opens a select overlay on t
 ```dart
 PopupSelectButton(
   label: 'Neighborhood',
-  selectDelegate: GridSelectDelegate(crossAxisCount: 3, entriesLoader: _fetchNeighborhood),
+  selectDelegate: CascadingSelectDelegate(entriesLoader: _fetchNeighborhood),
   onApplied: (selected) { /* ... */ },
 );
 
 PopupSelectButton.elevated(
   label: 'Price',
-  selectDelegate: GridSelectDelegate(crossAxisCount: 3, entriesLoader: _fetchPrice),
+  selectDelegate: TabNavSelectDelegate(entriesLoader: _fetchPrice),
+);
+
+PopupSelectButton.filled(
+  label: 'Rooms',
+  selectDelegate: TabNavSelectDelegate(entriesLoader: _fetchRooms),
 );
 
 PopupSelectButton.outlined(
-  label: 'Rooms',
+  label: 'Sort',
   icon: const Icon(Icons.filter_alt_outlined),
-  selectDelegate: GridSelectDelegate(crossAxisCount: 3, entriesLoader: _fetchRooms),
+  selectDelegate: ListSelectDelegate(entriesLoader: _fetchSort),
 );
 ```
 
@@ -182,8 +197,8 @@ Shows a select in a modal dialog. Returns the selected `SelectEntries` when appl
 ```dart
 final SelectEntries? selected = await showSelect(
   context: context,
-  delegate: FlattenSelectDelegate(entriesLoader: _fetchRooms),
-  title: const Text('Rooms'),
+  delegate: SideNavSelectDelegate(entriesLoader: _fetchMore),
+  title: const Text('More'),
 );
 
 if (selected != null) {
@@ -200,7 +215,7 @@ Shows a select in a modal bottom sheet built on Flutter's `showModalBottomSheet`
 ```dart
 final SelectEntries? selected = await showModalBottomSelect(
   context: context,
-  delegate: ListSelectDelegate(
+  delegate: SideNavSelectDelegate(
     selectionMode: SelectionMode.multiple,
     entriesLoader: _fetchMore,
   ),

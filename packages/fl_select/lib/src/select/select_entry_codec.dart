@@ -292,7 +292,8 @@ abstract final class SelectEntryCodec {
       if (!entry.enabled) 'enabled': false,
       if (entry.immediate) 'immediate': true,
       'children': [
-        for (final c in entry.children ?? const <SelectEntry>{}) _encodeEntry(c),
+        for (final c in entry.children ?? const <SelectEntry>{})
+          _encodeEntry(c),
       ],
     };
   }
@@ -306,7 +307,8 @@ abstract final class SelectEntryCodec {
       'name': entry.name ?? entry.id,
       if (!entry.enabled) 'enabled': false,
       'children': [
-        for (final c in entry.children ?? const <SelectEntry>{}) _encodeEntry(c),
+        for (final c in entry.children ?? const <SelectEntry>{})
+          _encodeEntry(c),
       ],
     };
   }

@@ -7,14 +7,14 @@ import 'select_entry.dart';
 import 'select_search_filter.dart';
 import 'widgets/widgets.dart';
 
-/// Flat grid layout: the top-level entries render directly as a grid, with
-/// no category tabs.
+/// Flat layout: the top-level (parentless) entries render directly as a
+/// wrapable chip bar.
 ///
-/// For two-level (category) data with tabs on top, use [TabNavSelect] via
-/// [TabNavSelectDelegate].
+/// Only flat (single-level) structured data is supported; use
+/// [SideNavSelectDelegate] for two-level (category) data.
 ///
 /// Behavior notes:
-/// - At most one level is rendered; use [TabNavSelect] for two-level data
+/// - At most one level is rendered; use [SideNavSelect] for two-level data
 ///   and [CascadingSelect] for multi-level (cascading) data.
 /// - If the data contains a custom range entry ([SelectRangeEntry.custom]),
 ///   two numeric fields are shown for min/max input.
@@ -22,8 +22,8 @@ import 'widgets/widgets.dart';
 ///   without requiring the action bar.
 /// - In multi-selection mode, the action bar is shown and "Apply" produces
 ///   the final clipped selection tree.
-class GridSelect extends StatefulWidget {
-  final GridSelectDelegate delegate;
+class ChipSelect extends StatefulWidget {
+  final WrapSelectDelegate delegate;
   final List<SelectEntry> entries;
 
   /// The previously applied selection to restore, if any.
@@ -36,7 +36,7 @@ class GridSelect extends StatefulWidget {
   /// Custom predicate for search filtering.
   final SelectSearchPredicate? searchPredicate;
 
-  const GridSelect({
+  const ChipSelect({
     super.key,
     required this.delegate,
     required this.entries,
@@ -46,10 +46,10 @@ class GridSelect extends StatefulWidget {
   });
 
   @override
-  State<GridSelect> createState() => GridSelectState();
+  State<ChipSelect> createState() => ChipSelectState();
 }
 
-class GridSelectState extends State<GridSelect> {
+class ChipSelectState extends State<ChipSelect> {
   SelectController? controller;
 
   bool get _isSearching => widget.searchQuery.isNotEmpty;
@@ -72,7 +72,7 @@ class GridSelectState extends State<GridSelect> {
   }
 
   @override
-  void didUpdateWidget(covariant GridSelect oldWidget) {
+  void didUpdateWidget(covariant ChipSelect oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateSelectController(context);
   }
@@ -89,7 +89,7 @@ class GridSelectState extends State<GridSelect> {
     );
   }
 
-  GridSelectDelegate get delegate => widget.delegate;
+  WrapSelectDelegate get delegate => widget.delegate;
 
   void _handleSelectControllerTick() {
     if (mounted) setState(() {});
@@ -141,15 +141,17 @@ class GridSelectState extends State<GridSelect> {
         Flexible(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-            child: SelectGridView(
-              crossAxisCount: delegate.crossAxisCount,
-              mainAxisSpacing: delegate.mainAxisSpacing,
-              crossAxisSpacing: delegate.crossAxisSpacing,
-              childAspectRatio: delegate.childAspectRatio,
-              tileVariant: delegate.gridTileTheme?.variant,
-              fieldVariant: delegate.fieldTileTheme?.variant,
+            child: SelectChipBar(
               entries: _displayEntries,
               selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
+              isWrapable: true,
+              backgroundColor: delegate.chipBarTheme?.backgroundColor,
+              padding: delegate.chipBarTheme?.padding,
+              variant: delegate.chipBarTheme?.variant,
+              chipColor: delegate.chipBarTheme?.chipColor,
+              selectedChipColor: delegate.chipBarTheme?.selectedChipColor,
+              labelStyle: delegate.chipBarTheme?.labelStyle,
+              selectedLabelStyle: delegate.chipBarTheme?.selectedLabelStyle,
               onChanged: (_, entry) =>
                   _onTerminalItemTap(entry as SelectChildEntry),
             ),
@@ -175,22 +177,12 @@ class GridSelectState extends State<GridSelect> {
   }
 }
 
-/// Loading skeleton for [GridSelect].
-class GridSelectSkeleton extends StatelessWidget {
-  const GridSelectSkeleton({
-    super.key,
-    required this.itemCount,
-    required this.crossAxisCount,
-    this.mainAxisSpacing = 0.0,
-    this.crossAxisSpacing = 0.0,
-    this.childAspectRatio = 1.0,
-  });
+/// Loading skeleton for [ChipSelect].
+class ChipSelectSkeleton extends StatelessWidget {
+  const ChipSelectSkeleton({super.key, this.itemCount = 16, this.padding});
 
   final int itemCount;
-  final int crossAxisCount;
-  final double mainAxisSpacing;
-  final double crossAxisSpacing;
-  final double childAspectRatio;
+  final EdgeInsets? padding;
 
   @override
   Widget build(BuildContext context) {
@@ -200,12 +192,9 @@ class GridSelectSkeleton extends StatelessWidget {
         Flexible(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-            child: SelectGridSkeleton(
+            child: SelectChipBarSkeleton(
               itemCount: itemCount,
-              crossAxisCount: crossAxisCount,
-              mainAxisSpacing: mainAxisSpacing,
-              crossAxisSpacing: crossAxisSpacing,
-              childAspectRatio: childAspectRatio,
+              padding: padding,
             ),
           ),
         ),

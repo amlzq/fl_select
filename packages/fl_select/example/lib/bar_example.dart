@@ -51,7 +51,7 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
               mainAxisSpacing: 10,
               crossAxisSpacing: 10,
             ),
-            FlattenSelectDelegate(
+            WrapSelectDelegate(
               entries: {
                 SelectTextEntry.name(id: 'a', name: 'A'),
                 SelectTextEntry.name(id: 'b', name: 'B'),

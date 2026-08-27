@@ -16,19 +16,65 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
     return Scaffold(
       appBar: AppBar(title: const Text('PopupSelectButton')),
       body: Center(
-        child: PopupSelectButton(
-          label: 'PopupSelectButton',
-          selectDelegate: ListSelectDelegate(
-            entries: {
-              SelectTextEntry.name(id: 'a', name: 'A'),
-              SelectTextEntry.name(id: 'b', name: 'B'),
-              SelectTextEntry.name(id: 'c', name: 'C'),
-              SelectTextEntry.name(id: 'd', name: 'D'),
-            },
-          ),
-          onApplied: (selected) {
-            largePrint('onApplied: $selected');
-          },
+        child: Column(
+          children: [
+            PopupSelectButton(
+              label: 'PopupSelectButton',
+              selectDelegate: ListSelectDelegate(
+                entries: {
+                  SelectTextEntry.name(id: 'a', name: 'A'),
+                  SelectTextEntry.name(id: 'b', name: 'B'),
+                  SelectTextEntry.name(id: 'c', name: 'C'),
+                  SelectTextEntry.name(id: 'd', name: 'D'),
+                },
+              ),
+              onApplied: (selected) {
+                largePrint('onApplied: $selected');
+              },
+            ),
+            PopupSelectButton.filled(
+              label: 'PopupSelectButton',
+              selectDelegate: ListSelectDelegate(
+                entries: {
+                  SelectTextEntry.name(id: 'a', name: 'A'),
+                  SelectTextEntry.name(id: 'b', name: 'B'),
+                  SelectTextEntry.name(id: 'c', name: 'C'),
+                  SelectTextEntry.name(id: 'd', name: 'D'),
+                },
+              ),
+              onApplied: (selected) {
+                largePrint('onApplied: $selected');
+              },
+            ),
+            PopupSelectButton.outlined(
+              label: 'PopupSelectButton',
+              selectDelegate: ListSelectDelegate(
+                entries: {
+                  SelectTextEntry.name(id: 'a', name: 'A'),
+                  SelectTextEntry.name(id: 'b', name: 'B'),
+                  SelectTextEntry.name(id: 'c', name: 'C'),
+                  SelectTextEntry.name(id: 'd', name: 'D'),
+                },
+              ),
+              onApplied: (selected) {
+                largePrint('onApplied: $selected');
+              },
+            ),
+            PopupSelectButton.elevated(
+              label: 'PopupSelectButton',
+              selectDelegate: ListSelectDelegate(
+                entries: {
+                  SelectTextEntry.name(id: 'a', name: 'A'),
+                  SelectTextEntry.name(id: 'b', name: 'B'),
+                  SelectTextEntry.name(id: 'c', name: 'C'),
+                  SelectTextEntry.name(id: 'd', name: 'D'),
+                },
+              ),
+              onApplied: (selected) {
+                largePrint('onApplied: $selected');
+              },
+            ),
+          ],
         ),
       ),
     );

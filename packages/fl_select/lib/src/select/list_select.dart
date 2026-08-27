@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import 'action_bar_visibility.dart';
@@ -6,18 +5,14 @@ import 'constants.dart';
 import 'select_controller.dart';
 import 'select_delegate.dart';
 import 'select_entry.dart';
-import 'select_layout.dart';
 import 'select_search_filter.dart';
 import 'widgets/widgets.dart';
 
 /// Standard list view.
 ///
-/// Renders flat entries in a single list, or two-level entries as one
-/// expandable group per category whose children are laid out by the
-/// category's `layout` (defaulting to a list). A category's `header`/`footer`
-/// entries (if any) are rendered as chip bars above/below that category's
-/// expanded content, mirroring [CascadingSelect]. Levels deeper than the
-/// second are not rendered.
+/// Renders flat entries in a single list. For two-level (category) data
+/// with expandable groups, use [ExpandableSelect] via
+/// [ExpandableSelectDelegate].
 class ListSelect extends StatefulWidget {
   final ListSelectDelegate delegate;
   final List<SelectEntry> entries;
@@ -46,9 +41,6 @@ class ListSelect extends StatefulWidget {
 }
 
 class ListSelectState extends State<ListSelect> {
-  /// Focused category entry
-  int _tempSelectedCategoryIndex = 0;
-
   SelectController? controller;
 
   bool get _isSearching => widget.searchQuery.isNotEmpty;
@@ -94,11 +86,6 @@ class ListSelectState extends State<ListSelect> {
     if (mounted) setState(() {});
   }
 
-  SelectCategoryEntry? get selectedCategory {
-    final entry = widget.entries.elementAtOrNull(_tempSelectedCategoryIndex);
-    return entry is SelectCategoryEntry ? entry : null;
-  }
-
   void _onTerminalItemTap(SelectChildEntry item) {
     if (item is SelectRangeEntry && item.isCustom) {
       final hasRange = item.min != null || item.max != null;
@@ -111,37 +98,10 @@ class ListSelectState extends State<ListSelect> {
       return;
     }
 
-    final isCategoryTree = widget.entries.firstOrNull is SelectCategoryEntry;
-    if (!isCategoryTree) {
-      controller?.toggleFlatEntry(
-        item,
-        selectionMode: delegate.selectionMode,
-        isCategoryTree: false,
-      );
-      _setStateOrImmediateApply(item);
-      return;
-    }
-
-    final categoryEntry =
-        widget.entries.singleWhereOrNull((e) => e.id == item.parentId);
-    if (categoryEntry is! SelectCategoryEntry) {
-      assert(() {
-        debugPrint(
-          'ListSelect: child entry "${item.id}" has a parentId of '
-          '"${item.parentId}" that does not match any category; the tap was '
-          'ignored. Check that the child\'s parentId points to its owning '
-          'category id (a two-level-or-deeper structure).',
-        );
-        return true;
-      }());
-      return;
-    }
-    final category = categoryEntry;
     controller?.toggleFlatEntry(
       item,
       selectionMode: delegate.selectionMode,
-      isCategoryTree: true,
-      category: category,
+      isCategoryTree: false,
     );
     _setStateOrImmediateApply(item);
   }
@@ -157,37 +117,8 @@ class ListSelectState extends State<ListSelect> {
     }
   }
 
-  SelectEntries _headerSelectedFor(String categoryId) =>
-      controller?.selectedHeaderEntriesFor(categoryId) ?? <SelectEntry>{};
-
-  SelectEntries _footerSelectedFor(String categoryId) =>
-      controller?.selectedFooterEntriesFor(categoryId) ?? <SelectEntry>{};
-
-  void _onHeaderOrFooterItemTap(
-    SelectCategoryEntry category,
-    bool isHeader,
-    int chipIndex,
-    SelectChildEntry entry,
-  ) {
-    // Every category is visible at once here, so the tapped header/footer
-    // entry is resolved against its owning category.
-    final delegateMode = controller?.selectionMode ?? SelectionMode.single;
-    final selectionMode = isHeader
-        ? category.effectiveHeaderSelectionMode(delegateMode)
-        : category.effectiveFooterSelectionMode(delegateMode);
-    controller?.toggleHeaderOrFooterEntry(
-      categoryId: category.id,
-      entry: entry,
-      selectionMode: selectionMode,
-      isHeader: isHeader,
-    );
-
-    _setStateOrImmediateApply(entry);
-  }
-
   void _onResetTap() {
     controller?.resetState(initializeAnyIfEmpty: true);
-    _tempSelectedCategoryIndex = 0;
     setState(() {});
     controller?.reset();
   }
@@ -200,180 +131,18 @@ class ListSelectState extends State<ListSelect> {
   Widget build(BuildContext context) {
     final selectionMode = controller?.selectionMode;
 
-    // final listTileTheme = select?.listTileTheme;
-    // final gridTileTheme = select?.gridTileTheme;
-    final chipBarTheme = delegate.chipBarTheme;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(
-          child: _displayEntries.firstOrNull is SelectCategoryEntry
-              ? SingleChildScrollView(
-                  physics: const ClampingScrollPhysics(),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: List.generate(_displayEntries.length, (index) {
-                      final category =
-                          _displayEntries[index] as SelectCategoryEntry;
-                      final selectedEntries =
-                          controller?.selectedEntriesAtLevel(1) ?? {};
-                      final entries = category.children?.toList() ?? [];
-                      final layout =
-                          category.layout ?? const SelectListLayout();
-                      final content = switch (layout) {
-                        SelectListLayout(:final toText) => SelectListView(
-                            key: ValueKey('category_$index'),
-                            category: category,
-                            showTitle: false,
-                            entries: entries,
-                            selectedEntries: selectedEntries,
-                            onChanged: (_, entry) =>
-                                _onTerminalItemTap(entry as SelectChildEntry),
-                            toText: toText,
-                          ),
-                        SelectGridLayout(
-                          :final crossAxisCount,
-                          :final mainAxisSpacing,
-                          :final crossAxisSpacing,
-                          :final childAspectRatio,
-                          :final toText,
-                        ) =>
-                          SelectGridView(
-                            key: ValueKey('category_$index'),
-                            crossAxisCount: crossAxisCount,
-                            mainAxisSpacing: mainAxisSpacing,
-                            crossAxisSpacing: crossAxisSpacing,
-                            childAspectRatio: childAspectRatio,
-                            tileVariant: delegate.gridTileTheme?.variant,
-                            fieldVariant: delegate.fieldTileTheme?.variant,
-                            category: category,
-                            showTitle: false,
-                            entries: entries,
-                            selectedEntries: selectedEntries,
-                            onChanged: (_, entry) =>
-                                _onTerminalItemTap(entry as SelectChildEntry),
-                            toText: toText,
-                          ),
-                        SelectChipLayout(
-                          :final spacing,
-                          :final runSpacing,
-                        ) =>
-                          SelectChipBar(
-                            key: ValueKey('category_$index'),
-                            category: category,
-                            entries: entries,
-                            selectedEntries: selectedEntries,
-                            showTitle: false,
-                            isWrapable: true,
-                            spacing: spacing,
-                            runSpacing: runSpacing,
-                            backgroundColor: chipBarTheme?.backgroundColor,
-                            padding: chipBarTheme?.padding,
-                            variant: chipBarTheme?.variant,
-                            chipColor: chipBarTheme?.chipColor,
-                            selectedChipColor: chipBarTheme?.selectedChipColor,
-                            labelStyle: chipBarTheme?.labelStyle,
-                            selectedLabelStyle:
-                                chipBarTheme?.selectedLabelStyle,
-                            onChanged: (_, item) =>
-                                _onTerminalItemTap(item as SelectChildEntry),
-                          ),
-                        SelectRangeLayout(:final toText) => SelectRangeView(
-                            key: ValueKey('category_$index'),
-                            category: category,
-                            showTitle: false,
-                            toText: toText,
-                            entries: entries,
-                            selectedEntries: selectedEntries,
-                            fieldVariant: delegate.fieldTileTheme?.variant,
-                            onChanged: (_, entry) =>
-                                _onTerminalItemTap(entry as SelectChildEntry),
-                          ),
-                        SelectCounterLayout() => SelectCounter(
-                            key: ValueKey('category_$index'),
-                            category: category,
-                            showTitle: false,
-                            entries: entries,
-                            selectedEntries: selectedEntries,
-                            onChanged: (_, entry) =>
-                                _onTerminalItemTap(entry as SelectChildEntry),
-                          ),
-                      };
-
-                      final categoryHeader = category.header;
-                      final categoryFooter = category.footer;
-                      final hasHeader = categoryHeader != null &&
-                          categoryHeader.children != null;
-                      final hasFooter = categoryFooter != null &&
-                          categoryFooter.children != null;
-
-                      return SelectExpansionTile(
-                        title: category.name ?? '',
-                        titlePadding: const EdgeInsets.symmetric(vertical: 10),
-                        initiallyExpanded: true,
-                        child: hasHeader || hasFooter
-                            ? Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (hasHeader)
-                                    Padding(
-                                      padding:
-                                          const EdgeInsets.only(bottom: 10),
-                                      child: SelectChipBar(
-                                        category: categoryHeader,
-                                        entries:
-                                            categoryHeader.children!.toList(),
-                                        selectedEntries:
-                                            _headerSelectedFor(category.id),
-                                        variant: SelectChipVariant.filled,
-                                        isWrapable: true,
-                                        onChanged: (index, entry) =>
-                                            _onHeaderOrFooterItemTap.call(
-                                                category,
-                                                true,
-                                                index,
-                                                entry as SelectChildEntry),
-                                      ),
-                                    ),
-                                  content,
-                                  if (hasFooter)
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 10),
-                                      child: SelectChipBar(
-                                        category: categoryFooter,
-                                        entries:
-                                            categoryFooter.children!.toList(),
-                                        selectedEntries:
-                                            _footerSelectedFor(category.id),
-                                        variant: SelectChipVariant.filled,
-                                        isWrapable: true,
-                                        onChanged: (index, entry) =>
-                                            _onHeaderOrFooterItemTap.call(
-                                                category,
-                                                false,
-                                                index,
-                                                entry as SelectChildEntry),
-                                      ),
-                                    ),
-                                ],
-                              )
-                            : content,
-                      );
-                    }),
-                  ),
-                )
-              : SelectListView(
-                  entries: _displayEntries,
-                  selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
-                  onChanged: (_, entry) =>
-                      _onTerminalItemTap(entry as SelectChildEntry),
-                  radioBuilder: delegate.radioBuilder,
-                  checkboxBuilder: delegate.checkboxBuilder,
-                ),
+          child: SelectListView(
+            entries: _displayEntries,
+            selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
+            onChanged: (_, entry) =>
+                _onTerminalItemTap(entry as SelectChildEntry),
+            radioBuilder: delegate.radioBuilder,
+            checkboxBuilder: delegate.checkboxBuilder,
+          ),
         ),
         if (SelectionMode.multiple == selectionMode &&
             !SelectActionBarVisibility.isHidden(context))

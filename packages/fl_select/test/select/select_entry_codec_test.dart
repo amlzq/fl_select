@@ -86,16 +86,15 @@ void main() {
       final more = entries.elementAt(1) as SelectCategoryEntry;
       final layout = more.children!.elementAt(1);
       expect(layout.children!.length, 3);
-      expect(layout.children!
-          .firstWhere((e) => e.id == '2br')
-          .immediate, isTrue);
-      expect(layout.children!.firstWhere((e) => e.id == '3br').enabled,
-          isFalse);
       expect(
-        (layout.children!.firstWhere((e) => e.id == '1br')
-                as SelectChildEntry)
-            .parentId,
-        'layout');
+          layout.children!.firstWhere((e) => e.id == '2br').immediate, isTrue);
+      expect(
+          layout.children!.firstWhere((e) => e.id == '3br').enabled, isFalse);
+      expect(
+          (layout.children!.firstWhere((e) => e.id == '1br')
+                  as SelectChildEntry)
+              .parentId,
+          'layout');
     });
 
     test('any with bounds decodes to a range any entry', () {
@@ -110,9 +109,8 @@ void main() {
         },
       ]);
 
-      final any = (entries.first as SelectCategoryEntry)
-          .children!
-          .single as SelectRangeEntry;
+      final any = (entries.first as SelectCategoryEntry).children!.single
+          as SelectRangeEntry;
       expect(any.isAny, isTrue);
       expect(any.min, 0);
       expect(any.max, 5000);
@@ -174,9 +172,8 @@ void main() {
         },
       ]);
 
-      final range =
-          (entries.first as SelectCategoryEntry).children!.single
-              as SelectRangeEntry;
+      final range = (entries.first as SelectCategoryEntry).children!.single
+          as SelectRangeEntry;
       expect(range.min, isA<double>());
     });
 
@@ -379,8 +376,7 @@ void main() {
       expect(category['layout']['crossAxisCount'], 4);
 
       final children = category['children'] as List;
-      final anyNode =
-          children.firstWhere((c) => c['type'] == 'any') as Map;
+      final anyNode = children.firstWhere((c) => c['type'] == 'any') as Map;
       expect(anyNode['name'], 'any');
       expect(anyNode.containsKey('id'), isFalse);
 
@@ -397,8 +393,7 @@ void main() {
       expect(category.containsKey('immediate'), isFalse);
 
       final children = category['children'] as List;
-      final rangeNode =
-          children.firstWhere((c) => c['type'] == 'range') as Map;
+      final rangeNode = children.firstWhere((c) => c['type'] == 'range') as Map;
       expect(rangeNode.containsKey('immediate'), isFalse);
     });
 
@@ -478,7 +473,13 @@ void main() {
           'name': 'Price',
           'children': [
             {'type': 'any', 'name': 'Any'},
-            {'type': 'range', 'id': '0-100', 'name': '0-100', 'min': 0, 'max': 100},
+            {
+              'type': 'range',
+              'id': '0-100',
+              'name': '0-100',
+              'min': 0,
+              'max': 100
+            },
           ],
         },
         {

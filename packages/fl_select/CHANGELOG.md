@@ -1,3 +1,20 @@
+## Next
+
+- **FEATURE** add `TabNavSelectDelegate` — a two-level select with category tabs on top driving the content below, split out of `GridSelectDelegate`'s two-level mode. Category layouts default to the delegate's `defaultLayout` (a 3-column grid) instead of being derived from grid parameters.
+
+- **FEATURE** add `SideNavSelectDelegate` — the renamed two-level "flatten" select: a category sidebar on the left scrolls the single right column to the matching section, with scroll-linked highlighting.
+
+- **FEATURE** add `WrapSelectDelegate` — a flat select whose parentless entries render directly as a wrapable chip bar, split out of `FlattenSelectDelegate`'s flat mode.
+
+- **FEATURE** add `ExpandableSelectDelegate` — a two-level select with one expandable group per category, split out of `ListSelectDelegate`'s two-level mode.
+
+- **DEPRECATION** the dual-mode delegates are deprecated in favor of the single-purpose ones above; the old behavior keeps working through forwarding and **will be removed in a future minor version**:
+  - `FlattenSelectDelegate` is renamed — use `SideNavSelectDelegate` for two-level data or `WrapSelectDelegate` for flat data.
+  - `GridSelectDelegate` with two-level (category) data — use `TabNavSelectDelegate` instead; the flat grid mode is unaffected.
+  - `ListSelectDelegate` with two-level (category) data — use `ExpandableSelectDelegate` instead; the flat list mode is unaffected.
+
+  Each new delegate asserts on the data shape it does not support, so mis-migrations surface immediately ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+
 ## 0.10.0
 
 - **FEATURE** add `SelectEntryCodec` — declarative JSON import/export for entry trees (`fromJson` / `toJson`), powering the new GenUI bridge package [`fl_select_genui`](https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui).

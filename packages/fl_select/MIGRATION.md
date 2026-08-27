@@ -1,5 +1,64 @@
 # Migration Guide
 
+## MIGRATE TO Next
+
+The dual-mode delegates are split into single-purpose ones and the old
+dual-mode entry points are deprecated: they keep working through forwarding
+and will be removed in a future minor version.
+
+### Which mode am I using?
+
+Check your `entries`: if the top level contains `SelectCategoryEntry` items
+(two-level data), you are on a two-level mode; if it contains plain entries
+such as `SelectTextEntry` (flat data), you are on a flat mode.
+
+### FlattenSelectDelegate (renamed)
+
+```diff
+- FlattenSelectDelegate(
++ SideNavSelectDelegate(
+    entries: categoryEntries, // two-level data
+  )
+
+- FlattenSelectDelegate(
++ WrapSelectDelegate(
+    entries: flatEntries, // flat data
+  )
+```
+
+### GridSelectDelegate with two-level data
+
+```diff
+- GridSelectDelegate(
+-   crossAxisCount: 4,
+-   entries: categoryEntries, // two-level data
+- )
++ TabNavSelectDelegate(
++   defaultLayout: const SelectGridLayout(crossAxisCount: 4),
++   entries: categoryEntries,
++ )
+```
+
+`GridSelectDelegate` with flat data is unaffected.
+
+### ListSelectDelegate with two-level data
+
+```diff
+- ListSelectDelegate(
++ ExpandableSelectDelegate(
+    entries: categoryEntries, // two-level data
+  )
+```
+
+`ListSelectDelegate` with flat data is unaffected.
+
+### Notes
+
+- Each new delegate asserts on the data shape it does not support, so a
+  mis-migration fails fast with a message pointing to the right delegate.
+- Running the deprecated two-level paths prints a one-time warning naming
+  the replacement.
+
 ## MIGRATE TO 0.10.0
 
 ### `FlattenSelectDelegate` grid parameters removed
