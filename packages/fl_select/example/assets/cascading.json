@@ -1,423 +1,309 @@
 [
   {
-    "id": "animals",
-    "name": "Animal Kingdom",
+    "id": "residential",
+    "name": "Residential",
     "data": [
       {
-        "id": "1",
-        "name": "Chordata",
+        "id": "11",
+        "name": "Single-Family",
         "data": [
           {
-            "id": "11",
-            "name": "Mammalia",
+            "id": "111",
+            "name": "Rural",
             "data": [
               {
-                "id": "111",
-                "name": "Carnivora",
-                "data": [
-                  {
-                    "id": "1111",
-                    "name": "Felidae"
-                  },
-                  {
-                    "id": "1112",
-                    "name": "Canidae"
-                  },
-                  {
-                    "id": "1113",
-                    "name": "Ursidae"
-                  }
-                ]
+                "id": "1111",
+                "name": "RR"
               },
               {
-                "id": "112",
-                "name": "Primates",
-                "data": [
-                  {
-                    "id": "1121",
-                    "name": "Hominidae"
-                  },
-                  {
-                    "id": "1122",
-                    "name": "Cercopithecidae"
-                  }
-                ]
-              },
-              {
-                "id": "113",
-                "name": "Rodentia"
-              },
-              {
-                "id": "114",
-                "name": "Chiroptera"
-              },
-              {
-                "id": "115",
-                "name": "Cetartiodactyla"
+                "id": "1112",
+                "name": "SF-1"
               }
             ]
           },
           {
-            "id": "12",
-            "name": "Aves",
+            "id": "112",
+            "name": "Urban",
             "data": [
               {
-                "id": "121",
-                "name": "Passeriformes"
+                "id": "1121",
+                "name": "SF-2"
               },
               {
-                "id": "122",
-                "name": "Psittaciformes"
+                "id": "1122",
+                "name": "SF-3"
               },
               {
-                "id": "123",
-                "name": "Falconiformes"
+                "id": "1123",
+                "name": "SF-4A"
               },
               {
-                "id": "124",
-                "name": "Strigiformes"
+                "id": "1124",
+                "name": "SF-4B"
               },
               {
-                "id": "125",
-                "name": "Sphenisciformes"
+                "id": "1125",
+                "name": "SF-5"
               }
             ]
           },
           {
-            "id": "13",
-            "name": "Reptilia",
+            "id": "113",
+            "name": "Attached",
             "data": [
               {
-                "id": "131",
-                "name": "Squamata"
+                "id": "1131",
+                "name": "SF-6"
               },
               {
-                "id": "132",
-                "name": "Testudines"
-              },
-              {
-                "id": "133",
-                "name": "Crocodilia"
-              }
-            ]
-          },
-          {
-            "id": "14",
-            "name": "Amphibia"
-          },
-          {
-            "id": "15",
-            "name": "Actinopterygii",
-            "data": [
-              {
-                "id": "151",
-                "name": "Perciformes"
-              },
-              {
-                "id": "152",
-                "name": "Cypriniformes"
-              },
-              {
-                "id": "153",
-                "name": "Salmoniformes"
+                "id": "1132",
+                "name": "MH"
               }
             ]
           }
         ]
       },
       {
-        "id": "2",
-        "name": "Arthropoda",
+        "id": "12",
+        "name": "Multi-Family",
         "data": [
           {
-            "id": "21",
-            "name": "Insecta",
+            "id": "121",
+            "name": "Low",
             "data": [
               {
-                "id": "211",
-                "name": "Coleoptera"
+                "id": "1211",
+                "name": "MF-1"
               },
               {
-                "id": "212",
-                "name": "Lepidoptera"
-              },
-              {
-                "id": "213",
-                "name": "Hymenoptera"
-              },
-              {
-                "id": "214",
-                "name": "Diptera"
-              },
-              {
-                "id": "215",
-                "name": "Orthoptera"
-              },
-              {
-                "id": "216",
-                "name": "Odonata"
+                "id": "1212",
+                "name": "MF-2"
               }
             ]
           },
           {
-            "id": "22",
-            "name": "Arachnida"
+            "id": "122",
+            "name": "Medium",
+            "data": [
+              {
+                "id": "1221",
+                "name": "MF-3"
+              },
+              {
+                "id": "1222",
+                "name": "MF-4"
+              }
+            ]
           },
           {
-            "id": "23",
-            "name": "Crustacea",
+            "id": "123",
+            "name": "High",
+            "data": [
+              {
+                "id": "1231",
+                "name": "MF-5"
+              },
+              {
+                "id": "1232",
+                "name": "MF-6"
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "commercial",
+    "name": "Commercial",
+    "data": [
+      {
+        "id": "21",
+        "name": "Downtown",
+        "data": [
+          {
+            "id": "211",
+            "name": "CBD"
+          },
+          {
+            "id": "212",
+            "name": "DMU"
+          },
+          {
+            "id": "213",
+            "name": "CBD-R"
+          }
+        ]
+      },
+      {
+        "id": "22",
+        "name": "Retail & Office",
+        "data": [
+          {
+            "id": "221",
+            "name": "Neighborhood",
+            "data": [
+              {
+                "id": "2211",
+                "name": "LR"
+              },
+              {
+                "id": "2212",
+                "name": "GO"
+              }
+            ]
+          },
+          {
+            "id": "222",
+            "name": "Community",
+            "data": [
+              {
+                "id": "2221",
+                "name": "GR"
+              },
+              {
+                "id": "2222",
+                "name": "CS"
+              },
+              {
+                "id": "2223",
+                "name": "CS-1"
+              },
+              {
+                "id": "2224",
+                "name": "CH"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "23",
+        "name": "CR"
+      }
+    ]
+  },
+  {
+    "id": "industrial",
+    "name": "Industrial",
+    "data": [
+      {
+        "id": "31",
+        "name": "Light",
+        "data": [
+          {
+            "id": "311",
+            "name": "R&D / Warehouse",
+            "data": [
+              {
+                "id": "3111",
+                "name": "R&D"
+              },
+              {
+                "id": "3112",
+                "name": "W/LO"
+              },
+              {
+                "id": "3113",
+                "name": "IP"
+              }
+            ]
+          },
+          {
+            "id": "312",
+            "name": "LI"
+          }
+        ]
+      },
+      {
+        "id": "32",
+        "name": "Heavy",
+        "enabled": false,
+        "data": [
+          {
+            "id": "321",
+            "name": "MI"
+          },
+          {
+            "id": "322",
+            "name": "IP-H"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "id": "special",
+    "name": "Special",
+    "data": [
+      {
+        "id": "41",
+        "name": "Public",
+        "data": [
+          {
+            "id": "411",
+            "name": "P"
+          },
+          {
+            "id": "412",
+            "name": "AV"
+          }
+        ]
+      },
+      {
+        "id": "42",
+        "name": "Land & Water",
+        "data": [
+          {
+            "id": "421",
+            "name": "AG"
+          },
+          {
+            "id": "422",
+            "name": "LA"
+          },
+          {
+            "id": "423",
+            "name": "DR",
             "enabled": false
-          },
-          {
-            "id": "24",
-            "name": "Myriapoda"
           }
         ]
-      },
-      {
-        "id": "3",
-        "name": "Mollusca"
-      },
-      {
-        "id": "4",
-        "name": "Echinodermata"
       }
     ]
   },
   {
-    "id": "plants",
-    "name": "Plant Kingdom",
+    "id": "overlay",
+    "name": "Overlay",
     "data": [
       {
-        "id": "1",
-        "name": "Angiosperms",
+        "id": "51",
+        "name": "Transit",
         "data": [
           {
-            "id": "11",
-            "name": "Eudicots",
-            "data": [
-              {
-                "id": "111",
-                "name": "Rosales",
-                "data": [
-                  {
-                    "id": "1111",
-                    "name": "Rosaceae"
-                  },
-                  {
-                    "id": "1112",
-                    "name": "Ulmaceae"
-                  }
-                ]
-              },
-              {
-                "id": "112",
-                "name": "Fabales"
-              },
-              {
-                "id": "113",
-                "name": "Fagales"
-              },
-              {
-                "id": "114",
-                "name": "Solanales"
-              },
-              {
-                "id": "115",
-                "name": "Asterales"
-              },
-              {
-                "id": "116",
-                "name": "Apiales"
-              }
-            ]
+            "id": "511",
+            "name": "TOD"
           },
           {
-            "id": "12",
-            "name": "Monocots",
-            "data": [
-              {
-                "id": "121",
-                "name": "Poales"
-              },
-              {
-                "id": "122",
-                "name": "Asparagales"
-              },
-              {
-                "id": "123",
-                "name": "Liliales"
-              },
-              {
-                "id": "124",
-                "name": "Arecales"
-              },
-              {
-                "id": "125",
-                "name": "Zingiberales"
-              }
-            ]
+            "id": "512",
+            "name": "MU"
           }
         ]
       },
       {
-        "id": "2",
-        "name": "Gymnosperms",
+        "id": "52",
+        "name": "Planned",
         "data": [
           {
-            "id": "21",
-            "name": "Pinopsida"
+            "id": "521",
+            "name": "PUD"
           },
           {
-            "id": "22",
-            "name": "Cycadopsida"
+            "id": "522",
+            "name": "TN"
           },
           {
-            "id": "23",
-            "name": "Ginkgoopsida"
-          },
-          {
-            "id": "24",
-            "name": "Gnetopsida"
-          }
-        ]
-      },
-      {
-        "id": "3",
-        "name": "Pteridophytes"
-      },
-      {
-        "id": "4",
-        "name": "Bryophytes"
-      }
-    ]
-  },
-  {
-    "id": "fungi",
-    "name": "Fungi Kingdom",
-    "data": [
-      {
-        "id": "1",
-        "name": "Basidiomycota",
-        "data": [
-          {
-            "id": "11",
-            "name": "Agaricomycetes",
-            "data": [
-              {
-                "id": "111",
-                "name": "Agaricales"
-              },
-              {
-                "id": "112",
-                "name": "Boletales"
-              },
-              {
-                "id": "113",
-                "name": "Russulales"
-              }
-            ]
-          },
-          {
-            "id": "12",
-            "name": "Ustilaginomycetes"
-          },
-          {
-            "id": "13",
-            "name": "Tremellomycetes"
-          }
-        ]
-      },
-      {
-        "id": "2",
-        "name": "Ascomycota",
-        "data": [
-          {
-            "id": "21",
-            "name": "Saccharomycetes"
-          },
-          {
-            "id": "22",
-            "name": "Eurotiomycetes"
-          },
-          {
-            "id": "23",
-            "name": "Sordariomycetes"
-          }
-        ]
-      },
-      {
-        "id": "3",
-        "name": "Zygomycota",
-        "enabled": false
-      },
-      {
-        "id": "4",
-        "name": "Chytridiomycota"
-      }
-    ]
-  },
-  {
-    "id": "microbes",
-    "name": "Microorganisms",
-    "data": [
-      {
-        "id": "1",
-        "name": "Bacteria",
-        "data": [
-          {
-            "id": "11",
-            "name": "Proteobacteria",
-            "data": [
-              {
-                "id": "111",
-                "name": "Gammaproteobacteria"
-              },
-              {
-                "id": "112",
-                "name": "Alphaproteobacteria"
-              }
-            ]
-          },
-          {
-            "id": "12",
-            "name": "Firmicutes"
-          },
-          {
-            "id": "13",
-            "name": "Actinobacteria"
-          },
-          {
-            "id": "14",
-            "name": "Cyanobacteria"
-          }
-        ]
-      },
-      {
-        "id": "2",
-        "name": "Archaea",
-        "data": [
-          {
-            "id": "21",
-            "name": "Euryarchaeota"
-          },
-          {
-            "id": "22",
-            "name": "Crenarchaeota"
-          }
-        ]
-      },
-      {
-        "id": "3",
-        "name": "Protists",
-        "data": [
-          {
-            "id": "31",
-            "name": "Protozoa"
-          },
-          {
-            "id": "32",
-            "name": "Algae"
+            "id": "523",
+            "name": "UNO"
           }
         ]
       }

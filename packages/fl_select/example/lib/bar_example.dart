@@ -1,3 +1,4 @@
+import 'package:example/entry_data.dart';
 import 'package:example/log.dart';
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
@@ -14,56 +15,51 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('PopupSelectBar')),
-      body: Center(
-        child: PopupSelectBar(
-          tabs: const [
-            PopupTab(label: ''),
-            PopupTab(label: ''),
-            PopupTab(label: ''),
-            PopupTab(child: Icon(Icons.sort))
-          ],
-          selectDelegates: [
-            CascadingSelectDelegate(
-              entries: {
-                SelectTextEntry.name(id: 'a', name: 'A'),
-                SelectTextEntry.name(id: 'b', name: 'B'),
-                SelectTextEntry.name(id: 'c', name: 'C'),
-                SelectTextEntry.name(id: 'd', name: 'D'),
-              },
-            ),
-            ListSelectDelegate(
-              entries: {
-                SelectTextEntry.name(id: 'a', name: 'A'),
-                SelectTextEntry.name(id: 'b', name: 'B'),
-                SelectTextEntry.name(id: 'c', name: 'C'),
-                SelectTextEntry.name(id: 'd', name: 'D'),
-              },
-            ),
-            GridSelectDelegate(
-              entries: {
-                SelectTextEntry.name(id: 'a', name: 'A'),
-                SelectTextEntry.name(id: 'b', name: 'B'),
-                SelectTextEntry.name(id: 'c', name: 'C'),
-                SelectTextEntry.name(id: 'd', name: 'D'),
-              },
-              crossAxisCount: 3,
-              childAspectRatio: 3.2,
-              mainAxisSpacing: 10,
-              crossAxisSpacing: 10,
-            ),
-            WrapSelectDelegate(
-              entries: {
-                SelectTextEntry.name(id: 'a', name: 'A'),
-                SelectTextEntry.name(id: 'b', name: 'B'),
-                SelectTextEntry.name(id: 'c', name: 'C'),
-                SelectTextEntry.name(id: 'd', name: 'D'),
-              },
-            ),
-          ],
-          onApplied: (tabData, selected) {
-            largePrint('onApplied: $tabData, $selected');
-          },
-        ),
+      body: Column(
+        children: [
+          PopupSelectBar(
+            isScrollable: true,
+            tabs: const [
+              PopupTab(label: 'List'),
+              PopupTab(label: 'Grid'),
+              PopupTab(label: 'Wrap'),
+              PopupTab(label: 'Cascading'),
+              PopupTab(label: 'TabNav'),
+              PopupTab(label: 'SideNav'),
+              PopupTab(child: Icon(Icons.expand)),
+            ],
+            selectDelegates: [
+              ListSelectDelegate(
+                entries: listData,
+              ),
+              GridSelectDelegate(
+                entries: gridData,
+                crossAxisCount: 3,
+                childAspectRatio: 3.2,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+              ),
+              WrapSelectDelegate(
+                entries: wrapData,
+              ),
+              CascadingSelectDelegate(
+                entriesLoader: fetchCascadingData,
+              ),
+              TabNavSelectDelegate(
+                entries: multiCategoryData,
+              ),
+              SideNavSelectDelegate(
+                entries: multiCategoryData,
+              ),
+              ExpandableSelectDelegate(
+                entries: multiCategoryData,
+              ),
+            ],
+            onApplied: (tabData, selected) {
+              largePrint('onApplied: $tabData, $selected');
+            },
+          ),
+        ],
       ),
     );
   }

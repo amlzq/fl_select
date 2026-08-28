@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Direct coverage for the four delegates introduced by the split:
-/// [TabNavSelectDelegate], [SideNavSelectDelegate], [WrapSelectDelegate]
+/// [WrapSelectDelegate], [TabNavSelectDelegate], [SideNavSelectDelegate]
 /// and [ExpandableSelectDelegate]. Each new delegate accepts exactly one
 /// data shape and asserts on the other; the deprecated dual-mode paths in
 /// [GridSelectDelegate], [FlattenSelectDelegate] and [ListSelectDelegate]

@@ -1,3 +1,4 @@
+import 'package:example/entry_data.dart';
 import 'package:example/log.dart';
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
@@ -21,54 +22,41 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
             PopupSelectButton(
               label: 'PopupSelectButton',
               selectDelegate: ListSelectDelegate(
-                entries: {
-                  SelectTextEntry.name(id: 'a', name: 'A'),
-                  SelectTextEntry.name(id: 'b', name: 'B'),
-                  SelectTextEntry.name(id: 'c', name: 'C'),
-                  SelectTextEntry.name(id: 'd', name: 'D'),
-                },
+                entries: listData,
               ),
               onApplied: (selected) {
                 largePrint('onApplied: $selected');
               },
             ),
-            PopupSelectButton.filled(
-              label: 'PopupSelectButton',
-              selectDelegate: ListSelectDelegate(
-                entries: {
-                  SelectTextEntry.name(id: 'a', name: 'A'),
-                  SelectTextEntry.name(id: 'b', name: 'B'),
-                  SelectTextEntry.name(id: 'c', name: 'C'),
-                  SelectTextEntry.name(id: 'd', name: 'D'),
-                },
-              ),
-              onApplied: (selected) {
-                largePrint('onApplied: $selected');
-              },
-            ),
-            PopupSelectButton.outlined(
-              label: 'PopupSelectButton',
-              selectDelegate: ListSelectDelegate(
-                entries: {
-                  SelectTextEntry.name(id: 'a', name: 'A'),
-                  SelectTextEntry.name(id: 'b', name: 'B'),
-                  SelectTextEntry.name(id: 'c', name: 'C'),
-                  SelectTextEntry.name(id: 'd', name: 'D'),
-                },
-              ),
-              onApplied: (selected) {
-                largePrint('onApplied: $selected');
-              },
-            ),
+            SizedBox(height: 24),
             PopupSelectButton.elevated(
               label: 'PopupSelectButton',
-              selectDelegate: ListSelectDelegate(
-                entries: {
-                  SelectTextEntry.name(id: 'a', name: 'A'),
-                  SelectTextEntry.name(id: 'b', name: 'B'),
-                  SelectTextEntry.name(id: 'c', name: 'C'),
-                  SelectTextEntry.name(id: 'd', name: 'D'),
-                },
+              selectDelegate: GridSelectDelegate(
+                entries: gridData,
+                crossAxisCount: 3,
+                childAspectRatio: 3,
+                mainAxisSpacing: 10,
+                crossAxisSpacing: 10,
+              ),
+              onApplied: (selected) {
+                largePrint('onApplied: $selected');
+              },
+            ),
+            SizedBox(height: 24),
+            PopupSelectButton.filled(
+              label: 'PopupSelectButton',
+              selectDelegate: WrapSelectDelegate(
+                entries: wrapData,
+              ),
+              onApplied: (selected) {
+                largePrint('onApplied: $selected');
+              },
+            ),
+            SizedBox(height: 24),
+            PopupSelectButton.outlined(
+              label: 'PopupSelectButton',
+              selectDelegate: CascadingSelectDelegate(
+                entriesLoader: fetchCascadingData,
               ),
               onApplied: (selected) {
                 largePrint('onApplied: $selected');
