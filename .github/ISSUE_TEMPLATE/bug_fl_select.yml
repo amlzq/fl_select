@@ -24,8 +24,11 @@ body:
         - Controllers (SelectController / PopupSelectController)
         - ListSelectDelegate
         - GridSelectDelegate
+        - WrapSelectDelegate
         - CascadingSelectDelegate
-        - FlattenSelectDelegate
+        - TabNavSelectDelegate
+        - SideNavSelectDelegate
+        - ExpandableSelectDelegate
         - Panel widgets (SelectPanel / SelectListView / SelectGridView / SelectSideBar)
         - Search (SelectSearchBar / SelectSearchFilter)
         - Entries (SelectCategoryEntry / SelectTextEntry / SelectRangeEntry)
@@ -51,7 +54,7 @@ body:
       label: Steps to reproduce
       description: What did you do? Be exact — small details matter.
       placeholder: |
-        1. Build a PopupSelectBar with a FlattenSelectDelegate...
+        1. Build a PopupSelectBar with a SideNavSelectDelegate...
         2. Tap the 'More' tab...
         3. Observe that...
     validations:

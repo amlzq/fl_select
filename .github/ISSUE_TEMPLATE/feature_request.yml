@@ -36,8 +36,11 @@ body:
         - Controllers (SelectController / PopupSelectController)
         - ListSelectDelegate
         - GridSelectDelegate
+        - WrapSelectDelegate
         - CascadingSelectDelegate
-        - FlattenSelectDelegate
+        - TabNavSelectDelegate
+        - SideNavSelectDelegate
+        - ExpandableSelectDelegate
         - Panel widgets (SelectPanel / SelectListView / SelectGridView / SelectSideBar)
         - Search (SelectSearchBar / SelectSearchFilter)
         - Entries (SelectCategoryEntry / SelectTextEntry / SelectRangeEntry)
@@ -66,7 +69,7 @@ body:
       placeholder: |
         e.g.
 
-        FlattenSelectDelegate(
+        SideNavSelectDelegate(
           ...,
           someNewParameter: ...,
         );
