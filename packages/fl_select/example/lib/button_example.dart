@@ -50,6 +50,8 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
               label: 'PopupSelectButton.filled',
               selectDelegate: WrapSelectDelegate(
                 entries: wrapData,
+                spacing: 12.0,
+                runSpacing: 12.0,
               ),
               onApplied: (selected) {
                 largePrint('onApplied: $selected');

@@ -219,7 +219,7 @@ SelectEntries get multiCategoryData {
         SelectTextEntry.name(id: 'p', name: 'Sheep'),
         SelectTextEntry.name(id: 'q', name: 'Cow'),
       },
-      layout: SelectWrapLayout(),
+      layout: SelectWrapLayout(spacing: 12.0, runSpacing: 12.0),
     ),
     SelectCategoryEntry.children(
       id: 'cate5',

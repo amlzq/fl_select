@@ -79,6 +79,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   delegate: WrapSelectDelegate(
                     entries: wrapData,
                     selectionMode: SelectionMode.multiple,
+                    spacing: 12.0,
+                    runSpacing: 12.0,
                     sideBarTheme: const SelectSideBarTheme(width: 90),
                   ),
                   onChanged: (SelectEntries selected) {
