@@ -690,6 +690,7 @@ class TabNavSelectDelegate extends SelectDelegate {
     this.defaultLayout,
     this.checkboxBuilder,
     this.radioBuilder,
+    this.isScrollable = false,
     super.selectionMode,
     super.entries,
     super.entriesLoader,
@@ -742,6 +743,13 @@ class TabNavSelectDelegate extends SelectDelegate {
 
   /// Optional custom checkbox widget builder.
   final ToggleWidgetBuilder? checkboxBuilder;
+
+  /// Whether the category tab bar can be scrolled horizontally.
+  ///
+  /// If true, the tabs are laid out at their natural width inside a
+  /// horizontal scroll view. If false (the default), the tabs are expanded
+  /// to divide the available width equally.
+  final bool isScrollable;
 
   @override
   Widget buildBody(
@@ -936,6 +944,7 @@ class FlattenSelectDelegate extends SelectDelegate {
 class SideNavSelectDelegate extends SelectDelegate {
   SideNavSelectDelegate({
     this.defaultLayout,
+    this.isScrollable = true,
     super.selectionMode,
     super.entries,
     super.entriesLoader,
@@ -978,6 +987,17 @@ class SideNavSelectDelegate extends SelectDelegate {
         );
 
   final SelectLayout? defaultLayout;
+
+  /// Whether the left category sidebar can be scrolled vertically.
+  ///
+  /// If true (the default), the category tiles are laid out at their natural
+  /// height inside a vertical scroll view. If false, the tiles are expanded
+  /// to divide the sidebar's available height equally (when the sidebar has
+  /// a bounded height).
+  ///
+  /// This only affects the left category sidebar; the right content column
+  /// is always scrollable.
+  final bool isScrollable;
 
   @override
   Widget buildBody(

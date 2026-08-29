@@ -293,7 +293,7 @@ class TabNavSelectState extends State<TabNavSelect> {
       children: [
         if (_displayEntries.length > 1)
           SelectTabBar(
-            isScrollable: false,
+            isScrollable: delegate.isScrollable,
             onChanged: (_, item) =>
                 _onCategoryItemTap(item as SelectCategoryEntry),
             entries: _displayEntries,

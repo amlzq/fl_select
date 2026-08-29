@@ -269,4 +269,20 @@ void main() {
       expect(find.text('A'), findsOneWidget);
     });
   });
+
+  group('nav scrollability defaults', () {
+    test('TabNavSelectDelegate.isScrollable defaults to false', () {
+      final delegate = TabNavSelectDelegate(
+        entriesLoader: () async => <SelectEntry<dynamic>>{},
+      );
+      expect(delegate.isScrollable, isFalse);
+    });
+
+    test('SideNavSelectDelegate.isScrollable defaults to true', () {
+      final delegate = SideNavSelectDelegate(
+        entriesLoader: () async => <SelectEntry<dynamic>>{},
+      );
+      expect(delegate.isScrollable, isTrue);
+    });
+  });
 }

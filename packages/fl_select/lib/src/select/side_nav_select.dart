@@ -488,7 +488,7 @@ class SideNavSelectState extends State<SideNavSelect> {
             children: [
               // Left category list
               SelectSideBar(
-                isScrollable: true,
+                isScrollable: delegate.isScrollable,
                 width: delegate.sideBarTheme?.width,
                 backgroundColor: categoryBackgroundColor,
                 selectedColor: effectiveSelectedColor,
