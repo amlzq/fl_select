@@ -244,9 +244,9 @@ class HouseFiltersRepository {
       }
     }
 
-    SelectChipLayout? chipLayout(String categoryId) {
+    SelectWrapLayout? wrapLayout(String categoryId) {
       if (categoryId == 'expanded_search') {
-        return const SelectChipLayout();
+        return const SelectWrapLayout();
       }
       return null;
     }
@@ -278,7 +278,7 @@ class HouseFiltersRepository {
             selectionMode: category.id == 'expanded_search'
                 ? SelectionMode.single
                 : SelectionMode.multiple,
-            layout: gridLayout(category.id!) ?? chipLayout(category.id!),
+            layout: gridLayout(category.id!) ?? wrapLayout(category.id!),
           ),
         )
         .toSet();

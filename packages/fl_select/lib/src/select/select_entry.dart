@@ -916,7 +916,7 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
   /// - [TabNavSelectDelegate] falls back to its `defaultLayout`, then to a
   ///   3-column [SelectGridLayout].
   /// - [SideNavSelectDelegate] falls back to its `defaultLayout`, then to a
-  ///   [SelectChipLayout].
+  ///   [SelectWrapLayout].
   /// - [ExpandableSelectDelegate] falls back to its `defaultLayout`, then to
   ///   a [SelectListLayout].
   /// - [GridSelectDelegate] and [ListSelectDelegate] with two-level data

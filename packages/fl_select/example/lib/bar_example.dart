@@ -22,7 +22,7 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
             tabs: const [
               PopupTab(label: 'List'),
               PopupTab(label: 'Grid'),
-              PopupTab(label: 'Wrap'),
+              PopupTab(child: Icon(Icons.wrap_text)),
               PopupTab(label: 'Cascading'),
               PopupTab(label: 'TabNav'),
               PopupTab(label: 'SideNav'),
@@ -44,19 +44,25 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
               ),
               CascadingSelectDelegate(
                 entriesLoader: fetchCascadingData,
+                selectionMode: SelectionMode.multiple,
               ),
               TabNavSelectDelegate(
                 entries: multiCategoryData,
+                selectionMode: SelectionMode.multiple,
               ),
               SideNavSelectDelegate(
                 entries: multiCategoryData,
+                selectionMode: SelectionMode.multiple,
               ),
               ExpandableSelectDelegate(
                 entries: multiCategoryData,
+                selectionMode: SelectionMode.multiple,
               ),
             ],
             onApplied: (tabData, selected) {
               largePrint('onApplied: $tabData, $selected');
+              largePrint('toQueryMap: ${selected.toQueryMap()}');
+              largePrint('toQueryParameters: ${selected.toQueryParameters()}');
             },
           ),
         ],

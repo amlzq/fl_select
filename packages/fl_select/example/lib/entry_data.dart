@@ -223,7 +223,7 @@ SelectEntries get multiCategoryData {
         SelectTextEntry.name(id: 'q', name: 'Cow'),
       },
       selectionMode: SelectionMode.single,
-      layout: SelectChipLayout(),
+      layout: SelectWrapLayout(),
     ),
     SelectCategoryEntry.children(
       id: 'cate5',

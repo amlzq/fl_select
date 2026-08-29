@@ -4,7 +4,9 @@
 
 The dual-mode delegates are split into single-purpose ones and the old
 dual-mode entry points are deprecated: they keep working through forwarding
-and will be removed in a future minor version.
+and will be removed in a future minor version. Likewise,
+`SelectChipLayout` is renamed to `SelectWrapLayout`, with the old name kept
+as a deprecated alias.
 
 ### Which mode am I using?
 
@@ -51,6 +53,20 @@ such as `SelectTextEntry` (flat data), you are on a flat mode.
 ```
 
 `ListSelectDelegate` with flat data is unaffected.
+
+### `SelectChipLayout` renamed to `SelectWrapLayout`
+
+`SelectChipLayout` is renamed to `SelectWrapLayout` to align the layout with
+the wrapable chip bar it renders. The old name is kept as a deprecated
+subclass of `SelectWrapLayout` for backward compatibility and will be
+removed in a future minor version. The two are fully interchangeable —
+equal values compare equal, render identically and encode to the same JSON
+`kind: 'chip'` — so migration is a pure rename.
+
+```diff
+- layout: const SelectChipLayout(spacing: 8, runSpacing: 8),
++ layout: const SelectWrapLayout(spacing: 8, runSpacing: 8),
+```
 
 ### Notes
 

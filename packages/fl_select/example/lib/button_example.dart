@@ -26,6 +26,9 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
               ),
               onApplied: (selected) {
                 largePrint('onApplied: $selected');
+                largePrint('toQueryMap: ${selected.toQueryMap()}');
+                largePrint(
+                    'toQueryParameters: ${selected.toQueryParameters()}');
               },
             ),
             SizedBox(height: 24),
@@ -57,6 +60,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
               label: 'PopupSelectButton',
               selectDelegate: CascadingSelectDelegate(
                 entriesLoader: fetchCascadingData,
+                selectionMode: SelectionMode.multiple,
               ),
               onApplied: (selected) {
                 largePrint('onApplied: $selected');

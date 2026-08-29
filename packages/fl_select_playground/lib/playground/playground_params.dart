@@ -5,30 +5,38 @@ import 'package:flutter/material.dart';
 enum EntryPoint { view, popupBar, popupButton, dialog, bottomSheet }
 
 /// Select delegate family.
-enum Delegate { cascading, list, grid, flatten }
+enum Delegate { list, grid, wrap, cascading, tabNav, sideNav, expandable }
 
 /// Visual style of grid / chip tiles.
 enum TileVariant { filled, outlined }
 
-/// Default [PlaygroundParams.crossAxisCount] per [Delegate]. Only the grid and
-/// flatten delegates are column-based, so they get dedicated defaults (4 and 2
-/// respectively); the others fall back to 4.
+/// Default [PlaygroundParams.crossAxisCount] per [Delegate]. Only the
+/// column-based delegates own the value (see [PlaygroundControlSpec.
+/// isColumnBased]): grid defaults to 4 columns, sideNav to 2 (the side bar
+/// takes width), tabNav / expandable to 3 (the library's tab-nav default);
+/// the others fall back to 4.
 const Map<Delegate, int> defaultCrossAxisCountByDelegate = <Delegate, int>{
-  Delegate.cascading: 4,
   Delegate.list: 4,
   Delegate.grid: 4,
-  Delegate.flatten: 2,
+  Delegate.wrap: 4,
+  Delegate.cascading: 4,
+  Delegate.tabNav: 3,
+  Delegate.sideNav: 2,
+  Delegate.expandable: 3,
 };
 
-/// Default [PlaygroundParams.childAspectRatio] per [Delegate]. Only the grid
-/// and flatten delegates are column-based, so they get dedicated defaults
-/// (2.5 and 2.8 respectively); the others fall back to 2.5.
+/// Default [PlaygroundParams.childAspectRatio] per [Delegate]. Only the
+/// column-based delegates own the value; sideNav pairs its 2-column grid
+/// with shorter tiles (3.0), the others fall back to 2.5.
 const Map<Delegate, double> defaultChildAspectRatioByDelegate =
     <Delegate, double>{
-      Delegate.cascading: 2.5,
       Delegate.list: 2.5,
       Delegate.grid: 2.5,
-      Delegate.flatten: 3.0,
+      Delegate.wrap: 2.5,
+      Delegate.cascading: 2.5,
+      Delegate.tabNav: 2.5,
+      Delegate.sideNav: 3.0,
+      Delegate.expandable: 2.5,
     };
 
 /// All tunable parameters of the interactive demo, held in a single immutable
@@ -43,6 +51,18 @@ class PlaygroundParams {
   final TileVariant tileVariant;
   final Color seedColor;
   final bool useMaterial3;
+
+  /// Whether the [showSelect] / [showModalBottomSelect] header shows a sample
+  /// leading widget (close icon).
+  final bool headerLeading;
+
+  /// Whether the [showSelect] / [showModalBottomSelect] header shows a sample
+  /// trailing widget (confirm icon).
+  final bool headerTrailing;
+
+  /// Explicit [SelectHeader.centerTitle] for [showSelect] /
+  /// [showModalBottomSelect].
+  final bool centerTitle;
 
   /// Explicit brightness of the simulated phone preview. When `null`, the
   /// preview follows the app's resolved brightness (the [ThemeMode] set by the
@@ -60,6 +80,9 @@ class PlaygroundParams {
     required this.tileVariant,
     required this.seedColor,
     required this.useMaterial3,
+    this.headerLeading = false,
+    this.headerTrailing = false,
+    this.centerTitle = true,
     this.brightness,
   });
 
@@ -73,6 +96,9 @@ class PlaygroundParams {
     TileVariant? tileVariant,
     Color? seedColor,
     bool? useMaterial3,
+    bool? headerLeading,
+    bool? headerTrailing,
+    bool? centerTitle,
     Brightness? brightness,
     // Nullable fields need an explicit "clear" flag because `?? this.x` cannot
     // tell "not provided" apart from "provided as null".
@@ -88,6 +114,9 @@ class PlaygroundParams {
       tileVariant: tileVariant ?? this.tileVariant,
       seedColor: seedColor ?? this.seedColor,
       useMaterial3: useMaterial3 ?? this.useMaterial3,
+      headerLeading: headerLeading ?? this.headerLeading,
+      headerTrailing: headerTrailing ?? this.headerTrailing,
+      centerTitle: centerTitle ?? this.centerTitle,
       brightness: clearBrightness ? null : (brightness ?? this.brightness),
     );
   }
@@ -133,6 +162,15 @@ enum PlaygroundControl {
 
   /// Material 3 switch.
   useMaterial3,
+
+  /// Header leading widget switch (Dialog / Bottom Sheet only).
+  headerLeading,
+
+  /// Header trailing widget switch (Dialog / Bottom Sheet only).
+  headerTrailing,
+
+  /// Header center-title switch (Dialog / Bottom Sheet only).
+  headerCenterTitle,
 }
 
 /// Declares which [PlaygroundControl]s the controls panel shows, scoped along
@@ -145,8 +183,9 @@ enum PlaygroundControl {
 ///   families at once with their own per-family defaults.
 /// - delegate private (私有): the grid geometry sliders (Columns / Aspect
 ///   Ratio) belong to the column-based delegates only — [Delegate.grid] and
-///   [Delegate.flatten]. [Delegate.cascading] and [Delegate.list] carry no
-///   such parameters, so the sliders hide while they are active.
+///   the two-level delegates ([Delegate.tabNav], [Delegate.sideNav],
+///   [Delegate.expandable]). The others carry no such parameters, so the
+///   sliders hide while they are active.
 abstract final class PlaygroundControlSpec {
   const PlaygroundControlSpec._();
 
@@ -164,6 +203,19 @@ abstract final class PlaygroundControlSpec {
   static const Map<EntryPoint, List<PlaygroundControl>>
   entryPointPrivateControls = <EntryPoint, List<PlaygroundControl>>{
     EntryPoint.view: <PlaygroundControl>[PlaygroundControl.delegate],
+    // The dialog / bottom sheet entry points additionally expose the header
+    // (leading / trailing / centerTitle) parameters of showSelect /
+    // showModalBottomSelect.
+    EntryPoint.dialog: <PlaygroundControl>[
+      PlaygroundControl.headerLeading,
+      PlaygroundControl.headerTrailing,
+      PlaygroundControl.headerCenterTitle,
+    ],
+    EntryPoint.bottomSheet: <PlaygroundControl>[
+      PlaygroundControl.headerLeading,
+      PlaygroundControl.headerTrailing,
+      PlaygroundControl.headerCenterTitle,
+    ],
   };
 
   /// Controls private to the column-based delegates, in panel display order.
@@ -176,7 +228,10 @@ abstract final class PlaygroundControlSpec {
   /// Whether [delegate] renders a column-based grid that owns the
   /// Columns / Aspect Ratio / Spacing parameters.
   static bool isColumnBased(Delegate delegate) =>
-      delegate == Delegate.grid || delegate == Delegate.flatten;
+      delegate == Delegate.grid ||
+      delegate == Delegate.tabNav ||
+      delegate == Delegate.sideNav ||
+      delegate == Delegate.expandable;
 
   /// Whether the Columns / Aspect Ratio sliders take effect: they only drive
   /// the inline view's column-based delegate (the popup / dialog entry points

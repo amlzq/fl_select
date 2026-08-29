@@ -90,8 +90,17 @@ void main() {
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
   });
 
-  testWidgets('all four delegates build without throwing', (tester) async {
-    for (final delegate in ['list', 'grid', 'flatten', 'cascading']) {
+  testWidgets('all delegate tokens build without throwing', (tester) async {
+    for (final delegate in [
+      'list',
+      'grid',
+      'wrap',
+      'cascading',
+      'tabNav',
+      'sideNav',
+      'expandable',
+      'flatten',
+    ]) {
       await pumpFilter(tester, {
         'delegate': delegate,
         'crossAxisCount': 2,

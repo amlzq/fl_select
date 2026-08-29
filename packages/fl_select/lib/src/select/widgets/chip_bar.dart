@@ -29,7 +29,7 @@ const kSelectChipBarHeight = 44.0;
 /// above or below the chip group, mirroring [SelectGridView]. The committed
 /// value is reported through [onChanged] once both fields lose focus.
 ///
-/// This is the canonical render target for [SelectChipLayout].
+/// This is the canonical render target for [SelectWrapLayout].
 class SelectChipBar extends StatefulWidget {
   const SelectChipBar({
     super.key,

@@ -6,7 +6,7 @@ description: >-
 version: 0.0.1
 repository: https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui
 issue_tracker: https://github.com/amlzq/fl_select/issues
-topics: [multiselect, dropdown, cascade, select, genui]
+topics: [genui, select, multiselect, dropdown, cascade]
 
 environment:
   sdk: ^3.10.0

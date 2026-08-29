@@ -11,7 +11,7 @@ void main() {
       expect(a.hashCode, b.hashCode);
       // Different layout subclasses must not be equal.
       expect(a, isNot(equals(const SelectListLayout())));
-      expect(a, isNot(equals(const SelectChipLayout())));
+      expect(a, isNot(equals(const SelectWrapLayout())));
     });
   });
 

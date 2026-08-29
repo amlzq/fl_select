@@ -33,8 +33,22 @@ abstract final class FlSelectCatalogItems {
           'result set by several criteria at once.',
       properties: {
         'delegate': S.string(
-          description: 'Body layout.',
-          enumValues: ['list', 'grid', 'flatten', 'cascading'],
+          description:
+              'Body layout: "list"/"grid" fit any shape, "wrap" is a flat '
+              'chip cloud, "cascading" is a drill-down tree, "tabNav"/'
+              '"sideNav"/"expandable" render category groups, "flatten" is a '
+              'legacy alias. Layouts auto-fallback to match the entries '
+              'shape.',
+          enumValues: [
+            'list',
+            'grid',
+            'wrap',
+            'cascading',
+            'tabNav',
+            'sideNav',
+            'expandable',
+            'flatten',
+          ],
         ),
         'selectionMode': S.string(
           description: 'Per panel; default multiple.',
@@ -51,7 +65,7 @@ abstract final class FlSelectCatalogItems {
     isImplicitlyFlexible: true,
     exampleData: [
       () =>
-          '{"delegate":"flatten","selectionMode":"multiple","entries":['
+          '{"delegate":"sideNav","selectionMode":"multiple","entries":['
           '{"type":"category","id":"price","name":"Price","children":['
           '{"type":"any","name":"Any"},'
           '{"type":"range","id":"0-100","name":"\$0 - \$100","min":0,"max":100},'
@@ -76,9 +90,11 @@ abstract final class FlSelectCatalogItems {
   /// agents using [selectFilter]. Append it to your agent instructions.
   static const String systemPromptFragment = '''
 When the user needs to narrow down results, render a `SelectFilter`:
-- `delegate`: "flatten" (recommended: grouped chips/options in one scrollable
-  panel), "list", "grid" (with `crossAxisCount`), or "cascading" (drill-down
-  menus).
+- `delegate`: "list", "grid" (with `crossAxisCount`), "wrap" (flat chip
+  cloud), "cascading" (drill-down menus), "tabNav" (category tabs on top),
+  "sideNav" (recommended for category groups: left rail, options in one
+  scrollable panel), or "expandable" (accordion groups). Layouts
+  auto-fallback to match the `entries` shape; "flatten" is a legacy alias.
 - `entries`: a tree of nodes, each with a `type`:
   - `category`: group; requires `id`, `name`, non-empty `children`; optional
     `selectionMode` ("single"/"multiple") and `layout`
@@ -145,17 +161,40 @@ class _SelectFilterWidget extends StatelessWidget {
       'single' => SelectionMode.single,
       _ => SelectionMode.multiple,
     };
+    // Category-aware delegates assert on flat data (and flat delegates on
+    // category data), so the requested layout is matched to the actual
+    // entry-tree shape: grouped layouts fall back to their flat equivalent
+    // and vice versa.
+    final isCategoryData =
+        entries.isNotEmpty && entries.first is SelectCategoryEntry;
     return switch (delegateName) {
+      'grid' when isCategoryData => TabNavSelectDelegate(
+        defaultLayout: SelectGridLayout(
+          crossAxisCount: data['crossAxisCount'] as int? ?? 3,
+        ),
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
       'grid' => GridSelectDelegate(
         crossAxisCount: data['crossAxisCount'] as int? ?? 3,
         selectionMode: selectionMode,
         entries: entries,
       ),
-      'flatten' => FlattenSelectDelegate(
+      'cascading' => CascadingSelectDelegate(
         selectionMode: selectionMode,
         entries: entries,
       ),
-      'cascading' => CascadingSelectDelegate(
+      'tabNav' when isCategoryData => TabNavSelectDelegate(
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
+      'sideNav' || 'wrap' || 'chips' || 'flatten' when isCategoryData =>
+        SideNavSelectDelegate(selectionMode: selectionMode, entries: entries),
+      'wrap' || 'chips' || 'flatten' => WrapSelectDelegate(
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
+      _ when isCategoryData => ExpandableSelectDelegate(
         selectionMode: selectionMode,
         entries: entries,
       ),

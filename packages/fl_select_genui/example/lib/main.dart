@@ -8,7 +8,7 @@ import 'package:genui/genui.dart';
 /// (see [FlSelectCatalogItems.systemPromptFragment]).
 const agentPayload = '''
 {
-  "delegate": "flatten",
+  "delegate": "sideNav",
   "selectionMode": "multiple",
   "entries": [
     {

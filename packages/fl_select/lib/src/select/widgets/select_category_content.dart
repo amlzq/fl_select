@@ -92,7 +92,7 @@ class SelectCategoryContentView extends StatelessWidget {
           onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
           toText: toText,
         ),
-      SelectChipLayout(
+      SelectWrapLayout(
         :final spacing,
         :final runSpacing,
       ) =>

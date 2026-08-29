@@ -1,6 +1,6 @@
 import 'package:fl_select/fl_select.dart';
-import 'package:flutter/material.dart';
 import 'package:fl_select_playground/widgets/my_widgets.dart';
+import 'package:flutter/material.dart';
 
 import '../generated/l10n/app_localizations.dart';
 import '../log.dart';

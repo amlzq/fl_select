@@ -73,10 +73,19 @@ class PlaygroundL10n {
   String get dark => _t('Dark', '深色');
 
   // Delegate options.
-  String get layoutCascading => _t('Cascading', '联动');
-  String get layoutGrid => _t('Grid', '网格');
-  String get layoutFlatten => _t('Flatten', '平铺');
   String get layoutList => _t('List', '列表');
+  String get layoutGrid => _t('Grid', '网格');
+  String get layoutWrap => _t('Wrap', '平铺');
+  String get layoutCascading => _t('Cascading', '联动');
+  String get layoutTabNav => _t('Tab Nav', '顶导航');
+  String get layoutSideNav => _t('Side Nav', '侧导航');
+  String get layoutExpandable => _t('Expandable', '分组');
+
+  // Header options (Dialog / Bottom Sheet entry points).
+  String get headerOptions => _t('Header Options', '标题栏选项');
+  String get leadingOption => _t('Leading', '前置组件');
+  String get trailingOption => _t('Trailing', '后置组件');
+  String get centerTitleOption => _t('Center Title', '标题居中');
 
   // Phone screen titles & labels.
   String get phoneViewTitle => 'SelectView';
@@ -89,16 +98,22 @@ class PlaygroundL10n {
   String get openSelect => _t('Open Select', '打开选择器');
 
   // Per-delegate open buttons (Dialog / Bottom Sheet entry points).
-  String get openCascadingSelect => _t('Open Cascading Select', '打开联动选择器');
-  String get openGridSelect => _t('Open Grid Select', '打开网格选择器');
-  String get openFlattenSelect => _t('Open Flatten Select', '打开平铺选择器');
   String get openListSelect => _t('Open List Select', '打开列表选择器');
+  String get openGridSelect => _t('Open Grid Select', '打开网格选择器');
+  String get openWrapSelect => _t('Open Wrap Select', '打开平铺选择器');
+  String get openCascadingSelect => _t('Open Cascading Select', '打开联动选择器');
+  String get openTabNavSelect => _t('Open Tab Nav Select', '打开顶导航选择器');
+  String get openSideNavSelect => _t('Open Side Nav Select', '打开侧导航选择器');
+  String get openExpandableSelect => _t('Open Expandable Select', '打开分组选择器');
 
   // Per-delegate titles for the Dialog / Bottom Sheet selects.
-  String get titleCascadingSelect => _t('Cascading Select', '联动选择器');
-  String get titleGridSelect => _t('Grid Select', '网格选择器');
-  String get titleFlattenSelect => _t('Flatten Select', '平铺选择器');
   String get titleListSelect => _t('List Select', '列表选择器');
+  String get titleGridSelect => _t('Grid Select', '网格选择器');
+  String get titleWrapSelect => _t('Wrap Select', '平铺选择器');
+  String get titleCascadingSelect => _t('Cascading Select', '联动选择器');
+  String get titleTabNavSelect => _t('Tab Nav Select', '顶导航选择器');
+  String get titleSideNavSelect => _t('Side Nav Select', '侧导航选择器');
+  String get titleExpandableSelect => _t('Expandable Select', '分组选择器');
 
   // Callback result panel.
   String get resultPanelTitle => _t('Callback results', '回调结果');

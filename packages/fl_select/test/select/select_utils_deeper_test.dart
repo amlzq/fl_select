@@ -436,7 +436,7 @@ void main() {
         headerSelectionMode: SelectionMode.multiple,
         footerSelectionMode: SelectionMode.multiple,
         selectionMode: SelectionMode.multiple,
-        layout: const SelectChipLayout(),
+        layout: const SelectWrapLayout(),
       );
 
       final cloned = SelectUtils.deepCloneEntries({c});
@@ -445,7 +445,7 @@ void main() {
       expect(clonedC.selectionMode, SelectionMode.multiple);
       expect(clonedC.headerSelectionMode, SelectionMode.multiple);
       expect(clonedC.footerSelectionMode, SelectionMode.multiple);
-      expect(clonedC.layout, const SelectChipLayout());
+      expect(clonedC.layout, const SelectWrapLayout());
       expect(clonedC.header, isNotNull);
       expect(clonedC.footer, isNotNull);
       expect(clonedC.header!.children!.length, 1);

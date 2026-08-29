@@ -16,9 +16,9 @@ agent ──JSON payload──▶ SelectFilter (fl_select UI) ──selection─
    [`FlSelectCatalogItems.systemPromptFragment`], which teaches it the
    `SelectFilter` vocabulary.
 3. When the user needs to narrow down results, the agent emits a
-   `SelectFilter` payload — a `delegate` (list / grid / flatten /
-   cascading) plus an `entries` tree authored in the
-   `SelectEntryCodec` JSON format.
+   `SelectFilter` payload — a `delegate` (list / grid / wrap / cascading /
+   tabNav / sideNav / expandable) plus an `entries` tree authored
+   in the `SelectEntryCodec` JSON format.
 4. The user interacts with a real fl_select panel; selections are written
    back to the GenUI data model at `<id>.value` as a
    `Map<String, List<String>>` (same shape as fl_select's `toQueryMap`),

@@ -625,7 +625,7 @@ void main() {
       final a = _category('c', 'C',
           children: {_text('c', 'a', 'A')}, layout: const SelectListLayout());
       final b = _category('c', 'C',
-          children: {_text('c', 'a', 'A')}, layout: const SelectChipLayout());
+          children: {_text('c', 'a', 'A')}, layout: const SelectWrapLayout());
 
       expect(a, isNot(equals(b)));
     });

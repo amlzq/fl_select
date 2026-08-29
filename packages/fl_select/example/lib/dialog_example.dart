@@ -27,6 +27,8 @@ class _DialogExampleState extends State<DialogExample> {
                   ),
                 );
                 largePrint('result: $result');
+                largePrint('toQueryMap: ${result?.toQueryMap()}');
+                largePrint('toQueryParameters: ${result?.toQueryParameters()}');
               },
               child: const Text('showListSelect'),
             ),
@@ -67,6 +69,7 @@ class _DialogExampleState extends State<DialogExample> {
                   context: context,
                   delegate: CascadingSelectDelegate(
                     entriesLoader: fetchCascadingData,
+                    selectionMode: SelectionMode.multiple,
                   ),
                 );
                 largePrint('result: $result');
@@ -80,6 +83,7 @@ class _DialogExampleState extends State<DialogExample> {
                   context: context,
                   delegate: TabNavSelectDelegate(
                     entries: multiCategoryData,
+                    selectionMode: SelectionMode.multiple,
                   ),
                 );
                 largePrint('result: $result');
@@ -93,6 +97,7 @@ class _DialogExampleState extends State<DialogExample> {
                   context: context,
                   delegate: SideNavSelectDelegate(
                     entries: multiCategoryData,
+                    selectionMode: SelectionMode.multiple,
                   ),
                 );
                 largePrint('result: $result');
@@ -106,6 +111,7 @@ class _DialogExampleState extends State<DialogExample> {
                   context: context,
                   delegate: ExpandableSelectDelegate(
                     entries: multiCategoryData,
+                    selectionMode: SelectionMode.multiple,
                   ),
                 );
                 largePrint('result: $result');

@@ -74,7 +74,7 @@ In every delegate except `CascadingSelectDelegate`, each `SelectCategoryEntry.la
 | --- | --- | --- |
 | `SelectListLayout` | Vertical list of tiles; a custom range entry becomes an input field | `toText` (separator between min/max fields, default `'-'`) |
 | `SelectGridLayout` | Grid of tiles | `crossAxisCount` (required), `mainAxisSpacing`, `crossAxisSpacing`, `childAspectRatio`, `toText` |
-| `SelectChipLayout` | Wrapping row of chips | `spacing`, `runSpacing` |
+| `SelectWrapLayout` (deprecated alias: `SelectChipLayout`) | Wrapping row of chips | `spacing`, `runSpacing` |
 | `SelectCounterLayout` | Spin-box (`-` value `+`) stepping through `SelectTextEntry` children ("Any", "1", "1+", "2", ...) | — |
 | `SelectRangeLayout` | "Price-range" control: range slider over two synced text fields; the category must expose exactly one custom `SelectRangeEntry` | `toText` |
 
@@ -82,7 +82,7 @@ In every delegate except `CascadingSelectDelegate`, each `SelectCategoryEntry.la
 SelectCategoryEntry(
   id: 'brand',
   name: 'Brand',
-  layout: const SelectChipLayout(spacing: 8, runSpacing: 8),
+  layout: const SelectWrapLayout(spacing: 8, runSpacing: 8),
   selectionMode: SelectionMode.multiple,
   children: {
     SelectTextEntry(parentId: 'brand', id: 'a', name: 'Apple'),

@@ -6,7 +6,7 @@ void main() {
     test('is the common supertype of all concrete layouts', () {
       expect(const SelectListLayout(), isA<SelectLayout>());
       expect(const SelectGridLayout(crossAxisCount: 2), isA<SelectLayout>());
-      expect(const SelectChipLayout(), isA<SelectLayout>());
+      expect(const SelectWrapLayout(), isA<SelectLayout>());
       expect(const SelectRangeLayout(), isA<SelectLayout>());
     });
   });
@@ -69,19 +69,55 @@ void main() {
     });
   });
 
-  group('SelectChipLayout', () {
-    test('== and hashCode: all instances are equal', () {
-      const a = SelectChipLayout();
-      const b = SelectChipLayout();
+  group('SelectWrapLayout', () {
+    test('== and hashCode: equal layouts are identical', () {
+      const a = SelectWrapLayout();
+      const b = SelectWrapLayout();
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
     });
 
     test('== and hashCode: different spacing makes layouts unequal', () {
-      const a = SelectChipLayout(spacing: 8, runSpacing: 12);
-      const b = SelectChipLayout(spacing: 12, runSpacing: 12);
+      const a = SelectWrapLayout(spacing: 8, runSpacing: 12);
+      const b = SelectWrapLayout(spacing: 12, runSpacing: 12);
       expect(a, isNot(equals(b)));
       expect(a.hashCode, isNot(equals(b.hashCode)));
+    });
+
+    test('defaults are applied', () {
+      const layout = SelectWrapLayout();
+      expect(layout.spacing, 12.0);
+      expect(layout.runSpacing, 12.0);
+    });
+  });
+
+  group('SelectChipLayout (deprecated alias)', () {
+    test('is a SelectWrapLayout', () {
+      // ignore: deprecated_member_use_from_same_package
+      const layout = SelectChipLayout();
+      expect(layout, isA<SelectWrapLayout>());
+      expect(layout, isA<SelectLayout>());
+    });
+
+    test('is interchangeable with SelectWrapLayout', () {
+      // ignore: deprecated_member_use_from_same_package
+      const legacy = SelectChipLayout(spacing: 8, runSpacing: 8);
+      expect(legacy, equals(const SelectWrapLayout(spacing: 8, runSpacing: 8)));
+      expect(
+        legacy.hashCode,
+        equals(const SelectWrapLayout(spacing: 8, runSpacing: 8).hashCode),
+      );
+      expect(
+        const SelectWrapLayout(spacing: 8, runSpacing: 8),
+        equals(legacy),
+      );
+    });
+
+    test('defaults are applied', () {
+      // ignore: deprecated_member_use_from_same_package
+      const layout = SelectChipLayout();
+      expect(layout.spacing, 12.0);
+      expect(layout.runSpacing, 12.0);
     });
   });
 

@@ -8,7 +8,7 @@ A monorepo for **fl_select** — a customizable Flutter select widget for buildi
 
 | Package | Pub | Description |
 | --- | --- | --- |
-| [`packages/fl_select`](packages/fl_select) | [![pub package](https://img.shields.io/pub/v/fl_select.svg)](https://pub.dev/packages/fl_select) | Core select/filter widgets: `SelectView`, `ListSelectDelegate`, `GridSelectDelegate`, `FlattenSelectDelegate`, `CascadingSelectDelegate`, popup bar/button, dialogs, and bottom sheets. |
+| [`packages/fl_select`](packages/fl_select) | [![pub package](https://img.shields.io/pub/v/fl_select.svg)](https://pub.dev/packages/fl_select) | Core select widgets: `SelectView`, delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`, `CascadingSelectDelegate`, `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`), popup bar/button, dialogs, and bottom sheets. |
 | [`packages/fl_select_genui`](packages/fl_select_genui) | [![pub package](https://img.shields.io/pub/v/fl_select_genui.svg)](https://pub.dev/packages/fl_select_genui) | [GenUI SDK](https://pub.dev/packages/genui) / A2UI integration: ready-made `CatalogItem`s so conversational AI agents can render fl_select widgets and receive selections as structured data. |
 | [`packages/fl_select_playground`](packages/fl_select_playground) | — | Interactive playground for fl_select: live preview of `SelectView`, `PopupSelectBar`, `PopupSelectButton`, etc. with a control panel for behavior/appearance params and Zillow / 乐有家 demo data sources. Not published to pub. |
 

@@ -233,7 +233,7 @@ abstract final class SelectEntryCodec {
           childAspectRatio: (map['childAspectRatio'] as num?)?.toDouble() ?? 1,
           toText: map['toText'] as String? ?? '-',
         ),
-      'chip' => SelectChipLayout(
+      'chip' => SelectWrapLayout(
           spacing: (map['spacing'] as num?)?.toDouble() ?? 12,
           runSpacing: (map['runSpacing'] as num?)?.toDouble() ?? 12,
         ),
@@ -382,7 +382,7 @@ abstract final class SelectEntryCodec {
           'childAspectRatio': childAspectRatio,
           'toText': toText,
         },
-      SelectChipLayout(:final spacing, :final runSpacing) => {
+      SelectWrapLayout(:final spacing, :final runSpacing) => {
           'kind': 'chip',
           'spacing': spacing,
           'runSpacing': runSpacing,

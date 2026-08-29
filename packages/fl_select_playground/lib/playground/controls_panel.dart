@@ -24,8 +24,8 @@ class ControlsPanel extends StatelessWidget {
   });
 
   /// Whether the grid geometry sliders (columns / aspect ratio) take effect:
-  /// only the inline view's column-based delegates (grid / flatten) read
-  /// them; cascading and list carry no grid geometry.
+  /// only the inline view's column-based delegates (grid / tabNav / sideNav /
+  /// expandable) read them; cascading, list and wrap carry no grid geometry.
   bool get _gridGeometryActive =>
       PlaygroundControlSpec.isGeometryActive(params);
 
@@ -88,7 +88,48 @@ class ControlsPanel extends StatelessWidget {
       PlaygroundControl.delegate => _buildDelegate(),
       PlaygroundControl.crossAxisCount => _buildCrossAxisCount(),
       PlaygroundControl.childAspectRatio => _buildChildAspectRatio(),
+      PlaygroundControl.headerLeading => _buildHeaderLeading(),
+      PlaygroundControl.headerTrailing => _buildHeaderTrailing(),
+      PlaygroundControl.headerCenterTitle => _buildHeaderCenterTitle(),
     };
+  }
+
+  Widget _buildHeaderLeading() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        _SectionTitle(l10n.headerOptions),
+        SwitchListTile(
+          title: Text(l10n.leadingOption),
+          value: params.headerLeading,
+          onChanged: (v) => onChanged(params.copyWith(headerLeading: v)),
+          contentPadding: EdgeInsets.zero,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildHeaderTrailing() {
+    return SwitchListTile(
+      title: Text(l10n.trailingOption),
+      value: params.headerTrailing,
+      onChanged: (v) => onChanged(params.copyWith(headerTrailing: v)),
+      contentPadding: EdgeInsets.zero,
+    );
+  }
+
+  Widget _buildHeaderCenterTitle() {
+    return Column(
+      children: <Widget>[
+        SwitchListTile(
+          title: Text(l10n.centerTitleOption),
+          value: params.centerTitle,
+          onChanged: (v) => onChanged(params.copyWith(centerTitle: v)),
+          contentPadding: EdgeInsets.zero,
+        ),
+        const SizedBox(height: 16),
+      ],
+    );
   }
 
   Widget _buildSelectionMode() {
@@ -204,10 +245,13 @@ class ControlsPanel extends StatelessWidget {
         _EnumDropdown<Delegate>(
           value: params.delegate,
           items: {
-            Delegate.cascading: l10n.layoutCascading,
             Delegate.list: l10n.layoutList,
             Delegate.grid: l10n.layoutGrid,
-            Delegate.flatten: l10n.layoutFlatten,
+            Delegate.wrap: l10n.layoutWrap,
+            Delegate.cascading: l10n.layoutCascading,
+            Delegate.tabNav: l10n.layoutTabNav,
+            Delegate.sideNav: l10n.layoutSideNav,
+            Delegate.expandable: l10n.layoutExpandable,
           },
           onChanged: (v) => onChanged(
             params.copyWith(

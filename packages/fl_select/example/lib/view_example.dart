@@ -98,6 +98,7 @@ class SelectViewExamplePage extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: CascadingSelectDelegate(
                     entriesLoader: fetchCascadingData,
+                    selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 120),
                     isScrollable: true,
                     radioBuilder: (context, selected) {

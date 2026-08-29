@@ -150,13 +150,13 @@ void main() {
       expect(find.text('One'), findsOneWidget);
     });
 
-    testWidgets('renders SelectChipBar for SelectChipLayout', (tester) async {
+    testWidgets('renders SelectChipBar for SelectWrapLayout', (tester) async {
       await tester.pumpWidget(
         _flattenHarness({
           _category(
             'c1',
             'C1',
-            const SelectChipLayout(),
+            const SelectWrapLayout(),
             children: {
               SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
               SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-2', name: 'Two'),
@@ -223,7 +223,7 @@ void main() {
           _category(
             'c2',
             'C2',
-            const SelectChipLayout(),
+            const SelectWrapLayout(),
             children: {
               SelectTextEntry<dynamic>(
                   parentId: 'c2', id: 'c2-1', name: 'ChipA'),

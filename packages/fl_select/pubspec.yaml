@@ -3,7 +3,7 @@ description: "A customizable Flutter select widget for building filter bars, cas
 version: 0.10.0
 repository: https://github.com/amlzq/fl_select/tree/main/packages/fl_select
 issue_tracker: https://github.com/amlzq/fl_select/issues
-topics: [multiselect, dropdown, cascade, select, widget]
+topics: [select, multiselect, dropdown, cascade, widget]
 
 environment:
   sdk: ^3.5.4

@@ -204,7 +204,7 @@ void main() {
       );
       expect(
         layoutFor({'kind': 'chip', 'spacing': 8}),
-        isA<SelectChipLayout>(),
+        isA<SelectWrapLayout>(),
       );
       expect(layoutFor({'kind': 'counter'}), isA<SelectCounterLayout>());
       expect(layoutFor({'kind': 'range'}), isA<SelectRangeLayout>());

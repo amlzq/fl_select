@@ -7,7 +7,7 @@ import 'package:flutter/foundation.dart';
 ///
 /// * [SelectListLayout] → [SelectListView] (handles all [SelectEntry] subtypes)
 /// * [SelectGridLayout] → [SelectGridView] (handles all [SelectEntry] subtypes)
-/// * [SelectChipLayout] → [SelectChipBar] (handles all [SelectEntry] subtypes)
+/// * [SelectWrapLayout] → [SelectChipBar] (handles all [SelectEntry] subtypes)
 /// * [SelectCounterLayout] → [SelectCounter] (handles [SelectTextEntry])
 /// * [SelectRangeLayout] → [SelectRangeView] (handles [SelectRangeEntry])
 ///
@@ -89,8 +89,8 @@ class SelectGridLayout extends SelectLayout {
 ///
 /// Rendered by [SelectChipBar], which handles all [SelectEntry] subtypes
 /// using their [SelectEntry.name] as the chip label.
-class SelectChipLayout extends SelectLayout {
-  const SelectChipLayout({
+class SelectWrapLayout extends SelectLayout {
+  const SelectWrapLayout({
     this.spacing = 12,
     this.runSpacing = 12,
   });
@@ -104,12 +104,31 @@ class SelectChipLayout extends SelectLayout {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is SelectChipLayout &&
+      other is SelectWrapLayout &&
           spacing == other.spacing &&
           runSpacing == other.runSpacing;
 
   @override
   int get hashCode => Object.hash(spacing, runSpacing);
+}
+
+/// Deprecated alias of [SelectWrapLayout].
+///
+/// `SelectChipLayout` was renamed to [SelectWrapLayout] to align with the
+/// wrap-style rendering (a wrapable [SelectChipBar]). The old name is kept
+/// as a deprecated subclass of [SelectWrapLayout] for backward
+/// compatibility and **will be removed in a future minor version**. The two
+/// are fully interchangeable — equal values compare equal and render
+/// identically — so migrating is a pure rename.
+@Deprecated(
+  'Use SelectWrapLayout instead. Will be removed in a future minor version.',
+)
+class SelectChipLayout extends SelectWrapLayout {
+  /// Creates a deprecated chip wrap layout; use [SelectWrapLayout] instead.
+  const SelectChipLayout({
+    super.spacing,
+    super.runSpacing,
+  });
 }
 
 /// Counter (spin-box) layout for the children of a [SelectCategoryEntry].

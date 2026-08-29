@@ -32,6 +32,8 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                   ),
                 );
                 largePrint('result: $result');
+                largePrint('toQueryMap: ${result?.toQueryMap()}');
+                largePrint('toQueryParameters: ${result?.toQueryParameters()}');
               },
               child: const Text('showModalBottomListSelect'),
             ),
@@ -72,6 +74,7 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                   context: context,
                   delegate: CascadingSelectDelegate(
                     entriesLoader: fetchCascadingData,
+                    selectionMode: SelectionMode.multiple,
                   ),
                 );
                 largePrint('result: $result');
@@ -85,6 +88,7 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                   context: context,
                   delegate: TabNavSelectDelegate(
                     entries: multiCategoryData,
+                    selectionMode: SelectionMode.multiple,
                   ),
                 );
                 largePrint('result: $result');
@@ -98,6 +102,7 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                   context: context,
                   delegate: SideNavSelectDelegate(
                     entries: multiCategoryData,
+                    selectionMode: SelectionMode.multiple,
                   ),
                 );
                 largePrint('result: $result');
@@ -111,6 +116,7 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                   context: context,
                   delegate: ExpandableSelectDelegate(
                     entries: multiCategoryData,
+                    selectionMode: SelectionMode.multiple,
                   ),
                 );
                 largePrint('result: $result');

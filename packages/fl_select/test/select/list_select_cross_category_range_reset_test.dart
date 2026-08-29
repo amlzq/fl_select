@@ -25,7 +25,7 @@ Widget _harness(List<SelectEntries> changes) {
                 SelectTextEntry.name(id: 'b', name: 'Lion'),
               },
               selectionMode: SelectionMode.multiple,
-              layout: const SelectChipLayout(),
+              layout: const SelectWrapLayout(),
             ),
             SelectCategoryEntry.children(
               id: 'cate5',

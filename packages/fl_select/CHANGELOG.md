@@ -15,6 +15,8 @@
 
   Each new delegate asserts on the data shape it does not support, so mis-migrations surface immediately ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
 
+- **DEPRECATION** rename `SelectChipLayout` to `SelectWrapLayout` to align the layout with the wrapable chip bar it renders; the old name is kept as a deprecated subclass alias for backward compatibility and **will be removed in a future minor version**. The two are fully interchangeable — equal values compare equal, render identically and encode to the same JSON `kind: 'chip'` — so migration is a pure rename ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+
 ## 0.10.0
 
 - **FEATURE** add `SelectEntryCodec` — declarative JSON import/export for entry trees (`fromJson` / `toJson`), powering the new GenUI bridge package [`fl_select_genui`](https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui).

@@ -18,19 +18,17 @@ SelectChipVariant _chipVariant(TileVariant v) => v == TileVariant.outlined
 Widget _radioBuilder(BuildContext context, bool selected) =>
     MyRadio(value: selected);
 
-/// The Flatten delegate no longer exposes panel-driven geometry through its
-/// constructor (`crossAxisCount` / `childAspectRatio` / the spacings are
-/// deprecated); instead every [SelectCategoryEntry] carries a
-/// [SelectGridLayout]. Zillow's flatten sample ([HouseFiltersRepository.
-/// fetchMoreData]) assigns a fixed layout to each category, which would
-/// override the controls panel.
+/// Strips the per-category [SelectCategoryEntry.layout] from two-level
+/// entries.
 ///
-/// Rebuild every category with a uniform [SelectGridLayout] built from the
-/// panel params so Columns / Aspect Ratio / Spacing drive the Flatten
-/// delegate too. Other delegate families are unaffected.
-Future<SelectEntries> _flattenEntriesWithPanelLayout(
+/// The Zillow / Leyoujia two-level samples assign a fixed layout to every
+/// category, which would override the delegate's `defaultLayout`.
+/// [_twoLevelEntriesWithoutLayout] rebuilds every category with a null
+/// layout so the TabNav / SideNav / Expandable delegates fall back to the
+/// `defaultLayout` built from the panel params — Columns / Aspect Ratio /
+/// Spacing keep driving the two-level delegates too.
+Future<SelectEntries> _twoLevelEntriesWithoutLayout(
   Future<SelectEntries> Function() loader,
-  PlaygroundParams params,
 ) async {
   final entries = await loader();
   return entries.map((entry) {
@@ -40,12 +38,6 @@ Future<SelectEntries> _flattenEntriesWithPanelLayout(
         name: entry.name,
         children: entry.children,
         selectionMode: entry.selectionMode,
-        layout: SelectGridLayout(
-          crossAxisCount: params.crossAxisCount,
-          childAspectRatio: params.childAspectRatio,
-          mainAxisSpacing: params.spacing,
-          crossAxisSpacing: params.spacing,
-        ),
       );
     }
     return entry;
@@ -74,67 +66,87 @@ class DelegateLoaders {
 /// builder works for both the English (Zillow) and Simplified Chinese
 /// (Leyoujia) data.
 class PlaygroundDataSource {
-  final DelegateLoaders cascading;
-  final DelegateLoaders grid;
-  final DelegateLoaders flatten;
   final DelegateLoaders list;
+  final DelegateLoaders grid;
+  final DelegateLoaders wrap;
+  final DelegateLoaders cascading;
+  final DelegateLoaders tabNav;
+  final DelegateLoaders sideNav;
+  final DelegateLoaders expandable;
 
   const PlaygroundDataSource({
-    required this.cascading,
-    required this.grid,
-    required this.flatten,
     required this.list,
+    required this.grid,
+    required this.wrap,
+    required this.cascading,
+    required this.tabNav,
+    required this.sideNav,
+    required this.expandable,
   });
 
   /// English demo → Zillow data.
   factory PlaygroundDataSource.zillow(zillow.HouseFiltersRepository repo) {
+    // Wrap reuses the flat grid sample (rooms); the two-level delegates
+    // (tabNav / sideNav / expandable) share the 2L sample (more).
+    final rooms = DelegateLoaders(
+      entriesLoader: repo.fetchRoomsData,
+      selected: repo.roomsSelectedData,
+      reset: repo.roomsResetData,
+    );
+    final more = DelegateLoaders(
+      entriesLoader: repo.fetchMoreData,
+      selected: repo.moreSelectedData,
+      reset: repo.moreResetData,
+    );
     return PlaygroundDataSource(
-      cascading: DelegateLoaders(
-        entriesLoader: repo.fetchNeighborhoodData,
-        selected: repo.neighborhoodSelectedData,
-        reset: repo.neighborhoodResetData,
-      ),
-      grid: DelegateLoaders(
-        entriesLoader: repo.fetchRoomsData,
-        selected: repo.roomsSelectedData,
-        reset: repo.roomsResetData,
-      ),
-      flatten: DelegateLoaders(
-        entriesLoader: repo.fetchMoreData,
-        selected: repo.moreSelectedData,
-        reset: repo.moreResetData,
-      ),
       list: DelegateLoaders(
         entriesLoader: repo.fetchSortData,
         selected: repo.sortSelectedData,
         reset: repo.sortResetData,
       ),
+      grid: rooms,
+      wrap: rooms,
+      cascading: DelegateLoaders(
+        entriesLoader: repo.fetchNeighborhoodData,
+        selected: repo.neighborhoodSelectedData,
+        reset: repo.neighborhoodResetData,
+      ),
+      tabNav: more,
+      sideNav: more,
+      expandable: more,
     );
   }
 
   /// Simplified Chinese demo → Leyoujia data.
   factory PlaygroundDataSource.leyoujia(leyoujia.HouseFiltersRepository repo) {
+    // Wrap reuses the flat grid sample (buy price); the two-level delegates
+    // (tabNav / sideNav / expandable) share the 2L sample (floor plan).
+    final buyPrice = DelegateLoaders(
+      entriesLoader: repo.fetchBuyPriceData,
+      selected: repo.buyPriceSelectedData,
+      reset: repo.buyPriceResetData,
+    );
+    final floorPlan = DelegateLoaders(
+      entriesLoader: repo.fetchFloorPlanBuyData,
+      selected: repo.floorPlanBuySelectedData,
+      reset: repo.floorPlanBuyResetData,
+    );
     return PlaygroundDataSource(
-      cascading: DelegateLoaders(
-        entriesLoader: repo.fetchRegionData,
-        selected: repo.regionSelectedData,
-        reset: repo.regionResetData,
-      ),
-      grid: DelegateLoaders(
-        entriesLoader: repo.fetchBuyPriceData,
-        selected: repo.buyPriceSelectedData,
-        reset: repo.buyPriceResetData,
-      ),
-      flatten: DelegateLoaders(
-        entriesLoader: repo.fetchFloorPlanBuyData,
-        selected: repo.floorPlanBuySelectedData,
-        reset: repo.floorPlanBuyResetData,
-      ),
       list: DelegateLoaders(
         entriesLoader: repo.fetchSortBuyData,
         selected: repo.sortBuySelectedData,
         reset: repo.sortBuyResetData,
       ),
+      grid: buyPrice,
+      wrap: buyPrice,
+      cascading: DelegateLoaders(
+        entriesLoader: repo.fetchRegionData,
+        selected: repo.regionSelectedData,
+        reset: repo.regionResetData,
+      ),
+      tabNav: floorPlan,
+      sideNav: floorPlan,
+      expandable: floorPlan,
     );
   }
 }
@@ -142,12 +154,12 @@ class PlaygroundDataSource {
 /// Reusable delegates keyed by the params that affect the delegate identity.
 ///
 /// Column count / aspect ratio / spacing ARE part of the key: the grid and
-/// flatten delegates read `crossAxisCount`, `childAspectRatio` and the spacings
-/// at build time (the grid from [GridSelectDelegate] itself, the flatten from
-/// the per-category [SelectGridLayout] injected by
-/// [_flattenEntriesWithPanelLayout]), so excluding them would keep reusing a
-/// stale delegate and make the Columns / Aspect / Spacing controls have no
-/// effect.
+/// two-level delegates read `crossAxisCount`, `childAspectRatio` and the
+/// spacings at build time — [GridSelectDelegate] from its constructor, the
+/// TabNav / SideNav / Expandable delegates from their `defaultLayout` (fed
+/// with the panel params after [_twoLevelEntriesWithoutLayout] strips the
+/// per-category layouts) — so excluding them would keep reusing a stale
+/// delegate and make the Columns / Aspect / Spacing controls have no effect.
 ///
 /// The delegate is still cached so that changing *other* params (e.g. seed
 /// color, theme) does not discard the applied selection stored in
@@ -200,17 +212,6 @@ SelectDelegate buildDelegate(
 SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
   final chipBarTheme = SelectChipBarTheme(variant: _chipVariant(p.tileVariant));
   switch (p.delegate) {
-    case Delegate.cascading:
-      return CascadingSelectDelegate(
-        entriesLoader: data.cascading.entriesLoader,
-        selectedEntries: data.cascading.selected,
-        resetEntries: data.cascading.reset,
-        selectionMode: p.selectionMode,
-        radioBuilder: _radioBuilder,
-        checkboxBuilder: _checkboxBuilder,
-        chipBarTheme: chipBarTheme,
-        sideBarTheme: const SelectSideBarTheme(width: 150),
-      );
     case Delegate.list:
       return ListSelectDelegate(
         entriesLoader: data.list.entriesLoader,
@@ -223,8 +224,9 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
         chipBarTheme: chipBarTheme,
       );
     case Delegate.grid:
-      // Grid / Flatten delegates use the default radio & checkbox widgets, so
-      // the custom [MyRadio]/[MyCheckbox] builders are not forwarded here.
+      // Grid / Wrap / TabNav / SideNav / Expandable delegates use the default
+      // radio & checkbox widgets, so the custom [MyRadio]/[MyCheckbox]
+      // builders are not forwarded here.
       return GridSelectDelegate(
         entriesLoader: data.grid.entriesLoader,
         selectedEntries: data.grid.selected,
@@ -239,22 +241,85 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
         ),
         chipBarTheme: chipBarTheme,
       );
-    case Delegate.flatten:
-      // The flatten delegate's geometry (columns / aspect ratio / spacing) is
-      // injected as a per-category SelectGridLayout by
-      // [_flattenEntriesWithPanelLayout] — its constructor-level geometry
-      // params are deprecated.
-      return FlattenSelectDelegate(
-        entriesLoader: () =>
-            _flattenEntriesWithPanelLayout(data.flatten.entriesLoader, p),
-        selectedEntries: data.flatten.selected,
-        resetEntries: data.flatten.reset,
+    case Delegate.wrap:
+      // Wrap chips ignore Columns / Aspect Ratio; Spacing drives the chip
+      // gaps via the chip bar theme.
+      return WrapSelectDelegate(
+        entriesLoader: data.wrap.entriesLoader,
+        selectedEntries: data.wrap.selected,
+        resetEntries: data.wrap.reset,
         selectionMode: p.selectionMode,
+        chipBarTheme: chipBarTheme,
+      );
+    case Delegate.cascading:
+      return CascadingSelectDelegate(
+        entriesLoader: data.cascading.entriesLoader,
+        selectedEntries: data.cascading.selected,
+        resetEntries: data.cascading.reset,
+        selectionMode: p.selectionMode,
+        radioBuilder: _radioBuilder,
+        checkboxBuilder: _checkboxBuilder,
+        chipBarTheme: chipBarTheme,
+        sideBarTheme: const SelectSideBarTheme(width: 150),
+      );
+    case Delegate.tabNav:
+      // The two-level delegates take their geometry (columns / aspect ratio /
+      // spacing) from `defaultLayout`: [_twoLevelEntriesWithoutLayout]
+      // strips the per-category layouts baked into the sample data so the
+      // fallback takes effect.
+      return TabNavSelectDelegate(
+        entriesLoader: () =>
+            _twoLevelEntriesWithoutLayout(data.tabNav.entriesLoader),
+        selectedEntries: data.tabNav.selected,
+        resetEntries: data.tabNav.reset,
+        selectionMode: p.selectionMode,
+        defaultLayout: SelectGridLayout(
+          crossAxisCount: p.crossAxisCount,
+          childAspectRatio: p.childAspectRatio,
+          mainAxisSpacing: p.spacing,
+          crossAxisSpacing: p.spacing,
+        ),
+        gridTileTheme: SelectGridTileTheme(
+          variant: _gridVariant(p.tileVariant),
+        ),
+        chipBarTheme: chipBarTheme,
+      );
+    case Delegate.sideNav:
+      return SideNavSelectDelegate(
+        entriesLoader: () =>
+            _twoLevelEntriesWithoutLayout(data.sideNav.entriesLoader),
+        selectedEntries: data.sideNav.selected,
+        resetEntries: data.sideNav.reset,
+        selectionMode: p.selectionMode,
+        defaultLayout: SelectGridLayout(
+          crossAxisCount: p.crossAxisCount,
+          childAspectRatio: p.childAspectRatio,
+          mainAxisSpacing: p.spacing,
+          crossAxisSpacing: p.spacing,
+        ),
         gridTileTheme: SelectGridTileTheme(
           variant: _gridVariant(p.tileVariant),
         ),
         chipBarTheme: chipBarTheme,
         sideBarTheme: const SelectSideBarTheme(width: 110),
+      );
+    case Delegate.expandable:
+      return ExpandableSelectDelegate(
+        entriesLoader: () =>
+            _twoLevelEntriesWithoutLayout(data.expandable.entriesLoader),
+        selectedEntries: data.expandable.selected,
+        resetEntries: data.expandable.reset,
+        selectionMode: p.selectionMode,
+        defaultLayout: SelectGridLayout(
+          crossAxisCount: p.crossAxisCount,
+          childAspectRatio: p.childAspectRatio,
+          mainAxisSpacing: p.spacing,
+          crossAxisSpacing: p.spacing,
+        ),
+        gridTileTheme: SelectGridTileTheme(
+          variant: _gridVariant(p.tileVariant),
+        ),
+        chipBarTheme: chipBarTheme,
       );
   }
 }
@@ -329,10 +394,25 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
   void _onChanged(Object? value) => setState(() => _lastChanged = value);
   void _onApplied(Object? value) => setState(() => _lastApplied = value);
 
-  /// Builds the 4 per-delegate-family open buttons (Cascading / Grid / Flatten
-  /// / List). Each opens the current entry point's select ([showSelect] or
-  /// [showModalBottomSelect]) with the matching delegate family, so users can
-  /// exercise every delegate from a single Dialog / Bottom Sheet screen.
+  /// Sample [SelectHeader.leading] widget for the Dialog / Bottom Sheet
+  /// selects: closes the popup without a result.
+  Widget _headerCloseButton(BuildContext context) => IconButton(
+    icon: const Icon(Icons.close),
+    onPressed: () => Navigator.of(context).pop(),
+  );
+
+  /// Sample [SelectHeader.trailing] widget for the Dialog / Bottom Sheet
+  /// selects: pops with a "confirmed" marker so the result panel reacts.
+  Widget _headerConfirmButton(BuildContext context) => IconButton(
+    icon: const Icon(Icons.check),
+    onPressed: () => Navigator.of(context).pop('confirmed'),
+  );
+
+  /// Builds the 7 per-delegate-family open buttons (List / Grid / Wrap /
+  /// Cascading / Tab Nav / Side Nav / Expandable). Each opens the current entry
+  /// point's select ([showSelect] or [showModalBottomSelect]) with the
+  /// matching delegate family, so users can exercise every delegate from a
+  /// single Dialog / Bottom Sheet screen.
   ///
   /// [open] is invoked with the resolved delegate and must return the select
   /// result future; it should call [showSelect] for the Dialog entry point or
@@ -343,10 +423,17 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
   ) {
     final l10n = widget.l10n;
     final entries = <(Delegate, String, String)>[
-      (Delegate.cascading, l10n.openCascadingSelect, l10n.titleCascadingSelect),
       (Delegate.list, l10n.openListSelect, l10n.titleListSelect),
       (Delegate.grid, l10n.openGridSelect, l10n.titleGridSelect),
-      (Delegate.flatten, l10n.openFlattenSelect, l10n.titleFlattenSelect),
+      (Delegate.wrap, l10n.openWrapSelect, l10n.titleWrapSelect),
+      (Delegate.cascading, l10n.openCascadingSelect, l10n.titleCascadingSelect),
+      (Delegate.tabNav, l10n.openTabNavSelect, l10n.titleTabNavSelect),
+      (Delegate.sideNav, l10n.openSideNavSelect, l10n.titleSideNavSelect),
+      (
+        Delegate.expandable,
+        l10n.openExpandableSelect,
+        l10n.titleExpandableSelect,
+      ),
     ];
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -356,8 +443,8 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
         children: entries.map((e) {
           final title = Text(e.$3);
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: FilledButton(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: TextButton(
               onPressed: () async {
                 final result = await open(context, _tabDelegate(e.$1), title);
                 _onApplied(result);
@@ -372,7 +459,7 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
 
   /// Builds a select delegate for one tab of the dropdown bar, using the
   /// current playground params but a fixed delegate family so each tab shows a
-  /// distinct select (cascading / grid / flatten / list).
+  /// distinct select (one per [Delegate] family).
   ///
   /// Each tab applies the per-delegate default Columns / Aspect Ratio (see
   /// [defaultCrossAxisCountByDelegate] / [defaultChildAspectRatioByDelegate])
@@ -413,10 +500,11 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
                 child: SelectView(
                   // Key the view by every param that affects its rendered output.
                   // Columns / aspect ratio / spacing MUST be included: changing
-                  // them yields a new delegate object, but the Flatten delegate's
-                  // [FlattenSelect] is a stateful widget and its [ListView] children
-                  // (each [SelectGridView] has [AutomaticKeepAliveClientMixin]) can
-                  // cache the old layout when only the delegate object changes live.
+                  // them yields a new delegate object, but the two-level
+                  // delegates' selects are stateful widgets and their [ListView]
+                  // children (each [SelectGridView] has
+                  // [AutomaticKeepAliveClientMixin]) can cache the old layout
+                  // when only the delegate object changes live.
                   // Re-keying the view forces a clean rebuild so Columns / Aspect
                   // Ratio actually take effect. The in-progress selection is not
                   // lost: [buildDelegate] restores it from [selectionCache].
@@ -452,21 +540,10 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      // cascadingSelect: elevated style, aligned to the left.
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: PopupSelectButton(
-                          selectDelegate: _tabDelegate(Delegate.cascading),
-                          label: l10n.titleCascadingSelect,
-                          onChanged: (selected) => _onChanged(selected),
-                          onApplied: (selected) => _onApplied(selected),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
                       // listSelect: elevated style, offset 100px from the left edge.
                       Padding(
                         padding: const EdgeInsets.only(left: 100),
-                        child: PopupSelectButton.elevated(
+                        child: PopupSelectButton(
                           selectDelegate: _tabDelegate(Delegate.list),
                           label: l10n.titleListSelect,
                           onChanged: (selected) => _onChanged(selected),
@@ -477,7 +554,7 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
                       // gridSelect: filled style, centered.
                       Align(
                         alignment: Alignment.center,
-                        child: PopupSelectButton.filled(
+                        child: PopupSelectButton.elevated(
                           selectDelegate: _tabDelegate(Delegate.grid),
                           label: l10n.titleGridSelect,
                           onChanged: (selected) => _onChanged(selected),
@@ -485,12 +562,56 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
                         ),
                       ),
                       const SizedBox(height: 12),
-                      // flattenSelect: outlined style, aligned to the right.
+                      // wrapSelect: outlined style, aligned to the right.
                       Align(
                         alignment: Alignment.centerRight,
+                        child: PopupSelectButton.filled(
+                          selectDelegate: _tabDelegate(Delegate.wrap),
+                          label: l10n.titleWrapSelect,
+                          onChanged: (selected) => _onChanged(selected),
+                          onApplied: (selected) => _onApplied(selected),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // cascadingSelect: elevated style, aligned to the left.
+                      Align(
+                        alignment: Alignment.centerLeft,
                         child: PopupSelectButton.outlined(
-                          selectDelegate: _tabDelegate(Delegate.flatten),
-                          label: l10n.titleFlattenSelect,
+                          selectDelegate: _tabDelegate(Delegate.cascading),
+                          label: l10n.titleCascadingSelect,
+                          onChanged: (selected) => _onChanged(selected),
+                          onApplied: (selected) => _onApplied(selected),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // tabNavSelect: elevated style, aligned to the left.
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: PopupSelectButton(
+                          selectDelegate: _tabDelegate(Delegate.tabNav),
+                          label: l10n.titleTabNavSelect,
+                          onChanged: (selected) => _onChanged(selected),
+                          onApplied: (selected) => _onApplied(selected),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // sideNavSelect: elevated style, offset 100px from the left edge.
+                      Padding(
+                        padding: const EdgeInsets.only(left: 100),
+                        child: PopupSelectButton.elevated(
+                          selectDelegate: _tabDelegate(Delegate.sideNav),
+                          label: l10n.titleSideNavSelect,
+                          onChanged: (selected) => _onChanged(selected),
+                          onApplied: (selected) => _onApplied(selected),
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      // expandableSelect: filled style, centered.
+                      Align(
+                        alignment: Alignment.center,
+                        child: PopupSelectButton.filled(
+                          selectDelegate: _tabDelegate(Delegate.expandable),
+                          label: l10n.titleExpandableSelect,
                           onChanged: (selected) => _onChanged(selected),
                           onApplied: (selected) => _onApplied(selected),
                         ),
@@ -505,20 +626,27 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
         );
       case EntryPoint.popupBar:
         final tabDelegates = <SelectDelegate>[
-          _tabDelegate(Delegate.cascading),
           _tabDelegate(Delegate.list),
           _tabDelegate(Delegate.grid),
-          _tabDelegate(Delegate.flatten),
+          _tabDelegate(Delegate.wrap),
+          _tabDelegate(Delegate.cascading),
+          _tabDelegate(Delegate.tabNav),
+          _tabDelegate(Delegate.sideNav),
+          _tabDelegate(Delegate.expandable),
         ];
         return Scaffold(
           appBar: AppBar(
             title: Text(l10n.phonePopupBarTitle),
             bottom: PopupSelectBar(
+              isScrollable: true,
               tabs: <PopupTab>[
-                PopupTab(label: l10n.layoutCascading),
                 PopupTab(label: l10n.layoutList),
                 PopupTab(label: l10n.layoutGrid),
-                PopupTab(label: l10n.layoutFlatten),
+                PopupTab(label: l10n.layoutWrap),
+                PopupTab(label: l10n.layoutCascading),
+                PopupTab(label: l10n.layoutTabNav),
+                PopupTab(label: l10n.layoutSideNav),
+                PopupTab(label: l10n.layoutExpandable),
               ],
               selectDelegates: tabDelegates,
               onChanged: (tabData, selected) =>
@@ -548,6 +676,13 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
                         context: c,
                         delegate: delegate,
                         title: title,
+                        leading: widget.params.headerLeading
+                            ? _headerCloseButton(c)
+                            : null,
+                        trailing: widget.params.headerTrailing
+                            ? _headerConfirmButton(c)
+                            : null,
+                        centerTitle: widget.params.centerTitle,
                         useRootNavigator: false,
                       ),
                     ),
@@ -572,6 +707,13 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
                         context: c,
                         delegate: delegate,
                         title: title,
+                        leading: widget.params.headerLeading
+                            ? _headerCloseButton(c)
+                            : null,
+                        trailing: widget.params.headerTrailing
+                            ? _headerConfirmButton(c)
+                            : null,
+                        centerTitle: widget.params.centerTitle,
                       ),
                     ),
                   ),

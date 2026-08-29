@@ -1,8 +1,8 @@
 // ignore_for_file: avoid_print
 
 import 'package:fl_select/fl_select.dart';
-import 'package:flutter/material.dart';
 import 'package:fl_select_playground/widgets/my_widgets.dart';
+import 'package:flutter/material.dart';
 
 import '../log.dart';
 import '../widgets/show_select_result.dart';
