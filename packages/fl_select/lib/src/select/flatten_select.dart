@@ -2,15 +2,15 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
-import 'chip_select.dart';
 import 'select_delegate.dart';
 import 'select_entry.dart';
 import 'select_search_filter.dart';
 import 'side_nav_select.dart';
+import 'wrap_select.dart';
 
 /// Deprecated compatibility host for the former "flatten" select.
 ///
-/// - Flat (parentless) entries are rendered by [ChipSelect].
+/// - Flat (parentless) entries are rendered by [WrapSelect].
 /// - Two-level (category) data is rendered by [SideNavSelect].
 ///
 /// See [FlattenSelectDelegate] for the deprecation notes.
@@ -67,7 +67,7 @@ class _FlattenSelectState extends State<FlattenSelect> {
       );
     }
     _warn('WrapSelectDelegate');
-    return ChipSelect(
+    return WrapSelect(
       delegate: widget.delegate.toWrap(),
       entries: widget.entries,
       selectedEntries: widget.selectedEntries,

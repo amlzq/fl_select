@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'cascading_select.dart';
-import 'chip_select.dart';
 import 'constants.dart';
 import 'expandable_select.dart';
 import 'flatten_select.dart';
@@ -14,6 +13,7 @@ import 'select_search_filter.dart';
 import 'side_nav_select.dart';
 import 'tab_nav_select.dart';
 import 'widgets/widgets.dart';
+import 'wrap_select.dart';
 
 /// Builds the action bar shown at the bottom of the select panel.
 ///
@@ -1083,7 +1083,7 @@ class WrapSelectDelegate extends SelectDelegate {
       'WrapSelectDelegate only supports flat (parentless) data. '
       'Use SideNavSelectDelegate for two-level (category) data.',
     );
-    return ChipSelect(
+    return WrapSelect(
       delegate: this,
       entries: entries,
       selectedEntries: selectedEntries,
@@ -1095,7 +1095,7 @@ class WrapSelectDelegate extends SelectDelegate {
   @override
   Widget buildSkeleton(BuildContext context) {
     return skeletonBuilder?.call(context) ??
-        ChipSelectSkeleton(spacing: spacing, runSpacing: runSpacing);
+        WrapSelectSkeleton(spacing: spacing, runSpacing: runSpacing);
   }
 }
 

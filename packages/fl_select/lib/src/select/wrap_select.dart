@@ -22,7 +22,7 @@ import 'widgets/widgets.dart';
 ///   without requiring the action bar.
 /// - In multi-selection mode, the action bar is shown and "Apply" produces
 ///   the final clipped selection tree.
-class ChipSelect extends StatefulWidget {
+class WrapSelect extends StatefulWidget {
   final WrapSelectDelegate delegate;
   final List<SelectEntry> entries;
 
@@ -36,7 +36,7 @@ class ChipSelect extends StatefulWidget {
   /// Custom predicate for search filtering.
   final SelectSearchPredicate? searchPredicate;
 
-  const ChipSelect({
+  const WrapSelect({
     super.key,
     required this.delegate,
     required this.entries,
@@ -46,10 +46,10 @@ class ChipSelect extends StatefulWidget {
   });
 
   @override
-  State<ChipSelect> createState() => ChipSelectState();
+  State<WrapSelect> createState() => WrapSelectState();
 }
 
-class ChipSelectState extends State<ChipSelect> {
+class WrapSelectState extends State<WrapSelect> {
   SelectController? controller;
 
   bool get _isSearching => widget.searchQuery.isNotEmpty;
@@ -72,7 +72,7 @@ class ChipSelectState extends State<ChipSelect> {
   }
 
   @override
-  void didUpdateWidget(covariant ChipSelect oldWidget) {
+  void didUpdateWidget(covariant WrapSelect oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateSelectController(context);
   }
@@ -179,9 +179,9 @@ class ChipSelectState extends State<ChipSelect> {
   }
 }
 
-/// Loading skeleton for [ChipSelect].
-class ChipSelectSkeleton extends StatelessWidget {
-  const ChipSelectSkeleton({
+/// Loading skeleton for [WrapSelect].
+class WrapSelectSkeleton extends StatelessWidget {
+  const WrapSelectSkeleton({
     super.key,
     this.itemCount = 16,
     this.padding,
