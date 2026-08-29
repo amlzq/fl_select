@@ -12,7 +12,7 @@ import 'skeleton_view.dart';
 /// Default width for the SelectSideBar.
 const kSelectSideBarWidth = 80.0;
 
-class SelectSideBar extends StatelessWidget {
+class SelectSideBar extends StatefulWidget {
   const SelectSideBar({
     super.key,
     required this.entries,
@@ -43,7 +43,9 @@ class SelectSideBar extends StatelessWidget {
   /// The index of the tile that should be considered focused.
   ///
   /// The focused tile is highlighted via its selected appearance; this does
-  /// not by itself change [selectedCategories].
+  /// not by itself change [selectedCategories]. When [isScrollable] is true,
+  /// a change of this index scrolls the newly focused tile to the center of
+  /// the sidebar.
   final int focusedIndex;
 
   /// The width of the sidebar.
@@ -68,8 +70,12 @@ class SelectSideBar extends StatelessWidget {
   /// Whether this sidebar can be scrolled vertically.
   ///
   /// If true, the tiles are laid out at their natural height inside a scroll
-  /// view. If false (the default), the tiles are expanded to divide the
-  /// available height equally when the sidebar has a bounded height.
+  /// view. Tapping a tile — or focusing one through [focusedIndex] — scrolls
+  /// it to the center, matching Flutter's [TabBar] with `isScrollable: true`
+  /// (a tile taller than the viewport aligns to the leading edge, and the
+  /// target offset is clamped at both ends). If false (the default), the
+  /// tiles are expanded to divide the available height equally when the
+  /// sidebar has a bounded height.
   final bool isScrollable;
 
   /// The color of the tile labels and badge when a tile is selected.
@@ -96,33 +102,118 @@ class SelectSideBar extends StatelessWidget {
   final OnChanged onChanged;
 
   @override
+  State<SelectSideBar> createState() => _SelectSideBarState();
+}
+
+class _SelectSideBarState extends State<SelectSideBar> {
+  final ScrollController _scrollController = ScrollController();
+  final Map<int, GlobalKey> _tileKeys = {};
+  int? _previousFocusedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _syncTileKeys();
+    _previousFocusedIndex = widget.focusedIndex;
+  }
+
+  @override
+  void didUpdateWidget(covariant SelectSideBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _syncTileKeys();
+    if (_previousFocusedIndex != widget.focusedIndex) {
+      _previousFocusedIndex = widget.focusedIndex;
+      // Covers programmatic category switches; taps scroll in [_handleTap].
+      _scrollTileToCenter(widget.focusedIndex);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /// Keeps [_tileKeys] in sync with the current number of tiles, reusing
+  /// existing keys so tile rects stay measurable across rebuilds.
+  void _syncTileKeys() {
+    if (!widget.isScrollable) {
+      _tileKeys.clear();
+      return;
+    }
+    for (int i = 0; i < widget.entries.length; i++) {
+      _tileKeys.putIfAbsent(i, () => GlobalKey());
+    }
+    _tileKeys.removeWhere((index, _) => index >= widget.entries.length);
+  }
+
+  void _handleTap(int index, SelectEntry entry) {
+    // Mark as handled so the didUpdateWidget pass triggered by onChanged
+    // doesn't scroll a second time.
+    _previousFocusedIndex = index;
+    widget.onChanged(index, entry);
+    _scrollTileToCenter(index);
+  }
+
+  /// Scrolls the scrollable sidebar so the tile at [index] is centered.
+  ///
+  /// Matches Flutter [TabBar]'s behavior: a tile shorter than the viewport is
+  /// centered, a taller one aligns to the leading edge, and the target offset
+  /// is clamped at the scroll extents.
+  Future<void> _scrollTileToCenter(int index) async {
+    if (!widget.isScrollable) return;
+    if (!_scrollController.hasClients) {
+      // The sidebar may not be laid out yet; retry once after the current
+      // frame.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _scrollTileToCenter(index);
+        }
+      });
+      return;
+    }
+    final RenderObject? object =
+        _tileKeys[index]?.currentContext?.findRenderObject();
+    if (object == null) return;
+    await _scrollController.position.ensureVisible(
+      object,
+      alignment: 0.5,
+      duration: const Duration(milliseconds: 240),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
     final SelectSideBarTheme defaults = _SelectSideBarDefaults(context);
     final theme = SelectSideBarTheme.of(context);
 
-    final effectiveBackgroundColor =
-        backgroundColor ?? theme.backgroundColor ?? defaults.backgroundColor!;
+    final effectiveBackgroundColor = widget.backgroundColor ??
+        theme.backgroundColor ??
+        defaults.backgroundColor!;
 
-    final effectivePadding = padding ?? theme.padding ?? defaults.padding!;
-    final containerPadding = isScrollable ? EdgeInsets.zero : effectivePadding;
+    final effectivePadding =
+        widget.padding ?? theme.padding ?? defaults.padding!;
+    final containerPadding =
+        widget.isScrollable ? EdgeInsets.zero : effectivePadding;
 
-    final effctiveWidth = width ?? theme.width ?? defaults.width!;
+    final effctiveWidth = widget.width ?? theme.width ?? defaults.width!;
 
     final effectiveSelectedColor =
-        selectedColor ?? theme.selectedColor ?? defaults.selectedColor!;
+        widget.selectedColor ?? theme.selectedColor ?? defaults.selectedColor!;
 
     final effectiveLabelStyle =
-        labelStyle ?? theme.labelStyle ?? defaults.labelStyle!;
+        widget.labelStyle ?? theme.labelStyle ?? defaults.labelStyle!;
 
-    final effectiveSelectedTileColor = selectedTileColor ??
+    final effectiveSelectedTileColor = widget.selectedTileColor ??
         theme.selectedTileColor ??
         defaults.selectedTileColor;
 
-    final tiles = List<Widget>.generate(entries.length, (int index) {
-      final entry = entries[index];
-      final selected = selectedCategories.contains(entry);
-      final focused = focusedIndex == index;
-      return SelectListTile(
+    final tiles = List<Widget>.generate(widget.entries.length, (int index) {
+      final entry = widget.entries[index];
+      final selected = widget.selectedCategories.contains(entry);
+      final focused = widget.focusedIndex == index;
+      Widget tile = SelectListTile(
         label: entry.name ?? '',
         selected: focused,
         labelStyle: effectiveLabelStyle,
@@ -130,15 +221,19 @@ class SelectSideBar extends StatelessWidget {
         selectedTileColor: effectiveSelectedTileColor,
         leading: SelectBadge(
             color: entry.hasChildren && selected
-                ? selectedColor
+                ? widget.selectedColor
                 : Colors.transparent),
-        onTap: () => onChanged(index, entry),
+        onTap: () => _handleTap(index, entry),
       );
+      if (widget.isScrollable) {
+        tile = KeyedSubtree(key: _tileKeys[index], child: tile);
+      }
+      return tile;
     });
 
     final column = LayoutBuilder(
       builder: (context, constraints) {
-        if (!isScrollable && constraints.hasBoundedHeight) {
+        if (!widget.isScrollable && constraints.hasBoundedHeight) {
           return Column(
             children: tiles.map((tile) => Expanded(child: tile)).toList(),
           );
@@ -151,13 +246,14 @@ class SelectSideBar extends StatelessWidget {
       width: effctiveWidth,
       padding: containerPadding,
       color: effectiveBackgroundColor,
-      child: isScrollable
+      child: widget.isScrollable
           ? ScrollConfiguration(
               behavior:
                   ScrollConfiguration.of(context).copyWith(overscroll: false),
               child: SingleChildScrollView(
+                controller: _scrollController,
                 physics: const ClampingScrollPhysics(),
-                padding: padding,
+                padding: widget.padding,
                 child: column,
               ),
             )
