@@ -16,7 +16,7 @@ enum SelectTabBarIndicatorSize {
 /// height (`_kTabHeight`).
 const double _kTabBarHeight = 48.0;
 
-class SelectTabBar extends StatelessWidget {
+class SelectTabBar extends StatefulWidget {
   const SelectTabBar({
     super.key,
     required this.entries,
@@ -51,7 +51,9 @@ class SelectTabBar extends StatelessWidget {
   /// The index of the tab that should be considered focused.
   ///
   /// Used to track which tab receives visual emphasis or keyboard focus; it
-  /// does not by itself change the selected state.
+  /// does not by itself change the selected state. When [isScrollable] is
+  /// true, a change of this index scrolls the newly focused tab to the center
+  /// of the bar.
   final int focusedIndex;
 
   /// The padding around the whole tab bar.
@@ -64,8 +66,12 @@ class SelectTabBar extends StatelessWidget {
   /// Whether this tab bar can be scrolled horizontally.
   ///
   /// If true, each tab is sized to fit its own content and the whole bar
-  /// becomes horizontally scrollable. If false (the default), the tabs are
-  /// expanded to divide the available width equally.
+  /// becomes horizontally scrollable. Tapping a tab — or focusing one through
+  /// [focusedIndex] — scrolls it to the center, matching Flutter's [TabBar]
+  /// with `isScrollable: true` (a tab wider than the viewport aligns to the
+  /// leading edge, and the target offset is clamped at both ends). If false
+  /// (the default), the tabs are expanded to divide the available width
+  /// equally.
   final bool isScrollable;
 
   /// The color of the tab bar itself.
@@ -128,6 +134,87 @@ class SelectTabBar extends StatelessWidget {
   /// The callback receives the tapped tab's index and its [SelectEntry].
   final OnChanged onChanged;
 
+  @override
+  State<SelectTabBar> createState() => _SelectTabBarState();
+}
+
+class _SelectTabBarState extends State<SelectTabBar> {
+  final ScrollController _scrollController = ScrollController();
+  final Map<int, GlobalKey> _tabKeys = {};
+  int? _previousFocusedIndex;
+
+  @override
+  void initState() {
+    super.initState();
+    _syncTabKeys();
+    _previousFocusedIndex = widget.focusedIndex;
+  }
+
+  @override
+  void didUpdateWidget(covariant SelectTabBar oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _syncTabKeys();
+    if (_previousFocusedIndex != widget.focusedIndex) {
+      _previousFocusedIndex = widget.focusedIndex;
+      // Covers programmatic category switches; taps scroll in [_handleTap].
+      _scrollToTab(widget.focusedIndex);
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  /// Keeps [_tabKeys] in sync with the current number of tabs, reusing
+  /// existing keys so tab rects stay measurable across rebuilds.
+  void _syncTabKeys() {
+    if (!widget.isScrollable) {
+      _tabKeys.clear();
+      return;
+    }
+    for (int i = 0; i < widget.entries.length; i++) {
+      _tabKeys.putIfAbsent(i, () => GlobalKey());
+    }
+    _tabKeys.removeWhere((index, _) => index >= widget.entries.length);
+  }
+
+  void _handleTap(int index, SelectEntry entry) {
+    // Mark as handled so the didUpdateWidget pass triggered by onChanged
+    // doesn't scroll a second time.
+    _previousFocusedIndex = index;
+    widget.onChanged(index, entry);
+    _scrollToTab(index);
+  }
+
+  /// Scrolls the scrollable bar so the tab at [index] is centered.
+  ///
+  /// Matches Flutter [TabBar]'s behavior: a tab narrower than the viewport is
+  /// centered, a wider one aligns to the leading edge, and the target offset
+  /// is clamped at the scroll extents (RTL-safe).
+  Future<void> _scrollToTab(int index) async {
+    if (!widget.isScrollable) return;
+    if (!_scrollController.hasClients) {
+      // The bar may not be laid out yet; retry once after the current frame.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _scrollToTab(index);
+        }
+      });
+      return;
+    }
+    final RenderObject? object =
+        _tabKeys[index]?.currentContext?.findRenderObject();
+    if (object == null) return;
+    await _scrollController.position.ensureVisible(
+      object,
+      alignment: 0.5,
+      duration: const Duration(milliseconds: 240),
+      curve: Curves.easeOutCubic,
+    );
+  }
+
   double _measureLabelWidth(
       BuildContext context, String label, TextStyle style) {
     final painter = TextPainter(
@@ -144,47 +231,53 @@ class SelectTabBar extends StatelessWidget {
     final SelectTabBarTheme defaults = _SelectTabBarDefaults(context);
     final theme = SelectTabBarTheme.of(context);
 
-    final effectivePadding = padding ?? theme.padding ?? defaults.padding!;
-    final containerPadding = isScrollable ? EdgeInsets.zero : effectivePadding;
+    final effectivePadding =
+        widget.padding ?? theme.padding ?? defaults.padding!;
+    final containerPadding =
+        widget.isScrollable ? EdgeInsets.zero : effectivePadding;
 
-    final effectiveBackgroundColor =
-        backgroundColor ?? theme.backgroundColor ?? defaults.backgroundColor!;
+    final effectiveBackgroundColor = widget.backgroundColor ??
+        theme.backgroundColor ??
+        defaults.backgroundColor!;
 
     final effectiveSelectedColor =
-        selectedColor ?? theme.selectedColor ?? defaults.selectedColor!;
+        widget.selectedColor ?? theme.selectedColor ?? defaults.selectedColor!;
 
     final effectiveLabelStyle =
-        labelStyle ?? theme.labelStyle ?? defaults.labelStyle!;
+        widget.labelStyle ?? theme.labelStyle ?? defaults.labelStyle!;
 
-    final effectiveSelectedLabelStyle = selectedLabelStyle ??
+    final effectiveSelectedLabelStyle = widget.selectedLabelStyle ??
         theme.selectedLabelStyle ??
         defaults.selectedLabelStyle!;
 
-    final effectiveIndicatorColor =
-        indicatorColor ?? theme.indicatorColor ?? defaults.indicatorColor!;
+    final effectiveIndicatorColor = widget.indicatorColor ??
+        theme.indicatorColor ??
+        defaults.indicatorColor!;
 
-    final effectiveIndicatorHeight =
-        indicatorHeight ?? theme.indicatorHeight ?? defaults.indicatorHeight!;
+    final effectiveIndicatorHeight = widget.indicatorHeight ??
+        theme.indicatorHeight ??
+        defaults.indicatorHeight!;
 
-    final effectiveIndicatorPadding = indicatorPadding ??
+    final effectiveIndicatorPadding = widget.indicatorPadding ??
         theme.indicatorPadding ??
         defaults.indicatorPadding!;
 
     final effectiveIndicatorSize =
-        indicatorSize ?? theme.indicatorSize ?? defaults.indicatorSize!;
+        widget.indicatorSize ?? theme.indicatorSize ?? defaults.indicatorSize!;
 
-    final effectiveIndicatorAnimationDuration = indicatorAnimationDuration ??
-        theme.indicatorAnimationDuration ??
-        defaults.indicatorAnimationDuration!;
+    final effectiveIndicatorAnimationDuration =
+        widget.indicatorAnimationDuration ??
+            theme.indicatorAnimationDuration ??
+            defaults.indicatorAnimationDuration!;
 
-    final tabs = List<Widget>.generate(entries.length, (int index) {
-      final entry = entries[index] as SelectCategoryEntry;
-      final selected = selectedCategories.contains(entry);
+    final tabs = List<Widget>.generate(widget.entries.length, (int index) {
+      final entry = widget.entries[index] as SelectCategoryEntry;
+      final selected = widget.selectedCategories.contains(entry);
       final label = entry.name ?? '';
 
       Widget tab = _Tab(
         label: label,
-        isScrollable: isScrollable,
+        isScrollable: widget.isScrollable,
         selected: selected,
         padding: effectivePadding,
         selectedColor: effectiveSelectedColor,
@@ -195,14 +288,15 @@ class SelectTabBar extends StatelessWidget {
         indicatorPadding: effectiveIndicatorPadding,
         indicatorSize: effectiveIndicatorSize,
         indicatorAnimationDuration: effectiveIndicatorAnimationDuration,
-        onTap: () => onChanged(index, entry),
+        onTap: () => _handleTap(index, entry),
       );
 
-      if (isScrollable) {
+      if (widget.isScrollable) {
         const double horizontalPadding = 4.5;
         final double labelWidth =
             _measureLabelWidth(context, label, effectiveLabelStyle);
         tab = SizedBox(width: labelWidth + horizontalPadding * 2, child: tab);
+        tab = KeyedSubtree(key: _tabKeys[index], child: tab);
       } else {
         tab = Expanded(child: tab);
       }
@@ -211,7 +305,7 @@ class SelectTabBar extends StatelessWidget {
     });
 
     final row = Row(
-      mainAxisSize: isScrollable ? MainAxisSize.min : MainAxisSize.max,
+      mainAxisSize: widget.isScrollable ? MainAxisSize.min : MainAxisSize.max,
       // Stretch the tabs to the bar's fixed height so each tab's tap target
       // covers the full height, like [TabBar].
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -224,14 +318,15 @@ class SelectTabBar extends StatelessWidget {
       height: _kTabBarHeight,
       padding: containerPadding,
       color: effectiveBackgroundColor,
-      child: isScrollable
+      child: widget.isScrollable
           ? ScrollConfiguration(
               behavior:
                   ScrollConfiguration.of(context).copyWith(overscroll: false),
               child: SingleChildScrollView(
+                controller: _scrollController,
                 scrollDirection: Axis.horizontal,
                 physics: const ClampingScrollPhysics(),
-                padding: padding,
+                padding: widget.padding,
                 child: row,
               ),
             )
