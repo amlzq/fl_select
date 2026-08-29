@@ -82,6 +82,13 @@ class PopupSelectBar extends StatefulWidget implements PreferredSizeWidget {
   /// is also null, the default is [kPopupSelectBarHeight].
   final double? height;
 
+  /// Whether the tabs scroll horizontally when they overflow the bar width.
+  ///
+  /// When true, each tab is sized to fit its own content and the bar becomes
+  /// horizontally scrollable. Whenever a tab becomes the selected one, the bar
+  /// scrolls it to the center — matching Flutter's [TabBar] with
+  /// `isScrollable: true` (a tab wider than the viewport aligns to the leading
+  /// edge, and the target offset is clamped at both ends).
   final bool isScrollable;
 
   /// The color of the [PopupSelectBar] itself.
@@ -175,6 +182,9 @@ class _PopupSelectBarState extends State<PopupSelectBar>
   PopupSelectController? _controller;
   int? _previousIndex;
 
+  final ScrollController _scrollController = ScrollController();
+  final Map<int, GlobalKey> _tabKeys = {};
+
   VoidCallback? _removeChangeListener;
   VoidCallback? _removeApplyListener;
   VoidCallback? _removeResetListener;
@@ -186,6 +196,7 @@ class _PopupSelectBarState extends State<PopupSelectBar>
   @override
   void initState() {
     super.initState();
+    _syncTabKeys();
     // _controller.onChanged = widget.onChanged;
     // _controller.onApplied = widget.onApplied;
     // _controller.onReset = widget.onReset;
@@ -202,10 +213,12 @@ class _PopupSelectBarState extends State<PopupSelectBar>
       _removeResetListener?.call();
       controller.hideSelect(immediate: true);
       controller.detachTickerProvider();
+      controller.attachScrollToTabHandler(null);
       if (widget.controller == null) {
         controller.dispose();
       }
     }
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -218,7 +231,17 @@ class _PopupSelectBarState extends State<PopupSelectBar>
   @override
   void didUpdateWidget(covariant PopupSelectBar oldWidget) {
     super.didUpdateWidget(oldWidget);
+    _syncTabKeys();
     _updatePopupSelectController(context);
+  }
+
+  /// Keeps [_tabKeys] in sync with the current number of tabs, reusing
+  /// existing keys so tab rects stay measurable across rebuilds.
+  void _syncTabKeys() {
+    for (int i = 0; i < widget.tabs.length; i++) {
+      _tabKeys.putIfAbsent(i, () => GlobalKey());
+    }
+    _tabKeys.removeWhere((index, _) => index >= widget.tabs.length);
   }
 
   void _updatePopupSelectController(BuildContext context) {
@@ -232,13 +255,50 @@ class _PopupSelectBarState extends State<PopupSelectBar>
     }
     _controller!.attachSelectDelegates(widget.selectDelegates);
     _controller!.attachTickerProvider(this);
+    _controller!.attachScrollToTabHandler(
+        widget.isScrollable ? (int index) => _scrollToTab(index) : null);
   }
 
   void _handlePopupSelectControllerTick() {
-    if (_previousIndex != _controller?.currentIndex) {
-      _previousIndex = _controller?.currentIndex;
+    final int? index = _controller?.currentIndex;
+    if (_previousIndex != index) {
+      _previousIndex = index;
+      // Mirror Flutter TabBar's "center the selected tab" behavior whenever
+      // the selected tab changes. Collapsing the panel leaves currentIndex
+      // untouched, so hiding never triggers an extra scroll.
+      if (index != null) {
+        _scrollToTab(index);
+      }
     }
     setState(() {});
+  }
+
+  /// Scrolls the scrollable bar so the tab at [index] is centered.
+  ///
+  /// Matches Flutter [TabBar]'s behavior: a tab narrower than the viewport is
+  /// centered, a wider one aligns to the leading edge, and the target offset
+  /// is clamped at the scroll extents (RTL-safe).
+  Future<void> _scrollToTab(int index) async {
+    if (!widget.isScrollable) return;
+    if (!_scrollController.hasClients) {
+      // The bar may not be laid out yet (e.g. a programmatic show during the
+      // first build); retry once after the current frame.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) {
+          _scrollToTab(index);
+        }
+      });
+      return;
+    }
+    final RenderObject? object =
+        _tabKeys[index]?.currentContext?.findRenderObject();
+    if (object == null) return;
+    await _scrollController.position.ensureVisible(
+      object,
+      alignment: 0.5,
+      duration: const Duration(milliseconds: 240),
+      curve: Curves.easeOutCubic,
+    );
   }
 
   void _handleWidgetChange(
@@ -351,21 +411,24 @@ class _PopupSelectBarState extends State<PopupSelectBar>
             builder: (context) {
               final tabs = <Widget>[
                 for (int i = 0; i < widget.tabs.length; i++)
-                  _PopupSelectTabInfo(
-                    index: i,
-                    onTap: (tabData) => _handleTap(tabData),
-                    indicator: widget.indicator,
-                    unselectedIndicator: widget.unselectedIndicator,
-                    child: _PopupSelectTabStyle(
-                      isSelected: (_controller?.isSelectShowing == true &&
-                              _controller!.currentIndex == i) ||
-                          _controller?.labelStateMap[i]?.isResulted == true,
-                      labelColor: widget.labelColor,
-                      unselectedLabelColor: widget.unselectedLabelColor,
-                      labelStyle: widget.labelStyle,
-                      unselectedLabelStyle: widget.unselectedLabelStyle,
-                      defaults: defaults,
-                      child: widget.tabs[i],
+                  KeyedSubtree(
+                    key: _tabKeys[i],
+                    child: _PopupSelectTabInfo(
+                      index: i,
+                      onTap: (tabData) => _handleTap(tabData),
+                      indicator: widget.indicator,
+                      unselectedIndicator: widget.unselectedIndicator,
+                      child: _PopupSelectTabStyle(
+                        isSelected: (_controller?.isSelectShowing == true &&
+                                _controller!.currentIndex == i) ||
+                            _controller?.labelStateMap[i]?.isResulted == true,
+                        labelColor: widget.labelColor,
+                        unselectedLabelColor: widget.unselectedLabelColor,
+                        labelStyle: widget.labelStyle,
+                        unselectedLabelStyle: widget.unselectedLabelStyle,
+                        defaults: defaults,
+                        child: widget.tabs[i],
+                      ),
                     ),
                   ),
               ];
@@ -386,6 +449,7 @@ class _PopupSelectBarState extends State<PopupSelectBar>
                 behavior:
                     ScrollConfiguration.of(context).copyWith(overscroll: false),
                 child: SingleChildScrollView(
+                  controller: _scrollController,
                   scrollDirection: Axis.horizontal,
                   physics: const ClampingScrollPhysics(),
                   child: row,

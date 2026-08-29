@@ -128,6 +128,18 @@ class PopupSelectController extends ChangeNotifier {
   final portalCtrl = OverlayPortalController();
   final layerLink = LayerLink();
 
+  /// Scrolls the host bar so the tab at a given index is centered.
+  ///
+  /// Attached by [PopupSelectBar] when its `isScrollable` is true; used by
+  /// [apply] when its `centerTab` argument is true. Passing `null` detaches.
+  Future<void> Function(int tabIndex)? _scrollToTabHandler;
+
+  /// Attaches or detaches the callback used to center a tab in the host bar.
+  void attachScrollToTabHandler(Future<void> Function(int tabIndex)? handler) {
+    if (_isDisposed) return;
+    _scrollToTabHandler = handler;
+  }
+
   TickerProvider? _tickerProvider;
   AnimationController? _overlayAnimCtrl;
   Animation<double>? _overlayAnimation;
@@ -266,6 +278,7 @@ class PopupSelectController extends ChangeNotifier {
   void dispose() {
     hideSelect(immediate: true);
     _isDisposed = true;
+    _scrollToTabHandler = null;
     detachTickerProvider();
     labelStateMap.clear();
     _changeListeners.clear();
@@ -463,6 +476,11 @@ class PopupSelectController extends ChangeNotifier {
   /// - Custom range entries are not supported.
   /// - Category ids are not allowed in [selectedEntryIds].
   ///
+  /// When [centerTab] is true and the host bar is scrollable, the applied tab
+  /// is scrolled to the center of the bar after its result label updates —
+  /// matching the "center the selected tab" behavior of Flutter's [TabBar].
+  /// Defaults to `false` (no scrolling).
+  ///
   /// Return value:
   /// - Returns `true` when the apply flow completes successfully, including the
   ///   case where no entry ids match and the result is treated as cleared/empty.
@@ -476,6 +494,7 @@ class PopupSelectController extends ChangeNotifier {
     required int tabIndex,
     required Set<String> selectedEntryIds,
     String multipleText = 'Multiple',
+    bool centerTab = false,
   }) async {
     if (_isDisposed) return false;
     final labelState = labelStateMap[tabIndex];
@@ -507,6 +526,15 @@ class PopupSelectController extends ChangeNotifier {
     tabData.resultLabel =
         customLabel ?? SelectUtils.getResultLabel(selected, multipleText);
     notifyListeners();
+
+    if (centerTab && _scrollToTabHandler != null) {
+      // Defer to the next frame so the tab's new (possibly wider) result
+      // label is laid out before its rect is measured for the scroll.
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (_isDisposed) return;
+        await _scrollToTabHandler?.call(tabIndex);
+      });
+    }
     return true;
   }
 

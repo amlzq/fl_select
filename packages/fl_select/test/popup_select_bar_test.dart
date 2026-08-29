@@ -213,5 +213,151 @@ void main() {
       expect(controller.isSelectShowing, isTrue);
       expect(resetCalled, isTrue);
     });
+
+    testWidgets('centers the selected tab when isScrollable', (tester) async {
+      final controller = PopupSelectController();
+
+      Widget buildBar() => MaterialApp(
+            home: Scaffold(
+              appBar: PopupSelectBar(
+                isScrollable: true,
+                tabs: [
+                  for (var i = 0; i < 12; i++) PopupTab(label: 'Filter $i')
+                ],
+                selectDelegates: [
+                  for (var i = 0; i < 12; i++)
+                    ListSelectDelegate(
+                      entriesLoader: () async => <SelectEntry<dynamic>>{
+                        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                      },
+                    ),
+                ],
+                onApplied: (_, __) {},
+                controller: controller,
+              ),
+              body: const SizedBox.expand(),
+            ),
+          );
+
+      await tester.pumpWidget(buildBar());
+
+      double offset() => tester
+          .widget<SingleChildScrollView>(find.descendant(
+              of: find.byType(PopupSelectBar),
+              matching: find.byType(SingleChildScrollView)))
+          .controller!
+          .offset;
+
+      expect(find.byType(SingleChildScrollView), findsOneWidget);
+      expect(offset(), 0.0);
+
+      // Selecting a fully-visible tab still centers it ("center on select",
+      // matching Flutter's TabBar), rather than minimally revealing it.
+      // Filter 4 is fully visible right of the center, so centering it
+      // requires a positive offset; tabs near the start clamp to 0.
+      final rectBefore = tester.getRect(find.text('Filter 4'));
+      await tester.tap(find.text('Filter 4'));
+      await tester.pumpAndSettle();
+
+      final rectAfter = tester.getRect(find.text('Filter 4'));
+      // The bar scrolled: the tab moved and is now centered on the 800px-wide
+      // test surface (dx = 400).
+      expect(rectAfter.left, lessThan(rectBefore.left));
+      expect(rectAfter.center.dx, closeTo(400, 30));
+
+      // Collapsing the panel does not re-scroll...
+      final double centeredDx = rectAfter.center.dx;
+      await tester.tap(find.text('Filter 4'));
+      await tester.pumpAndSettle();
+      expect(tester.getRect(find.text('Filter 4')).center.dx, centeredDx);
+
+      // ...and reopening the same tab doesn't either.
+      await tester.tap(find.text('Filter 4'));
+      await tester.pumpAndSettle();
+      expect(tester.getRect(find.text('Filter 4')).center.dx, centeredDx);
+    });
+
+    testWidgets('apply() centers the tab only when centerTab is true',
+        (tester) async {
+      final controller = PopupSelectController();
+
+      Widget buildBar() => MaterialApp(
+            home: Scaffold(
+              appBar: PopupSelectBar(
+                isScrollable: true,
+                tabs: [
+                  for (var i = 0; i < 12; i++) PopupTab(label: 'Filter $i')
+                ],
+                selectDelegates: [
+                  for (var i = 0; i < 12; i++)
+                    ListSelectDelegate(
+                      entriesLoader: () async => <SelectEntry<dynamic>>{
+                        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                      },
+                    ),
+                ],
+                onApplied: (_, __) {},
+                controller: controller,
+              ),
+              body: const SizedBox.expand(),
+            ),
+          );
+
+      await tester.pumpWidget(buildBar());
+
+      double offset() => tester
+          .widget<SingleChildScrollView>(find.byType(SingleChildScrollView))
+          .controller!
+          .offset;
+
+      // Default: apply() does not scroll the bar.
+      var ok = await controller.apply(tabIndex: 6, selectedEntryIds: {'a'});
+      expect(ok, isTrue);
+      await tester.pumpAndSettle();
+      expect(offset(), 0.0);
+      // Filter 6's label became the applied result.
+      expect(find.text('A'), findsOneWidget);
+      expect(find.text('Filter 6'), findsNothing);
+
+      // centerTab: true scrolls the applied tab to the center.
+      ok = await controller.apply(
+          tabIndex: 8, selectedEntryIds: {'a'}, centerTab: true);
+      expect(ok, isTrue);
+      await tester.pumpAndSettle();
+      expect(offset(), greaterThan(0.0));
+    });
+
+    testWidgets('isScrollable=false renders a non-scrollable row',
+        (tester) async {
+      final controller = PopupSelectController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            appBar: PopupSelectBar(
+              tabs: const [
+                PopupTab(label: 'Filter'),
+              ],
+              selectDelegates: [
+                ListSelectDelegate(
+                  entriesLoader: () async => <SelectEntry<dynamic>>{
+                    SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                  },
+                ),
+              ],
+              onApplied: (_, __) {},
+              controller: controller,
+            ),
+            body: const SizedBox.expand(),
+          ),
+        ),
+      );
+
+      expect(find.byType(SingleChildScrollView), findsNothing);
+
+      await tester.tap(find.text('Filter'));
+      await tester.pumpAndSettle();
+      expect(controller.isSelectShowing, isTrue);
+    });
   });
 }
