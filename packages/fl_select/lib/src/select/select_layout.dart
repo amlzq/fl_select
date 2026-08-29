@@ -91,8 +91,8 @@ class SelectGridLayout extends SelectLayout {
 /// using their [SelectEntry.name] as the chip label.
 class SelectWrapLayout extends SelectLayout {
   const SelectWrapLayout({
-    this.spacing = 12,
-    this.runSpacing = 12,
+    this.spacing = 0.0,
+    this.runSpacing = 0.0,
   });
 
   /// Horizontal spacing between chips in the wrap.
@@ -125,9 +125,12 @@ class SelectWrapLayout extends SelectLayout {
 )
 class SelectChipLayout extends SelectWrapLayout {
   /// Creates a deprecated chip wrap layout; use [SelectWrapLayout] instead.
+  ///
+  /// Defaults `spacing`/`runSpacing` to 12.0 (the historical default) for
+  /// backward compatibility, unlike [SelectWrapLayout] which defaults to 0.0.
   const SelectChipLayout({
-    super.spacing,
-    super.runSpacing,
+    super.spacing = 12.0,
+    super.runSpacing = 12.0,
   });
 }
 

@@ -145,6 +145,8 @@ class ChipSelectState extends State<ChipSelect> {
               entries: _displayEntries,
               selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
               isWrapable: true,
+              spacing: delegate.spacing,
+              runSpacing: delegate.runSpacing,
               backgroundColor: delegate.chipBarTheme?.backgroundColor,
               padding: delegate.chipBarTheme?.padding,
               variant: delegate.chipBarTheme?.variant,
@@ -179,10 +181,18 @@ class ChipSelectState extends State<ChipSelect> {
 
 /// Loading skeleton for [ChipSelect].
 class ChipSelectSkeleton extends StatelessWidget {
-  const ChipSelectSkeleton({super.key, this.itemCount = 16, this.padding});
+  const ChipSelectSkeleton({
+    super.key,
+    this.itemCount = 16,
+    this.padding,
+    this.spacing = 0.0,
+    this.runSpacing = 0.0,
+  });
 
   final int itemCount;
   final EdgeInsets? padding;
+  final double spacing;
+  final double runSpacing;
 
   @override
   Widget build(BuildContext context) {
@@ -195,6 +205,8 @@ class ChipSelectSkeleton extends StatelessWidget {
             child: SelectChipBarSkeleton(
               itemCount: itemCount,
               padding: padding,
+              spacing: spacing,
+              runSpacing: runSpacing,
             ),
           ),
         ),

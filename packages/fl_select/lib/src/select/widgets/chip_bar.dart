@@ -40,8 +40,8 @@ class SelectChipBar extends StatefulWidget {
     this.isWrapable = false,
     this.showTitle = true,
     this.direction = Axis.horizontal,
-    this.spacing = 12,
-    this.runSpacing = 12,
+    this.spacing = 0.0,
+    this.runSpacing = 0.0,
     this.backgroundColor,
     this.padding,
     this.variant,
@@ -89,12 +89,12 @@ class SelectChipBar extends StatefulWidget {
   ///
   /// When [isWrapable] is true this is the [Wrap.spacing] between chips in a
   /// row; otherwise it is the width of the separators between chips in the
-  /// single-row [Row]. Defaults to 12.
+  /// single-row [Row]. Defaults to 0.0.
   final double spacing;
 
   /// Vertical spacing between wrapped chip rows.
   ///
-  /// Only used when [isWrapable] is true. Defaults to 12.
+  /// Only used when [isWrapable] is true. Defaults to 0.0.
   final double runSpacing;
 
   /// The color of the chip bar's background.
@@ -295,8 +295,7 @@ class _SelectChipBarState extends State<SelectChipBar> {
     // "111-222" instead of a null name. Mirrors [SelectRangeView]'s slider
     // commit; safe because name is not part of == / hashCode.
     if (custom.hasCustomValue) {
-      custom.name =
-          '${custom.min ?? ''}${widget.toText}${custom.max ?? ''}';
+      custom.name = '${custom.min ?? ''}${widget.toText}${custom.max ?? ''}';
     }
     // Reflect the canonical (swapped) order back into the fields so the display
     // immediately shows "left small, right big" instead of the raw typed order.
@@ -637,8 +636,8 @@ class SelectChipBarSkeleton extends StatelessWidget {
     this.isWrapable = false,
     this.showTitle = true,
     this.direction = Axis.horizontal,
-    this.spacing = 12,
-    this.runSpacing = 12,
+    this.spacing = 0.0,
+    this.runSpacing = 0.0,
     this.backgroundColor,
     this.padding,
   });
@@ -668,12 +667,12 @@ class SelectChipBarSkeleton extends StatelessWidget {
 
   /// Horizontal spacing between placeholder chips.
   ///
-  /// Defaults to 12, matching [SelectChipBar.spacing].
+  /// Defaults to 0.0, matching [SelectChipBar.spacing].
   final double spacing;
 
   /// Vertical spacing between wrapped placeholder chip rows.
   ///
-  /// Defaults to 12, matching [SelectChipBar.runSpacing].
+  /// Defaults to 0.0, matching [SelectChipBar.runSpacing].
   final double runSpacing;
 
   /// The background color of the skeleton.

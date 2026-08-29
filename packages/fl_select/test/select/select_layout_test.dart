@@ -86,8 +86,8 @@ void main() {
 
     test('defaults are applied', () {
       const layout = SelectWrapLayout();
-      expect(layout.spacing, 12.0);
-      expect(layout.runSpacing, 12.0);
+      expect(layout.spacing, 0.0);
+      expect(layout.runSpacing, 0.0);
     });
   });
 
@@ -116,6 +116,8 @@ void main() {
     test('defaults are applied', () {
       // ignore: deprecated_member_use_from_same_package
       const layout = SelectChipLayout();
+      // Deprecated alias keeps the historical default (12.0) for backward
+      // compatibility; SelectWrapLayout defaults to 0.0.
       expect(layout.spacing, 12.0);
       expect(layout.runSpacing, 12.0);
     });

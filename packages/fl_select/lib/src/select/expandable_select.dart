@@ -235,6 +235,8 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                                       _headerSelectedFor(category.id),
                                   variant: SelectChipVariant.filled,
                                   isWrapable: true,
+                                  spacing: 12.0,
+                                  runSpacing: 12.0,
                                   onChanged: (index, entry) =>
                                       _onHeaderOrFooterItemTap.call(
                                           category,
@@ -254,6 +256,8 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                                       _footerSelectedFor(category.id),
                                   variant: SelectChipVariant.filled,
                                   isWrapable: true,
+                                  spacing: 12.0,
+                                  runSpacing: 12.0,
                                   onChanged: (index, entry) =>
                                       _onHeaderOrFooterItemTap.call(
                                           category,

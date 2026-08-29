@@ -815,6 +815,7 @@ class CascadingSelectState extends State<CascadingSelect> {
                         entries: categoryHeader.children!.toList(),
                         selectedEntries: headerSelected,
                         variant: SelectChipVariant.filled,
+                        spacing: 12.0,
                         onChanged: (index, entry) => _onHeaderOrFooterItemTap
                             .call(true, index, entry as SelectChildEntry),
                       ),
@@ -864,6 +865,7 @@ class CascadingSelectState extends State<CascadingSelect> {
                         entries: categoryFooter.children!.toList(),
                         selectedEntries: footerSelected,
                         variant: SelectChipVariant.filled,
+                        spacing: 12.0,
                         onChanged: (index, entry) => _onHeaderOrFooterItemTap
                             .call(false, index, entry as SelectChildEntry),
                       ),

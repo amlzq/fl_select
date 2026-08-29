@@ -316,6 +316,8 @@ class TabNavSelectState extends State<TabNavSelect> {
                       selectedEntries: headerSelected,
                       variant: SelectChipVariant.filled,
                       isWrapable: true,
+                      spacing: 12.0,
+                      runSpacing: 12.0,
                       onChanged: (index, entry) => _onHeaderOrFooterItemTap
                           .call(true, index, entry as SelectChildEntry),
                     ),
@@ -335,6 +337,8 @@ class TabNavSelectState extends State<TabNavSelect> {
                       selectedEntries: footerSelected,
                       variant: SelectChipVariant.filled,
                       isWrapable: true,
+                      spacing: 12.0,
+                      runSpacing: 12.0,
                       onChanged: (index, entry) => _onHeaderOrFooterItemTap
                           .call(false, index, entry as SelectChildEntry),
                     ),

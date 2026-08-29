@@ -413,6 +413,7 @@ class SideNavSelectState extends State<SideNavSelect> {
                       selectedEntries: _headerSelectedFor(category.id),
                       variant: SelectChipVariant.filled,
                       isWrapable: false,
+                      spacing: 12.0,
                       onChanged: (index, entry) =>
                           _onHeaderOrFooterItemTap.call(
                               category, true, index, entry as SelectChildEntry),
@@ -428,6 +429,7 @@ class SideNavSelectState extends State<SideNavSelect> {
                       selectedEntries: _footerSelectedFor(category.id),
                       variant: SelectChipVariant.filled,
                       isWrapable: false,
+                      spacing: 12.0,
                       onChanged: (index, entry) =>
                           _onHeaderOrFooterItemTap.call(category, false, index,
                               entry as SelectChildEntry),

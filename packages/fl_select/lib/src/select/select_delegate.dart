@@ -855,7 +855,12 @@ class FlattenSelectDelegate extends SelectDelegate {
       );
 
   /// Copies this delegate's configuration into a [WrapSelectDelegate].
+  ///
+  /// Passes the historical default chip spacing (12.0) for backward
+  /// compatibility, since [WrapSelectDelegate] now defaults to 0.0.
   WrapSelectDelegate toWrap() => WrapSelectDelegate(
+        spacing: 12.0,
+        runSpacing: 12.0,
         selectionMode: selectionMode,
         entries: entries,
         entriesLoader: entriesLoader,
@@ -1013,6 +1018,8 @@ class SideNavSelectDelegate extends SelectDelegate {
 /// [SideNavSelectDelegate] for two-level data.
 class WrapSelectDelegate extends SelectDelegate {
   WrapSelectDelegate({
+    this.spacing = 0.0,
+    this.runSpacing = 0.0,
     super.selectionMode,
     super.entries,
     super.entriesLoader,
@@ -1054,6 +1061,16 @@ class WrapSelectDelegate extends SelectDelegate {
           'Use SideNavSelectDelegate for two-level (category) data.',
         );
 
+  /// Horizontal spacing between chips in a wrapped row.
+  ///
+  /// Forwarded to [SelectChipBar.spacing]. Defaults to 0.0.
+  final double spacing;
+
+  /// Vertical spacing between wrapped chip rows.
+  ///
+  /// Forwarded to [SelectChipBar.runSpacing]. Defaults to 0.0.
+  final double runSpacing;
+
   @override
   Widget buildBody(
     BuildContext context,
@@ -1077,7 +1094,8 @@ class WrapSelectDelegate extends SelectDelegate {
 
   @override
   Widget buildSkeleton(BuildContext context) {
-    return skeletonBuilder?.call(context) ?? const ChipSelectSkeleton();
+    return skeletonBuilder?.call(context) ??
+        ChipSelectSkeleton(spacing: spacing, runSpacing: runSpacing);
   }
 }
 
