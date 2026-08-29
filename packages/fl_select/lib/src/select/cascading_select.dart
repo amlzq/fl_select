@@ -147,7 +147,10 @@ class CascadingSelectState extends State<CascadingSelect> {
         delegate.categoryBackgroundColor ?? theme.backgroundColor;
     final terminalBackgroundColor =
         delegate.terminalBackgroundColor ?? theme.backgroundColorHighest;
-    final maxDepth = _calculateMaxDepth(widget.entries.toSet(), 1);
+    // The cascading UI always renders at least two levels (the category
+    // sidebar plus one children column), so the gradient must span at least
+    // two steps even for depth-1 trees (categories without children).
+    final maxDepth = max(2, _calculateMaxDepth(widget.entries.toSet(), 1));
     _backgroundColors = _calculateGradientColors(
         maxDepth, categoryBackgroundColor, terminalBackgroundColor);
 
@@ -648,12 +651,14 @@ class CascadingSelectState extends State<CascadingSelect> {
     final entries = _cascadingList[cascadeIndex];
     final level = cascadeIndex + 1;
     final selectedEntries = controller?.selectedEntriesAtLevel(level) ?? {};
+    // Clamp to the gradient's last color instead of a hard-coded white so
+    // out-of-range levels still match the theme.
     final bgColor = level < _backgroundColors.length
         ? _backgroundColors[level]
-        : Colors.white;
+        : _backgroundColors.last;
     final selectedColor = level + 1 < _backgroundColors.length
         ? _backgroundColors[level + 1]
-        : Colors.white;
+        : _backgroundColors.last;
 
     final child = ColoredBox(
       color: bgColor,
@@ -753,11 +758,11 @@ class CascadingSelectState extends State<CascadingSelect> {
     final footerSelected = _footerSelectedFor(tempSelectedCategory.id);
 
     final categoryBackgroundColor =
-        _backgroundColors.firstOrNull ?? Colors.white;
+        _backgroundColors.firstOrNull ?? theme.backgroundColor;
     // Get selected item color (background color of next level)
     final selectedTileColor = 0 + 1 < _backgroundColors.length
         ? _backgroundColors[0 + 1]
-        : Colors.white;
+        : _backgroundColors.last;
 
     final effectiveSelectedColor =
         delegate.selectedColor ?? theme.selectedColor;

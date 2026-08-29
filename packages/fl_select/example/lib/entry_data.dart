@@ -133,6 +133,8 @@ SelectEntries get wrapData {
     SelectTextEntry.name(id: 'j', name: 'Sheep'),
     SelectTextEntry.name(id: 'k', name: 'Cow'),
     SelectTextEntry.name(id: 'l', name: 'Chicken'),
+    SelectTextEntry.name(id: 'm', name: 'Duck'),
+    SelectTextEntry.name(id: 'n', name: 'Penguin'),
   };
 }
 
@@ -193,12 +195,7 @@ SelectEntries get multiCategoryData {
         SelectTextEntry.name(id: 'd', name: '1000-2000'),
         SelectRangeEntry.custom(),
       },
-      layout: SelectGridLayout(
-        crossAxisCount: 3,
-        childAspectRatio: 3.2,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-      ),
+      selectionMode: SelectionMode.single,
     ),
     SelectCategoryEntry.children(
       id: 'cate4',
@@ -222,7 +219,6 @@ SelectEntries get multiCategoryData {
         SelectTextEntry.name(id: 'p', name: 'Sheep'),
         SelectTextEntry.name(id: 'q', name: 'Cow'),
       },
-      selectionMode: SelectionMode.single,
       layout: SelectWrapLayout(),
     ),
     SelectCategoryEntry.children(
@@ -238,6 +234,7 @@ SelectEntries get multiCategoryData {
         ),
         SelectRangeEntry.custom(),
       },
+      selectionMode: SelectionMode.single,
       layout: const SelectRangeLayout(),
     ),
     SelectCategoryEntry.children(
@@ -250,6 +247,7 @@ SelectEntries get multiCategoryData {
         SelectTextEntry.name(id: 'd', name: '4'),
         SelectTextEntry.name(id: 'e', name: '5'),
       },
+      selectionMode: SelectionMode.single,
       layout: const SelectCounterLayout(),
     ),
   };

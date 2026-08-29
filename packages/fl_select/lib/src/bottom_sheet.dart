@@ -24,10 +24,11 @@ import 'select_header.dart';
 ///   to confirm; "Reset" only clears the current selection without closing.
 ///
 /// The optional [title] is rendered above the select panel. A leading and/or
-/// trailing widget may be attached to the title row via [leading] /
-/// [trailing] to mimic a [ListTile] header. Set [centerTitle] to `true` to
-/// center the [title] (like [AppBar.centerTitle]); when `null` the default is
-/// platform-dependent (`true` on Android, `false` elsewhere).
+/// trailing widget may be attached via [leading] / [trailing] to mimic a
+/// [ListTile] header; they are shown even when [title] is omitted. Set
+/// [centerTitle] to `true` to center the [title] (like [AppBar.centerTitle]);
+/// when `null` the default is platform-dependent (`true` on iOS/macOS,
+/// `false` elsewhere).
 ///
 /// Most of the remaining parameters ([backgroundColor], [elevation], [shape],
 /// [clipBehavior], [constraints], [barrierColor], [isScrollControlled],
@@ -160,9 +161,11 @@ class _ModalBottomSheetContentState extends State<_ModalBottomSheetContent> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          if (widget.title != null)
+          if (widget.title != null ||
+              widget.leading != null ||
+              widget.trailing != null)
             SelectHeader(
-              title: widget.title!,
+              title: widget.title,
               leading: widget.leading,
               trailing: widget.trailing,
               centerTitle: widget.centerTitle,

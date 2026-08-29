@@ -12,6 +12,10 @@ enum SelectTabBarIndicatorSize {
   label,
 }
 
+/// The fixed height of [SelectTabBar], matching [TabBar]'s text-only tab
+/// height (`_kTabHeight`).
+const double _kTabBarHeight = 48.0;
+
 class SelectTabBar extends StatelessWidget {
   const SelectTabBar({
     super.key,
@@ -208,10 +212,16 @@ class SelectTabBar extends StatelessWidget {
 
     final row = Row(
       mainAxisSize: isScrollable ? MainAxisSize.min : MainAxisSize.max,
+      // Stretch the tabs to the bar's fixed height so each tab's tap target
+      // covers the full height, like [TabBar].
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: tabs,
     );
 
     return Container(
+      // Match [TabBar]'s total height (48 for text-only tabs) so the bar is
+      // independent of the label font size / text scale.
+      height: _kTabBarHeight,
       padding: containerPadding,
       color: effectiveBackgroundColor,
       child: isScrollable
@@ -308,22 +318,27 @@ class _Tab extends StatelessWidget {
                   : maxIndicatorWidth;
 
           return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.5, vertical: 6),
+            padding: const EdgeInsets.symmetric(horizontal: 4.5),
+            // Like [TabBar]'s underline indicator: the label centers in the
+            // space above the indicator, and the indicator sits at the bottom
+            // edge of the (fixed-height) tab.
             child: Column(
-              mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  label,
-                  style: labelStyle,
-                  strutStyle: StrutStyle(
-                    fontSize: fontSize,
-                    height: 20 / fontSize,
-                    forceStrutHeight: true,
+                Expanded(
+                  child: Center(
+                    child: Text(
+                      label,
+                      style: labelStyle,
+                      strutStyle: StrutStyle(
+                        fontSize: fontSize,
+                        height: 20 / fontSize,
+                        forceStrutHeight: true,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
                 ),
-                const SizedBox(height: 4),
                 Padding(
                   padding: indicatorPadding,
                   child: Align(
@@ -389,7 +404,7 @@ class SelectTabBarSkeleton extends StatelessWidget {
             Expanded(
               child: SkeletonTile(
                 width: double.infinity,
-                height: 40,
+                height: _kTabBarHeight - 8,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),
@@ -397,7 +412,7 @@ class SelectTabBarSkeleton extends StatelessWidget {
             Expanded(
               child: SkeletonTile(
                 width: double.infinity,
-                height: 40,
+                height: _kTabBarHeight - 8,
                 borderRadius: BorderRadius.circular(4),
               ),
             ),

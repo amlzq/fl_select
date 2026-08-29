@@ -367,6 +367,18 @@ class SideNavSelectState extends State<SideNavSelect> {
     required int index,
     required bool isLast,
   }) {
+    final categoryHeader = category.header;
+    final categoryFooter = category.footer;
+    final hasHeader = categoryHeader != null && categoryHeader.children != null;
+    final hasFooter = categoryFooter != null && categoryFooter.children != null;
+
+    // A category without children, header or footer has nothing to show on
+    // the right; render an empty box instead of a lonely category title.
+    final hasChildren = category.children?.isNotEmpty ?? false;
+    if (!hasChildren && !hasHeader && !hasFooter) {
+      return const SizedBox.shrink();
+    }
+
     final view = SelectCategoryContentView(
       category: category,
       index: index,
@@ -379,10 +391,6 @@ class SideNavSelectState extends State<SideNavSelect> {
     );
 
     final categoryTitle = _buildCategoryTitle(category);
-    final categoryHeader = category.header;
-    final categoryFooter = category.footer;
-    final hasHeader = categoryHeader != null && categoryHeader.children != null;
-    final hasFooter = categoryFooter != null && categoryFooter.children != null;
 
     // The outer ListView handles vertical scrolling; the inner view must not
     // add another vertical scrollable in the same axis. Every branch above

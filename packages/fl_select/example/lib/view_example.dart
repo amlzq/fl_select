@@ -55,7 +55,6 @@ class SelectViewExamplePage extends StatelessWidget {
                     childAspectRatio: 3,
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
-                    selectionMode: SelectionMode.multiple,
                     gridTileTheme: const SelectGridTileTheme(
                       variant: SelectGridTileVariant.outlined,
                     ),
@@ -208,6 +207,63 @@ class SelectViewExamplePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 const Text(
+                  'TabNavSelectDelegate-1L',
+                  style: TextStyle(fontSize: 20),
+                ),
+                SelectView(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  delegate: TabNavSelectDelegate(
+                    defaultLayout: SelectGridLayout(
+                      crossAxisCount: 3,
+                      childAspectRatio: 3,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                    ),
+                    entries: {
+                      SelectCategoryEntry(
+                        id: 'cate1',
+                        name: 'Cate 1',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate2',
+                        name: 'Cate 2',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate3',
+                        name: 'Cate 3',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate4',
+                        name: 'Cate 4',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate5',
+                        name: 'Cate 5',
+                        children: null,
+                      ),
+                    },
+                    selectionMode: SelectionMode.multiple,
+                    gridTileTheme: const SelectGridTileTheme(
+                      variant: SelectGridTileVariant.outlined,
+                    ),
+                    fieldTileTheme: const SelectFieldTileTheme(
+                      variant: SelectFieldTileVariant.outlined,
+                    ),
+                  ),
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters()}');
+                    showSelectResult(context, selected);
+                  },
+                ),
+                const SizedBox(height: 24),
+                const Text(
                   'SideNavSelectDelegate',
                   style: TextStyle(fontSize: 20),
                 ),
@@ -215,7 +271,59 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: SideNavSelectDelegate(
+                    defaultLayout: SelectGridLayout(
+                      crossAxisCount: 2,
+                      childAspectRatio: 3.2,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                    ),
                     entries: multiCategoryData,
+                    selectionMode: SelectionMode.multiple,
+                    sideBarTheme: const SelectSideBarTheme(width: 90),
+                  ),
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters()}');
+                    showSelectResult(context, selected);
+                  },
+                ),
+                const SizedBox(height: 24),
+                const Text(
+                  'SideNavSelectDelegate-1L',
+                  style: TextStyle(fontSize: 20),
+                ),
+                SelectView(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  delegate: SideNavSelectDelegate(
+                    entries: {
+                      SelectCategoryEntry(
+                        id: 'cate1',
+                        name: 'Cate 1',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate2',
+                        name: 'Cate 2',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate3',
+                        name: 'Cate 3',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate4',
+                        name: 'Cate 4',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate5',
+                        name: 'Cate 5',
+                        children: null,
+                      ),
+                    },
                     selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 90),
                   ),
@@ -236,6 +344,54 @@ class SelectViewExamplePage extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: ExpandableSelectDelegate(
                     entries: multiCategoryData,
+                    searchEnabled: true,
+                    searchPredicate: (entry, query) {
+                      return entry.name?.contains(query) == true;
+                    },
+                  ),
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters()}');
+                    showSelectResult(context, selected);
+                  },
+                ),
+                const SizedBox(height: 250),
+                const Text(
+                  'ExpandableSelectDelegate-1L',
+                  style: TextStyle(fontSize: 20),
+                ),
+                SelectView(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  delegate: ExpandableSelectDelegate(
+                    entries: {
+                      SelectCategoryEntry(
+                        id: 'cate1',
+                        name: 'Cate 1',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate2',
+                        name: 'Cate 2',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate3',
+                        name: 'Cate 3',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate4',
+                        name: 'Cate 4',
+                        children: null,
+                      ),
+                      SelectCategoryEntry(
+                        id: 'cate5',
+                        name: 'Cate 5',
+                        children: null,
+                      ),
+                    },
                     searchEnabled: true,
                     searchPredicate: (entry, query) {
                       return entry.name?.contains(query) == true;

@@ -25,6 +25,9 @@ class _DialogExampleState extends State<DialogExample> {
                   delegate: ListSelectDelegate(
                     entries: listData,
                   ),
+                  leading: Icon(Icons.list),
+                  title: Text('ListSelect'),
+                  centerTitle: false,
                 );
                 largePrint('result: $result');
                 largePrint('toQueryMap: ${result?.toQueryMap()}');
@@ -44,6 +47,7 @@ class _DialogExampleState extends State<DialogExample> {
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
                   ),
+                  trailing: CloseButton(),
                 );
                 largePrint('result: $result');
               },
@@ -57,6 +61,9 @@ class _DialogExampleState extends State<DialogExample> {
                   delegate: WrapSelectDelegate(
                     entries: wrapData,
                   ),
+                  leading: Icon(Icons.list),
+                  title: Text('ListSelect'),
+                  trailing: CloseButton(),
                 );
                 largePrint('result: $result');
               },

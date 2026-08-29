@@ -30,6 +30,9 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                       SelectTextEntry.name(id: 'd', name: 'D'),
                     },
                   ),
+                  leading: Icon(Icons.list),
+                  title: Text('ListSelect'),
+                  centerTitle: false,
                 );
                 largePrint('result: $result');
                 largePrint('toQueryMap: ${result?.toQueryMap()}');
@@ -49,6 +52,7 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
                   ),
+                  trailing: CloseButton(),
                 );
                 largePrint('result: $result');
               },
@@ -62,6 +66,9 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                   delegate: WrapSelectDelegate(
                     entries: wrapData,
                   ),
+                  leading: Icon(Icons.list),
+                  title: Text('ListSelect'),
+                  trailing: CloseButton(),
                 );
                 largePrint('result: $result');
               },
