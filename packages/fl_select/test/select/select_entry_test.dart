@@ -579,17 +579,19 @@ void main() {
       expect(entry.hasCustomValue, isFalse);
     });
 
-    test('name getter falls back to min-max format when base name is null', () {
-      // SelectRangeEntry.custom with no explicit name: base name is null
+    test('custom entry name stays null until the view commits the range', () {
+      // SelectRangeEntry.custom with no explicit name: base name is null.
+      // The former extension `name` getter (falling back to '$min-$max') was
+      // removed: an extension member can never shadow the instance field
+      // [SelectEntry.name], so it was unreachable dead code. Instead, the
+      // hosting view writes the formatted name back on commit (e.g.
+      // SelectGridViewState._commitCustomRange), mirroring the slider.
       final entry = SelectRangeEntry<int, dynamic>.custom(
         parentId: 'p',
         min: 10,
         max: 20,
       );
-      // The extension name getter on SelectRangeEntryExt shadows the base
-      // field and returns '$min-$max' when this.name (base field) is null.
-      // Due to Dart extension resolution, the behavior depends on static type.
-      // Verify the entry has the expected values regardless.
+      expect(entry.name, isNull);
       expect(entry.min, 10);
       expect(entry.max, 20);
       expect(entry.isCustom, isTrue);

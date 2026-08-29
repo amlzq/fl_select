@@ -239,6 +239,14 @@ class SelectGridViewState extends State<SelectGridView>
     }
     custom.min = (minInt == 0) ? null : minInt;
     custom.max = (maxInt == 0) ? null : maxInt;
+    // Keep the entry's name in sync with the committed range so downstream
+    // consumers (e.g. the applied-result label on a popup trigger) show
+    // "111-222" instead of a null name. Mirrors [SelectRangeView]'s slider
+    // commit; safe because name is not part of == / hashCode.
+    if (custom.hasCustomValue) {
+      custom.name =
+          '${custom.min ?? ''}${widget.toText}${custom.max ?? ''}';
+    }
     // Reflect the canonical (swapped) order back into the fields so the display
     // immediately shows "left small, right big" instead of the raw typed order.
     if (swapped) {
@@ -309,6 +317,10 @@ class SelectGridViewState extends State<SelectGridView>
               maxFocusNode: _maxFocusNode,
               variant: widget.fieldVariant,
               separator: widget.toText,
+              // Pressing enter commits immediately instead of waiting for a
+              // focus loss (e.g. closing the panel without tapping outside).
+              onMinSubmitted: (_) => _commitCustomRange(_firstCustomEntry),
+              onMaxSubmitted: (_) => _commitCustomRange(_firstCustomEntry),
             ),
           // Grid of items (3 columns)
           GridView.builder(
@@ -345,6 +357,8 @@ class SelectGridViewState extends State<SelectGridView>
               maxFocusNode: _maxFocusNode,
               variant: widget.fieldVariant,
               separator: widget.toText,
+              onMinSubmitted: (_) => _commitCustomRange(_lastCustomEntry),
+              onMaxSubmitted: (_) => _commitCustomRange(_lastCustomEntry),
             ),
         ],
       ),

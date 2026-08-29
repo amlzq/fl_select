@@ -77,6 +77,8 @@ class _DialogExampleState extends State<DialogExample> {
                   delegate: CascadingSelectDelegate(
                     entriesLoader: fetchCascadingData,
                     selectionMode: SelectionMode.multiple,
+                    sideBarTheme: const SelectSideBarTheme(width: 120),
+                    isScrollable: true,
                   ),
                 );
                 largePrint('result: $result');
@@ -89,6 +91,12 @@ class _DialogExampleState extends State<DialogExample> {
                 final result = await showSelect(
                   context: context,
                   delegate: TabNavSelectDelegate(
+                    defaultLayout: SelectGridLayout(
+                      crossAxisCount: 3,
+                      childAspectRatio: 3,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                    ),
                     entries: multiCategoryData,
                     selectionMode: SelectionMode.multiple,
                   ),
@@ -103,6 +111,12 @@ class _DialogExampleState extends State<DialogExample> {
                 final result = await showSelect(
                   context: context,
                   delegate: SideNavSelectDelegate(
+                    defaultLayout: SelectGridLayout(
+                      crossAxisCount: 2,
+                      childAspectRatio: 2.8,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                    ),
                     entries: multiCategoryData,
                     selectionMode: SelectionMode.multiple,
                   ),
@@ -117,6 +131,12 @@ class _DialogExampleState extends State<DialogExample> {
                 final result = await showSelect(
                   context: context,
                   delegate: ExpandableSelectDelegate(
+                    defaultLayout: SelectGridLayout(
+                      crossAxisCount: 2,
+                      childAspectRatio: 3.8,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                    ),
                     entries: multiCategoryData,
                     selectionMode: SelectionMode.multiple,
                   ),

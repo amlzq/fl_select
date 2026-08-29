@@ -214,12 +214,6 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: TabNavSelectDelegate(
-                    defaultLayout: SelectGridLayout(
-                      crossAxisCount: 3,
-                      childAspectRatio: 3,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                    ),
                     entries: {
                       SelectCategoryEntry(
                         id: 'cate1',
@@ -271,12 +265,6 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: SideNavSelectDelegate(
-                    defaultLayout: SelectGridLayout(
-                      crossAxisCount: 2,
-                      childAspectRatio: 3.2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                    ),
                     entries: multiCategoryData,
                     selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 90),

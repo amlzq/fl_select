@@ -45,12 +45,25 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
               CascadingSelectDelegate(
                 entriesLoader: fetchCascadingData,
                 selectionMode: SelectionMode.multiple,
+                sideBarTheme: const SelectSideBarTheme(width: 120),
               ),
               TabNavSelectDelegate(
+                defaultLayout: SelectGridLayout(
+                  crossAxisCount: 3,
+                  childAspectRatio: 3,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                ),
                 entries: multiCategoryData,
                 selectionMode: SelectionMode.multiple,
               ),
               SideNavSelectDelegate(
+                defaultLayout: SelectGridLayout(
+                  crossAxisCount: 2,
+                  childAspectRatio: 3.8,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                ),
                 entries: multiCategoryData,
                 selectionMode: SelectionMode.multiple,
               ),

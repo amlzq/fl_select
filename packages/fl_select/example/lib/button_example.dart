@@ -33,7 +33,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
             ),
             SizedBox(height: 24),
             PopupSelectButton.elevated(
-              label: 'PopupSelectButton',
+              label: 'PopupSelectButton.elevated',
               selectDelegate: GridSelectDelegate(
                 entries: gridData,
                 crossAxisCount: 3,
@@ -47,7 +47,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
             ),
             SizedBox(height: 24),
             PopupSelectButton.filled(
-              label: 'PopupSelectButton',
+              label: 'PopupSelectButton.filled',
               selectDelegate: WrapSelectDelegate(
                 entries: wrapData,
               ),
@@ -57,10 +57,11 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
             ),
             SizedBox(height: 24),
             PopupSelectButton.outlined(
-              label: 'PopupSelectButton',
+              label: 'PopupSelectButton.outlined',
               selectDelegate: CascadingSelectDelegate(
                 entriesLoader: fetchCascadingData,
                 selectionMode: SelectionMode.multiple,
+                sideBarTheme: const SelectSideBarTheme(width: 120),
               ),
               onApplied: (selected) {
                 largePrint('onApplied: $selected');

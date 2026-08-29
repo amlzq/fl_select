@@ -418,7 +418,13 @@ extension SelectRangeEntryExt on SelectRangeEntry {
       (min != null && min.toString().isNotEmpty) ||
       (max != null && max.toString().isNotEmpty);
 
-  String get name => this.name ?? '$min-$max';
+  /// The display name of a custom entry is written back by the hosting view
+  /// when its range is committed (e.g. `'111-222'`); see
+  /// `SelectGridViewState._commitCustomRange` and [SelectRangeView].
+  ///
+  /// NOTE: there is deliberately no `name` getter here — an extension member
+  /// can never shadow the instance field [SelectEntry.name], so such a getter
+  /// would be unreachable dead code.
 }
 
 /// A plain text entry.

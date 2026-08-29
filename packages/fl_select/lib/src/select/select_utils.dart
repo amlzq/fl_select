@@ -645,6 +645,13 @@ class SelectUtils {
           selectedItem as SelectRangeEntry;
           item.min = selectedItem.min;
           item.max = selectedItem.max;
+          // Re-derive the display name from the restored bounds so the
+          // applied-result label keeps showing "111-222" after a reopen
+          // (legacy selections stored before the name write-back may have
+          // a null name).
+          if (item.hasCustomValue) {
+            item.name = '${item.min ?? ''}-${item.max ?? ''}';
+          }
         }
       }
       if (selectedItem.children?.isNotEmpty == true) {
