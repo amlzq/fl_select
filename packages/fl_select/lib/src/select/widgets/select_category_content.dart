@@ -67,6 +67,11 @@ class SelectCategoryContentView extends StatelessWidget {
           selectedEntries: selectedEntries,
           onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
           toText: toText,
+          // Mirror [SelectionRules.toggleFlatLeaf]: a category without an
+          // explicit selectionMode inherits the delegate-level mode, while
+          // counter/range layouts stay pinned to single.
+          selectionMode:
+              category.effectiveSelectionMode(delegate.selectionMode),
           radioBuilder: radioBuilder,
           checkboxBuilder: checkboxBuilder,
         ),

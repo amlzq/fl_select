@@ -198,8 +198,7 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
             // mimicking native nested scrolling. Pointer-wheel chaining is
             // handled by the framework itself.
             physics: const ChainingClampingScrollPhysics(),
-            padding:
-                const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: List.generate(_displayEntries.length, (index) {
@@ -211,6 +210,8 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                   fallbackLayout:
                       delegate.defaultLayout ?? const SelectListLayout(),
                   delegate: delegate,
+                  radioBuilder: delegate.radioBuilder,
+                  checkboxBuilder: delegate.checkboxBuilder,
                   onTerminalItemTap: _onTerminalItemTap,
                 );
 

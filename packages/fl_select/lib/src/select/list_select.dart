@@ -140,6 +140,7 @@ class ListSelectState extends State<ListSelect> {
             selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
             onChanged: (_, entry) =>
                 _onTerminalItemTap(entry as SelectChildEntry),
+            selectionMode: delegate.selectionMode,
             radioBuilder: delegate.radioBuilder,
             checkboxBuilder: delegate.checkboxBuilder,
           ),
