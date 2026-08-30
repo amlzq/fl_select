@@ -29,10 +29,10 @@ class SelectViewExamplePage extends StatelessWidget {
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: ListSelectDelegate(
                     entries: listData,
-                    searchEnabled: true,
-                    searchPredicate: (entry, query) {
-                      return entry.name?.contains(query) == true;
-                    },
+                    // searchEnabled: true,
+                    // searchPredicate: (entry, query) {
+                    //   return entry.name?.contains(query) == true;
+                    // },
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
@@ -108,10 +108,10 @@ class SelectViewExamplePage extends StatelessWidget {
                     checkboxBuilder: (context, selected) {
                       return MyCheckbox(value: selected);
                     },
-                    searchEnabled: true,
-                    searchPredicate: (entry, query) {
-                      return entry.name?.contains(query) == true;
-                    },
+                    // searchEnabled: true,
+                    // searchPredicate: (entry, query) {
+                    //   return entry.name?.contains(query) == true;
+                    // },
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
@@ -216,6 +216,12 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: TabNavSelectDelegate(
+                    defaultLayout: SelectGridLayout(
+                      crossAxisCount: 3,
+                      childAspectRatio: 3,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                    ),
                     entries: {
                       SelectCategoryEntry(
                         id: 'cate1',
@@ -267,6 +273,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: SideNavSelectDelegate(
+                    defaultLayout: SelectWrapLayout(
+                      spacing: 12,
+                      runSpacing: 12,
+                    ),
                     entries: multiCategoryData,
                     selectionMode: SelectionMode.multiple,
                     sideBarTheme: const SelectSideBarTheme(width: 90),
@@ -287,6 +297,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: SideNavSelectDelegate(
+                    defaultLayout: SelectWrapLayout(
+                      spacing: 12,
+                      runSpacing: 12,
+                    ),
                     entries: {
                       SelectCategoryEntry(
                         id: 'cate1',
@@ -333,11 +347,12 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: ExpandableSelectDelegate(
+                    defaultLayout: SelectListLayout(),
                     entries: multiCategoryData,
-                    searchEnabled: true,
-                    searchPredicate: (entry, query) {
-                      return entry.name?.contains(query) == true;
-                    },
+                    // searchEnabled: true,
+                    // searchPredicate: (entry, query) {
+                    //   return entry.name?.contains(query) == true;
+                    // },
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
@@ -355,6 +370,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
                   delegate: ExpandableSelectDelegate(
+                    defaultLayout: SelectListLayout(),
                     entries: {
                       SelectCategoryEntry(
                         id: 'cate1',
@@ -382,10 +398,10 @@ class SelectViewExamplePage extends StatelessWidget {
                         children: null,
                       ),
                     },
-                    searchEnabled: true,
-                    searchPredicate: (entry, query) {
-                      return entry.name?.contains(query) == true;
-                    },
+                    // searchEnabled: true,
+                    // searchPredicate: (entry, query) {
+                    //   return entry.name?.contains(query) == true;
+                    // },
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');

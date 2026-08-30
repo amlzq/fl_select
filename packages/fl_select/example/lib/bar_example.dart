@@ -42,6 +42,7 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                 ),
                 WrapSelectDelegate(
                   entries: wrapData,
+                  selectionMode: SelectionMode.multiple,
                   spacing: 12.0,
                   runSpacing: 12.0,
                 ),
@@ -61,16 +62,15 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                   selectionMode: SelectionMode.multiple,
                 ),
                 SideNavSelectDelegate(
-                  defaultLayout: SelectGridLayout(
-                    crossAxisCount: 2,
-                    childAspectRatio: 3.8,
-                    mainAxisSpacing: 10,
-                    crossAxisSpacing: 10,
+                  defaultLayout: SelectWrapLayout(
+                    spacing: 12,
+                    runSpacing: 12,
                   ),
                   entries: multiCategoryData,
                   selectionMode: SelectionMode.multiple,
                 ),
                 ExpandableSelectDelegate(
+                  defaultLayout: SelectListLayout(),
                   entries: multiCategoryData,
                   selectionMode: SelectionMode.multiple,
                 ),

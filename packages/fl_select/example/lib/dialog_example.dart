@@ -29,7 +29,6 @@ class _DialogExampleState extends State<DialogExample> {
                       ),
                       leading: Icon(Icons.list),
                       title: Text('ListSelect'),
-                      centerTitle: false,
                     );
                     largePrint('result: $result');
                     largePrint('toQueryMap: ${result?.toQueryMap()}');
@@ -46,11 +45,13 @@ class _DialogExampleState extends State<DialogExample> {
                       delegate: GridSelectDelegate(
                         entries: gridData,
                         crossAxisCount: 3,
-                        childAspectRatio: 3,
+                        childAspectRatio: 2.4,
                         mainAxisSpacing: 10,
                         crossAxisSpacing: 10,
                       ),
+                      title: Text('GridSelect'),
                       trailing: CloseButton(),
+                      centerTitle: false,
                     );
                     largePrint('result: $result');
                   },
@@ -63,6 +64,7 @@ class _DialogExampleState extends State<DialogExample> {
                       context: context,
                       delegate: WrapSelectDelegate(
                         entries: wrapData,
+                        selectionMode: SelectionMode.multiple,
                         spacing: 12.0,
                         runSpacing: 12.0,
                       ),
@@ -106,6 +108,7 @@ class _DialogExampleState extends State<DialogExample> {
                         selectionMode: SelectionMode.multiple,
                         isScrollable: true,
                       ),
+                      title: Text('TabNavSelect'),
                     );
                     largePrint('result: $result');
                   },
@@ -117,15 +120,14 @@ class _DialogExampleState extends State<DialogExample> {
                     final result = await showSelect(
                       context: context,
                       delegate: SideNavSelectDelegate(
-                        defaultLayout: SelectGridLayout(
-                          crossAxisCount: 2,
-                          childAspectRatio: 2.8,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
+                        defaultLayout: SelectWrapLayout(
+                          spacing: 12,
+                          runSpacing: 12,
                         ),
                         entries: multiCategoryData,
                         selectionMode: SelectionMode.multiple,
                       ),
+                      title: Text('SideNavSelect'),
                     );
                     largePrint('result: $result');
                   },
@@ -137,15 +139,11 @@ class _DialogExampleState extends State<DialogExample> {
                     final result = await showSelect(
                       context: context,
                       delegate: ExpandableSelectDelegate(
-                        defaultLayout: SelectGridLayout(
-                          crossAxisCount: 2,
-                          childAspectRatio: 3.8,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
-                        ),
+                        defaultLayout: SelectListLayout(),
                         entries: multiCategoryData,
                         selectionMode: SelectionMode.multiple,
                       ),
+                      title: Text('ExpandableSelect'),
                     );
                     largePrint('result: $result');
                   },

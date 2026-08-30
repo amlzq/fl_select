@@ -52,6 +52,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                   label: 'PopupSelectButton.filled',
                   selectDelegate: WrapSelectDelegate(
                     entries: wrapData,
+                    selectionMode: SelectionMode.multiple,
                     spacing: 12.0,
                     runSpacing: 12.0,
                   ),
@@ -92,11 +93,9 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                 PopupSelectButton(
                   label: 'SideNavSelect',
                   selectDelegate: SideNavSelectDelegate(
-                    defaultLayout: SelectGridLayout(
-                      crossAxisCount: 2,
-                      childAspectRatio: 3.8,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
+                    defaultLayout: SelectWrapLayout(
+                      spacing: 12,
+                      runSpacing: 12,
                     ),
                     entries: multiCategoryData,
                     selectionMode: SelectionMode.multiple,
@@ -110,6 +109,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                   direction: PopupSelectDirection.above,
                   label: 'ExpandableSelect',
                   selectDelegate: ExpandableSelectDelegate(
+                    defaultLayout: SelectListLayout(),
                     entries: multiCategoryData,
                     selectionMode: SelectionMode.multiple,
                   ),

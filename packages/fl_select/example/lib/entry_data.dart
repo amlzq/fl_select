@@ -161,7 +161,6 @@ SelectEntries get multiCategoryData {
         },
       ),
       footerSelectionMode: SelectionMode.single,
-      layout: const SelectListLayout(),
     ),
     SelectCategoryEntry.children(
       id: 'cate2',
@@ -219,7 +218,6 @@ SelectEntries get multiCategoryData {
         SelectTextEntry.name(id: 'p', name: 'Sheep'),
         SelectTextEntry.name(id: 'q', name: 'Cow'),
       },
-      layout: SelectWrapLayout(spacing: 12.0, runSpacing: 12.0),
     ),
     SelectCategoryEntry.children(
       id: 'cate5',
