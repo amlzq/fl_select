@@ -50,22 +50,9 @@ import 'package:fl_select/fl_select.dart';
 
 A delegate controls both data loading and how the body is rendered, and works with every entry point above. Flat delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) render parentless leaves created with `.name(...)`, while category delegates (`CascadingSelectDelegate`, `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) render a tree of `SelectCategoryEntry` roots whose children follow `category.layout` (list / grid / chips / range slider / counter):
 
-| Delegate                    |
-| --------------------------- |
-| `ListSelectDelegate`        |
-| ![ListSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/list.jpg) |
-| `GridSelectDelegate`        |
-| ![GridSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/grid.jpg) |
-| `WrapSelectDelegate`        |
-| ![WrapSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/wrap.jpg) |
-| `CascadingSelectDelegate`   |
-| ![CascadingSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/cascading.jpg) |
-| `TabNavSelectDelegate`      |
-| ![TabNavSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/tabnav.jpg) |
-| `SideNavSelectDelegate`     |
-| ![SideNavSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/sidenav.jpg) |
-| `ExpandableSelectDelegate`  |
-| ![ExpandableSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/expandable.jpg) |
+| `ListSelectDelegate`        | `GridSelectDelegate`        | `WrapSelectDelegate`        | `CascadingSelectDelegate`   | `TabNavSelectDelegate`      | `SideNavSelectDelegate`     | `ExpandableSelectDelegate`  |
+| --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- |
+| ![ListSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/list.jpg) | ![GridSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/grid.jpg) | ![WrapSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/wrap.jpg) | ![CascadingSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/cascading.jpg) | ![TabNavSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/tabnav.jpg) | ![SideNavSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/sidenav.jpg) | ![ExpandableSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/expandable.jpg) |
 
 #### SelectEntry
 
