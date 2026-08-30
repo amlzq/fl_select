@@ -1,12 +1,12 @@
-## Next
+## 0.11.1
 
-- **BUGFIX** fix list tiles ignoring the effective selection mode: `SelectListView` was never given the resolved mode, so a `SelectListLayout` category always rendered `SelectRadioListTile`s regardless of the delegate's `selectionMode`. A category without an explicit `selectionMode` under `ExpandableSelectDelegate(selectionMode: SelectionMode.multiple)` now renders `SelectCheckboxListTile`s (matching the already-correct toggle behavior), a category-level `SelectionMode.single` override still renders radios, and counter/range layouts stay pinned to single. The flat `ListSelectDelegate` body had the same leak and now forwards its delegate-level mode. `ExpandableSelectDelegate`'s `radioBuilder` / `checkboxBuilder` are now also forwarded to the category content (they were silently dropped, unlike `TabNavSelectDelegate` / `SideNavSelectDelegate`).
+- **BUGFIX** fix list tiles ignoring the effective selection mode: the resolved `selectionMode` and `ExpandableSelectDelegate`'s `radioBuilder` / `checkboxBuilder` are now forwarded to the body, so categories inherit the delegate's mode instead of always rendering radios.
 
-- **BUGFIX** `ExpandableSelect` now chains touch-drag scrolling to the enclosing page the same way `SideNavSelect` does: drags past the body's edges hand the unconsumed distance to the nearest same-direction ancestor scrollable (e.g. the page's `SingleChildScrollView`), reverse drags unwind the ancestor's chained offset first, and flings released at an edge transfer their momentum. The chaining physics now live in a shared internal implementation reused by both selects.
+- **BUGFIX** `ExpandableSelect` now chains touch-drag scrolling to the enclosing page like `SideNavSelect`, via a shared internal clamping-physics implementation.
 
-- **BUGFIX** `SideNavSelect` now chains touch-drag scrolling to the enclosing page: dragging the right column past its start/end edge hands the unconsumed drag to the nearest same-direction ancestor scrollable (e.g. the page's `SingleChildScrollView`), dragging back first unwinds the ancestor's chained offset before the column scrolls again, and a fling released while the column rests at an edge hands its momentum to the ancestor. This matches the framework's built-in pointer-wheel chaining and the native nested-scrolling behavior of iOS `UIScrollView` and Android `NestedScrollingParent`, instead of the column stopping dead at its edge while the page behind stayed stuck. Implemented via a `ClampingScrollPhysics` subclass that falls back to plain clamping behavior when no scrollable ancestor is found, requiring no changes to hosting pages.
+- **BUGFIX** `SideNavSelect` now chains touch-drag scrolling to the enclosing page's scrollable instead of stopping dead at its edges, via a `ClampingScrollPhysics` subclass with no changes required on hosting pages.
 
-- **BUGFIX** `SideNavSelect` now aligns the tapped category's section (instead of its bare title) with the top of the right column, keeping the section's top padding as breathing room and sharing one geometric anchor with the scroll-linked highlight. The right column prefetches sections eagerly (finite 10000px cache extent), so taps scroll in one continuous animation; the estimate-then-jump fallback for extremely long content now animates instead of teleporting.
+- **BUGFIX** `SideNavSelect` now scrolls the tapped category's full section (including its top padding) to the top of the right column, and long-content jumps animate instead of teleporting.
 
 ## 0.11.0
 
