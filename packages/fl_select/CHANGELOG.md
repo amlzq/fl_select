@@ -1,4 +1,8 @@
-## Next
+## 0.11.0
+
+- **DEPRECATION** the dual-mode delegates (`FlattenSelectDelegate`, `GridSelectDelegate`, `ListSelectDelegate` with two-level data) are deprecated in favor of the single-purpose ones above and **will be removed in a future minor version** ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0110)).
+
+- **DEPRECATION** rename `SelectChipLayout` to `SelectWrapLayout`; the old name is kept as a deprecated alias and **will be removed in a future minor version** ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0110)).
 
 - **FEATURE** add `TabNavSelectDelegate` — a two-level select with category tabs on top driving the content below, split out of `GridSelectDelegate`'s two-level mode. Category layouts default to the delegate's `defaultLayout` (a 3-column grid) instead of being derived from grid parameters.
 
@@ -8,22 +12,15 @@
 
 - **FEATURE** add `ExpandableSelectDelegate` — a two-level select with one expandable group per category, split out of `ListSelectDelegate`'s two-level mode.
 
-- **DEPRECATION** the dual-mode delegates are deprecated in favor of the single-purpose ones above; the old behavior keeps working through forwarding and **will be removed in a future minor version**:
-  - `FlattenSelectDelegate` is renamed — use `SideNavSelectDelegate` for two-level data or `WrapSelectDelegate` for flat data.
-  - `GridSelectDelegate` with two-level (category) data — use `TabNavSelectDelegate` instead; the flat grid mode is unaffected.
-  - `ListSelectDelegate` with two-level (category) data — use `ExpandableSelectDelegate` instead; the flat list mode is unaffected.
-
-  Each new delegate asserts on the data shape it does not support, so mis-migrations surface immediately ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
-
-- **DEPRECATION** rename `SelectChipLayout` to `SelectWrapLayout` to align the layout with the wrapable chip bar it renders; the old name is kept as a deprecated subclass alias for backward compatibility and **will be removed in a future minor version**. The two are fully interchangeable — equal values compare equal, render identically and encode to the same JSON `kind: 'chip'` — so migration is a pure rename ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+- **FEATURE** `PopupSelectBar`, `SelectTabBar` and `SelectSideBar` now scroll the tapped or focused tab to the center when `isScrollable` is true.
 
 ## 0.10.0
 
 - **FEATURE** add `SelectEntryCodec` — declarative JSON import/export for entry trees (`fromJson` / `toJson`), powering the new GenUI bridge package [`fl_select_genui`](https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui).
 
-- **BREAKING** remove the deprecated `FlattenSelectDelegate` grid parameters and the matching `FlattenSelect` widget parameters (no effect since 0.7.2); set a `SelectGridLayout` on `SelectCategoryEntry.layout` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+- **BREAKING** remove the deprecated `FlattenSelectDelegate` grid parameters and the matching `FlattenSelect` widget parameters (no effect since 0.7.2); set a `SelectGridLayout` on `SelectCategoryEntry.layout` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0100)).
 
-- **BREAKING** remove the deprecated `SelectController` `previousSelected` / `resetSelected` aliases (deprecated since 0.8.0); pass `selectedEntries` / `resetEntries` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+- **BREAKING** remove the deprecated `SelectController` `previousSelected` / `resetSelected` aliases (deprecated since 0.8.0); pass `selectedEntries` / `resetEntries` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0100)).
 
 ## 0.9.0
 

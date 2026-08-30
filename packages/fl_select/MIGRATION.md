@@ -1,6 +1,6 @@
 # Migration Guide
 
-## MIGRATE TO Next
+## MIGRATE TO 0.11.0
 
 The dual-mode delegates are split into single-purpose ones and the old
 dual-mode entry points are deprecated: they keep working through forwarding
