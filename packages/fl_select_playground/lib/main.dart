@@ -5,7 +5,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
 
 import 'generated/l10n/app_localizations.dart';
-import 'playground/playground_page.dart';
+import 'playground_page.dart';
 import 'theme_mode.dart';
 
 void main() {
@@ -74,18 +74,27 @@ class _PlaygroundAppState extends State<PlaygroundApp> {
               AppLocalizations.delegate,
             ],
             supportedLocales: const [
+              Locale('de'),
               Locale('en'),
+              Locale('es'),
+              Locale('fr'),
+              Locale('id'),
+              Locale('ja'),
+              Locale('ko'),
+              Locale('pt'),
+              Locale('vi'),
               Locale.fromSubtags(languageCode: 'zh'),
               Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
-              Locale.fromSubtags(
-                languageCode: 'zh',
-                scriptCode: 'Hant',
-                countryCode: 'TW',
-              ),
+              Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
               Locale.fromSubtags(
                 languageCode: 'zh',
                 scriptCode: 'Hant',
                 countryCode: 'HK',
+              ),
+              Locale.fromSubtags(
+                languageCode: 'zh',
+                scriptCode: 'Hant',
+                countryCode: 'TW',
               ),
             ],
             home: const PlaygroundPage(),

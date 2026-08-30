@@ -5,7 +5,15 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
+import 'app_localizations_de.dart';
 import 'app_localizations_en.dart';
+import 'app_localizations_es.dart';
+import 'app_localizations_fr.dart';
+import 'app_localizations_id.dart';
+import 'app_localizations_ja.dart';
+import 'app_localizations_ko.dart';
+import 'app_localizations_pt.dart';
+import 'app_localizations_vi.dart';
 import 'app_localizations_zh.dart';
 
 // ignore_for_file: type=lint
@@ -94,7 +102,15 @@ abstract class AppLocalizations {
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
+    Locale('de'),
     Locale('en'),
+    Locale('es'),
+    Locale('fr'),
+    Locale('id'),
+    Locale('ja'),
+    Locale('ko'),
+    Locale('pt'),
+    Locale('vi'),
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
     Locale.fromSubtags(
       languageCode: 'zh',
@@ -106,6 +122,7 @@ abstract class AppLocalizations {
       countryCode: 'TW',
       scriptCode: 'Hant',
     ),
+    Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
     Locale('zh'),
   ];
 
@@ -114,216 +131,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Select Example'**
   String get appName;
-
-  /// No description provided for @realEstate.
-  ///
-  /// In en, this message translates to:
-  /// **'Real Estate'**
-  String get realEstate;
-
-  /// No description provided for @leyoujia.
-  ///
-  /// In en, this message translates to:
-  /// **'Leyoujia'**
-  String get leyoujia;
-
-  /// No description provided for @buy.
-  ///
-  /// In en, this message translates to:
-  /// **'Buy'**
-  String get buy;
-
-  /// No description provided for @sell.
-  ///
-  /// In en, this message translates to:
-  /// **'For sale'**
-  String get sell;
-
-  /// No description provided for @rent.
-  ///
-  /// In en, this message translates to:
-  /// **'Rent'**
-  String get rent;
-
-  /// No description provided for @onMap.
-  ///
-  /// In en, this message translates to:
-  /// **'On Map'**
-  String get onMap;
-
-  /// No description provided for @reset.
-  ///
-  /// In en, this message translates to:
-  /// **'Reset'**
-  String get reset;
-
-  /// No description provided for @apply.
-  ///
-  /// In en, this message translates to:
-  /// **'Apply'**
-  String get apply;
-
-  /// No description provided for @clear.
-  ///
-  /// In en, this message translates to:
-  /// **'Clear all'**
-  String get clear;
-
-  /// No description provided for @done.
-  ///
-  /// In en, this message translates to:
-  /// **'Done'**
-  String get done;
-
-  /// No description provided for @zillow.
-  ///
-  /// In en, this message translates to:
-  /// **'Zillow'**
-  String get zillow;
-
-  /// No description provided for @region.
-  ///
-  /// In en, this message translates to:
-  /// **'Region'**
-  String get region;
-
-  /// No description provided for @neighborhood.
-  ///
-  /// In en, this message translates to:
-  /// **'Neighborhood'**
-  String get neighborhood;
-
-  /// No description provided for @price.
-  ///
-  /// In en, this message translates to:
-  /// **'Price'**
-  String get price;
-
-  /// No description provided for @floorPlan.
-  ///
-  /// In en, this message translates to:
-  /// **'Layout'**
-  String get floorPlan;
-
-  /// No description provided for @rooms.
-  ///
-  /// In en, this message translates to:
-  /// **'Rooms'**
-  String get rooms;
-
-  /// No description provided for @more.
-  ///
-  /// In en, this message translates to:
-  /// **'More'**
-  String get more;
-
-  /// No description provided for @selectUpdated.
-  ///
-  /// In en, this message translates to:
-  /// **'Selection updated'**
-  String get selectUpdated;
-
-  /// No description provided for @view.
-  ///
-  /// In en, this message translates to:
-  /// **'View'**
-  String get view;
-
-  /// No description provided for @selectResult.
-  ///
-  /// In en, this message translates to:
-  /// **'Result: {result}'**
-  String selectResult(Object result);
-
-  /// No description provided for @resultParseFailed.
-  ///
-  /// In en, this message translates to:
-  /// **'Failed to parse result'**
-  String get resultParseFailed;
-
-  /// No description provided for @viewing.
-  ///
-  /// In en, this message translates to:
-  /// **'Loading...'**
-  String get viewing;
-
-  /// No description provided for @loadError.
-  ///
-  /// In en, this message translates to:
-  /// **'Error: {error}'**
-  String loadError(Object error);
-
-  /// No description provided for @any.
-  ///
-  /// In en, this message translates to:
-  /// **'Any'**
-  String get any;
-
-  /// No description provided for @custom.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom'**
-  String get custom;
-
-  /// No description provided for @minHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Min'**
-  String get minHint;
-
-  /// No description provided for @maxHint.
-  ///
-  /// In en, this message translates to:
-  /// **'Max'**
-  String get maxHint;
-
-  /// No description provided for @noMin.
-  ///
-  /// In en, this message translates to:
-  /// **'No min'**
-  String get noMin;
-
-  /// No description provided for @noMax.
-  ///
-  /// In en, this message translates to:
-  /// **'No max'**
-  String get noMax;
-
-  /// No description provided for @customArea.
-  ///
-  /// In en, this message translates to:
-  /// **'Custom area'**
-  String get customArea;
-
-  /// No description provided for @userCityName.
-  ///
-  /// In en, this message translates to:
-  /// **'Shenzhen'**
-  String get userCityName;
-
-  /// No description provided for @viewhomes.
-  ///
-  /// In en, this message translates to:
-  /// **'View {count} homes'**
-  String viewhomes(Object count);
-
-  /// No description provided for @nohomes.
-  ///
-  /// In en, this message translates to:
-  /// **'No homes'**
-  String get nohomes;
-
-  /// No description provided for @noMore.
-  ///
-  /// In en, this message translates to:
-  /// **'No more'**
-  String get noMore;
-
-  /// No description provided for @loading.
-  ///
-  /// In en, this message translates to:
-  /// **'Loading...'**
-  String get loading;
 
   /// No description provided for @themeMode.
   ///
@@ -348,6 +155,300 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark'**
   String get themeDark;
+
+  /// No description provided for @languageTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageTooltip;
+
+  /// No description provided for @entryPoint.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry Point'**
+  String get entryPoint;
+
+  /// No description provided for @delegateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Delegate'**
+  String get delegateLabel;
+
+  /// No description provided for @selectionMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Selection Mode'**
+  String get selectionMode;
+
+  /// No description provided for @tileVariant.
+  ///
+  /// In en, this message translates to:
+  /// **'Tile Variant'**
+  String get tileVariant;
+
+  /// No description provided for @seedColor.
+  ///
+  /// In en, this message translates to:
+  /// **'Seed Color'**
+  String get seedColor;
+
+  /// No description provided for @columns.
+  ///
+  /// In en, this message translates to:
+  /// **'Columns ({value})'**
+  String columns(int value);
+
+  /// No description provided for @aspectRatio.
+  ///
+  /// In en, this message translates to:
+  /// **'Aspect Ratio ({value})'**
+  String aspectRatio(String value);
+
+  /// No description provided for @spacing.
+  ///
+  /// In en, this message translates to:
+  /// **'Spacing ({value})'**
+  String spacing(int value);
+
+  /// No description provided for @single.
+  ///
+  /// In en, this message translates to:
+  /// **'Single'**
+  String get single;
+
+  /// No description provided for @multiple.
+  ///
+  /// In en, this message translates to:
+  /// **'Multiple'**
+  String get multiple;
+
+  /// No description provided for @filled.
+  ///
+  /// In en, this message translates to:
+  /// **'Filled'**
+  String get filled;
+
+  /// No description provided for @outlined.
+  ///
+  /// In en, this message translates to:
+  /// **'Outlined'**
+  String get outlined;
+
+  /// No description provided for @brightness.
+  ///
+  /// In en, this message translates to:
+  /// **'Brightness'**
+  String get brightness;
+
+  /// No description provided for @follow.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow App'**
+  String get follow;
+
+  /// No description provided for @light.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get light;
+
+  /// No description provided for @dark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get dark;
+
+  /// No description provided for @layoutList.
+  ///
+  /// In en, this message translates to:
+  /// **'List'**
+  String get layoutList;
+
+  /// No description provided for @layoutGrid.
+  ///
+  /// In en, this message translates to:
+  /// **'Grid'**
+  String get layoutGrid;
+
+  /// No description provided for @layoutWrap.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrap'**
+  String get layoutWrap;
+
+  /// No description provided for @layoutCascading.
+  ///
+  /// In en, this message translates to:
+  /// **'Cascading'**
+  String get layoutCascading;
+
+  /// No description provided for @layoutTabNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Tab Nav'**
+  String get layoutTabNav;
+
+  /// No description provided for @layoutSideNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Side Nav'**
+  String get layoutSideNav;
+
+  /// No description provided for @layoutExpandable.
+  ///
+  /// In en, this message translates to:
+  /// **'Expandable'**
+  String get layoutExpandable;
+
+  /// No description provided for @headerOptions.
+  ///
+  /// In en, this message translates to:
+  /// **'Header Options'**
+  String get headerOptions;
+
+  /// No description provided for @leadingOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Leading'**
+  String get leadingOption;
+
+  /// No description provided for @trailingOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Trailing'**
+  String get trailingOption;
+
+  /// No description provided for @centerTitleOption.
+  ///
+  /// In en, this message translates to:
+  /// **'Center Title'**
+  String get centerTitleOption;
+
+  /// No description provided for @phonePopupBarTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Popup Bar'**
+  String get phonePopupBarTitle;
+
+  /// No description provided for @phonePopupButtonTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Popup Button'**
+  String get phonePopupButtonTitle;
+
+  /// No description provided for @phoneDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dialog'**
+  String get phoneDialogTitle;
+
+  /// No description provided for @phoneBottomSheetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Bottom Sheet'**
+  String get phoneBottomSheetTitle;
+
+  /// No description provided for @tapBarHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Tap the bar to open the select'**
+  String get tapBarHint;
+
+  /// No description provided for @openSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Select'**
+  String get openSelect;
+
+  /// No description provided for @openListSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Open List Select'**
+  String get openListSelect;
+
+  /// No description provided for @openGridSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Grid Select'**
+  String get openGridSelect;
+
+  /// No description provided for @openWrapSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Wrap Select'**
+  String get openWrapSelect;
+
+  /// No description provided for @openCascadingSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Cascading Select'**
+  String get openCascadingSelect;
+
+  /// No description provided for @openTabNavSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Tab Nav Select'**
+  String get openTabNavSelect;
+
+  /// No description provided for @openSideNavSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Side Nav Select'**
+  String get openSideNavSelect;
+
+  /// No description provided for @openExpandableSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Open Expandable Select'**
+  String get openExpandableSelect;
+
+  /// No description provided for @titleListSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'List Select'**
+  String get titleListSelect;
+
+  /// No description provided for @titleGridSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Grid Select'**
+  String get titleGridSelect;
+
+  /// No description provided for @titleWrapSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrap Select'**
+  String get titleWrapSelect;
+
+  /// No description provided for @titleCascadingSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Cascading Select'**
+  String get titleCascadingSelect;
+
+  /// No description provided for @titleTabNavSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Tab Nav Select'**
+  String get titleTabNavSelect;
+
+  /// No description provided for @titleSideNavSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Side Nav Select'**
+  String get titleSideNavSelect;
+
+  /// No description provided for @titleExpandableSelect.
+  ///
+  /// In en, this message translates to:
+  /// **'Expandable Select'**
+  String get titleExpandableSelect;
+
+  /// No description provided for @resultPanelTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Callback results'**
+  String get resultPanelTitle;
 }
 
 class _AppLocalizationsDelegate
@@ -360,8 +461,18 @@ class _AppLocalizationsDelegate
   }
 
   @override
-  bool isSupported(Locale locale) =>
-      <String>['en', 'zh'].contains(locale.languageCode);
+  bool isSupported(Locale locale) => <String>[
+    'de',
+    'en',
+    'es',
+    'fr',
+    'id',
+    'ja',
+    'ko',
+    'pt',
+    'vi',
+    'zh',
+  ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -383,6 +494,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
         switch (locale.scriptCode) {
           case 'Hans':
             return AppLocalizationsZhHans();
+          case 'Hant':
+            return AppLocalizationsZhHant();
         }
         break;
       }
@@ -390,8 +503,24 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
 
   // Lookup logic when only language code is specified.
   switch (locale.languageCode) {
+    case 'de':
+      return AppLocalizationsDe();
     case 'en':
       return AppLocalizationsEn();
+    case 'es':
+      return AppLocalizationsEs();
+    case 'fr':
+      return AppLocalizationsFr();
+    case 'id':
+      return AppLocalizationsId();
+    case 'ja':
+      return AppLocalizationsJa();
+    case 'ko':
+      return AppLocalizationsKo();
+    case 'pt':
+      return AppLocalizationsPt();
+    case 'vi':
+      return AppLocalizationsVi();
     case 'zh':
       return AppLocalizationsZh();
   }

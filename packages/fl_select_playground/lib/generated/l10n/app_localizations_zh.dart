@@ -12,117 +12,6 @@ class AppLocalizationsZh extends AppLocalizations {
   String get appName => '选择器示例';
 
   @override
-  String get realEstate => '房地产';
-
-  @override
-  String get leyoujia => '乐有家';
-
-  @override
-  String get buy => '新房';
-
-  @override
-  String get sell => '二手房';
-
-  @override
-  String get rent => '租房';
-
-  @override
-  String get onMap => '地图看房';
-
-  @override
-  String get reset => '重置';
-
-  @override
-  String get apply => '应用';
-
-  @override
-  String get clear => '清除全部';
-
-  @override
-  String get done => '完成';
-
-  @override
-  String get zillow => 'Zillow';
-
-  @override
-  String get region => '区域';
-
-  @override
-  String get neighborhood => '社区';
-
-  @override
-  String get price => '价格';
-
-  @override
-  String get floorPlan => '户型';
-
-  @override
-  String get rooms => '房间';
-
-  @override
-  String get more => '更多';
-
-  @override
-  String get selectUpdated => '选择已更新';
-
-  @override
-  String get view => '查看';
-
-  @override
-  String selectResult(Object result) {
-    return '结果：$result';
-  }
-
-  @override
-  String get resultParseFailed => '结果解析失败';
-
-  @override
-  String get viewing => '查看中…';
-
-  @override
-  String loadError(Object error) {
-    return '加载错误: $error';
-  }
-
-  @override
-  String get any => '不限';
-
-  @override
-  String get custom => '自定义';
-
-  @override
-  String get minHint => '最小值';
-
-  @override
-  String get maxHint => '最大值';
-
-  @override
-  String get noMin => '最小值不限';
-
-  @override
-  String get noMax => '最大值不限';
-
-  @override
-  String get customArea => '自定义面积';
-
-  @override
-  String get userCityName => '深圳';
-
-  @override
-  String viewhomes(Object count) {
-    return '查看 $count 套';
-  }
-
-  @override
-  String get nohomes => '暂无房源';
-
-  @override
-  String get noMore => '没有更多了';
-
-  @override
-  String get loading => '加载中…';
-
-  @override
   String get themeMode => '主题模式';
 
   @override
@@ -133,6 +22,159 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get themeDark => '深色';
+
+  @override
+  String get languageTooltip => '语言';
+
+  @override
+  String get entryPoint => '入口';
+
+  @override
+  String get delegateLabel => '代理';
+
+  @override
+  String get selectionMode => '选择模式';
+
+  @override
+  String get tileVariant => '磁贴样式';
+
+  @override
+  String get seedColor => '主题色';
+
+  @override
+  String columns(int value) {
+    return '列数（$value）';
+  }
+
+  @override
+  String aspectRatio(String value) {
+    return '宽高比（$value）';
+  }
+
+  @override
+  String spacing(int value) {
+    return '间距（$value）';
+  }
+
+  @override
+  String get single => '单选';
+
+  @override
+  String get multiple => '多选';
+
+  @override
+  String get filled => '填充';
+
+  @override
+  String get outlined => '描边';
+
+  @override
+  String get brightness => '明暗';
+
+  @override
+  String get follow => '跟随应用';
+
+  @override
+  String get light => '浅色';
+
+  @override
+  String get dark => '深色';
+
+  @override
+  String get layoutList => '列表';
+
+  @override
+  String get layoutGrid => '网格';
+
+  @override
+  String get layoutWrap => '平铺';
+
+  @override
+  String get layoutCascading => '联动';
+
+  @override
+  String get layoutTabNav => '顶导航';
+
+  @override
+  String get layoutSideNav => '侧导航';
+
+  @override
+  String get layoutExpandable => '分组';
+
+  @override
+  String get headerOptions => '标题栏选项';
+
+  @override
+  String get leadingOption => '前置组件';
+
+  @override
+  String get trailingOption => '后置组件';
+
+  @override
+  String get centerTitleOption => '标题居中';
+
+  @override
+  String get phonePopupBarTitle => '弹出选择栏';
+
+  @override
+  String get phonePopupButtonTitle => '弹出选择按钮';
+
+  @override
+  String get phoneDialogTitle => '对话框';
+
+  @override
+  String get phoneBottomSheetTitle => '底部弹层';
+
+  @override
+  String get tapBarHint => '点击顶栏打开选择器';
+
+  @override
+  String get openSelect => '打开选择器';
+
+  @override
+  String get openListSelect => '打开列表选择器';
+
+  @override
+  String get openGridSelect => '打开网格选择器';
+
+  @override
+  String get openWrapSelect => '打开平铺选择器';
+
+  @override
+  String get openCascadingSelect => '打开联动选择器';
+
+  @override
+  String get openTabNavSelect => '打开顶导航选择器';
+
+  @override
+  String get openSideNavSelect => '打开侧导航选择器';
+
+  @override
+  String get openExpandableSelect => '打开分组选择器';
+
+  @override
+  String get titleListSelect => '列表选择器';
+
+  @override
+  String get titleGridSelect => '网格选择器';
+
+  @override
+  String get titleWrapSelect => '平铺选择器';
+
+  @override
+  String get titleCascadingSelect => '联动选择器';
+
+  @override
+  String get titleTabNavSelect => '顶导航选择器';
+
+  @override
+  String get titleSideNavSelect => '侧导航选择器';
+
+  @override
+  String get titleExpandableSelect => '分组选择器';
+
+  @override
+  String get resultPanelTitle => '回调结果';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -143,117 +185,6 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get appName => '选择器示例';
 
   @override
-  String get realEstate => '房地产';
-
-  @override
-  String get leyoujia => '乐有家';
-
-  @override
-  String get buy => '新房';
-
-  @override
-  String get sell => '二手房';
-
-  @override
-  String get rent => '租房';
-
-  @override
-  String get onMap => '地图看房';
-
-  @override
-  String get reset => '重置';
-
-  @override
-  String get apply => '应用';
-
-  @override
-  String get clear => '清除全部';
-
-  @override
-  String get done => '完成';
-
-  @override
-  String get zillow => 'Zillow';
-
-  @override
-  String get region => '区域';
-
-  @override
-  String get neighborhood => '社区';
-
-  @override
-  String get price => '价格';
-
-  @override
-  String get floorPlan => '户型';
-
-  @override
-  String get rooms => '房间';
-
-  @override
-  String get more => '更多';
-
-  @override
-  String get selectUpdated => '选择已更新';
-
-  @override
-  String get view => '查看';
-
-  @override
-  String selectResult(Object result) {
-    return '结果：$result';
-  }
-
-  @override
-  String get resultParseFailed => '结果解析失败';
-
-  @override
-  String get viewing => '查看中…';
-
-  @override
-  String loadError(Object error) {
-    return '加载错误: $error';
-  }
-
-  @override
-  String get any => '不限';
-
-  @override
-  String get custom => '自定义';
-
-  @override
-  String get minHint => '最小值';
-
-  @override
-  String get maxHint => '最大值';
-
-  @override
-  String get noMin => '最小值不限';
-
-  @override
-  String get noMax => '最大值不限';
-
-  @override
-  String get customArea => '自定义面积';
-
-  @override
-  String get userCityName => '深圳';
-
-  @override
-  String viewhomes(Object count) {
-    return '查看 $count 套';
-  }
-
-  @override
-  String get nohomes => '暂无房源';
-
-  @override
-  String get noMore => '没有更多了';
-
-  @override
-  String get loading => '加载中…';
-
-  @override
   String get themeMode => '主题模式';
 
   @override
@@ -264,6 +195,159 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get themeDark => '深色';
+
+  @override
+  String get languageTooltip => '语言';
+
+  @override
+  String get entryPoint => '入口';
+
+  @override
+  String get delegateLabel => '代理';
+
+  @override
+  String get selectionMode => '选择模式';
+
+  @override
+  String get tileVariant => '磁贴样式';
+
+  @override
+  String get seedColor => '主题色';
+
+  @override
+  String columns(int value) {
+    return '列数（$value）';
+  }
+
+  @override
+  String aspectRatio(String value) {
+    return '宽高比（$value）';
+  }
+
+  @override
+  String spacing(int value) {
+    return '间距（$value）';
+  }
+
+  @override
+  String get single => '单选';
+
+  @override
+  String get multiple => '多选';
+
+  @override
+  String get filled => '填充';
+
+  @override
+  String get outlined => '描边';
+
+  @override
+  String get brightness => '明暗';
+
+  @override
+  String get follow => '跟随应用';
+
+  @override
+  String get light => '浅色';
+
+  @override
+  String get dark => '深色';
+
+  @override
+  String get layoutList => '列表';
+
+  @override
+  String get layoutGrid => '网格';
+
+  @override
+  String get layoutWrap => '平铺';
+
+  @override
+  String get layoutCascading => '联动';
+
+  @override
+  String get layoutTabNav => '顶导航';
+
+  @override
+  String get layoutSideNav => '侧导航';
+
+  @override
+  String get layoutExpandable => '分组';
+
+  @override
+  String get headerOptions => '标题栏选项';
+
+  @override
+  String get leadingOption => '前置组件';
+
+  @override
+  String get trailingOption => '后置组件';
+
+  @override
+  String get centerTitleOption => '标题居中';
+
+  @override
+  String get phonePopupBarTitle => '弹出选择栏';
+
+  @override
+  String get phonePopupButtonTitle => '弹出选择按钮';
+
+  @override
+  String get phoneDialogTitle => '对话框';
+
+  @override
+  String get phoneBottomSheetTitle => '底部弹层';
+
+  @override
+  String get tapBarHint => '点击顶栏打开选择器';
+
+  @override
+  String get openSelect => '打开选择器';
+
+  @override
+  String get openListSelect => '打开列表选择器';
+
+  @override
+  String get openGridSelect => '打开网格选择器';
+
+  @override
+  String get openWrapSelect => '打开平铺选择器';
+
+  @override
+  String get openCascadingSelect => '打开联动选择器';
+
+  @override
+  String get openTabNavSelect => '打开顶导航选择器';
+
+  @override
+  String get openSideNavSelect => '打开侧导航选择器';
+
+  @override
+  String get openExpandableSelect => '打开分组选择器';
+
+  @override
+  String get titleListSelect => '列表选择器';
+
+  @override
+  String get titleGridSelect => '网格选择器';
+
+  @override
+  String get titleWrapSelect => '平铺选择器';
+
+  @override
+  String get titleCascadingSelect => '联动选择器';
+
+  @override
+  String get titleTabNavSelect => '顶导航选择器';
+
+  @override
+  String get titleSideNavSelect => '侧导航选择器';
+
+  @override
+  String get titleExpandableSelect => '分组选择器';
+
+  @override
+  String get resultPanelTitle => '回调结果';
 }
 
 /// The translations for Chinese, as used in Hong Kong, using the Han script (`zh_Hant_HK`).
@@ -274,117 +358,6 @@ class AppLocalizationsZhHantHk extends AppLocalizationsZh {
   String get appName => '選擇器示範';
 
   @override
-  String get realEstate => '地產';
-
-  @override
-  String get leyoujia => '樂有家';
-
-  @override
-  String get buy => '新樓';
-
-  @override
-  String get sell => '二手樓';
-
-  @override
-  String get rent => '租樓';
-
-  @override
-  String get onMap => '地圖搵樓';
-
-  @override
-  String get reset => '重設';
-
-  @override
-  String get apply => '立即搜尋';
-
-  @override
-  String get clear => '全部清除';
-
-  @override
-  String get done => '完成';
-
-  @override
-  String get zillow => 'Zillow';
-
-  @override
-  String get region => '地區';
-
-  @override
-  String get neighborhood => '社區';
-
-  @override
-  String get price => '價格';
-
-  @override
-  String get floorPlan => '間隔';
-
-  @override
-  String get rooms => '房間';
-
-  @override
-  String get more => '更多';
-
-  @override
-  String get selectUpdated => '選擇已更新';
-
-  @override
-  String get view => '查看';
-
-  @override
-  String selectResult(Object result) {
-    return '結果：$result';
-  }
-
-  @override
-  String get resultParseFailed => '結果解析失敗';
-
-  @override
-  String get viewing => '查看中…';
-
-  @override
-  String loadError(Object error) {
-    return '載入錯誤: $error';
-  }
-
-  @override
-  String get any => '不限';
-
-  @override
-  String get custom => '自訂';
-
-  @override
-  String get minHint => '最小值';
-
-  @override
-  String get maxHint => '最大值';
-
-  @override
-  String get noMin => '最小值不限';
-
-  @override
-  String get noMax => '最大值不限';
-
-  @override
-  String get customArea => '自訂面積';
-
-  @override
-  String get userCityName => '深圳';
-
-  @override
-  String viewhomes(Object count) {
-    return '查看 $count 個盤';
-  }
-
-  @override
-  String get nohomes => '暫無樓盤';
-
-  @override
-  String get noMore => '暫無更多';
-
-  @override
-  String get loading => '載入中…';
-
-  @override
   String get themeMode => '主題模式';
 
   @override
@@ -395,6 +368,159 @@ class AppLocalizationsZhHantHk extends AppLocalizationsZh {
 
   @override
   String get themeDark => '深色';
+
+  @override
+  String get languageTooltip => '語言';
+
+  @override
+  String get entryPoint => '入口';
+
+  @override
+  String get delegateLabel => '代理';
+
+  @override
+  String get selectionMode => '選擇模式';
+
+  @override
+  String get tileVariant => '磁貼樣式';
+
+  @override
+  String get seedColor => '主題色';
+
+  @override
+  String columns(int value) {
+    return '列數（$value）';
+  }
+
+  @override
+  String aspectRatio(String value) {
+    return '寬高比（$value）';
+  }
+
+  @override
+  String spacing(int value) {
+    return '間距（$value）';
+  }
+
+  @override
+  String get single => '單選';
+
+  @override
+  String get multiple => '多選';
+
+  @override
+  String get filled => '填充';
+
+  @override
+  String get outlined => '描邊';
+
+  @override
+  String get brightness => '明暗';
+
+  @override
+  String get follow => '跟隨應用';
+
+  @override
+  String get light => '淺色';
+
+  @override
+  String get dark => '深色';
+
+  @override
+  String get layoutList => '列表';
+
+  @override
+  String get layoutGrid => '網格';
+
+  @override
+  String get layoutWrap => '平鋪';
+
+  @override
+  String get layoutCascading => '連動';
+
+  @override
+  String get layoutTabNav => '頂導航';
+
+  @override
+  String get layoutSideNav => '側導航';
+
+  @override
+  String get layoutExpandable => '分組';
+
+  @override
+  String get headerOptions => '標題欄選項';
+
+  @override
+  String get leadingOption => '前置組件';
+
+  @override
+  String get trailingOption => '後置組件';
+
+  @override
+  String get centerTitleOption => '標題置中';
+
+  @override
+  String get phonePopupBarTitle => '彈出選擇欄';
+
+  @override
+  String get phonePopupButtonTitle => '彈出選擇按鈕';
+
+  @override
+  String get phoneDialogTitle => '對話框';
+
+  @override
+  String get phoneBottomSheetTitle => '底部彈層';
+
+  @override
+  String get tapBarHint => '點擊頂欄打開選擇器';
+
+  @override
+  String get openSelect => '打開選擇器';
+
+  @override
+  String get openListSelect => '打開列表選擇器';
+
+  @override
+  String get openGridSelect => '打開網格選擇器';
+
+  @override
+  String get openWrapSelect => '打開平鋪選擇器';
+
+  @override
+  String get openCascadingSelect => '打開連動選擇器';
+
+  @override
+  String get openTabNavSelect => '打開頂導航選擇器';
+
+  @override
+  String get openSideNavSelect => '打開側導航選擇器';
+
+  @override
+  String get openExpandableSelect => '打開分組選擇器';
+
+  @override
+  String get titleListSelect => '列表選擇器';
+
+  @override
+  String get titleGridSelect => '網格選擇器';
+
+  @override
+  String get titleWrapSelect => '平鋪選擇器';
+
+  @override
+  String get titleCascadingSelect => '連動選擇器';
+
+  @override
+  String get titleTabNavSelect => '頂導航選擇器';
+
+  @override
+  String get titleSideNavSelect => '側導航選擇器';
+
+  @override
+  String get titleExpandableSelect => '分組選擇器';
+
+  @override
+  String get resultPanelTitle => '回呼結果';
 }
 
 /// The translations for Chinese, as used in Taiwan, using the Han script (`zh_Hant_TW`).
@@ -405,115 +531,177 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   String get appName => '選擇器範例';
 
   @override
-  String get realEstate => '房地產';
+  String get themeMode => '主題模式';
 
   @override
-  String get leyoujia => '樂有家';
+  String get themeSystem => '跟隨系統';
 
   @override
-  String get buy => '新建案';
+  String get themeLight => '淺色';
 
   @override
-  String get sell => '中古屋';
+  String get themeDark => '深色';
 
   @override
-  String get rent => '租屋';
+  String get languageTooltip => '語言';
 
   @override
-  String get onMap => '地圖找房';
+  String get entryPoint => '入口';
 
   @override
-  String get reset => '重設';
+  String get delegateLabel => '代理';
 
   @override
-  String get apply => '套用';
+  String get selectionMode => '選擇模式';
 
   @override
-  String get clear => '全部清除';
+  String get tileVariant => '磚塊樣式';
 
   @override
-  String get done => '完成';
+  String get seedColor => '主題色';
 
   @override
-  String get zillow => 'Zillow';
-
-  @override
-  String get region => '區域';
-
-  @override
-  String get neighborhood => '社區';
-
-  @override
-  String get price => '價格';
-
-  @override
-  String get floorPlan => '格局';
-
-  @override
-  String get rooms => '房間';
-
-  @override
-  String get more => '更多';
-
-  @override
-  String get selectUpdated => '選擇已更新';
-
-  @override
-  String get view => '查看';
-
-  @override
-  String selectResult(Object result) {
-    return '結果：$result';
+  String columns(int value) {
+    return '列數（$value）';
   }
 
   @override
-  String get resultParseFailed => '結果解析失敗';
-
-  @override
-  String get viewing => '查看中…';
-
-  @override
-  String loadError(Object error) {
-    return '載入錯誤: $error';
+  String aspectRatio(String value) {
+    return '寬高比（$value）';
   }
 
   @override
-  String get any => '不限';
-
-  @override
-  String get custom => '自訂';
-
-  @override
-  String get minHint => '最小值';
-
-  @override
-  String get maxHint => '最大值';
-
-  @override
-  String get noMin => '最小值不限';
-
-  @override
-  String get noMax => '最大值不限';
-
-  @override
-  String get customArea => '自訂面積';
-
-  @override
-  String get userCityName => '深圳';
-
-  @override
-  String viewhomes(Object count) {
-    return '查看 $count 間';
+  String spacing(int value) {
+    return '間距（$value）';
   }
 
   @override
-  String get nohomes => '暫無房源';
+  String get single => '單選';
 
   @override
-  String get noMore => '暫無更多';
+  String get multiple => '多選';
 
   @override
-  String get loading => '載入中…';
+  String get filled => '填滿';
+
+  @override
+  String get outlined => '外框';
+
+  @override
+  String get brightness => '明暗';
+
+  @override
+  String get follow => '跟隨應用';
+
+  @override
+  String get light => '淺色';
+
+  @override
+  String get dark => '深色';
+
+  @override
+  String get layoutList => '列表';
+
+  @override
+  String get layoutGrid => '網格';
+
+  @override
+  String get layoutWrap => '平鋪';
+
+  @override
+  String get layoutCascading => '連動';
+
+  @override
+  String get layoutTabNav => '頂導航';
+
+  @override
+  String get layoutSideNav => '側導航';
+
+  @override
+  String get layoutExpandable => '分組';
+
+  @override
+  String get headerOptions => '標題列選項';
+
+  @override
+  String get leadingOption => '前置組件';
+
+  @override
+  String get trailingOption => '後置組件';
+
+  @override
+  String get centerTitleOption => '標題置中';
+
+  @override
+  String get phonePopupBarTitle => '彈出選擇列';
+
+  @override
+  String get phonePopupButtonTitle => '彈出選擇按鈕';
+
+  @override
+  String get phoneDialogTitle => '對話框';
+
+  @override
+  String get phoneBottomSheetTitle => '底部彈出層';
+
+  @override
+  String get tapBarHint => '點擊頂欄開啟選擇器';
+
+  @override
+  String get openSelect => '開啟選擇器';
+
+  @override
+  String get openListSelect => '開啟列表選擇器';
+
+  @override
+  String get openGridSelect => '開啟網格選擇器';
+
+  @override
+  String get openWrapSelect => '開啟平鋪選擇器';
+
+  @override
+  String get openCascadingSelect => '開啟連動選擇器';
+
+  @override
+  String get openTabNavSelect => '開啟頂導航選擇器';
+
+  @override
+  String get openSideNavSelect => '開啟側導航選擇器';
+
+  @override
+  String get openExpandableSelect => '開啟分組選擇器';
+
+  @override
+  String get titleListSelect => '列表選擇器';
+
+  @override
+  String get titleGridSelect => '網格選擇器';
+
+  @override
+  String get titleWrapSelect => '平鋪選擇器';
+
+  @override
+  String get titleCascadingSelect => '連動選擇器';
+
+  @override
+  String get titleTabNavSelect => '頂導航選擇器';
+
+  @override
+  String get titleSideNavSelect => '側導航選擇器';
+
+  @override
+  String get titleExpandableSelect => '分組選擇器';
+
+  @override
+  String get resultPanelTitle => '回呼結果';
+}
+
+/// The translations for Chinese, using the Han script (`zh_Hant`).
+class AppLocalizationsZhHant extends AppLocalizationsZh {
+  AppLocalizationsZhHant() : super('zh_Hant');
+
+  @override
+  String get appName => '選擇器示例';
 
   @override
   String get themeMode => '主題模式';
@@ -526,4 +714,157 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
 
   @override
   String get themeDark => '深色';
+
+  @override
+  String get languageTooltip => '語言';
+
+  @override
+  String get entryPoint => '入口';
+
+  @override
+  String get delegateLabel => '代理';
+
+  @override
+  String get selectionMode => '選擇模式';
+
+  @override
+  String get tileVariant => '磁貼樣式';
+
+  @override
+  String get seedColor => '主題色';
+
+  @override
+  String columns(int value) {
+    return '列數（$value）';
+  }
+
+  @override
+  String aspectRatio(String value) {
+    return '寬高比（$value）';
+  }
+
+  @override
+  String spacing(int value) {
+    return '間距（$value）';
+  }
+
+  @override
+  String get single => '單選';
+
+  @override
+  String get multiple => '多選';
+
+  @override
+  String get filled => '填充';
+
+  @override
+  String get outlined => '描邊';
+
+  @override
+  String get brightness => '明暗';
+
+  @override
+  String get follow => '跟隨應用';
+
+  @override
+  String get light => '淺色';
+
+  @override
+  String get dark => '深色';
+
+  @override
+  String get layoutList => '列表';
+
+  @override
+  String get layoutGrid => '網格';
+
+  @override
+  String get layoutWrap => '平鋪';
+
+  @override
+  String get layoutCascading => '連動';
+
+  @override
+  String get layoutTabNav => '頂導航';
+
+  @override
+  String get layoutSideNav => '側導航';
+
+  @override
+  String get layoutExpandable => '分組';
+
+  @override
+  String get headerOptions => '標題欄選項';
+
+  @override
+  String get leadingOption => '前置組件';
+
+  @override
+  String get trailingOption => '後置組件';
+
+  @override
+  String get centerTitleOption => '標題置中';
+
+  @override
+  String get phonePopupBarTitle => '彈出選擇欄';
+
+  @override
+  String get phonePopupButtonTitle => '彈出選擇按鈕';
+
+  @override
+  String get phoneDialogTitle => '對話框';
+
+  @override
+  String get phoneBottomSheetTitle => '底部彈層';
+
+  @override
+  String get tapBarHint => '點擊頂欄打開選擇器';
+
+  @override
+  String get openSelect => '打開選擇器';
+
+  @override
+  String get openListSelect => '打開列表選擇器';
+
+  @override
+  String get openGridSelect => '打開網格選擇器';
+
+  @override
+  String get openWrapSelect => '打開平鋪選擇器';
+
+  @override
+  String get openCascadingSelect => '打開連動選擇器';
+
+  @override
+  String get openTabNavSelect => '打開頂導航選擇器';
+
+  @override
+  String get openSideNavSelect => '打開側導航選擇器';
+
+  @override
+  String get openExpandableSelect => '打開分組選擇器';
+
+  @override
+  String get titleListSelect => '列表選擇器';
+
+  @override
+  String get titleGridSelect => '網格選擇器';
+
+  @override
+  String get titleWrapSelect => '平鋪選擇器';
+
+  @override
+  String get titleCascadingSelect => '連動選擇器';
+
+  @override
+  String get titleTabNavSelect => '頂導航選擇器';
+
+  @override
+  String get titleSideNavSelect => '側導航選擇器';
+
+  @override
+  String get titleExpandableSelect => '分組選擇器';
+
+  @override
+  String get resultPanelTitle => '回調結果';
 }

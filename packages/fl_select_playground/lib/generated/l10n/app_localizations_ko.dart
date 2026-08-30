@@ -1,0 +1,178 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for Korean (`ko`).
+class AppLocalizationsKo extends AppLocalizations {
+  AppLocalizationsKo([String locale = 'ko']) : super(locale);
+
+  @override
+  String get appName => 'Select 예제';
+
+  @override
+  String get themeMode => '테마';
+
+  @override
+  String get themeSystem => '시스템 따르기';
+
+  @override
+  String get themeLight => '밝게';
+
+  @override
+  String get themeDark => '어둡게';
+
+  @override
+  String get languageTooltip => '언어';
+
+  @override
+  String get entryPoint => '진입점';
+
+  @override
+  String get delegateLabel => '델리게이트';
+
+  @override
+  String get selectionMode => '선택 모드';
+
+  @override
+  String get tileVariant => '타일 스타일';
+
+  @override
+  String get seedColor => '시드 색상';
+
+  @override
+  String columns(int value) {
+    return '열 수($value)';
+  }
+
+  @override
+  String aspectRatio(String value) {
+    return '가로세로 비율($value)';
+  }
+
+  @override
+  String spacing(int value) {
+    return '간격($value)';
+  }
+
+  @override
+  String get single => '단일';
+
+  @override
+  String get multiple => '다중';
+
+  @override
+  String get filled => '채우기';
+
+  @override
+  String get outlined => '외곽선';
+
+  @override
+  String get brightness => '밝기';
+
+  @override
+  String get follow => '앱 따르기';
+
+  @override
+  String get light => '밝게';
+
+  @override
+  String get dark => '어둡게';
+
+  @override
+  String get layoutList => '목록';
+
+  @override
+  String get layoutGrid => '그리드';
+
+  @override
+  String get layoutWrap => '줄바꿈';
+
+  @override
+  String get layoutCascading => '계단식';
+
+  @override
+  String get layoutTabNav => '상단 탐색';
+
+  @override
+  String get layoutSideNav => '측면 탐색';
+
+  @override
+  String get layoutExpandable => '확장';
+
+  @override
+  String get headerOptions => '헤더 옵션';
+
+  @override
+  String get leadingOption => '앞쪽 위젯';
+
+  @override
+  String get trailingOption => '뒤쪽 위젯';
+
+  @override
+  String get centerTitleOption => '제목 가운데';
+
+  @override
+  String get phonePopupBarTitle => '팝업 바';
+
+  @override
+  String get phonePopupButtonTitle => '팝업 버튼';
+
+  @override
+  String get phoneDialogTitle => '대화상자';
+
+  @override
+  String get phoneBottomSheetTitle => '바텀 시트';
+
+  @override
+  String get tapBarHint => '막대를 탭하여 선택기를 엽니다';
+
+  @override
+  String get openSelect => '선택기 열기';
+
+  @override
+  String get openListSelect => '목록 선택기 열기';
+
+  @override
+  String get openGridSelect => '그리드 선택기 열기';
+
+  @override
+  String get openWrapSelect => '줄바꿈 선택기 열기';
+
+  @override
+  String get openCascadingSelect => '계단식 선택기 열기';
+
+  @override
+  String get openTabNavSelect => '상단 탐색 선택기 열기';
+
+  @override
+  String get openSideNavSelect => '측면 탐색 선택기 열기';
+
+  @override
+  String get openExpandableSelect => '확장 선택기 열기';
+
+  @override
+  String get titleListSelect => '목록 선택기';
+
+  @override
+  String get titleGridSelect => '그리드 선택기';
+
+  @override
+  String get titleWrapSelect => '줄바꿈 선택기';
+
+  @override
+  String get titleCascadingSelect => '계단식 선택기';
+
+  @override
+  String get titleTabNavSelect => '상단 탐색 선택기';
+
+  @override
+  String get titleSideNavSelect => '측면 탐색 선택기';
+
+  @override
+  String get titleExpandableSelect => '확장 선택기';
+
+  @override
+  String get resultPanelTitle => '콜백 결과';
+}

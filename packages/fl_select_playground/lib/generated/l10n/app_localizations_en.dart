@@ -12,117 +12,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Select Example';
 
   @override
-  String get realEstate => 'Real Estate';
-
-  @override
-  String get leyoujia => 'Leyoujia';
-
-  @override
-  String get buy => 'Buy';
-
-  @override
-  String get sell => 'For sale';
-
-  @override
-  String get rent => 'Rent';
-
-  @override
-  String get onMap => 'On Map';
-
-  @override
-  String get reset => 'Reset';
-
-  @override
-  String get apply => 'Apply';
-
-  @override
-  String get clear => 'Clear all';
-
-  @override
-  String get done => 'Done';
-
-  @override
-  String get zillow => 'Zillow';
-
-  @override
-  String get region => 'Region';
-
-  @override
-  String get neighborhood => 'Neighborhood';
-
-  @override
-  String get price => 'Price';
-
-  @override
-  String get floorPlan => 'Layout';
-
-  @override
-  String get rooms => 'Rooms';
-
-  @override
-  String get more => 'More';
-
-  @override
-  String get selectUpdated => 'Selection updated';
-
-  @override
-  String get view => 'View';
-
-  @override
-  String selectResult(Object result) {
-    return 'Result: $result';
-  }
-
-  @override
-  String get resultParseFailed => 'Failed to parse result';
-
-  @override
-  String get viewing => 'Loading...';
-
-  @override
-  String loadError(Object error) {
-    return 'Error: $error';
-  }
-
-  @override
-  String get any => 'Any';
-
-  @override
-  String get custom => 'Custom';
-
-  @override
-  String get minHint => 'Min';
-
-  @override
-  String get maxHint => 'Max';
-
-  @override
-  String get noMin => 'No min';
-
-  @override
-  String get noMax => 'No max';
-
-  @override
-  String get customArea => 'Custom area';
-
-  @override
-  String get userCityName => 'Shenzhen';
-
-  @override
-  String viewhomes(Object count) {
-    return 'View $count homes';
-  }
-
-  @override
-  String get nohomes => 'No homes';
-
-  @override
-  String get noMore => 'No more';
-
-  @override
-  String get loading => 'Loading...';
-
-  @override
   String get themeMode => 'Theme';
 
   @override
@@ -133,4 +22,157 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get themeDark => 'Dark';
+
+  @override
+  String get languageTooltip => 'Language';
+
+  @override
+  String get entryPoint => 'Entry Point';
+
+  @override
+  String get delegateLabel => 'Delegate';
+
+  @override
+  String get selectionMode => 'Selection Mode';
+
+  @override
+  String get tileVariant => 'Tile Variant';
+
+  @override
+  String get seedColor => 'Seed Color';
+
+  @override
+  String columns(int value) {
+    return 'Columns ($value)';
+  }
+
+  @override
+  String aspectRatio(String value) {
+    return 'Aspect Ratio ($value)';
+  }
+
+  @override
+  String spacing(int value) {
+    return 'Spacing ($value)';
+  }
+
+  @override
+  String get single => 'Single';
+
+  @override
+  String get multiple => 'Multiple';
+
+  @override
+  String get filled => 'Filled';
+
+  @override
+  String get outlined => 'Outlined';
+
+  @override
+  String get brightness => 'Brightness';
+
+  @override
+  String get follow => 'Follow App';
+
+  @override
+  String get light => 'Light';
+
+  @override
+  String get dark => 'Dark';
+
+  @override
+  String get layoutList => 'List';
+
+  @override
+  String get layoutGrid => 'Grid';
+
+  @override
+  String get layoutWrap => 'Wrap';
+
+  @override
+  String get layoutCascading => 'Cascading';
+
+  @override
+  String get layoutTabNav => 'Tab Nav';
+
+  @override
+  String get layoutSideNav => 'Side Nav';
+
+  @override
+  String get layoutExpandable => 'Expandable';
+
+  @override
+  String get headerOptions => 'Header Options';
+
+  @override
+  String get leadingOption => 'Leading';
+
+  @override
+  String get trailingOption => 'Trailing';
+
+  @override
+  String get centerTitleOption => 'Center Title';
+
+  @override
+  String get phonePopupBarTitle => 'Popup Bar';
+
+  @override
+  String get phonePopupButtonTitle => 'Popup Button';
+
+  @override
+  String get phoneDialogTitle => 'Dialog';
+
+  @override
+  String get phoneBottomSheetTitle => 'Bottom Sheet';
+
+  @override
+  String get tapBarHint => 'Tap the bar to open the select';
+
+  @override
+  String get openSelect => 'Open Select';
+
+  @override
+  String get openListSelect => 'Open List Select';
+
+  @override
+  String get openGridSelect => 'Open Grid Select';
+
+  @override
+  String get openWrapSelect => 'Open Wrap Select';
+
+  @override
+  String get openCascadingSelect => 'Open Cascading Select';
+
+  @override
+  String get openTabNavSelect => 'Open Tab Nav Select';
+
+  @override
+  String get openSideNavSelect => 'Open Side Nav Select';
+
+  @override
+  String get openExpandableSelect => 'Open Expandable Select';
+
+  @override
+  String get titleListSelect => 'List Select';
+
+  @override
+  String get titleGridSelect => 'Grid Select';
+
+  @override
+  String get titleWrapSelect => 'Wrap Select';
+
+  @override
+  String get titleCascadingSelect => 'Cascading Select';
+
+  @override
+  String get titleTabNavSelect => 'Tab Nav Select';
+
+  @override
+  String get titleSideNavSelect => 'Side Nav Select';
+
+  @override
+  String get titleExpandableSelect => 'Expandable Select';
+
+  @override
+  String get resultPanelTitle => 'Callback results';
 }

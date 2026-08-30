@@ -17,7 +17,7 @@ dependencies:
   flutter_web_plugins:
     sdk: flutter
   intl: any
-  fl_select: ^0.10.0
+  fl_select: ^0.11.0
 
 dev_dependencies:
   flutter_test:
@@ -27,8 +27,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true
-  assets:
-    - assets/
-    - assets/realestate/
-    - assets/realestate/austin/
-    - assets/realestate/shenzhen/
+
