@@ -71,8 +71,8 @@ Finder _bodyScrollableFinder() => find
 /// Drags up in small steps until the body rests at its bottom edge, then
 /// lets the caller continue the gesture (the returned gesture is still
 /// down). Small steps keep the drag recognizer fed with move events.
-Future<TestGesture> _dragToBottom(WidgetTester tester, Offset position,
-    ScrollPosition inner) async {
+Future<TestGesture> _dragToBottom(
+    WidgetTester tester, Offset position, ScrollPosition inner) async {
   final gesture = await tester.startGesture(position);
   await gesture.moveBy(const Offset(0, -30));
   await tester.pump();
@@ -85,8 +85,7 @@ Future<TestGesture> _dragToBottom(WidgetTester tester, Offset position,
 }
 
 void main() {
-  testWidgets(
-      'touch drag past the body bottom edge chains to the outer view',
+  testWidgets('touch drag past the body bottom edge chains to the outer view',
       (tester) async {
     final outer = ScrollController();
     addTearDown(outer.dispose);
@@ -95,8 +94,7 @@ void main() {
 
     final inner =
         tester.state<ScrollableState>(_bodyScrollableFinder()).position;
-    final gesture = await _dragToBottom(
-        tester, const Offset(400, 300), inner);
+    final gesture = await _dragToBottom(tester, const Offset(400, 300), inner);
     expect(inner.pixels, inner.maxScrollExtent,
         reason: 'precondition: the drag reached the body bottom edge');
 
@@ -123,8 +121,7 @@ void main() {
 
     final inner =
         tester.state<ScrollableState>(_bodyScrollableFinder()).position;
-    final gesture = await _dragToBottom(
-        tester, const Offset(400, 300), inner);
+    final gesture = await _dragToBottom(tester, const Offset(400, 300), inner);
     // Chain a bit more so the outer view carries a chained offset.
     await gesture.moveBy(const Offset(0, -200));
     await tester.pump();
@@ -157,8 +154,7 @@ void main() {
 
     final inner =
         tester.state<ScrollableState>(_bodyScrollableFinder()).position;
-    final warmup = await _dragToBottom(
-        tester, const Offset(400, 300), inner);
+    final warmup = await _dragToBottom(tester, const Offset(400, 300), inner);
     await warmup.up();
     await tester.pumpAndSettle();
     final chained = outer.offset;
@@ -169,16 +165,14 @@ void main() {
 
     // A fast, short fling on the pinned body: the stroke itself chains to
     // the outer view, and the released momentum must keep scrolling it.
-    await tester.fling(
-        _bodyScrollableFinder(), const Offset(0, -50), 1000.0);
+    await tester.fling(_bodyScrollableFinder(), const Offset(0, -50), 1000.0);
     await tester.pumpAndSettle();
 
     expect(outer.offset, greaterThan(chained),
         reason: 'the fling momentum must transfer to the outer view');
   });
 
-  testWidgets(
-      'touch drag on a body that cannot scroll scrolls the outer view',
+  testWidgets('touch drag on a body that cannot scroll scrolls the outer view',
       (tester) async {
     final outer = ScrollController();
     addTearDown(outer.dispose);
@@ -192,8 +186,7 @@ void main() {
     await gesture.moveBy(const Offset(0, -200));
     await tester.pump();
 
-    expect(inner.pixels, 0.0,
-        reason: 'the body has nothing to scroll');
+    expect(inner.pixels, 0.0, reason: 'the body has nothing to scroll');
     expect(outer.offset, greaterThan(0.0),
         reason: 'the outer view must scroll directly');
     await gesture.up();

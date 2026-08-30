@@ -91,7 +91,6 @@ class SideNavSelectState extends State<SideNavSelect> {
   /// inflated.
   final ScrollController _scrollController = ScrollController();
 
-
   SelectController? controller;
 
   bool get _isSearching => widget.searchQuery.isNotEmpty;
@@ -702,4 +701,3 @@ class SideNavSelectSkeleton extends StatelessWidget {
     );
   }
 }
-
