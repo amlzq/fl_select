@@ -1,5 +1,7 @@
 ## Next
 
+- **BUGFIX** `SideNavSelect` now chains touch-drag scrolling to the enclosing page: dragging the right column past its start/end edge hands the unconsumed drag to the nearest same-direction ancestor scrollable (e.g. the page's `SingleChildScrollView`), dragging back first unwinds the ancestor's chained offset before the column scrolls again, and a fling released while the column rests at an edge hands its momentum to the ancestor. This matches the framework's built-in pointer-wheel chaining and the native nested-scrolling behavior of iOS `UIScrollView` and Android `NestedScrollingParent`, instead of the column stopping dead at its edge while the page behind stayed stuck. Implemented via a `ClampingScrollPhysics` subclass that falls back to plain clamping behavior when no scrollable ancestor is found, requiring no changes to hosting pages.
+
 - **BUGFIX** `SideNavSelect` now aligns the tapped category's section (instead of its bare title) with the top of the right column, keeping the section's top padding as breathing room and sharing one geometric anchor with the scroll-linked highlight. The right column prefetches sections eagerly (finite 10000px cache extent), so taps scroll in one continuous animation; the estimate-then-jump fallback for extremely long content now animates instead of teleporting.
 
 ## 0.11.0

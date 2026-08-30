@@ -1,5 +1,9 @@
+import 'dart:math';
+
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart' show precisionErrorTolerance;
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart' show RenderAbstractViewport;
 
 import 'action_bar_visibility.dart';
 import 'select_controller.dart';
@@ -89,6 +93,36 @@ class SideNavSelectState extends State<SideNavSelect> {
   /// prefetch extent can still be scrolled to before their elements are
   /// inflated.
   final ScrollController _scrollController = ScrollController();
+
+  /// Physics for the right column's ListView: touch drags (and flings) the
+  /// column cannot consume at its edges chain to the nearest same-direction
+  /// ancestor scrollable, mimicking native nested scrolling. Pointer-wheel
+  /// chaining is handled by the framework itself.
+  late final ScrollPhysics _rightColumnPhysics = _ChainingClampingScrollPhysics(
+    outerPosition: _findChainingOuterPosition,
+  );
+
+  /// The nearest same-direction vertical ancestor scrollable of the right
+  /// column — typically the page-level [SingleChildScrollView] hosting this
+  /// panel — or null when there is none to chain to.
+  ///
+  /// The right column's ListView builds its own Scrollable in its subtree,
+  /// so searching from the ListView's context already skips it and lands on
+  /// the enclosing scrollable.
+  ScrollPositionWithSingleContext? _findChainingOuterPosition() {
+    final context = _scrollViewKey.currentContext;
+    if (context == null) return null;
+    // Skips over any non-vertical ancestors to the nearest vertical one.
+    final outer = Scrollable.maybeOf(context, axis: Axis.vertical);
+    if (outer == null) return null;
+    final position = outer.position;
+    if (position is! ScrollPositionWithSingleContext) return null;
+    if (!position.hasContentDimensions) return null;
+    // The right column never reverses (AxisDirection.down); a reversed
+    // ancestor would need inverted deltas, so it is not chained to.
+    if (position.axisDirection != AxisDirection.down) return null;
+    return position;
+  }
 
   SelectController? controller;
 
@@ -289,18 +323,52 @@ class SideNavSelectState extends State<SideNavSelect> {
     });
   }
 
-  /// Animates the right column so [targetElement] sits at the viewport top,
-  /// guarding the scroll-linked highlight for the duration of the animation.
+  /// Animates the right column so [targetElement]'s section box (including
+  /// its top padding) rests at the top of the right column's viewport.
+  ///
+  /// Only the right column's own viewport is animated. [Scrollable.ensureVisible]
+  /// is intentionally avoided: it walks up and animates every nested
+  /// Scrollable ancestor, so a page-level [SingleChildScrollView] hosting
+  /// this panel would scroll along with the tap-driven animation (unwanted
+  /// scroll chaining). Instead, the reveal offset is computed against the
+  /// nearest enclosing viewport of the section box — which is always the
+  /// right column's ListView, since any inner scrollables are descendants,
+  /// never ancestors — clamped to the scroll range, and applied via the
+  /// column's own [ScrollPosition].
+  ///
+  /// Does nothing when the section's render object is detached, the scroll
+  /// controller has no clients, or the position has no content dimensions
+  /// yet (e.g. before the first frame).
+  ///
+  /// The scroll-linked sidebar highlight is guarded for the duration of the
+  /// animation via [_isScrollingProgrammatically]; the flag is reset shortly
+  /// after the animation completes, or immediately if it fails.
   void _animateToElement(Element targetElement) {
+    final renderObject = targetElement.renderObject;
+    final position =
+        _scrollController.hasClients ? _scrollController.position : null;
+    if (renderObject == null || !renderObject.attached) return;
+    if (position == null || !position.hasContentDimensions) return;
+
+    // Reveal the section within the right column's own viewport only: the
+    // nearest enclosing viewport of the section box is the right column's
+    // ListView (inner horizontal scrollables are descendants, never
+    // ancestors, so they cannot be picked here).
+    final viewport = RenderAbstractViewport.of(renderObject);
+    final target = viewport
+        .getOffsetToReveal(renderObject, 0.0)
+        .offset
+        .clamp(position.minScrollExtent, position.maxScrollExtent);
+
     _isScrollingProgrammatically = true;
 
-    // Scroll safely
-    Scrollable.ensureVisible(
-      targetElement,
+    position
+        .animateTo(
+      target,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
-      alignment: 0.0,
-    ).then((_) {
+    )
+        .then((_) {
       // After scrolling ends, reset the flag with a short delay
       if (!mounted) return;
       Future.delayed(const Duration(milliseconds: 100), () {
@@ -582,13 +650,17 @@ class SideNavSelectState extends State<SideNavSelect> {
                     child: ListView(
                       key:
                           _scrollViewKey, // Add key to get scroll view position
+                      // Attached so programmatic scrolls (tap-to-section,
+                      // fallback estimate) target only this scrollable and
+                      // never chain to ancestor page-level scroll views.
+                      controller: _scrollController,
                       // Eagerly inflate every section of the (bounded)
                       // two-level filter so any category can be scrolled to
                       // with one continuous animation instead of an
                       // estimate-then-correct jump; it also lets the
                       // scroll-linked highlight observe every section.
                       cacheExtent: _kRightColumnCacheExtent,
-                      physics: const ClampingScrollPhysics(),
+                      physics: _rightColumnPhysics,
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       // shrinkWrap: true,
                       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
@@ -660,5 +732,122 @@ class SideNavSelectSkeleton extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// [ClampingScrollPhysics] extended with touch-gesture scroll chaining.
+///
+/// Flutter natively chains only pointer-wheel scrolling: once an inner
+/// scrollable consumes what it can, the surplus is offered to the ancestor.
+/// Touch drags have no such support — the inner scrollable wins the gesture
+/// arena and simply stops dead at its edge, which makes a panel hosted in a
+/// page-level scroll view feel stuck. These physics restore the native
+/// nested-scrolling feel by handing unconsumed gestures to [outerPosition],
+/// the nearest same-direction ancestor scrollable:
+///
+/// - Dragging past the end/start edge scrolls the ancestor by the leftover.
+/// - Dragging back first unwinds the ancestor's chained offset while the
+///   right column rests at its end, and only then scrolls the column itself.
+/// - A fling released while the column rests at an edge (and thus produces no
+///   simulation of its own) hands its momentum to the ancestor by starting a
+///   [ClampingScrollSimulation] on it.
+///
+/// Falls back to plain [ClampingScrollPhysics] behavior whenever there is no
+/// scrollable ancestor to chain to.
+class _ChainingClampingScrollPhysics extends ClampingScrollPhysics {
+  const _ChainingClampingScrollPhysics({
+    required this.outerPosition,
+    super.parent,
+  });
+
+  /// Resolves the ancestor position to chain to, or null while unavailable.
+  final ScrollPositionWithSingleContext? Function() outerPosition;
+
+  @override
+  _ChainingClampingScrollPhysics applyTo(ScrollPhysics? ancestor) {
+    return _ChainingClampingScrollPhysics(
+      outerPosition: outerPosition,
+      parent: buildParent(ancestor),
+    );
+  }
+
+  @override
+  double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
+    final outer = outerPosition();
+    if (outer == null || !outer.hasContentDimensions) {
+      return super.applyPhysicsToUserOffset(position, offset);
+    }
+
+    // Work in pixel space: the column would land on `target` for this raw
+    // offset because the framework applies it as `setPixels(pixels - result)`.
+    double target = position.pixels - offset;
+
+    if (target > position.maxScrollExtent) {
+      // Dragging past the end of the content: whatever the column cannot
+      // consume chains to the ancestor.
+      _moveOuterBy(outer, target - position.maxScrollExtent);
+      target = position.maxScrollExtent;
+    } else if (target < position.minScrollExtent) {
+      // Dragging past the start of the content chains likewise.
+      _moveOuterBy(outer, target - position.minScrollExtent);
+      target = position.minScrollExtent;
+    } else if (target < position.pixels &&
+        position.pixels >= position.maxScrollExtent - precisionErrorTolerance &&
+        outer.pixels > outer.minScrollExtent) {
+      // Dragging back towards the start while the column rests at its end
+      // and the ancestor still carries a chained offset: unwind the
+      // ancestor first — the column only scrolls once the ancestor is done.
+      final unwind =
+          min(position.pixels - target, outer.pixels - outer.minScrollExtent);
+      _moveOuterBy(outer, -unwind);
+      target += unwind;
+    }
+
+    final result = position.pixels - target;
+    if (result == 0.0) {
+      // The whole gesture was consumed by the ancestor.
+      return 0.0;
+    }
+    return super.applyPhysicsToUserOffset(position, result);
+  }
+
+  /// Moves [outer] by [delta], clamped to its scroll range.
+  void _moveOuterBy(ScrollPosition outer, double delta) {
+    if (delta == 0.0) return;
+    final target = (outer.pixels + delta)
+        .clamp(outer.minScrollExtent, outer.maxScrollExtent);
+    if (target != outer.pixels) {
+      // jumpTo also stops any ancestor ballistic activity, which is the
+      // correct grab behavior while the user's finger is down on the panel.
+      outer.jumpTo(target);
+    }
+  }
+
+  @override
+  Simulation? createBallisticSimulation(
+      ScrollMetrics position, double velocity) {
+    final simulation = super.createBallisticSimulation(position, velocity);
+    if (simulation != null) return simulation;
+
+    if (velocity == 0.0) return null;
+    if (velocity.abs() < toleranceFor(position).velocity) return null;
+    final outer = outerPosition();
+    if (outer == null || !outer.hasContentDimensions) return null;
+
+    // The fling dies at the column's edge (super returned no simulation);
+    // hand its momentum to the ancestor if it can still travel that way.
+    final bool towardsEnd = velocity > 0;
+    final bool columnAtEdge = towardsEnd
+        ? position.pixels >= position.maxScrollExtent - precisionErrorTolerance
+        : position.pixels <= position.minScrollExtent + precisionErrorTolerance;
+    final bool outerHasRoom = towardsEnd
+        ? outer.pixels < outer.maxScrollExtent - precisionErrorTolerance
+        : outer.pixels > outer.minScrollExtent + precisionErrorTolerance;
+    if (!columnAtEdge || !outerHasRoom) return null;
+
+    // Hand the momentum over: the ancestor runs its own ballistic activity
+    // from this velocity, using its own physics.
+    outer.goBallistic(velocity);
+    return null;
   }
 }
