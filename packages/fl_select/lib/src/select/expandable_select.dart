@@ -54,6 +54,17 @@ class ExpandableSelect extends StatefulWidget {
 }
 
 class _ExpandableSelectState extends State<ExpandableSelect> {
+  final GlobalKey _scrollViewKey = GlobalKey();
+
+  /// Physics for the body's scroll view: touch drags (and flings) the body
+  /// cannot consume at its edges chain to the nearest same-direction
+  /// ancestor scrollable, mimicking native nested scrolling. Pointer-wheel
+  /// chaining is handled by the framework itself.
+  late final ScrollPhysics _scrollPhysics = ChainingClampingScrollPhysics(
+    outerPosition: () =>
+        findVerticalChainingOuterPosition(_scrollViewKey.currentContext),
+  );
+
   SelectController? controller;
 
   bool get _isSearching => widget.searchQuery.isNotEmpty;
@@ -193,8 +204,10 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
       children: [
         Flexible(
           child: SingleChildScrollView(
-            physics: const ClampingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            key: _scrollViewKey,
+            physics: _scrollPhysics,
+            padding:
+                const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: List.generate(_displayEntries.length, (index) {

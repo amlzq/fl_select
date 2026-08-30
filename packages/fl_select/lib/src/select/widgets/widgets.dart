@@ -17,6 +17,7 @@ export 'list_view.dart';
 export 'range_slider.dart';
 export 'range_slider_theme.dart';
 export 'range_view.dart';
+export 'scroll_chaining.dart';
 export 'search_bar.dart';
 export 'search_bar_theme.dart';
 export 'side_bar.dart';
