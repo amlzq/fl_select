@@ -15,70 +15,75 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('PopupSelectBar')),
-      body: Column(
-        children: [
-          PopupSelectBar(
-            isScrollable: true,
-            tabs: const [
-              PopupTab(label: 'List'),
-              PopupTab(label: 'Grid'),
-              PopupTab(child: Icon(Icons.wrap_text)),
-              PopupTab(label: 'Cascading'),
-              PopupTab(label: 'TabNav'),
-              PopupTab(label: 'SideNav'),
-              PopupTab(child: Icon(Icons.expand)),
-            ],
-            selectDelegates: [
-              ListSelectDelegate(
-                entries: listData,
-              ),
-              GridSelectDelegate(
-                entries: gridData,
-                crossAxisCount: 3,
-                childAspectRatio: 3.2,
-                mainAxisSpacing: 10,
-                crossAxisSpacing: 10,
-              ),
-              WrapSelectDelegate(
-                entries: wrapData,
-              ),
-              CascadingSelectDelegate(
-                entriesLoader: fetchCascadingData,
-                selectionMode: SelectionMode.multiple,
-                sideBarTheme: const SelectSideBarTheme(width: 120),
-              ),
-              TabNavSelectDelegate(
-                defaultLayout: SelectGridLayout(
+      body: SafeArea(
+        child: Column(
+          children: [
+            PopupSelectBar(
+              isScrollable: true,
+              tabs: const [
+                PopupTab(label: 'List'),
+                PopupTab(label: 'Grid'),
+                PopupTab(child: Icon(Icons.wrap_text)),
+                PopupTab(label: 'Cascading'),
+                PopupTab(label: 'TabNav'),
+                PopupTab(label: 'SideNav'),
+                PopupTab(child: Icon(Icons.expand)),
+              ],
+              selectDelegates: [
+                ListSelectDelegate(
+                  entries: listData,
+                ),
+                GridSelectDelegate(
+                  entries: gridData,
                   crossAxisCount: 3,
-                  childAspectRatio: 3,
+                  childAspectRatio: 3.2,
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
                 ),
-                entries: multiCategoryData,
-                selectionMode: SelectionMode.multiple,
-              ),
-              SideNavSelectDelegate(
-                defaultLayout: SelectGridLayout(
-                  crossAxisCount: 2,
-                  childAspectRatio: 3.8,
-                  mainAxisSpacing: 10,
-                  crossAxisSpacing: 10,
+                WrapSelectDelegate(
+                  entries: wrapData,
+                  spacing: 12.0,
+                  runSpacing: 12.0,
                 ),
-                entries: multiCategoryData,
-                selectionMode: SelectionMode.multiple,
-              ),
-              ExpandableSelectDelegate(
-                entries: multiCategoryData,
-                selectionMode: SelectionMode.multiple,
-              ),
-            ],
-            onApplied: (tabData, selected) {
-              largePrint('onApplied: $tabData, $selected');
-              largePrint('toQueryMap: ${selected.toQueryMap()}');
-              largePrint('toQueryParameters: ${selected.toQueryParameters()}');
-            },
-          ),
-        ],
+                CascadingSelectDelegate(
+                  entriesLoader: fetchCascadingData,
+                  selectionMode: SelectionMode.multiple,
+                  sideBarTheme: const SelectSideBarTheme(width: 120),
+                ),
+                TabNavSelectDelegate(
+                  defaultLayout: SelectGridLayout(
+                    crossAxisCount: 3,
+                    childAspectRatio: 3,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                  ),
+                  entries: multiCategoryData,
+                  selectionMode: SelectionMode.multiple,
+                ),
+                SideNavSelectDelegate(
+                  defaultLayout: SelectGridLayout(
+                    crossAxisCount: 2,
+                    childAspectRatio: 3.8,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                  ),
+                  entries: multiCategoryData,
+                  selectionMode: SelectionMode.multiple,
+                ),
+                ExpandableSelectDelegate(
+                  entries: multiCategoryData,
+                  selectionMode: SelectionMode.multiple,
+                ),
+              ],
+              onApplied: (tabData, selected) {
+                largePrint('onApplied: $tabData, $selected');
+                largePrint('toQueryMap: ${selected.toQueryMap()}');
+                largePrint(
+                    'toQueryParameters: ${selected.toQueryParameters()}');
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

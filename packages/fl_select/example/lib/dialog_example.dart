@@ -15,142 +15,144 @@ class _DialogExampleState extends State<DialogExample> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Dialog')),
-      body: SingleChildScrollView(
-        child: Center(
-          child: Column(
-            children: [
-              TextButton(
-                onPressed: () async {
-                  final result = await showSelect(
-                    context: context,
-                    delegate: ListSelectDelegate(
-                      entries: listData,
-                    ),
-                    leading: Icon(Icons.list),
-                    title: Text('ListSelect'),
-                    centerTitle: false,
-                  );
-                  largePrint('result: $result');
-                  largePrint('toQueryMap: ${result?.toQueryMap()}');
-                  largePrint(
-                      'toQueryParameters: ${result?.toQueryParameters()}');
-                },
-                child: const Text('showListSelect'),
-              ),
-              SizedBox(height: 24),
-              TextButton(
-                onPressed: () async {
-                  final result = await showSelect(
-                    context: context,
-                    delegate: GridSelectDelegate(
-                      entries: gridData,
-                      crossAxisCount: 3,
-                      childAspectRatio: 3,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                    ),
-                    trailing: CloseButton(),
-                  );
-                  largePrint('result: $result');
-                },
-                child: const Text('showGridSelect'),
-              ),
-              SizedBox(height: 24),
-              TextButton(
-                onPressed: () async {
-                  final result = await showSelect(
-                    context: context,
-                    delegate: WrapSelectDelegate(
-                      entries: wrapData,
-                      spacing: 12.0,
-                      runSpacing: 12.0,
-                    ),
-                    leading: Icon(Icons.list),
-                    title: Text('ListSelect'),
-                    trailing: CloseButton(),
-                  );
-                  largePrint('result: $result');
-                },
-                child: const Text('showWrapSelect'),
-              ),
-              SizedBox(height: 24),
-              TextButton(
-                onPressed: () async {
-                  final result = await showSelect(
-                    context: context,
-                    delegate: CascadingSelectDelegate(
-                      entriesLoader: fetchCascadingData,
-                      selectionMode: SelectionMode.multiple,
-                      sideBarTheme: const SelectSideBarTheme(width: 120),
-                      isScrollable: true,
-                    ),
-                  );
-                  largePrint('result: $result');
-                },
-                child: const Text('showCascadingSelect'),
-              ),
-              SizedBox(height: 24),
-              TextButton(
-                onPressed: () async {
-                  final result = await showSelect(
-                    context: context,
-                    delegate: TabNavSelectDelegate(
-                      defaultLayout: SelectGridLayout(
-                        crossAxisCount: 2,
-                        childAspectRatio: 3.6,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Center(
+            child: Column(
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    final result = await showSelect(
+                      context: context,
+                      delegate: ListSelectDelegate(
+                        entries: listData,
+                      ),
+                      leading: Icon(Icons.list),
+                      title: Text('ListSelect'),
+                      centerTitle: false,
+                    );
+                    largePrint('result: $result');
+                    largePrint('toQueryMap: ${result?.toQueryMap()}');
+                    largePrint(
+                        'toQueryParameters: ${result?.toQueryParameters()}');
+                  },
+                  child: const Text('showListSelect'),
+                ),
+                SizedBox(height: 24),
+                TextButton(
+                  onPressed: () async {
+                    final result = await showSelect(
+                      context: context,
+                      delegate: GridSelectDelegate(
+                        entries: gridData,
+                        crossAxisCount: 3,
+                        childAspectRatio: 3,
                         mainAxisSpacing: 10,
                         crossAxisSpacing: 10,
                       ),
-                      entries: multiCategoryData,
-                      selectionMode: SelectionMode.multiple,
-                      isScrollable: true,
-                    ),
-                  );
-                  largePrint('result: $result');
-                },
-                child: const Text('showTabNavSelect'),
-              ),
-              SizedBox(height: 24),
-              TextButton(
-                onPressed: () async {
-                  final result = await showSelect(
-                    context: context,
-                    delegate: SideNavSelectDelegate(
-                      defaultLayout: SelectGridLayout(
-                        crossAxisCount: 2,
-                        childAspectRatio: 2.8,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
+                      trailing: CloseButton(),
+                    );
+                    largePrint('result: $result');
+                  },
+                  child: const Text('showGridSelect'),
+                ),
+                SizedBox(height: 24),
+                TextButton(
+                  onPressed: () async {
+                    final result = await showSelect(
+                      context: context,
+                      delegate: WrapSelectDelegate(
+                        entries: wrapData,
+                        spacing: 12.0,
+                        runSpacing: 12.0,
                       ),
-                      entries: multiCategoryData,
-                      selectionMode: SelectionMode.multiple,
-                    ),
-                  );
-                  largePrint('result: $result');
-                },
-                child: const Text('showSideNavSelect'),
-              ),
-              SizedBox(height: 24),
-              TextButton(
-                onPressed: () async {
-                  final result = await showSelect(
-                    context: context,
-                    delegate: ExpandableSelectDelegate(
-                      defaultLayout: SelectGridLayout(
-                        crossAxisCount: 2,
-                        childAspectRatio: 3.8,
-                        mainAxisSpacing: 10,
-                        crossAxisSpacing: 10,
+                      leading: Icon(Icons.list),
+                      title: Text('ListSelect'),
+                      trailing: CloseButton(),
+                    );
+                    largePrint('result: $result');
+                  },
+                  child: const Text('showWrapSelect'),
+                ),
+                SizedBox(height: 24),
+                TextButton(
+                  onPressed: () async {
+                    final result = await showSelect(
+                      context: context,
+                      delegate: CascadingSelectDelegate(
+                        entriesLoader: fetchCascadingData,
+                        selectionMode: SelectionMode.multiple,
+                        sideBarTheme: const SelectSideBarTheme(width: 120),
+                        isScrollable: true,
                       ),
-                      entries: multiCategoryData,
-                      selectionMode: SelectionMode.multiple,
-                    ),
-                  );
-                  largePrint('result: $result');
-                },
-                child: const Text('showExpandableSelect'),
-              ),
-            ],
+                    );
+                    largePrint('result: $result');
+                  },
+                  child: const Text('showCascadingSelect'),
+                ),
+                SizedBox(height: 24),
+                TextButton(
+                  onPressed: () async {
+                    final result = await showSelect(
+                      context: context,
+                      delegate: TabNavSelectDelegate(
+                        defaultLayout: SelectGridLayout(
+                          crossAxisCount: 2,
+                          childAspectRatio: 3.6,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                        ),
+                        entries: multiCategoryData,
+                        selectionMode: SelectionMode.multiple,
+                        isScrollable: true,
+                      ),
+                    );
+                    largePrint('result: $result');
+                  },
+                  child: const Text('showTabNavSelect'),
+                ),
+                SizedBox(height: 24),
+                TextButton(
+                  onPressed: () async {
+                    final result = await showSelect(
+                      context: context,
+                      delegate: SideNavSelectDelegate(
+                        defaultLayout: SelectGridLayout(
+                          crossAxisCount: 2,
+                          childAspectRatio: 2.8,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                        ),
+                        entries: multiCategoryData,
+                        selectionMode: SelectionMode.multiple,
+                      ),
+                    );
+                    largePrint('result: $result');
+                  },
+                  child: const Text('showSideNavSelect'),
+                ),
+                SizedBox(height: 24),
+                TextButton(
+                  onPressed: () async {
+                    final result = await showSelect(
+                      context: context,
+                      delegate: ExpandableSelectDelegate(
+                        defaultLayout: SelectGridLayout(
+                          crossAxisCount: 2,
+                          childAspectRatio: 3.8,
+                          mainAxisSpacing: 10,
+                          crossAxisSpacing: 10,
+                        ),
+                        entries: multiCategoryData,
+                        selectionMode: SelectionMode.multiple,
+                      ),
+                    );
+                    largePrint('result: $result');
+                  },
+                  child: const Text('showExpandableSelect'),
+                ),
+              ],
+            ),
           ),
         ),
       ),
