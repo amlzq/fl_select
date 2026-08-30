@@ -46,7 +46,7 @@ class PopupSelectBarTheme extends ThemeExtension<PopupSelectBarTheme> {
   /// Default indicator for the unselected state.
   final Widget? unselectedIndicator;
 
-  /// Default overlay style applied to [SelectOverlay].
+  /// Default overlay style applied to `SelectOverlay`.
   final SelectOverlayStyle? overlayStyle;
 
   /// Default theme overrides applied to select widgets inside the overlay.

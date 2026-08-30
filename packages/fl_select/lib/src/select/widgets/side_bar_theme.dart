@@ -38,22 +38,25 @@ class SelectSideBarTheme with Diagnosticable {
   /// Overrides the default value of [SelectSideBar.labelStyle].
   final TextStyle? labelStyle;
 
-  /// Overrides the default value of [SelectSideBar.selectedLabelStyle].
+  /// Overrides the default value of the selected label style used by
+  /// [SelectSideBar].
   final TextStyle? selectedLabelStyle;
 
   /// Overrides the default value of [SelectSideBar.selectedTileColor].
   final Color? selectedTileColor;
 
-  /// Overrides the default value of [SelectSideBar.indicatorColor].
+  /// Overrides the default value of the indicator color used by [SelectSideBar].
   final Color? indicatorColor;
 
-  /// Overrides the default value of [SelectSideBar.indicatorHeight].
+  /// Overrides the default value of the indicator height used by [SelectSideBar].
   final double? indicatorHeight;
 
-  /// Overrides the default value of [SelectSideBar.indicatorPadding].
+  /// Overrides the default value of the indicator padding used by
+  /// [SelectSideBar].
   final EdgeInsetsGeometry? indicatorPadding;
 
-  /// Overrides the default value of [SelectSideBar.indicatorAnimationDuration].
+  /// Overrides the default value of the indicator animation duration used by
+  /// [SelectSideBar].
   final Duration? indicatorAnimationDuration;
 
   /// Returns a copy of this theme with the given fields replaced.

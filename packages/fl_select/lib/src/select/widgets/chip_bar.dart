@@ -132,13 +132,13 @@ class SelectChipBar extends StatefulWidget {
   /// color.
   final Color? selectedChipColor;
 
-  /// The text style for an unselected chip's [label].
+  /// The text style for an unselected chip's `label`.
   ///
   /// If null, the value from the surrounding [SelectChipBarTheme] or the
   /// default is used.
   final TextStyle? labelStyle;
 
-  /// The text style for a selected chip's [label].
+  /// The text style for a selected chip's `label`.
   ///
   /// If null, the value from the surrounding [SelectChipBarTheme] or the
   /// default is used.
@@ -151,7 +151,7 @@ class SelectChipBar extends StatefulWidget {
 
   /// Called when the user taps a chip or commits the custom range input.
   ///
-  /// The [index] of the tapped entry within [entries] and the tapped entry
+  /// The `index` of the tapped entry within [entries] and the tapped entry
   /// itself are passed to the callback.
   final OnChanged onChanged;
 

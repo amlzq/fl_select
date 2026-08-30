@@ -15,7 +15,7 @@ class SelectActionBarTheme with Diagnosticable {
     this.applyButtonStyle,
   });
 
-  /// Overrides the default value of [SelectActionBar.selectedColor].
+  /// Overrides the default value of [SelectActionBar.backgroundColor].
   final Color? backgroundColor;
 
   /// Overrides the default value of [SelectActionBar.padding].

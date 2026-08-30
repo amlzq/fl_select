@@ -52,7 +52,7 @@ extension SelectEntriesExtension on SelectEntries {
     return result;
   }
 
-  /// Finds the first selected top-level entry (category) whose [id] matches
+  /// Finds the first selected top-level entry (category) whose `id` matches
   /// [categoryId], or `null` if no such category is selected.
   ///
   /// This is the entry point for most of the convenience query helpers below.
@@ -90,7 +90,7 @@ extension SelectEntriesExtension on SelectEntries {
   /// Returns parent → child-id pairs for a cascading category
   /// (e.g. region/metro with districts and sub-districts).
   ///
-  /// Each record carries the parent's [id] and a [childIds] list of the ids of
+  /// Each record carries the parent's `id` and a `childIds` list of the ids of
   /// its direct children. Returns an empty list when the category is not
   /// selected or has no children.
   List<({String id, List<String> childIds})> cascadingPairsOf(

@@ -26,13 +26,15 @@ class SelectFieldTileTheme with Diagnosticable {
   /// Overrides the default value of [SelectFieldTile.selectedColor].
   final Color? selectedColor;
 
-  /// Overrides the default value of [SelectFieldTile.textColor].
+  /// Overrides the default text color used by [SelectFieldTile].
   final Color? textColor;
 
-  /// Overrides the default value of [SelectFieldTile.labelStyle].
+  /// Overrides the default text style of the label rendered by
+  /// [SelectFieldTile].
   final TextStyle? labelStyle;
 
-  /// Overrides the default value of [SelectFieldTile.sublabelStyle].
+  /// Overrides the default text style of the sublabel rendered by
+  /// [SelectFieldTile].
   final TextStyle? sublabelStyle;
 
   /// Overrides the default value of [SelectFieldTile.variant].

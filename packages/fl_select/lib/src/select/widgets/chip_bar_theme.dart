@@ -23,7 +23,7 @@ class SelectChipBarTheme with Diagnosticable {
     this.selectedLabelStyle,
   });
 
-  /// Overrides the default value of [SelectChipBar.selectedColor].
+  /// Overrides the default value of [SelectChipBar.backgroundColor].
   final Color? backgroundColor;
 
   /// Overrides the default value of [SelectChipBar.padding].

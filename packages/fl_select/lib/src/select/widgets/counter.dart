@@ -50,7 +50,7 @@ class SelectCounter extends StatefulWidget {
   /// semantically single-valued — a nested category has no numeric/text value to
   /// step into, so filtering it out avoids it being mistaken for a value.
   ///
-  /// A special "Any" entry ([SelectChildEntry.isAny]), when present, is pinned
+  /// A special "Any" entry ([SelectChildEntryExt.isAny]), when present, is pinned
   /// to the left-most (zero) position.
   final List<SelectEntry> entries;
 

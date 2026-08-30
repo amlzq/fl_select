@@ -157,9 +157,9 @@ class SelectCounterLayout extends SelectLayout {
 /// [SelectRangeEntry] and renders it as a "price-range" style control: a
 /// [SelectRangeSlider] on top of two synced text fields.
 ///
-/// The category is expected to expose exactly one
-/// [SelectRangeEntry.firstCustomOrNull]; if none is found, the view falls
-/// back to a degenerate 0..1 range.
+/// The category is expected to expose exactly one custom range entry
+/// ([SelectCategoryEntryExtension.firstCustomOrNull]); if none is found, the
+/// view falls back to a degenerate 0..1 range.
 class SelectRangeLayout extends SelectLayout {
   const SelectRangeLayout({
     this.toText = '-',

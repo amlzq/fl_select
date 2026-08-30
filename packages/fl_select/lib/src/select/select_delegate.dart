@@ -246,7 +246,7 @@ abstract class SelectDelegate {
   /// Optional builder for the loading skeleton.
   final WidgetBuilder? skeletonBuilder;
 
-  /// Optional builder invoked when [data] fails to load.
+  /// Optional builder invoked when [entriesLoader] fails to load.
   ///
   /// When omitted, a simple [Text] widget showing the error is rendered.
   final Widget Function(Object error, StackTrace? stackTrace)? errorBuilder;
@@ -269,7 +269,7 @@ abstract class SelectDelegate {
   /// Builds the loading skeleton.
   Widget buildSkeleton(BuildContext context);
 
-  /// Builds the error widget shown when [data] fails to load.
+  /// Builds the error widget shown when [entriesLoader] fails to load.
   ///
   /// Returns the result of [errorBuilder] when provided, otherwise a simple
   /// [Text] widget showing the error.

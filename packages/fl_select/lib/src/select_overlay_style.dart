@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-/// Visual configuration for [SelectOverlay].
+/// Visual configuration for `SelectOverlay`.
 @immutable
 class SelectOverlayStyle {
   const SelectOverlayStyle({
@@ -13,7 +13,7 @@ class SelectOverlayStyle {
 
   /// Panel height = maxHeightFactor * available height (space from the bottom of the bar to the bottom of the screen).
   /// Note: this only affects scrollable select content with unconstrained height. For constrained content, height is determined by Wrap.
-  /// Default value is [kSelectOverlayMaxHeightFactor].
+  /// Default value is `kSelectOverlayMaxHeightFactor`.
   final double? maxHeightFactor;
 
   /// Minimum width of the overlay content (e.g. to keep it at least as wide as

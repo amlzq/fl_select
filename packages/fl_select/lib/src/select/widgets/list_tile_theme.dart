@@ -36,10 +36,10 @@ class SelectListTileTheme with Diagnosticable {
   /// Overrides the default value of [SelectListTile.sublabelStyle].
   final TextStyle? sublabelStyle;
 
-  /// Overrides the default value of [SelectListTile.radioBuilder].
+  /// Overrides the default value of [SelectRadioListTile.radioBuilder].
   final ToggleWidgetBuilder? radioBuilder;
 
-  /// Overrides the default value of [SelectListTile.checkboxBuilder].
+  /// Overrides the default value of [SelectCheckboxListTile.checkboxBuilder].
   final ToggleWidgetBuilder? checkboxBuilder;
 
   /// Returns a copy of this theme with the given fields replaced.

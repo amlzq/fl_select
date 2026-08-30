@@ -227,8 +227,7 @@ class SelectListViewState extends State<SelectListView>
     // "111-222" instead of a null name. Mirrors [SelectRangeView]'s slider
     // commit; safe because name is not part of == / hashCode.
     if (custom.hasCustomValue) {
-      custom.name =
-          '${custom.min ?? ''}${widget.toText}${custom.max ?? ''}';
+      custom.name = '${custom.min ?? ''}${widget.toText}${custom.max ?? ''}';
     }
     // Reflect the canonical (swapped) order back into the fields so the display
     // immediately shows "left small, right big" instead of the raw typed order.

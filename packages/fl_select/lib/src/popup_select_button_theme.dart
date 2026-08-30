@@ -59,7 +59,7 @@ class PopupSelectButtonTheme extends ThemeExtension<PopupSelectButtonTheme> {
   /// Overrides the default button elevation.
   final double? elevation;
 
-  /// Default overlay style applied to [SelectOverlay].
+  /// Default overlay style applied to `SelectOverlay`.
   final SelectOverlayStyle? overlayStyle;
 
   /// Default theme overrides applied to select widgets inside the overlay.
