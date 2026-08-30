@@ -11,6 +11,15 @@ import 'select_theme.dart';
 import 'widgets/select_category_content.dart';
 import 'widgets/widgets.dart';
 
+/// Prefetch extent (in logical pixels) for the right column's ListView.
+///
+/// Large enough to inflate every section of a typical two-level filter
+/// panel up front, so any category can be scrolled to with one continuous
+/// animation and the scroll-linked highlight can observe every section.
+/// Kept finite because an infinite cache extent produces non-finite
+/// semantics rects when accessibility services are active.
+const double _kRightColumnCacheExtent = 10000.0;
+
 /// Two-level layout: category navigation on the left and a flattened item
 /// list on the right.
 /// Tapping the left side drives scrolling on the right; scrolling the right side highlights the left side.
@@ -29,7 +38,11 @@ import 'widgets/widgets.dart';
 ///   the view itself; the inner layout views are created with
 ///   `showTitle: false` so titles never duplicate.
 /// - Child selection mode is determined per category by [SelectCategoryEntry.selectionMode].
-/// - The right-side content is scroll-synced with the left category list.
+/// - The right-side content is scroll-synced with the left category list:
+///   tapping a category aligns its section (the outer box including its top
+///   padding) with the top of the right column in one continuous animation,
+///   and scrolling the right column re-highlights the sidebar using the same
+///   section box as the geometric anchor.
 /// - Custom range entries ([SelectRangeEntry.custom]) are rendered as an input
 ///   row; typing clears existing child selections for that category.
 /// - When an entry's `immediate` is true, selection is applied immediately
@@ -72,6 +85,11 @@ class SideNavSelectState extends State<SideNavSelect> {
 
   final GlobalKey _scrollViewKey = GlobalKey();
 
+  /// Drives the right column's ListView so sections beyond the (finite)
+  /// prefetch extent can still be scrolled to before their elements are
+  /// inflated.
+  final ScrollController _scrollController = ScrollController();
+
   SelectController? controller;
 
   bool get _isSearching => widget.searchQuery.isNotEmpty;
@@ -83,6 +101,7 @@ class SideNavSelectState extends State<SideNavSelect> {
 
   @override
   void dispose() {
+    _scrollController.dispose();
     controller?.removeListener(_handleSelectControllerTick);
     super.dispose();
   }
@@ -158,7 +177,7 @@ class SideNavSelectState extends State<SideNavSelect> {
     for (int i = 0; i < _displayEntries.length; i++) {
       // Key point: find the child's RenderObject directly from the current context.
       // This has overhead for huge lists, but is efficient and robust for a category select (limited size).
-      final childKey = ValueKey('category_$i');
+      final childKey = ValueKey('sidenav_section_$i');
 
       // Note: due to ListView caching, off-screen children may not be found via context.
       // This matches our requirement: we only need visible items.
@@ -220,12 +239,59 @@ class SideNavSelectState extends State<SideNavSelect> {
       _tempSelectedCategoryIndex = index;
     });
 
-    final childKey = ValueKey('category_$index');
+    // With the right column's generous prefetch extent (see build), the
+    // section element is almost always inflated already and can be scrolled
+    // to with one continuous animation.
+    final sectionKey = ValueKey('sidenav_section_$index');
     final targetElement = _findChildElement(
-        _scrollViewKey.currentContext!.findRenderObject()!, childKey);
+      _scrollViewKey.currentContext!.findRenderObject()!,
+      sectionKey,
+    );
+    if (targetElement != null) {
+      _animateToElement(targetElement);
+      return;
+    }
 
-    if (targetElement == null) return;
+    // Fallback for sections still beyond the prefetch extent (extremely
+    // long content): animate — never jump — to a deliberately conservative
+    // estimate first, then align precisely once the target section is
+    // inflated. The estimate is biased low, so the aligning animation that
+    // follows only ever continues in the same direction instead of
+    // overshooting and bouncing back.
+    final position =
+        _scrollController.hasClients ? _scrollController.position : null;
+    if (position == null || !position.hasContentDimensions) return;
 
+    final target = ((position.maxScrollExtent + position.viewportDimension) *
+            index /
+            _displayEntries.length)
+        .clamp(0.0, position.maxScrollExtent)
+        .toDouble();
+
+    _isScrollingProgrammatically = true;
+    position
+        .animateTo(
+      target,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    )
+        .then((_) {
+      if (!mounted) return;
+      final element = _findChildElement(
+        _scrollViewKey.currentContext!.findRenderObject()!,
+        sectionKey,
+      );
+      if (element != null) {
+        _animateToElement(element);
+      } else {
+        _isScrollingProgrammatically = false;
+      }
+    });
+  }
+
+  /// Animates the right column so [targetElement] sits at the viewport top,
+  /// guarding the scroll-linked highlight for the duration of the animation.
+  void _animateToElement(Element targetElement) {
     _isScrollingProgrammatically = true;
 
     // Scroll safely
@@ -396,48 +462,57 @@ class SideNavSelectState extends State<SideNavSelect> {
     // add another vertical scrollable in the same axis. Every branch above
     // either is non-scrollable (chip/range/counter) or self-sizes its internal
     // scroll view (list/grid), so nesting is safe.
-    return Padding(
-      padding: EdgeInsets.only(top: 18, bottom: isLast ? 18 : 0),
-      child: (categoryTitle != null || hasHeader || hasFooter)
-          ? Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (categoryTitle != null) categoryTitle,
-                if (hasHeader)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 10),
-                    child: SelectChipBar(
-                      category: categoryHeader,
-                      entries: categoryHeader.children!.toList(),
-                      selectedEntries: _headerSelectedFor(category.id),
-                      variant: SelectChipVariant.filled,
-                      isWrapable: false,
-                      spacing: 12.0,
-                      onChanged: (index, entry) =>
-                          _onHeaderOrFooterItemTap.call(
-                              category, true, index, entry as SelectChildEntry),
+    //
+    // The KeyedSubtree is the single scroll-sync anchor shared by both
+    // linkage directions: tap-to-scroll aligns its outer edge (including
+    // the top padding) with the top of the right column's viewport, and the
+    // scroll-linked highlight observes the same box, so the tap resting
+    // point always sits on the highlight's geometric origin.
+    return KeyedSubtree(
+      key: ValueKey('sidenav_section_$index'),
+      child: Padding(
+        padding: EdgeInsets.only(top: 18, bottom: isLast ? 18 : 0),
+        child: (categoryTitle != null || hasHeader || hasFooter)
+            ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (categoryTitle != null) categoryTitle,
+                  if (hasHeader)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 10),
+                      child: SelectChipBar(
+                        category: categoryHeader,
+                        entries: categoryHeader.children!.toList(),
+                        selectedEntries: _headerSelectedFor(category.id),
+                        variant: SelectChipVariant.filled,
+                        isWrapable: false,
+                        spacing: 12.0,
+                        onChanged: (index, entry) =>
+                            _onHeaderOrFooterItemTap.call(category, true, index,
+                                entry as SelectChildEntry),
+                      ),
                     ),
-                  ),
-                view,
-                if (hasFooter)
-                  Padding(
-                    padding: const EdgeInsets.only(top: 10),
-                    child: SelectChipBar(
-                      category: categoryFooter,
-                      entries: categoryFooter.children!.toList(),
-                      selectedEntries: _footerSelectedFor(category.id),
-                      variant: SelectChipVariant.filled,
-                      isWrapable: false,
-                      spacing: 12.0,
-                      onChanged: (index, entry) =>
-                          _onHeaderOrFooterItemTap.call(category, false, index,
-                              entry as SelectChildEntry),
+                  view,
+                  if (hasFooter)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 10),
+                      child: SelectChipBar(
+                        category: categoryFooter,
+                        entries: categoryFooter.children!.toList(),
+                        selectedEntries: _footerSelectedFor(category.id),
+                        variant: SelectChipVariant.filled,
+                        isWrapable: false,
+                        spacing: 12.0,
+                        onChanged: (index, entry) =>
+                            _onHeaderOrFooterItemTap.call(category, false,
+                                index, entry as SelectChildEntry),
+                      ),
                     ),
-                  ),
-              ],
-            )
-          : view,
+                ],
+              )
+            : view,
+      ),
     );
   }
 
@@ -507,6 +582,12 @@ class SideNavSelectState extends State<SideNavSelect> {
                     child: ListView(
                       key:
                           _scrollViewKey, // Add key to get scroll view position
+                      // Eagerly inflate every section of the (bounded)
+                      // two-level filter so any category can be scrolled to
+                      // with one continuous animation instead of an
+                      // estimate-then-correct jump; it also lets the
+                      // scroll-linked highlight observe every section.
+                      cacheExtent: _kRightColumnCacheExtent,
                       physics: const ClampingScrollPhysics(),
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       // shrinkWrap: true,

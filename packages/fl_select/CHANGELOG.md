@@ -1,3 +1,7 @@
+## Next
+
+- **BUGFIX** `SideNavSelect` now aligns the tapped category's section (instead of its bare title) with the top of the right column, keeping the section's top padding as breathing room and sharing one geometric anchor with the scroll-linked highlight. The right column prefetches sections eagerly (finite 10000px cache extent), so taps scroll in one continuous animation; the estimate-then-jump fallback for extremely long content now animates instead of teleporting.
+
 ## 0.11.0
 
 - **DEPRECATION** the dual-mode delegates (`FlattenSelectDelegate`, `GridSelectDelegate`, `ListSelectDelegate` with two-level data) are deprecated in favor of the single-purpose ones above and **will be removed in a future minor version** ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0110)).
