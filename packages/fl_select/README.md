@@ -48,74 +48,167 @@ import 'package:fl_select/fl_select.dart';
 
 #### Delegates
 
-A delegate controls both data loading and how the body is rendered, and any delegate works with every entry point above.
+A delegate controls both data loading and how the body is rendered, and works with every entry point above. Flat delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) render parentless leaves created with `.name(...)`, while category delegates (`CascadingSelectDelegate`, `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) render a tree of `SelectCategoryEntry` roots whose children follow `category.layout` (list / grid / chips / range slider / counter):
 
-Each delegate is single-purpose and asserts on the data shape it does not support, so a mis-migration surfaces immediately.
-
-**Flat data** — parentless leaves created with `.name(...)`:
-
-| Delegate             | Description                                                                 | Preview                                                                                                          |
-| -------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `ListSelectDelegate` | A single-column list.                                                       | ![ListSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/list.jpg)           |
-| `GridSelectDelegate` | A grid layout (`crossAxisCount` is required).                               | ![GridSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/grid.jpg)           |
-| `WrapSelectDelegate` | A wrapable chip bar — the go-to for filter bars.                            | placeholder: ![WrapSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/grid.jpg) |
-
-**Two-level (category) data** — a tree of `SelectCategoryEntry` roots. Children follow `category.layout` — list / grid / chips / range slider / counter:
-
-| Delegate                   | Description                                                                                                                                                | Preview                                                                                                          |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| `CascadingSelectDelegate`  | A tree select: categories on the left, a cascading list on the right.                                                                                      | ![CascadingSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/cascading.jpg) |
-| `TabNavSelectDelegate`     | Category tabs on top drive the content below (default `defaultLayout`, a 3-column grid).                                                                   | placeholder: ![TabNavSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/grid.jpg) |
-| `SideNavSelectDelegate`    | A category sidebar on the left scrolls the single right column to the matching section. Best with `SelectionMode.multiple` and an "Any" entry.               | placeholder: ![SideNavSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/flatten.jpg) |
-| `ExpandableSelectDelegate` | One expandable group per category (default list).                                                                                                           | placeholder: ![ExpandableSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/list.jpg) |
+| Delegate                    |
+| --------------------------- |
+| `ListSelectDelegate`        |
+| ![ListSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/list.jpg) |
+| `GridSelectDelegate`        |
+| ![GridSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/grid.jpg) |
+| `WrapSelectDelegate`        |
+| ![WrapSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/wrap.jpg) |
+| `CascadingSelectDelegate`   |
+| ![CascadingSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/cascading.jpg) |
+| `TabNavSelectDelegate`      |
+| ![TabNavSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/tabnav.jpg) |
+| `SideNavSelectDelegate`     |
+| ![SideNavSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/sidenav.jpg) |
+| `ExpandableSelectDelegate`  |
+| ![ExpandableSelectDelegate](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/expandable.jpg) |
 
 #### SelectEntry
 
-Entries form a tree. `SelectCategoryEntry` is the root (a category) and `SelectChildEntry` is any non-root node, identified by its `parentId`.
+Entries form a tree. `SelectCategoryEntry` is the root (a category) and `SelectChildEntry` is any non-root node, identified by its `parentId`. Prefer the `SelectCategoryEntry.children(...)` factory: it auto-injects `parentId` on every child (recursively), so you never write it by hand, and it also takes `header` / `footer` entries and the category's `layout`.
 
 | Entry                    | Purpose                                                                                                                                                                       |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SelectCategoryEntry`    | Root node. Holds `children` and the `selectionMode` for them.                                                                                                                 |
+| `SelectCategoryEntry`    | Root node. `.children(...)` auto-injects `parentId` on `children`; also takes `selectionMode`, `header`/`footer`, and `layout`.                                                |
 | `SelectTextEntry`        | A plain text leaf. Use `.any(...)` for the "Any" (clear) entry. `.name(...)` creates a parentless leaf for flat lists.                                                        |
-| `SelectRangeEntry<N, E>` | A numeric range leaf (`min`/`max`). Use `.any(...)` for "Any" and `.custom(...)` for a user-input range. `SelectIntEntry<E>` is a handy alias for `SelectRangeEntry<int, E>`. |
+| `SelectRangeEntry<N, E>` | A numeric range leaf (`min`/`max`, snapped by `divisions`). Use `.any(...)` for "Any" and `.custom(...)` for a user-input range. `SelectIntEntry<E>` is a handy alias for `SelectRangeEntry<int, E>`. |
 
 Selection is controlled by `SelectionMode` (`single` by default, or `multiple`), set on a `SelectCategoryEntry` (per category) or on the delegate (fallback). In multiple-selection mode, an entry with `immediate: true` applies on tap and skips the action bar.
 
-Entries load asynchronously via `entriesLoader`, which returns a `Future<SelectEntries>` where `SelectEntries` is `Set<SelectEntry>`. For static data, skip the loader and pass the values directly — mutually exclusive with the loaders:
+Entries load asynchronously via `entriesLoader`, which returns a `Future<SelectEntries>` where `SelectEntries` is `Set<SelectEntry>`.
+
+Flat data for `ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate` — `SelectTextEntry.name(...)` creates a parentless leaf, and `SelectRangeEntry.custom()` adds a user-input range:
 
 ```dart
-// A category with single-selection children
-SelectCategoryEntry(
-  id: 'price',
-  name: 'Price',
-  children: {
-    SelectIntEntry.any(parentId: 'price', name: 'Any'),
-    SelectIntEntry(parentId: 'price', id: '0-100', name: '0-100', min: 0, max: 100),
-    SelectIntEntry.custom(parentId: 'price', name: 'Custom'),
-  },
-);
+SelectEntries get listData => {
+      SelectTextEntry.name(id: 'a', name: 'Kiwi'),
+      SelectTextEntry.name(id: 'b', name: 'Grape'),
+      SelectTextEntry.name(id: 'c', name: 'Strawberry'),
+      SelectTextEntry.name(id: 'd', name: 'Pineapple'),
+    };
 
-// A multi-selection category
-SelectCategoryEntry(
-  id: 'more',
-  name: 'More',
-  selectionMode: SelectionMode.multiple,
-  children: {
-    SelectTextEntry.any(parentId: 'more', name: 'Any'),
-    SelectTextEntry(parentId: 'more', id: 'near_subway', name: 'Near subway'),
-  },
-);
+SelectEntries get gridData => {
+      SelectRangeEntry.custom(), // user-input min/max
+      SelectTextEntry.name(id: 'a', name: '0-100'),
+      SelectTextEntry.name(id: 'b', name: '100-500'),
+      SelectTextEntry.name(id: 'c', name: '500-1000'),
+      SelectTextEntry.name(id: 'd', name: '1000-2000'),
+    };
 
-// Parentless leaves for a flat list
-SelectTextEntry.name(id: 'default', name: 'Default');
+SelectEntries get wrapData => {
+      SelectTextEntry.name(id: 'a', name: 'Tiger'),
+      SelectTextEntry.name(id: 'b', name: 'Lion'),
+      SelectTextEntry.name(id: 'c', name: 'Bear'),
+      SelectTextEntry.name(id: 'd', name: 'Elephant'),
+      SelectTextEntry.name(id: 'e', name: 'Monkey'),
+    };
 ```
+
+Two-level data for `CascadingSelectDelegate` / `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` — every category picks its own `selectionMode`, `layout`, and optional `header` / `footer`:
+
+```dart
+SelectEntries get multiCategoryData => {
+      SelectCategoryEntry.children(
+        id: 'cate1',
+        name: 'Cate 1',
+        children: {
+          SelectTextEntry.name(id: 'a', name: 'Football'),
+          SelectTextEntry.name(id: 'b', name: 'Basketball'),
+          SelectTextEntry.name(id: 'c', name: 'Baseball'),
+          SelectTextEntry.name(id: 'd', name: 'Tennis'),
+        },
+        selectionMode: SelectionMode.single,
+        footer: SelectTextEntry.children(
+          id: 'c1-f',
+          name: 'Letter Grade',
+          children: {
+            SelectTextEntry.name(id: 'f-a', name: 'A'),
+            SelectTextEntry.name(id: 'f-b', name: 'B'),
+            SelectTextEntry.name(id: 'f-c', name: 'C'),
+          },
+        ),
+        footerSelectionMode: SelectionMode.single,
+      ),
+      SelectCategoryEntry.children(
+        id: 'cate2',
+        name: 'Cate 2',
+        header: SelectTextEntry.children(
+          id: 'c2-h',
+          name: 'Letter Grade',
+          children: {
+            SelectTextEntry.name(id: 'h-a', name: 'A'),
+            SelectTextEntry.name(id: 'h-b', name: 'B'),
+          },
+        ),
+        headerSelectionMode: SelectionMode.single,
+        children: {
+          SelectTextEntry.name(id: 'a', name: 'Mathematics'),
+          SelectTextEntry.name(id: 'b', name: 'Language'),
+        },
+        selectionMode: SelectionMode.single,
+      ),
+      SelectCategoryEntry.children(
+        id: 'cate5',
+        name: 'Cate 5',
+        children: {
+          SelectRangeEntry(
+            id: 'a',
+            name: '\$0-\$2000000',
+            min: 0,
+            max: 2000000,
+            divisions: 80,
+          ),
+          SelectRangeEntry.custom(),
+        },
+        selectionMode: SelectionMode.single,
+        layout: const SelectRangeLayout(), // range slider
+      ),
+      SelectCategoryEntry.children(
+        id: 'cate6',
+        name: 'Cate 6',
+        children: {
+          SelectTextEntry.name(id: 'a', name: '1'),
+          SelectTextEntry.name(id: 'b', name: '2'),
+          SelectTextEntry.name(id: 'c', name: '3'),
+        },
+        selectionMode: SelectionMode.single,
+        layout: const SelectCounterLayout(), // stepper
+      ),
+    };
+```
+
+An async loader (`entriesLoader`) — any `Future<SelectEntries>`, e.g. decoded from JSON:
+
+```dart
+Future<SelectEntries> fetchCascadingData() async {
+  await Future.delayed(const Duration(milliseconds: 350)); // simulate a network delay
+  return {
+    SelectCategoryEntry.children(
+      id: 'region',
+      name: 'Region',
+      children: {
+        SelectTextEntry.any(parentId: '', name: 'Any', immediate: true), // parentId auto-injected
+        SelectTextEntry.name(id: 'north', name: 'North'),
+        SelectTextEntry.name(id: 'south', name: 'South'),
+      },
+      selectionMode: SelectionMode.multiple,
+    ),
+  };
+}
+```
+
+For static data, skip the loader and pass the values directly — `entries` / `selectedEntries` / `resetEntries` are mutually exclusive with the loaders:
 
 ```dart
 // Static data: no loader, no async — renders on the first frame
 ListSelectDelegate(
-  entries: {SelectTextEntry.name(id: 'relevance', name: 'Relevance')},
-  selectedEntries: {SelectTextEntry.name(id: 'relevance', name: 'Relevance')},
-  resetEntries: {SelectTextEntry.name(id: 'relevance', name: 'Relevance')},
+  entries: listData,
+  selectedEntries: {SelectTextEntry.name(id: 'a', name: 'Kiwi')},
+  resetEntries: {SelectTextEntry.name(id: 'a', name: 'Kiwi')},
 );
 ```
 
@@ -125,109 +218,309 @@ ListSelectDelegate(
 
 ```dart
 SelectView(
-  delegate: CascadingSelectDelegate(entriesLoader: _fetchNeighborhood),
-  onChanged: (selected) {
+  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  delegate: ListSelectDelegate(entries: listData),
+  onChanged: (SelectEntries selected) {
     // selected is the SelectEntries when the selection changes
+    print('toQueryParameters: ${selected.toQueryParameters()}');
+  },
+);
+
+SelectView(
+  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+  delegate: CascadingSelectDelegate(
+    entriesLoader: fetchCascadingData,
+    selectionMode: SelectionMode.multiple,
+    sideBarTheme: const SelectSideBarTheme(width: 120),
+    isScrollable: true,
+  ),
+  onChanged: (SelectEntries selected) {
+    print('toQueryMap: ${selected.toQueryMap()}');
+  },
+);
+
+SelectView(
+  delegate: TabNavSelectDelegate(
+    defaultLayout: SelectGridLayout(
+      crossAxisCount: 3,
+      childAspectRatio: 3,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+    ),
+    entries: multiCategoryData,
+    selectionMode: SelectionMode.multiple,
+    gridTileTheme: const SelectGridTileTheme(
+      variant: SelectGridTileVariant.outlined,
+    ),
+    fieldTileTheme: const SelectFieldTileTheme(
+      variant: SelectFieldTileVariant.outlined,
+    ),
+  ),
+  onChanged: (SelectEntries selected) {
+    print('onChanged: $selected');
   },
 );
 ```
 
-#### PopupSelectBar
-
-A tab bar (`PreferredSizeWidget`) that opens an overlay select when a tab is tapped. Provide `tabs` for the bar and a matching `selectDelegates` list (one per tab). Results arrive via `onChanged` / `onApplied` / `onReset`.
-
-```dart
-PopupSelectBar(
-  tabs: const [
-    PopupTab(label: 'Neighborhood'),
-    PopupTab(label: 'Price'),
-    PopupTab(label: 'Rooms'),
-    PopupTab(label: 'More'),
-    PopupTab(label: 'Sort'),
-  ],
-  selectDelegates: [
-    CascadingSelectDelegate(entriesLoader: _fetchNeighborhood),
-    TabNavSelectDelegate(entriesLoader: _fetchPrice),
-    TabNavSelectDelegate(entriesLoader: _fetchRooms),
-    SideNavSelectDelegate(entriesLoader: _fetchMore),
-    ListSelectDelegate(entriesLoader: _fetchSort),
-  ],
-  onApplied: (tabData, selected) {
-    // tabData is the PopupTabData; selected is the SelectEntries
-  },
-);
-```
-
-![PopupSelectBar](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/bar.gif)
+![SelectView](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/view.gif)
 
 #### PopupSelectButton
 
-A single-trigger alternative to `PopupSelectBar` — opens a select overlay on tap, like `PopupMenuButton`. It takes one `selectDelegate` and a `label`/`child`. Four variants: text (default), `.filled(...)`, `.elevated(...)`, and `.outlined(...)`.
+A single-trigger alternative to `PopupSelectBar` — opens a select overlay on tap, like `PopupMenuButton`. It takes one `selectDelegate`, a `label`/`child`, and a required `onApplied` callback. Four variants: text (default), `.filled(...)`, `.elevated(...)`, and `.outlined(...)`; use `direction` to open above the trigger.
 
 ```dart
 PopupSelectButton(
-  label: 'Neighborhood',
-  selectDelegate: CascadingSelectDelegate(entriesLoader: _fetchNeighborhood),
-  onApplied: (selected) { /* ... */ },
+  label: 'List',
+  selectDelegate: ListSelectDelegate(entries: listData),
+  onApplied: (selected) {
+    print('toQueryMap: ${selected.toQueryMap()}');
+    print('toQueryParameters: ${selected.toQueryParameters()}');
+  },
 );
 
 PopupSelectButton.elevated(
-  label: 'Price',
-  selectDelegate: TabNavSelectDelegate(entriesLoader: _fetchPrice),
+  label: 'Grid',
+  selectDelegate: GridSelectDelegate(
+    entries: gridData,
+    crossAxisCount: 3,
+    childAspectRatio: 3,
+    mainAxisSpacing: 10,
+    crossAxisSpacing: 10,
+  ),
+  onApplied: (selected) {
+    print('onApplied: $selected');
+  },
 );
 
 PopupSelectButton.filled(
-  label: 'Rooms',
-  selectDelegate: TabNavSelectDelegate(entriesLoader: _fetchRooms),
+  label: 'Wrap',
+  selectDelegate: WrapSelectDelegate(
+    entries: wrapData,
+    selectionMode: SelectionMode.multiple,
+    spacing: 12.0,
+    runSpacing: 12.0,
+  ),
+  onApplied: (selected) {
+    print('onApplied: $selected');
+  },
 );
 
 PopupSelectButton.outlined(
-  label: 'Sort',
-  icon: const Icon(Icons.filter_alt_outlined),
-  selectDelegate: ListSelectDelegate(entriesLoader: _fetchSort),
+  label: 'Cascading',
+  selectDelegate: CascadingSelectDelegate(
+    entriesLoader: fetchCascadingData,
+    selectionMode: SelectionMode.multiple,
+    sideBarTheme: const SelectSideBarTheme(width: 120),
+  ),
+  onApplied: (selected) {
+    print('onApplied: $selected');
+  },
 );
 ```
 
-![PopupSelectButton](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/button.gif)
+Category delegates work the same way — set `defaultLayout` to control how each category's children are laid out, and `direction` to open the overlay above the trigger:
+
+```dart
+PopupSelectButton(
+  label: 'TabNav',
+  selectDelegate: TabNavSelectDelegate(
+    defaultLayout: SelectGridLayout(
+      crossAxisCount: 3,
+      childAspectRatio: 3,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+    ),
+    entries: multiCategoryData,
+    selectionMode: SelectionMode.multiple,
+  ),
+  onApplied: (selected) {
+    print('onApplied: $selected');
+  },
+);
+
+PopupSelectButton(
+  direction: PopupSelectDirection.above,
+  label: 'Expandable',
+  selectDelegate: ExpandableSelectDelegate(
+    defaultLayout: SelectListLayout(),
+    entries: multiCategoryData,
+    selectionMode: SelectionMode.multiple,
+  ),
+  onApplied: (selected) {
+    print('onApplied: $selected');
+  },
+);
+```
+
+![PopupSelectButton](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/button.gif)
+
+#### PopupSelectBar
+
+A tab bar (`PreferredSizeWidget`) that opens an overlay select when a tab is tapped. Provide `tabs` for the bar and a matching `selectDelegates` list (one per tab), plus the required `onApplied` callback. Results also arrive via `onChanged` / `onReset`.
+
+```dart
+PopupSelectBar(
+  isScrollable: true,
+  tabs: const [
+    PopupTab(label: 'List'),
+    PopupTab(label: 'Grid'),
+    PopupTab(child: Icon(Icons.wrap_text)),
+    PopupTab(label: 'Cascading'),
+    PopupTab(label: 'TabNav'),
+    PopupTab(label: 'SideNav'),
+    PopupTab(child: Icon(Icons.expand)),
+  ],
+  selectDelegates: [
+    ListSelectDelegate(entries: listData),
+    GridSelectDelegate(
+      entries: gridData,
+      crossAxisCount: 3,
+      childAspectRatio: 3.2,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+    ),
+    WrapSelectDelegate(
+      entries: wrapData,
+      selectionMode: SelectionMode.multiple,
+      spacing: 12.0,
+      runSpacing: 12.0,
+    ),
+    CascadingSelectDelegate(
+      entriesLoader: fetchCascadingData,
+      selectionMode: SelectionMode.multiple,
+      sideBarTheme: const SelectSideBarTheme(width: 120),
+    ),
+    TabNavSelectDelegate(
+      defaultLayout: SelectGridLayout(
+        crossAxisCount: 3,
+        childAspectRatio: 3,
+        mainAxisSpacing: 10,
+        crossAxisSpacing: 10,
+      ),
+      entries: multiCategoryData,
+      selectionMode: SelectionMode.multiple,
+    ),
+    SideNavSelectDelegate(
+      defaultLayout: SelectWrapLayout(spacing: 12, runSpacing: 12),
+      entries: multiCategoryData,
+      selectionMode: SelectionMode.multiple,
+    ),
+    ExpandableSelectDelegate(
+      defaultLayout: SelectListLayout(),
+      entries: multiCategoryData,
+      selectionMode: SelectionMode.multiple,
+    ),
+  ],
+  onApplied: (tabData, selected) {
+    // tabData is the PopupTabData; selected is the SelectEntries
+    print('onApplied: $tabData, $selected');
+    print('toQueryMap: ${selected.toQueryMap()}');
+    print('toQueryParameters: ${selected.toQueryParameters()}');
+  },
+);
+```
+
+![PopupSelectBar](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/bar.gif)
 
 #### showSelect
 
 Shows a select in a modal dialog. Returns the selected `SelectEntries` when applied, or `null` when dismissed. In single-selection mode, tapping an item applies immediately; in multi-selection mode, "Apply" in the action bar confirms.
 
 ```dart
-final SelectEntries? selected = await showSelect(
+final SelectEntries? result = await showSelect(
   context: context,
-  delegate: SideNavSelectDelegate(entriesLoader: _fetchMore),
-  title: const Text('More'),
+  delegate: ListSelectDelegate(entries: listData),
+  leading: const Icon(Icons.list),
+  title: const Text('ListSelect'),
 );
 
-if (selected != null) {
-  // a selection was applied
+if (result != null) {
+  print('toQueryMap: ${result.toQueryMap()}');
+  print('toQueryParameters: ${result.toQueryParameters()}');
 }
 ```
 
-![showSelect](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/dialog.gif)
+Any delegate works, and the header is configurable:
+
+```dart
+await showSelect(
+  context: context,
+  delegate: CascadingSelectDelegate(
+    entriesLoader: fetchCascadingData,
+    selectionMode: SelectionMode.multiple,
+    sideBarTheme: const SelectSideBarTheme(width: 120),
+    isScrollable: true,
+  ),
+);
+
+await showSelect(
+  context: context,
+  delegate: TabNavSelectDelegate(
+    defaultLayout: SelectGridLayout(
+      crossAxisCount: 2,
+      childAspectRatio: 3.6,
+      mainAxisSpacing: 10,
+      crossAxisSpacing: 10,
+    ),
+    entries: multiCategoryData,
+    selectionMode: SelectionMode.multiple,
+    isScrollable: true,
+  ),
+  title: const Text('TabNavSelect'),
+  trailing: const CloseButton(),
+  centerTitle: false,
+);
+```
+
+![showSelect](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/dialog.gif)
 
 #### showModalBottomSelect
 
 Shows a select in a modal bottom sheet built on Flutter's `showModalBottomSheet`. Same interaction as `showSelect`. Standard sheet parameters (`isScrollControlled`, `isDismissible`, `enableDrag`, `showDragHandle`, `constraints`, etc.) are forwarded.
 
 ```dart
-final SelectEntries? selected = await showModalBottomSelect(
+final SelectEntries? result = await showModalBottomSelect(
   context: context,
-  delegate: SideNavSelectDelegate(
-    selectionMode: SelectionMode.multiple,
-    entriesLoader: _fetchMore,
-  ),
-  title: const Text('More'),
+  delegate: ListSelectDelegate(entries: listData),
+  leading: const Icon(Icons.list),
+  title: const Text('ListSelect'),
 );
 
-if (selected != null) {
-  // a selection was applied
+if (result != null) {
+  print('toQueryMap: ${result.toQueryMap()}');
+  print('toQueryParameters: ${result.toQueryParameters()}');
 }
 ```
 
-![showModalBottomSelect](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/bottom_sheet.gif)
+`title` / `leading` / `trailing` / `centerTitle` behave like the `showSelect` dialog header, plus the forwarded sheet parameters:
+
+```dart
+await showModalBottomSelect(
+  context: context,
+  delegate: GridSelectDelegate(
+    entries: gridData,
+    crossAxisCount: 3,
+    childAspectRatio: 3,
+    mainAxisSpacing: 10,
+    crossAxisSpacing: 10,
+  ),
+  title: const Text('GridSelect'),
+  centerTitle: false,
+  trailing: const CloseButton(),
+);
+
+await showModalBottomSelect(
+  context: context,
+  delegate: SideNavSelectDelegate(
+    defaultLayout: SelectWrapLayout(spacing: 12, runSpacing: 12),
+    entries: multiCategoryData,
+    selectionMode: SelectionMode.multiple,
+  ),
+  title: const Text('SideNavSelect'),
+);
+```
+
+![showModalBottomSelect](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/bottom_sheet.gif)
 
 #### Search
 
@@ -235,12 +528,18 @@ Set `searchEnabled: true` on any delegate to render a `SelectSearchBar` above th
 
 ```dart
 CascadingSelectDelegate(
-  entriesLoader: _fetchNeighborhood,
+  entriesLoader: fetchCascadingData,
   searchEnabled: true,
   searchHintText: 'Search',
   searchDebounceDuration: const Duration(milliseconds: 300),
-  // searchPredicate: (entry, query) => ..., // defaults to a case-insensitive
-  //                                        // substring match on SelectEntry.name
+  // searchPredicate: (entry, query) {
+  //   return entry.name?.contains(query) == true;
+  // },
+);
+
+ListSelectDelegate(
+  entries: listData,
+  searchEnabled: true,
 );
 ```
 
@@ -276,16 +575,31 @@ Values are percent-encoded by default; pass `encode: false` when the caller hand
 **Per instance** — delegates carry the styling: set `selectedColor` / `onSelectedColor` (or any finer-grained `*Theme` field) directly on a delegate. `PopupSelectBar` also accepts a single `selectTheme` that overrides the styling of every tab's delegate:
 
 ```dart
-ListSelectDelegate(
-  entriesLoader: _fetchSort,
+GridSelectDelegate(
+  entries: gridData,
+  crossAxisCount: 3,
   selectedColor: Theme.of(context).colorScheme.primary,
   onSelectedColor: Theme.of(context).colorScheme.onPrimary,
+  gridTileTheme: const SelectGridTileTheme(
+    variant: SelectGridTileVariant.outlined,
+  ),
+  fieldTileTheme: const SelectFieldTileTheme(
+    variant: SelectFieldTileVariant.outlined,
+  ),
+);
+
+CascadingSelectDelegate(
+  entriesLoader: fetchCascadingData,
+  sideBarTheme: const SelectSideBarTheme(width: 120),
 );
 
 PopupSelectBar(
   tabs: ...,
   selectDelegates: ...,
   selectTheme: SelectThemeData(Theme.of(context)),
+  onApplied: (tabData, selected) {
+    // tabData is the PopupTabData; selected is the SelectEntries
+  },
 );
 ```
 
@@ -294,6 +608,7 @@ PopupSelectBar(
 ```dart
 MaterialApp(
   theme: ThemeData(
+    colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
     extensions: [
       PopupSelectBarTheme(
         height: 48,
@@ -306,6 +621,36 @@ MaterialApp(
       ),
     ],
   ),
+);
+```
+
+Or derive the extensions from the active theme in `builder`, so they follow light/dark mode and the app's seed color:
+
+```dart
+MaterialApp(
+  theme: lightTheme,
+  darkTheme: darkTheme,
+  builder: (context, child) {
+    final baseTheme = Theme.of(context);
+    final theme = baseTheme.copyWith(
+      extensions: <ThemeExtension<dynamic>>[
+        PopupSelectBarTheme(
+          overlayStyle: const SelectOverlayStyle(
+            barrierColor: Colors.black54,
+          ),
+          selectTheme: SelectThemeData(baseTheme),
+        ),
+        PopupSelectButtonTheme(
+          backgroundColor: baseTheme.colorScheme.primary,
+          foregroundColor: baseTheme.colorScheme.onPrimary,
+        ),
+      ],
+    );
+    return Theme(
+      data: theme,
+      child: child ?? const SizedBox.shrink(),
+    );
+  },
 );
 ```
 
