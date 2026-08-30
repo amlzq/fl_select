@@ -91,19 +91,6 @@ class SideNavSelectState extends State<SideNavSelect> {
   /// inflated.
   final ScrollController _scrollController = ScrollController();
 
-  /// Physics for the right column's ListView: touch drags (and flings) the
-  /// column cannot consume at its edges chain to the nearest same-direction
-  /// ancestor scrollable, mimicking native nested scrolling. Pointer-wheel
-  /// chaining is handled by the framework itself.
-  late final ScrollPhysics _rightColumnPhysics = ChainingClampingScrollPhysics(
-    outerPosition: _findChainingOuterPosition,
-  );
-
-  /// The nearest same-direction vertical ancestor scrollable of the right
-  /// column — typically the page-level [SingleChildScrollView] hosting this
-  /// panel — or null when there is none to chain to.
-  ScrollPositionWithSingleContext? _findChainingOuterPosition() =>
-      findVerticalChainingOuterPosition(_scrollViewKey.currentContext);
 
   SelectController? controller;
 
@@ -641,7 +628,7 @@ class SideNavSelectState extends State<SideNavSelect> {
                       // estimate-then-correct jump; it also lets the
                       // scroll-linked highlight observe every section.
                       cacheExtent: _kRightColumnCacheExtent,
-                      physics: _rightColumnPhysics,
+                      physics: ChainingClampingScrollPhysics(),
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       // shrinkWrap: true,
                       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior

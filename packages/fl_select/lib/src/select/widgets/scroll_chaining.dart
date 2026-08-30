@@ -12,32 +12,9 @@ import 'package:flutter/material.dart';
 /// the inner scrollable wins the gesture arena and simply stops dead at its
 /// edge, which makes a panel hosted in a page-level scroll view feel stuck.
 ///
-/// These helpers restore the native nested-scrolling feel (iOS `UIScrollView`
-/// chaining, Android `NestedScrollingParent`) by handing unconsumed gestures
-/// to the nearest same-direction ancestor scrollable.
-
-/// The nearest same-direction vertical ancestor scrollable of the scrollable
-/// widget owning [context] — typically the page-level [SingleChildScrollView]
-/// hosting the panel — or null when there is none to chain to.
-///
-/// Call with the `BuildContext` of the inner scrollable widget itself (e.g.
-/// its [GlobalKey]'s `currentContext`): the `Scrollable` it builds lives in
-/// its subtree, so [Scrollable.maybeOf] already skips it and lands on the
-/// enclosing scrollable.
-ScrollPositionWithSingleContext? findVerticalChainingOuterPosition(
-    BuildContext? context) {
-  if (context == null) return null;
-  // Skips over any non-vertical ancestors to the nearest vertical one.
-  final outer = Scrollable.maybeOf(context, axis: Axis.vertical);
-  if (outer == null) return null;
-  final position = outer.position;
-  if (position is! ScrollPositionWithSingleContext) return null;
-  if (!position.hasContentDimensions) return null;
-  // Select bodies never reverse (AxisDirection.down); a reversed ancestor
-  // would need inverted deltas, so it is not chained to.
-  if (position.axisDirection != AxisDirection.down) return null;
-  return position;
-}
+/// [ChainingClampingScrollPhysics] restores the native nested-scrolling feel
+/// (iOS `UIScrollView` chaining, Android `NestedScrollingParent`) by handing
+/// unconsumed gestures to the nearest same-direction ancestor scrollable.
 
 /// [ClampingScrollPhysics] extended with touch-gesture scroll chaining.
 ///
@@ -48,28 +25,46 @@ ScrollPositionWithSingleContext? findVerticalChainingOuterPosition(
 ///   simulation of its own) hands its momentum to the ancestor by starting a
 ///   ballistic simulation on it.
 ///
-/// Falls back to plain [ClampingScrollPhysics] behavior whenever [outerPosition]
-/// resolves to null (no scrollable ancestor to chain to).
+/// Falls back to plain [ClampingScrollPhysics] behavior whenever no
+/// same-direction scrollable ancestor exists.
 class ChainingClampingScrollPhysics extends ClampingScrollPhysics {
-  const ChainingClampingScrollPhysics({
-    required this.outerPosition,
-    super.parent,
-  });
-
-  /// Resolves the ancestor position to chain to, or null while unavailable.
-  final ScrollPositionWithSingleContext? Function() outerPosition;
+  const ChainingClampingScrollPhysics({super.parent});
 
   @override
   ChainingClampingScrollPhysics applyTo(ScrollPhysics? ancestor) {
-    return ChainingClampingScrollPhysics(
-      outerPosition: outerPosition,
-      parent: buildParent(ancestor),
+    return ChainingClampingScrollPhysics(parent: buildParent(ancestor));
+  }
+
+  /// The nearest same-direction vertical ancestor scrollable of the
+  /// scrollable this position belongs to — typically the page-level
+  /// [SingleChildScrollView] hosting the panel — or null when there is none
+  /// to chain to.
+  ///
+  /// The framework always invokes physics methods with the owning
+  /// [ScrollPosition], whose [ScrollPosition.context]'s [ScrollContext
+  /// .storageContext] is the inner [Scrollable]'s own context;
+  /// [Scrollable.maybeOf] from there walks the ancestors (the inner
+  /// scrollable itself is never revisited, per its documentation) and skips
+  /// non-vertical ancestors to the nearest vertical one.
+  ScrollPositionWithSingleContext? _findOuter(ScrollMetrics metrics) {
+    if (metrics is! ScrollPosition) return null;
+    final outer = Scrollable.maybeOf(
+      metrics.context.storageContext,
+      axis: Axis.vertical,
     );
+    if (outer == null) return null;
+    final outerPosition = outer.position;
+    if (outerPosition is! ScrollPositionWithSingleContext) return null;
+    if (!outerPosition.hasContentDimensions) return null;
+    // Select bodies never reverse (AxisDirection.down); a reversed ancestor
+    // would need inverted deltas, so it is not chained to.
+    if (outerPosition.axisDirection != AxisDirection.down) return null;
+    return outerPosition;
   }
 
   @override
   double applyPhysicsToUserOffset(ScrollMetrics position, double offset) {
-    final outer = outerPosition();
+    final outer = _findOuter(position);
     if (outer == null || !outer.hasContentDimensions) {
       return super.applyPhysicsToUserOffset(position, offset);
     }
@@ -127,7 +122,7 @@ class ChainingClampingScrollPhysics extends ClampingScrollPhysics {
 
     if (velocity == 0.0) return null;
     if (velocity.abs() < toleranceFor(position).velocity) return null;
-    final outer = outerPosition();
+    final outer = _findOuter(position);
     if (outer == null || !outer.hasContentDimensions) return null;
 
     // The fling dies at the body's edge (super returned no simulation);
