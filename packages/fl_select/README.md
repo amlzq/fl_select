@@ -2,7 +2,7 @@ A customizable Flutter select widget for building filter bars, cascading menus, 
 
 [Playground](https://flselect.zeaon.dev/)
 
-![Highlights](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/atx/highlights.gif)
+![Highlights](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/highlights.gif)
 
 ### Agent Skills
 
