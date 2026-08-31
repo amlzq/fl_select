@@ -1,11 +1,13 @@
 # Migration Guide
 
-## MIGRATE TO Next
+## MIGRATE TO 0.1.0
 
 The `delegate` token now routes to fl_select's single-purpose delegates instead
-of the deprecated dual-mode paths ([fl_select migration](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+of the deprecated dual-mode paths ([fl_select migration](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0110)).
 No payload changes are required — every legacy token keeps rendering the same
-panel — but new tokens are available.
+panel (the deprecated paths already forwarded to the same delegates) — and no
+deprecated delegate is constructed anymore. New tokens are registered in the
+schema `enum` and the system prompt fragment.
 
 ### Delegate token routing
 

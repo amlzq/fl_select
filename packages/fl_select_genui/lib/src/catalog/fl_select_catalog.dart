@@ -14,7 +14,7 @@ abstract final class FlSelectCatalogItems {
   ///
   /// ```dart
   /// SurfaceController(
-  ///   catalogs: [CoreCatalogItems.asCatalog().copyWith(newItems: FlSelectCatalogItems.all)],
+  ///   catalogs: [BasicCatalogItems.asCatalog().copyWith(newItems: FlSelectCatalogItems.all)],
   /// )
   /// ```
   static Catalog asCatalog() => Catalog(all, catalogId: 'fl_select');

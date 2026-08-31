@@ -1,7 +1,7 @@
 name: example
 description: "Demo of fl_select_genui: rendering an agent-authored SelectFilter."
 publish_to: "none"
-version: 0.0.1
+version: 0.1.0
 
 environment:
   sdk: ^3.10.0

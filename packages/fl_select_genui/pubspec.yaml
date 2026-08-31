@@ -3,10 +3,10 @@ description: >-
   GenUI SDK (A2UI) integration for fl_select: ready-made CatalogItems so
   AI agents can render fl_select filters in chat and get selections back
   as structured query data.
-version: 0.0.1
+version: 0.1.0
 repository: https://github.com/amlzq/fl_select/tree/main/packages/fl_select_genui
 issue_tracker: https://github.com/amlzq/fl_select/issues
-topics: [genui, select, multiselect, dropdown, cascade]
+topics: [genui, select, multiselect, dropdown, ai]
 
 environment:
   sdk: ^3.10.0
@@ -16,7 +16,7 @@ environment:
 resolution: workspace
 
 dependencies:
-  fl_select: ^0.10.0
+  fl_select: ^0.11.0
   flutter:
     sdk: flutter
   genui: ^0.10.2

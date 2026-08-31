@@ -11,7 +11,7 @@ agent ──JSON payload──▶ SelectFilter (fl_select UI) ──selection─
 ## How it works
 
 1. You register [`FlSelectCatalogItems.asCatalog()`] (or `.all`) with your
-   GenUI `SurfaceController` alongside the core catalog.
+   GenUI `SurfaceController` alongside the basic catalog.
 2. Your agent's system prompt includes
    [`FlSelectCatalogItems.systemPromptFragment`], which teaches it the
    `SelectFilter` vocabulary.
@@ -34,11 +34,10 @@ import 'package:genui/genui.dart';
 
 final controller = SurfaceController(
   catalogs: [
-    CoreCatalogItems.asCatalog().copyWith(
+    BasicCatalogItems.asCatalog().copyWith(
       newItems: FlSelectCatalogItems.all,
     ),
   ],
-  // ...agent transport
 );
 
 // System prompt:
