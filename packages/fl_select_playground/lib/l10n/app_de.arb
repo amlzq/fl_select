@@ -53,5 +53,7 @@
   "titleTabNavSelect": "Tab-Navigationsauswahl",
   "titleSideNavSelect": "Seiten-Navigationsauswahl",
   "titleExpandableSelect": "Aufklappbare Auswahl",
-  "resultPanelTitle": "Callback-Ergebnisse"
+  "resultPanelTitle": "Callback-Ergebnisse",
+  "shareTooltip": "Link kopieren",
+  "linkCopied": "Link wurde in die Zwischenablage kopiert"
 }

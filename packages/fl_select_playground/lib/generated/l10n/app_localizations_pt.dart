@@ -175,4 +175,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get resultPanelTitle => 'Resultados de callbacks';
+
+  @override
+  String get shareTooltip => 'Copiar link';
+
+  @override
+  String get linkCopied => 'Link copiado para a área de transferência';
 }

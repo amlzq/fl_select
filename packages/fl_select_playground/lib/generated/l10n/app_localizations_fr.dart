@@ -175,4 +175,10 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get resultPanelTitle => 'Résultats des callbacks';
+
+  @override
+  String get shareTooltip => 'Copier le lien';
+
+  @override
+  String get linkCopied => 'Lien copié dans le presse-papiers';
 }

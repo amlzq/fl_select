@@ -53,5 +53,7 @@
   "titleTabNavSelect": "頂導航選擇器",
   "titleSideNavSelect": "側導航選擇器",
   "titleExpandableSelect": "分組選擇器",
-  "resultPanelTitle": "回呼結果"
+  "resultPanelTitle": "回呼結果",
+  "shareTooltip": "複製連結",
+  "linkCopied": "連結已複製到剪貼簿"
 }

@@ -53,5 +53,7 @@
   "titleTabNavSelect": "Trình chọn điều hướng tab",
   "titleSideNavSelect": "Trình chọn điều hướng bên",
   "titleExpandableSelect": "Trình chọn mở rộng",
-  "resultPanelTitle": "Kết quả callback"
+  "resultPanelTitle": "Kết quả callback",
+  "shareTooltip": "Sao chép liên kết",
+  "linkCopied": "Đã sao chép liên kết vào bảng tạm"
 }

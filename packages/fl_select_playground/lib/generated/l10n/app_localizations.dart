@@ -449,6 +449,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Callback results'**
   String get resultPanelTitle;
+
+  /// No description provided for @shareTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy link'**
+  String get shareTooltip;
+
+  /// No description provided for @linkCopied.
+  ///
+  /// In en, this message translates to:
+  /// **'Link copied to clipboard'**
+  String get linkCopied;
 }
 
 class _AppLocalizationsDelegate

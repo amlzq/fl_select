@@ -175,4 +175,10 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get resultPanelTitle => 'コールバック結果';
+
+  @override
+  String get shareTooltip => 'リンクをコピー';
+
+  @override
+  String get linkCopied => 'リンクをクリップボードにコピーしました';
 }

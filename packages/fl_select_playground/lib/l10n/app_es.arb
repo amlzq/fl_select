@@ -53,5 +53,7 @@
   "titleTabNavSelect": "Selector de navegación por pestañas",
   "titleSideNavSelect": "Selector de navegación lateral",
   "titleExpandableSelect": "Selector desplegable",
-  "resultPanelTitle": "Resultados de callbacks"
+  "resultPanelTitle": "Resultados de callbacks",
+  "shareTooltip": "Copiar enlace",
+  "linkCopied": "Enlace copiado al portapapeles"
 }

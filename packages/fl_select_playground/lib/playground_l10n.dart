@@ -186,4 +186,8 @@ class PlaygroundL10n {
   String get resultPanelTitle => _l10n.resultPanelTitle;
   String get onChangedLabel => 'onChanged';
   String get onAppliedLabel => 'onApplied';
+
+  // Share link (copy the URL that reproduces the current configuration).
+  String get shareTooltip => _l10n.shareTooltip;
+  String get linkCopied => _l10n.linkCopied;
 }

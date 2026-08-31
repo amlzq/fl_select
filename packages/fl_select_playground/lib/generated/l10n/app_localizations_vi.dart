@@ -175,4 +175,10 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get resultPanelTitle => 'Kết quả callback';
+
+  @override
+  String get shareTooltip => 'Sao chép liên kết';
+
+  @override
+  String get linkCopied => 'Đã sao chép liên kết vào bảng tạm';
 }

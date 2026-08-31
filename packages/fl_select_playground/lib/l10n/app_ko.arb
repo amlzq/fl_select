@@ -53,5 +53,7 @@
   "titleTabNavSelect": "상단 탐색 선택기",
   "titleSideNavSelect": "측면 탐색 선택기",
   "titleExpandableSelect": "확장 선택기",
-  "resultPanelTitle": "콜백 결과"
+  "resultPanelTitle": "콜백 결과",
+  "shareTooltip": "링크 복사",
+  "linkCopied": "링크가 클립보드에 복사되었습니다"
 }

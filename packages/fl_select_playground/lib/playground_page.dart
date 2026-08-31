@@ -1,5 +1,6 @@
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'controls_panel.dart';
 import 'entry_repository.dart';
@@ -14,10 +15,33 @@ import 'theme_mode.dart';
 /// keep it from being popped by system back.
 const String _kPhoneBaseRouteName = 'playground-phone-base';
 
-/// Interactive demo: a parameter panel on one side and a simulated phone on the
-/// other. Changing any parameter rebuilds the phone's select immediately.
+/// Interactive demo: a parameter panel on one side and a simulated phone on
+/// the other. Changing any parameter rebuilds the phone's select immediately.
+///
+/// The demo state (params / language / theme mode) is owned by the parent
+/// ([PlaygroundApp]), which mirrors it into the browser URL — so any
+/// configuration can be reproduced by sharing a copied link.
 class PlaygroundPage extends StatefulWidget {
-  const PlaygroundPage({super.key});
+  const PlaygroundPage({
+    super.key,
+    required this.params,
+    required this.language,
+    required this.onParamsChanged,
+    required this.onLanguageChanged,
+    required this.buildShareUri,
+  });
+
+  final PlaygroundParams params;
+
+  final PlaygroundLanguage language;
+
+  final ValueChanged<PlaygroundParams> onParamsChanged;
+
+  final ValueChanged<PlaygroundLanguage> onLanguageChanged;
+
+  /// Builds (and flushes to the address bar) the URL that reproduces the
+  /// current configuration; invoked by the copy-link app bar button.
+  final Uri Function() buildShareUri;
 
   @override
   State<PlaygroundPage> createState() => _PlaygroundPageState();
@@ -28,8 +52,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   // language only affects the select's built-in strings.
   final EntryRepository _repo = EntryRepository();
 
-  PlaygroundLanguage _language = PlaygroundLanguage.english;
-
   /// Cache of reusable delegates. See [buildDelegate] for why reusing the same
   /// instance across rebuilds is required (selection restoration).
   final Map<String, SelectDelegate> _delegateCache = <String, SelectDelegate>{};
@@ -39,19 +61,6 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   /// / spacing changes (those recreate the delegate).
   final Map<String, SelectDelegate> _selectionCache =
       <String, SelectDelegate>{};
-
-  var _params = const PlaygroundParams(
-    entryPoint: EntryPoint.view,
-    delegate: Delegate.cascading,
-    selectionMode: SelectionMode.multiple,
-    crossAxisCount: 4,
-    childAspectRatio: 2.5,
-    spacing: 8,
-    tileVariant: TileVariant.filled,
-    seedColor: Colors.deepPurple,
-    useMaterial3: true,
-    brightness: null,
-  );
 
   PlaygroundDataSource get _dataSource =>
       PlaygroundDataSource.fromRepository(_repo);
@@ -64,7 +73,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
     // surrounding app; only the locale is overridden.
     return Localizations.override(
       context: context,
-      locale: _language.locale,
+      locale: widget.language.locale,
       child: Builder(
         builder: (context) {
           final l10n = PlaygroundL10n(AppLocalizations.of(context)!);
@@ -75,22 +84,24 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   }
 
   Widget _buildScaffold(BuildContext context, PlaygroundL10n l10n) {
+    final params = widget.params;
+
     // When the brightness parameter is null, follow the app's resolved
     // brightness (the ThemeMode chosen by the top-right button, including
     // `system`); otherwise use the explicitly selected one. Read from the
     // outer context *before* the preview's own Theme override below.
     final effectiveBrightness =
-        _params.brightness ?? Theme.of(context).brightness;
+        params.brightness ?? Theme.of(context).brightness;
 
     final paramTheme = ThemeData(
-      useMaterial3: _params.useMaterial3,
+      useMaterial3: params.useMaterial3,
       colorScheme: ColorScheme.fromSeed(
-        seedColor: _params.seedColor,
+        seedColor: params.seedColor,
         brightness: effectiveBrightness,
       ),
     );
     final delegate = buildDelegate(
-      _params,
+      params,
       _dataSource,
       delegateCache: _delegateCache,
       selectionCache: _selectionCache,
@@ -154,7 +165,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
               child: Theme(
                 data: paramThemeWithExtensions,
                 child: buildPhoneScreen(
-                  _params,
+                  params,
                   delegate,
                   l10n,
                   data: _dataSource,
@@ -172,10 +183,16 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       appBar: AppBar(
         title: Text(l10n.title),
         actions: <Widget>[
+          _ShareLinkButton(
+            tooltip: l10n.shareTooltip,
+            copiedMessage: l10n.linkCopied,
+            onCopy: widget.buildShareUri,
+          ),
+          const SizedBox(width: 8),
           _LanguageSwitch(
-            language: _language,
+            language: widget.language,
             tooltip: l10n.languageTooltip,
-            onChanged: (lang) => setState(() => _language = lang),
+            onChanged: widget.onLanguageChanged,
           ),
           const SizedBox(width: 8),
           const ThemeModeButton(),
@@ -191,9 +208,9 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                 SizedBox(
                   width: 340,
                   child: ControlsPanel(
-                    params: _params,
+                    params: params,
                     l10n: l10n,
-                    onChanged: (p) => setState(() => _params = p),
+                    onChanged: widget.onParamsChanged,
                   ),
                 ),
                 Expanded(
@@ -214,9 +231,9 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
             child: Column(
               children: <Widget>[
                 ControlsPanel(
-                  params: _params,
+                  params: params,
                   l10n: l10n,
-                  onChanged: (p) => setState(() => _params = p),
+                  onChanged: widget.onParamsChanged,
                 ),
                 FittedBox(
                   fit: BoxFit.contain,
@@ -230,6 +247,37 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           );
         },
       ),
+    );
+  }
+}
+
+/// Top-right copy-link button: puts the URL that reproduces the current
+/// configuration on the clipboard and confirms with a snackbar.
+class _ShareLinkButton extends StatelessWidget {
+  final String tooltip;
+
+  final String copiedMessage;
+
+  final Uri Function() onCopy;
+
+  const _ShareLinkButton({
+    required this.tooltip,
+    required this.copiedMessage,
+    required this.onCopy,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      tooltip: tooltip,
+      icon: const Icon(Icons.link),
+      onPressed: () {
+        final url = onCopy().toString();
+        Clipboard.setData(ClipboardData(text: url));
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(copiedMessage)));
+      },
     );
   }
 }

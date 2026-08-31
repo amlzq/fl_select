@@ -53,5 +53,7 @@
   "titleTabNavSelect": "タブナビセレクター",
   "titleSideNavSelect": "サイドナビセレクター",
   "titleExpandableSelect": "展開セレクター",
-  "resultPanelTitle": "コールバック結果"
+  "resultPanelTitle": "コールバック結果",
+  "shareTooltip": "リンクをコピー",
+  "linkCopied": "リンクをクリップボードにコピーしました"
 }

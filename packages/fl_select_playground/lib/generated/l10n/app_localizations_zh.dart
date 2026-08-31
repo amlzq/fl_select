@@ -175,6 +175,12 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get resultPanelTitle => '回调结果';
+
+  @override
+  String get shareTooltip => '复制链接';
+
+  @override
+  String get linkCopied => '链接已复制到剪贴板';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -348,6 +354,12 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get resultPanelTitle => '回调结果';
+
+  @override
+  String get shareTooltip => '复制链接';
+
+  @override
+  String get linkCopied => '链接已复制到剪贴板';
 }
 
 /// The translations for Chinese, as used in Hong Kong, using the Han script (`zh_Hant_HK`).
@@ -521,6 +533,12 @@ class AppLocalizationsZhHantHk extends AppLocalizationsZh {
 
   @override
   String get resultPanelTitle => '回呼結果';
+
+  @override
+  String get shareTooltip => '複製連結';
+
+  @override
+  String get linkCopied => '連結已複製到剪貼簿';
 }
 
 /// The translations for Chinese, as used in Taiwan, using the Han script (`zh_Hant_TW`).
@@ -694,6 +712,12 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
 
   @override
   String get resultPanelTitle => '回呼結果';
+
+  @override
+  String get shareTooltip => '複製連結';
+
+  @override
+  String get linkCopied => '連結已複製到剪貼簿';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -867,4 +891,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get resultPanelTitle => '回調結果';
+
+  @override
+  String get shareTooltip => '複製連結';
+
+  @override
+  String get linkCopied => '連結已複製到剪貼簿';
 }

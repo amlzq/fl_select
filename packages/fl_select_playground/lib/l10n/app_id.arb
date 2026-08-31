@@ -53,5 +53,7 @@
   "titleTabNavSelect": "Pemilih navigasi tab",
   "titleSideNavSelect": "Pemilih navigasi sisi",
   "titleExpandableSelect": "Pemilih yang dapat diperluas",
-  "resultPanelTitle": "Hasil callback"
+  "resultPanelTitle": "Hasil callback",
+  "shareTooltip": "Salin tautan",
+  "linkCopied": "Tautan disalin ke papan klip"
 }

@@ -53,5 +53,7 @@
   "titleTabNavSelect": "Sélecteur à onglets",
   "titleSideNavSelect": "Sélecteur latéral",
   "titleExpandableSelect": "Sélecteur dépliable",
-  "resultPanelTitle": "Résultats des callbacks"
+  "resultPanelTitle": "Résultats des callbacks",
+  "shareTooltip": "Copier le lien",
+  "linkCopied": "Lien copié dans le presse-papiers"
 }

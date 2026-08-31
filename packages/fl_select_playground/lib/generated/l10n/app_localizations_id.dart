@@ -175,4 +175,10 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get resultPanelTitle => 'Hasil callback';
+
+  @override
+  String get shareTooltip => 'Salin tautan';
+
+  @override
+  String get linkCopied => 'Tautan disalin ke papan klip';
 }

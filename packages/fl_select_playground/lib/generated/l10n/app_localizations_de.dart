@@ -176,4 +176,10 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get resultPanelTitle => 'Callback-Ergebnisse';
+
+  @override
+  String get shareTooltip => 'Link kopieren';
+
+  @override
+  String get linkCopied => 'Link wurde in die Zwischenablage kopiert';
 }

@@ -175,4 +175,10 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get resultPanelTitle => '콜백 결과';
+
+  @override
+  String get shareTooltip => '링크 복사';
+
+  @override
+  String get linkCopied => '링크가 클립보드에 복사되었습니다';
 }

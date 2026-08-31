@@ -53,5 +53,7 @@
   "titleTabNavSelect": "顶导航选择器",
   "titleSideNavSelect": "侧导航选择器",
   "titleExpandableSelect": "分组选择器",
-  "resultPanelTitle": "回调结果"
+  "resultPanelTitle": "回调结果",
+  "shareTooltip": "复制链接",
+  "linkCopied": "链接已复制到剪贴板"
 }
