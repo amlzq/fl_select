@@ -532,6 +532,8 @@ ListSelectDelegate(
 
 The default predicate (`defaultSelectSearchPredicate`) matches `SelectEntry.name` case-insensitively; provide a custom `searchPredicate` to match `id`, `extra`, or any other field. Style the bar via `searchBarTheme` (`SelectSearchBarTheme`) on the delegate, or globally through `SelectThemeData`.
 
+![search](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/search.gif)
+
 #### Serializing selections
 
 Selections arrive as a `SelectEntries` tree. Two extensions turn that tree into URL query parameters — each category contributes key/value pairs keyed by its own id with the deepest selected leaf ids as values; an "Any" leaf resolves to its parent id; a custom `SelectRangeEntry` formats as `min-max`:

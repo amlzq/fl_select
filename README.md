@@ -19,9 +19,9 @@ A monorepo for **fl_select** — a customizable Flutter select widget for buildi
 ```
 fl_select/
 ├── packages/
-│   ├── fl_select/            # Core package (lib / test / example)
+│   ├── fl_select/            # Core package
 │   ├── fl_select_genui/      # GenUI bridge
-│   └── fl_select_playground/ # Interactive playground (not published)
+│   └── fl_select_playground/ # Interactive playground
 ├── screenshots/            # GIFs and images used by docs
 ├── skills/                 # Agent skills for AI coding assistants
 └── pubspec.yaml            # Pub workspace root (managed with melos)
@@ -29,7 +29,7 @@ fl_select/
 
 ## Documentation
 
-- Full documentation, delegate reference, and live playground: [`packages/fl_select/README.md`](packages/fl_select/README.md)
+- Full documentation, delegate reference: [`packages/fl_select/README.md`](packages/fl_select/README.md)
 - Changelog: [`packages/fl_select/CHANGELOG.md`](packages/fl_select/CHANGELOG.md)
 - Migration guide: [`packages/fl_select/MIGRATION.md`](packages/fl_select/MIGRATION.md)
 - GenUI integration docs: [`packages/fl_select_genui/README.md`](packages/fl_select_genui/README.md)
@@ -46,8 +46,6 @@ melos bootstrap   # install dependencies and link packages
 melos run analyze
 melos run test
 ```
-
-The example app (web demo) lives at [`packages/fl_select/example`](packages/fl_select/example) and is deployed to GitHub Pages / Cloudflare Pages on pushes to `main`.
 
 ## License
 
