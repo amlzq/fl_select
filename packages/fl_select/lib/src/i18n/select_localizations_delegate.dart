@@ -7,8 +7,8 @@ import 'select_localizations.dart';
 /// Add a const instance to your app's `localizationsDelegates` to enable the
 /// built-in translations for the select widgets. It ships translations for
 /// `de`, `en`, `es`, `fr`, `id`, `ja`, `ko`, `pt`, `vi`, and `zh`
-/// (Hans/Hant), localizing the "Apply" / "Reset" / "Multiple" labels
-/// automatically.
+/// (Hans/Hant), localizing the "Apply" / "Reset" / "Multiple" / "Search"
+/// labels automatically.
 class SelectLocalizationsDelegate
     extends LocalizationsDelegate<SelectLocalizations> {
   const SelectLocalizationsDelegate();

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../i18n/select_localizations.dart';
 import 'search_bar_theme.dart';
 
 /// A search bar widget used inside the select panel to filter entries.
@@ -102,7 +103,9 @@ class _SelectSearchBarState extends State<SelectSearchBar> {
             style: textStyle,
             decoration: widget.decoration ??
                 InputDecoration(
-                  hintText: widget.hintText ?? 'Search',
+                  hintText: widget.hintText ??
+                      SelectLocalizations.of(context)?.search ??
+                      'Search',
                   hintStyle: hintStyle,
                   prefixIcon: Icon(Icons.search, size: iconSize),
                   prefixIconColor: iconColor,
