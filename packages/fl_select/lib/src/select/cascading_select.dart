@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
+import '../i18n/select_localizations.dart';
 import 'action_bar_visibility.dart';
 import 'constants.dart';
 import 'select_controller.dart';
@@ -727,7 +728,12 @@ class CascadingSelectState extends State<CascadingSelect> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Expanded(child: Center(child: Text('No results'))),
+          Expanded(
+            child: Center(
+              child: Text(
+                  SelectLocalizations.of(context)?.noResults ?? 'No results'),
+            ),
+          ),
           if (controller?.hasMultipleMode == true &&
               !SelectActionBarVisibility.isHidden(context))
             delegate.actionBarBuilder?.call(

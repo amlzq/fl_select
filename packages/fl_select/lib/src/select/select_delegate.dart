@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../i18n/select_localizations.dart';
 import 'cascading_select.dart';
 import 'constants.dart';
 import 'expandable_select.dart';
@@ -279,7 +280,11 @@ abstract class SelectDelegate {
     StackTrace? stackTrace,
   ) {
     return errorBuilder?.call(error, stackTrace) ??
-        Center(child: Text('Error: $error'));
+        Center(
+          child: Text(
+            SelectLocalizations.of(context)?.error(error) ?? 'Error: $error',
+          ),
+        );
   }
 }
 

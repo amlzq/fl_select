@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
+import '../../i18n/select_localizations.dart';
 import '../select_entry.dart';
 import '../select_theme.dart';
 import 'constants.dart';
@@ -211,7 +212,7 @@ class _SpinBox extends StatelessWidget {
         IconButton.filled(
           onPressed: canDecrement ? () => onChanged(index - 1) : null,
           icon: Icon(decrementIcon),
-          tooltip: 'Decrease',
+          tooltip: SelectLocalizations.of(context)?.decrease ?? 'Decrease',
         ),
         Expanded(
           child: Text(
@@ -227,7 +228,7 @@ class _SpinBox extends StatelessWidget {
         IconButton.filled(
           onPressed: canIncrement ? () => onChanged(index + 1) : null,
           icon: Icon(incrementIcon),
-          tooltip: 'Increase',
+          tooltip: SelectLocalizations.of(context)?.increase ?? 'Increase',
         ),
       ],
     );

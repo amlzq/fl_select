@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
+import '../i18n/select_localizations.dart';
 import 'action_bar_visibility.dart';
 import 'select_controller.dart';
 import 'select_delegate.dart';
@@ -260,7 +261,12 @@ class TabNavSelectState extends State<TabNavSelect> {
       return Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Flexible(child: Center(child: Text('No results'))),
+          Flexible(
+            child: Center(
+              child: Text(
+                  SelectLocalizations.of(context)?.noResults ?? 'No results'),
+            ),
+          ),
           if (controller?.hasMultipleMode == true &&
               !SelectActionBarVisibility.isHidden(context))
             delegate.actionBarBuilder?.call(
