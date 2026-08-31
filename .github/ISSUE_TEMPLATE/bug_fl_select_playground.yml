@@ -24,12 +24,18 @@ body:
     validations:
       required: true
 
-  - type: input
-    id: page-url
+  - type: textarea
+    id: location
     attributes:
-      label: Page URL
-      description: Link to the page where the problem occurs.
-      placeholder: https://flselect.zeaon.dev/...
+      label: Where in the playground?
+      description: |
+        If you can, configure the playground until the problem shows up, tap the
+        copy-link button (top right) and paste the generated link here — it
+        encodes the current demo parameters and reproduces the state exactly.
+        Otherwise, describe where the problem occurs — e.g. the demo/example
+        name, the tab or section, and which widget was tapped.
+      placeholder: |
+        Example: https://flselect.zeaon.dev/?ep=d&dg=t&sm=s...
     validations:
       required: true
 

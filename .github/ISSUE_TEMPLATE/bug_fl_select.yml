@@ -17,9 +17,9 @@ body:
     attributes:
       label: Which API or component is affected?
       options:
-        - PopupSelectBar
-        - PopupSelectButton
         - SelectView
+        - PopupSelectButton
+        - PopupSelectBar
         - showSelect / showModalBottomSelect
         - Controllers (SelectController / PopupSelectController)
         - ListSelectDelegate
@@ -101,13 +101,6 @@ body:
         }
     validations:
       required: true
-
-  - type: input
-    id: playground-link
-    attributes:
-      label: Playground reproduction (optional)
-      description: If the bug is reproducible on the playground, paste the URL of the page where it happens.
-      placeholder: https://flselect.zeaon.dev/...
 
   - type: textarea
     id: logs
