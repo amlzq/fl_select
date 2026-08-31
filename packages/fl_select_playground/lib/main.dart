@@ -76,10 +76,10 @@ class _PlaygroundAppState extends State<PlaygroundApp> {
   }
 
   PlaygroundUrlState get _currentState => PlaygroundUrlState(
-        params: _params,
-        language: _language,
-        themeMode: _themeModeController.value,
-      );
+    params: _params,
+    language: _language,
+    themeMode: _themeModeController.value,
+  );
 
   void _setParams(PlaygroundParams params) {
     setState(() => _params = params);

@@ -39,8 +39,8 @@ class EntryRepository {
   SelectEntries? listResult;
 
   SelectEntries get _listInitialSelected => <SelectTextEntry>{
-        SelectTextEntry.id(id: 'newest'),
-      };
+    SelectTextEntry.id(id: 'newest'),
+  };
 
   /// List entries applied when the select opens.
   SelectEntries get listSelectedData => listResult ?? _listInitialSelected;
@@ -68,11 +68,7 @@ class EntryRepository {
         name: 'Most Popular',
         immediate: true,
       ),
-      SelectTextEntry.name(
-        id: 'rating',
-        name: 'Top Rated',
-        immediate: true,
-      ),
+      SelectTextEntry.name(id: 'rating', name: 'Top Rated', immediate: true),
     };
     debugPrint('list length: ${entries.length}');
     return entries;
@@ -86,17 +82,17 @@ class EntryRepository {
   SelectEntries? counterResult;
 
   SelectEntries get _counterInitialSelected => <SelectCategoryEntry>{
-        SelectCategoryEntry(
-          id: 'apples',
-          name: '',
-          children: {SelectTextEntry(parentId: 'apples', id: '2', name: '')},
-        ),
-        SelectCategoryEntry(
-          id: 'oranges',
-          name: '',
-          children: {SelectTextEntry(parentId: 'oranges', id: '1', name: '')},
-        ),
-      };
+    SelectCategoryEntry(
+      id: 'apples',
+      name: '',
+      children: {SelectTextEntry(parentId: 'apples', id: '2', name: '')},
+    ),
+    SelectCategoryEntry(
+      id: 'oranges',
+      name: '',
+      children: {SelectTextEntry(parentId: 'oranges', id: '1', name: '')},
+    ),
+  };
 
   /// Counters entries applied when the select opens.
   SelectEntries get counterSelectedData =>
@@ -104,17 +100,17 @@ class EntryRepository {
 
   /// Counters entries restored by the reset action.
   SelectEntries get counterResetData => <SelectCategoryEntry>{
-        SelectCategoryEntry(
-          id: 'apples',
-          name: '',
-          children: {SelectTextEntry.any(parentId: 'apples', name: '')},
-        ),
-        SelectCategoryEntry(
-          id: 'oranges',
-          name: '',
-          children: {SelectTextEntry.any(parentId: 'oranges', name: '')},
-        ),
-      };
+    SelectCategoryEntry(
+      id: 'apples',
+      name: '',
+      children: {SelectTextEntry.any(parentId: 'apples', name: '')},
+    ),
+    SelectCategoryEntry(
+      id: 'oranges',
+      name: '',
+      children: {SelectTextEntry.any(parentId: 'oranges', name: '')},
+    ),
+  };
 
   Future<SelectEntries> fetchCounterData() async {
     await _simulateNetworkDelay(450);
@@ -161,12 +157,12 @@ class EntryRepository {
   SelectEntries? cascadingResult;
 
   SelectEntries get _cascadingInitialSelected => <SelectCategoryEntry>{
-        SelectCategoryEntry(
-          id: 'animals',
-          name: '',
-          children: {SelectTextEntry.any(parentId: 'animals', name: '')},
-        ),
-      };
+    SelectCategoryEntry(
+      id: 'animals',
+      name: '',
+      children: {SelectTextEntry.any(parentId: 'animals', name: '')},
+    ),
+  };
 
   /// Cascading entries applied when the select opens.
   SelectEntries get cascadingSelectedData =>
@@ -340,24 +336,9 @@ class EntryRepository {
         ),
         children: {
           SelectRangeEntry(id: '0-64', name: '0-64', min: 0, max: 64),
-          SelectRangeEntry(
-            id: '64-128',
-            name: '64-128',
-            min: 64,
-            max: 128,
-          ),
-          SelectRangeEntry(
-            id: '128-256',
-            name: '128-256',
-            min: 128,
-            max: 256,
-          ),
-          SelectRangeEntry(
-            id: '256-512',
-            name: '256-512',
-            min: 256,
-            max: 512,
-          ),
+          SelectRangeEntry(id: '64-128', name: '64-128', min: 64, max: 128),
+          SelectRangeEntry(id: '128-256', name: '128-256', min: 128, max: 256),
+          SelectRangeEntry(id: '256-512', name: '256-512', min: 256, max: 512),
           SelectRangeEntry(
             id: '512-1024',
             name: '512-1024',

@@ -69,32 +69,29 @@ abstract final class PlaygroundUrlCodec {
 
   static const Map<SelectionMode, String> _selectionModeCodes =
       <SelectionMode, String>{
-    SelectionMode.single: 's',
-    SelectionMode.multiple: 'm',
-  };
+        SelectionMode.single: 's',
+        SelectionMode.multiple: 'm',
+      };
 
   static const Map<TileVariant, String> _tileVariantCodes =
-      <TileVariant, String>{
-    TileVariant.filled: 'f',
-    TileVariant.outlined: 'o',
-  };
+      <TileVariant, String>{TileVariant.filled: 'f', TileVariant.outlined: 'o'};
 
   static const Map<PlaygroundLanguage, String> _languageCodes =
       <PlaygroundLanguage, String>{
-    PlaygroundLanguage.english: 'en',
-    PlaygroundLanguage.german: 'de',
-    PlaygroundLanguage.spanish: 'es',
-    PlaygroundLanguage.french: 'fr',
-    PlaygroundLanguage.indonesian: 'id',
-    PlaygroundLanguage.japanese: 'ja',
-    PlaygroundLanguage.korean: 'ko',
-    PlaygroundLanguage.portuguese: 'pt',
-    PlaygroundLanguage.vietnamese: 'vi',
-    PlaygroundLanguage.simplifiedChinese: 'zh-Hans',
-    PlaygroundLanguage.traditionalChinese: 'zh-Hant',
-    PlaygroundLanguage.traditionalChineseHk: 'zh-HK',
-    PlaygroundLanguage.traditionalChineseTw: 'zh-TW',
-  };
+        PlaygroundLanguage.english: 'en',
+        PlaygroundLanguage.german: 'de',
+        PlaygroundLanguage.spanish: 'es',
+        PlaygroundLanguage.french: 'fr',
+        PlaygroundLanguage.indonesian: 'id',
+        PlaygroundLanguage.japanese: 'ja',
+        PlaygroundLanguage.korean: 'ko',
+        PlaygroundLanguage.portuguese: 'pt',
+        PlaygroundLanguage.vietnamese: 'vi',
+        PlaygroundLanguage.simplifiedChinese: 'zh-Hans',
+        PlaygroundLanguage.traditionalChinese: 'zh-Hant',
+        PlaygroundLanguage.traditionalChineseHk: 'zh-HK',
+        PlaygroundLanguage.traditionalChineseTw: 'zh-TW',
+      };
 
   static const Map<ThemeMode, String> _themeModeCodes = <ThemeMode, String>{
     ThemeMode.system: 's',
@@ -161,8 +158,11 @@ abstract final class PlaygroundUrlCodec {
       params: PlaygroundParams(
         entryPoint: _decode(_entryPointCodes, query['ep'], f.entryPoint),
         delegate: _decode(_delegateCodes, query['dg'], f.delegate),
-        selectionMode:
-            _decode(_selectionModeCodes, query['sm'], f.selectionMode),
+        selectionMode: _decode(
+          _selectionModeCodes,
+          query['sm'],
+          f.selectionMode,
+        ),
         crossAxisCount: _clamp(
           int.tryParse(query['cc'] ?? ''),
           1,
@@ -175,12 +175,7 @@ abstract final class PlaygroundUrlCodec {
           20,
           f.childAspectRatio,
         ),
-        spacing: _clamp(
-          double.tryParse(query['sp'] ?? ''),
-          0,
-          64,
-          f.spacing,
-        ),
+        spacing: _clamp(double.tryParse(query['sp'] ?? ''), 0, 64, f.spacing),
         tileVariant: _decode(_tileVariantCodes, query['tv'], f.tileVariant),
         seedColor: _decodeColor(query['sc']) ?? f.seedColor,
         useMaterial3: _decodeBool(query['m3']) ?? f.useMaterial3,
@@ -227,10 +222,10 @@ abstract final class PlaygroundUrlCodec {
   }
 
   static bool? _decodeBool(String? code) => switch (code) {
-        '1' => true,
-        '0' => false,
-        _ => null,
-      };
+    '1' => true,
+    '0' => false,
+    _ => null,
+  };
 
   /// Parses a 6-digit RGB hex string (as produced by [toQuery]).
   static Color? _decodeColor(String? hex) {
