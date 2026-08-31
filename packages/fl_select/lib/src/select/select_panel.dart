@@ -68,6 +68,11 @@ class SelectPanel extends StatefulWidget {
   /// Forwarded in both cases, whether [controller] is provided or not.
   final VoidCallback? onResetTap;
 
+  /// Theme overrides applied to the select widgets rendered by the panel.
+  ///
+  /// When null, a [SelectThemeData] derived from the ambient Material
+  /// [ThemeData] is used. The delegate-level [SelectDelegate.panelTheme]
+  /// (when provided) is merged on top of this theme.
   final SelectThemeData? selectTheme;
 
   @override

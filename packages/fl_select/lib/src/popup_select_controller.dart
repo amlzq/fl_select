@@ -456,7 +456,13 @@ class PopupSelectController extends ChangeNotifier {
     for (final listener in List.of(_applyListeners)) {
       listener(labelState, selected);
     }
-    final customLabel = labelState.resolvedLabelLoader?.call(selected);
+    // An empty applied selection must fall back to the original label, so the
+    // custom loader is skipped — matching getResultLabel's null for an empty
+    // set. Calling it here would pin the label to an "empty" text (e.g.
+    // "0 selected") and the original label could never be restored.
+    final customLabel = selected.isEmpty
+        ? null
+        : labelState.resolvedLabelLoader?.call(selected);
     labelState.resultLabel =
         customLabel ?? SelectUtils.getResultLabel(selected, multipleText);
     notifyListeners();
@@ -522,7 +528,10 @@ class PopupSelectController extends ChangeNotifier {
     for (final listener in List.of(_applyListeners)) {
       listener(tabData, selected);
     }
-    final customLabel = tabData.resolvedLabelLoader?.call(selected);
+    // Mirror handleApply: skip the custom loader for an empty applied
+    // selection so the label falls back to the original.
+    final customLabel =
+        selected.isEmpty ? null : tabData.resolvedLabelLoader?.call(selected);
     tabData.resultLabel =
         customLabel ?? SelectUtils.getResultLabel(selected, multipleText);
     notifyListeners();

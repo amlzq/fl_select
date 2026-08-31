@@ -116,6 +116,54 @@ void main() {
       expect(find.text('1 selected'), findsOneWidget);
     });
 
+    testWidgets(
+        'reset + apply empty selection restores the original label '
+        'when a labelLoader is set', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PopupSelectButton(
+              label: 'ExpandableSelect',
+              labelLoader: (selected) => '${selected.length} selected',
+              selectDelegate: ListSelectDelegate(
+                selectionMode: SelectionMode.multiple,
+                entries: <SelectEntry<dynamic>>{
+                  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+                },
+              ),
+              onApplied: (_) {},
+            ),
+          ),
+        ),
+      );
+
+      // Apply a non-empty selection: the label comes from the loader.
+      await tester.tap(find.text('ExpandableSelect'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('A'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Apply'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('1 selected'), findsOneWidget);
+
+      // Reopen, reset (clearing the pending selection), then apply the empty
+      // selection: the label must fall back to the original instead of being
+      // pinned to the loader's "0 selected".
+      await tester.tap(find.text('1 selected'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Reset'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Apply'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('0 selected'), findsNothing);
+      expect(find.text('ExpandableSelect'), findsOneWidget);
+    });
+
     testWidgets('renders filled, outlined and elevated variants',
         (tester) async {
       await tester.pumpWidget(

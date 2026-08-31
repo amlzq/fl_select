@@ -1,3 +1,9 @@
+## Next
+
+- **FEATURE** localize the select panel's search bar placeholder: `SelectLocalizations` gains a `search` label for all built-in languages (`de`/`en`/`es`/`fr`/`id`/`ja`/`ko`/`pt`/`vi`/`zh` Hans/Hant), resolving in the order `searchHintText` delegate parameter → `SelectLocalizationsDelegate` translation → English "Search".
+
+- **BUGFIX** an empty applied selection now restores the trigger's original `label` even when a `labelLoader` is set: the loader is skipped for empty results (mirroring `getResultLabel`'s `null`), so resetting and applying no longer pins the label to an "empty" text such as "0 selected".
+
 ## 0.11.1
 
 - **BUGFIX** fix list tiles ignoring the effective selection mode: the resolved `selectionMode` and `ExpandableSelectDelegate`'s `radioBuilder` / `checkboxBuilder` are now forwarded to the body, so categories inherit the delegate's mode instead of always rendering radios.

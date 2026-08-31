@@ -394,15 +394,17 @@ class _PopupSelectBarState extends State<PopupSelectBar>
 
     _controller!.applyMultipleText = effectiveMultipleText;
 
+    final effectiveBackgroundColor = widget.backgroundColor ??
+        theme?.backgroundColor ??
+        defaults.backgroundColor!;
+
     return SelectOverlayHost(
       controller: _controller!,
       direction: widget.direction,
       style: overlayStyle,
       selectTheme: effectiveSelectTheme,
       triggerChild: Material(
-        color: widget.backgroundColor ??
-            theme?.backgroundColor ??
-            defaults.backgroundColor!,
+        color: effectiveBackgroundColor,
         elevation: widget.elevation,
         child: SizedBox(
           width: double.infinity,
