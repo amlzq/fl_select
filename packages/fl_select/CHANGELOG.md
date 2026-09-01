@@ -1,6 +1,6 @@
 ## Next
 
-- **FEATURE** localize all built-in widget labels via `SelectLocalizations` (`de`/`en`/`es`/`fr`/`id`/`ja`/`ko`/`pt`/`vi`/`zh` Hans/Hant): the search bar placeholder, the `TabNavSelect` / `CascadingSelect` search empty-state placeholder, the default load-error text, and the `SelectCounter` spin-box tooltips.
+- **FEATURE** localize all built-in widget labels via `SelectLocalizations`.
 
 - **BUGFIX** an empty applied selection now restores the trigger's original `label` even when a `labelLoader` is set.
 

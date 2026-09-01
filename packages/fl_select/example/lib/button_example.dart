@@ -23,6 +23,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
               children: [
                 PopupSelectButton(
                   label: 'PopupSelectButton',
+                  labelLoader: (selected) => '${selected.length} selected',
                   selectDelegate: ListSelectDelegate(
                     entries: listData,
                   ),
@@ -78,7 +79,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                   selectDelegate: TabNavSelectDelegate(
                     defaultLayout: SelectGridLayout(
                       crossAxisCount: 3,
-                      childAspectRatio: 3,
+                      childAspectRatio: 3.2,
                       mainAxisSpacing: 10,
                       crossAxisSpacing: 10,
                     ),
@@ -108,6 +109,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                 PopupSelectButton(
                   direction: PopupSelectDirection.above,
                   label: 'ExpandableSelect',
+                  labelLoader: (selected) => '${selected.length} selected',
                   selectDelegate: ExpandableSelectDelegate(
                     defaultLayout: SelectListLayout(),
                     entries: multiCategoryData,

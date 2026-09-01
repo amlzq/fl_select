@@ -20,18 +20,28 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
           children: [
             PopupSelectBar(
               isScrollable: true,
-              tabs: const [
-                PopupTab(label: 'List'),
+              tabs: [
+                PopupTab(
+                  label: 'List',
+                  labelLoader: (selected) => '${selected.length} selected',
+                ),
                 PopupTab(label: 'Grid'),
                 PopupTab(child: Icon(Icons.wrap_text)),
                 PopupTab(label: 'Cascading'),
-                PopupTab(label: 'TabNav'),
+                PopupTab(
+                  label: 'TabNav',
+                  labelLoader: (selected) => '${selected.length} selected',
+                ),
                 PopupTab(label: 'SideNav'),
                 PopupTab(child: Icon(Icons.expand)),
               ],
               selectDelegates: [
                 ListSelectDelegate(
                   entries: listData,
+                  searchEnabled: true,
+                  searchPredicate: (entry, query) {
+                    return entry.name?.contains(query) == true;
+                  },
                 ),
                 GridSelectDelegate(
                   entries: gridData,
@@ -50,6 +60,10 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                   entriesLoader: fetchCascadingData,
                   selectionMode: SelectionMode.multiple,
                   sideBarTheme: const SelectSideBarTheme(width: 120),
+                  searchEnabled: true,
+                  searchPredicate: (entry, query) {
+                    return entry.name?.contains(query) == true;
+                  },
                 ),
                 TabNavSelectDelegate(
                   defaultLayout: SelectGridLayout(
@@ -60,6 +74,10 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                   ),
                   entries: multiCategoryData,
                   selectionMode: SelectionMode.multiple,
+                  searchEnabled: true,
+                  searchPredicate: (entry, query) {
+                    return entry.name?.contains(query) == true;
+                  },
                 ),
                 SideNavSelectDelegate(
                   defaultLayout: SelectWrapLayout(
@@ -68,11 +86,19 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                   ),
                   entries: multiCategoryData,
                   selectionMode: SelectionMode.multiple,
+                  searchEnabled: true,
+                  searchPredicate: (entry, query) {
+                    return entry.name?.contains(query) == true;
+                  },
                 ),
                 ExpandableSelectDelegate(
                   defaultLayout: SelectListLayout(),
                   entries: multiCategoryData,
                   selectionMode: SelectionMode.multiple,
+                  searchEnabled: true,
+                  searchPredicate: (entry, query) {
+                    return entry.name?.contains(query) == true;
+                  },
                 ),
               ],
               onApplied: (tabData, selected) {
