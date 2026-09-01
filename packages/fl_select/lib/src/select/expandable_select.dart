@@ -24,8 +24,10 @@ import 'widgets/widgets.dart';
 ///   (cascading) data.
 /// - When an entry's `immediate` is true, selection is applied immediately
 ///   without requiring the action bar.
-/// - In multi-selection mode, the action bar is shown and "Apply" produces
-///   the final clipped selection tree.
+/// - The action bar is shown when multiple selection is active anywhere
+///   (delegate-level `SelectionMode.multiple`, or any category opting into
+///   multiple), matching the other layouts; "Apply" produces the final
+///   clipped selection tree.
 class ExpandableSelect extends StatefulWidget {
   final ExpandableSelectDelegate delegate;
   final List<SelectEntry> entries;
@@ -186,8 +188,6 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
 
   @override
   Widget build(BuildContext context) {
-    final selectionMode = controller?.selectionMode;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -280,7 +280,7 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
             ),
           ),
         ),
-        if (SelectionMode.multiple == selectionMode &&
+        if (controller?.hasMultipleMode == true &&
             !SelectActionBarVisibility.isHidden(context))
           delegate.actionBarBuilder?.call(
                 context,

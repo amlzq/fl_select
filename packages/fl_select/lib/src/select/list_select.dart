@@ -129,8 +129,6 @@ class ListSelectState extends State<ListSelect> {
 
   @override
   Widget build(BuildContext context) {
-    final selectionMode = controller?.selectionMode;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -145,7 +143,7 @@ class ListSelectState extends State<ListSelect> {
             checkboxBuilder: delegate.checkboxBuilder,
           ),
         ),
-        if (SelectionMode.multiple == selectionMode &&
+        if (controller?.hasMultipleMode == true &&
             !SelectActionBarVisibility.isHidden(context))
           delegate.actionBarBuilder?.call(
                 context,

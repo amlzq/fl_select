@@ -1,3 +1,7 @@
+## Next
+
+- **BUGFIX** unify the action bar visibility on `SelectController.hasMultipleMode` across all layouts: `ListSelect` and `ExpandableSelect` now match `GridSelect`, `WrapSelect`, `TabNavSelect`, `SideNavSelect` and `CascadingSelect`. `ExpandableSelect` previously hid the action bar when only a category opted into multiple selection (delegate-level single), while taps still deferred to "Apply" — leaving the multi-selection impossible to apply; it now shows the bar in that mixed mode.
+
 ## 0.11.2
 
 - **FEATURE** localize all built-in widget labels via `SelectLocalizations`.
