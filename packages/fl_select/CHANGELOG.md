@@ -1,4 +1,4 @@
-## Next
+## 0.11.2
 
 - **FEATURE** localize all built-in widget labels via `SelectLocalizations`.
 
