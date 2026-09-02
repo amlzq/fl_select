@@ -297,6 +297,99 @@ controller.bindState(
 );
 ```
 
+### Search filtering parameters on `SelectDelegate`
+
+Every `SelectDelegate` accepts `searchEnabled`, `searchPredicate`,
+`searchHintText` and `searchDebounceDuration`; when enabled, a
+`SelectSearchBar` renders above the body and filters displayed entries
+(debounced 300 ms by default) while preserving layout and selection state.
+The search bar's look is customizable via `SelectSearchBarTheme`, per
+delegate or globally via `SelectThemeData`.
+
+```dart
+ListSelectDelegate(
+  searchEnabled: true,
+  searchHintText: 'Search',
+  searchPredicate: (entry, query) => entry.name.contains(query),
+  searchDebounceDuration: const Duration(milliseconds: 300),
+);
+```
+
+### `toQueryMap()` / `toQueryParameters()` on `SelectEntries`
+
+Each category contributes key/value pairs keyed by its own id with the
+deepest selected leaf ids as values; header/footer subtrees are keyed by
+their own ids; an "any" leaf resolves to its parent id; and a custom
+`SelectRangeEntry` formats as `min-max`.
+
+- `toQueryMap()` returns a `Map<String, List<String>>` mirroring
+  `Uri.queryParametersAll`, so repeated keys can be read back without losing
+  values, or handed to HTTP clients that accept multi-value maps directly.
+- `toQueryParameters({arrayFormat, delimiter, encode})` renders the map into
+  a query string, with multi-value layouts selected by the `SelectArrayFormat`
+  enum: `repeat` (default, `cate1=a&cate1=b`), `brackets` (`cate1[]=a`),
+  `comma` (`cate1=a,b`), `indices` (`cate1[0]=a`), and `delimited`
+  (`cate1=a|b` with a custom `delimiter`, covering OpenAPI
+  `pipeDelimited`/`spaceDelimited`). Values are percent-encoded by default.
+
+### Cascading selection state handling in `CascadingSelect`
+
+Focusing a category no longer clears other categories' selections;
+per-category single mode only clears selections within its own subtree;
+header/footer selections are cleared across categories; deeper search matches
+are auto-expanded; canceling a search restores the original unfiltered tree
+entries.
+
+### Cross-category clearing in two-level category trees
+
+In `GridSelect`, `ListSelect` and `FlattenSelect`, selecting a leaf in one
+category now clears every other category's selections when the delegate is in
+single mode, mirroring the cascading behavior.
+
+## MIGRATE TO 0.7.2
+
+### `FlattenSelectDelegate` grid parameters deprecated
+
+The `FlattenSelectDelegate` grid parameters — `crossAxisCount`,
+`mainAxisSpacing`, `crossAxisSpacing`, `childAspectRatio` — and the matching
+`FlattenSelect` widget parameters are deprecated. `FlattenSelect` now falls
+back to a wrapable chip bar when `SelectCategoryEntry.layout` is null, so
+these parameters no longer affect rendering; grid geometry comes exclusively
+from the `SelectGridLayout` set on each `SelectCategoryEntry.layout`.
+
+The old names keep working (they are simply ignored) and **will be removed in
+a future minor version**. No behavior changes for call sites that already set
+a layout, and call sites that relied on the old grid fall back to the chip bar
+instead of the grid.
+
+Migration: drop the deprecated parameters and set a `SelectGridLayout` on the
+categories that should render as a grid.
+
+```dart
+// Before
+FlattenSelectDelegate(
+  crossAxisCount: 3,
+  mainAxisSpacing: 8,
+  crossAxisSpacing: 8,
+  childAspectRatio: 1.2,
+);
+
+// After
+FlattenSelectDelegate();
+
+SelectCategoryEntry(
+  id: 'brand',
+  name: 'Brand',
+  children: brands,
+  layout: const SelectGridLayout(
+    crossAxisCount: 3,
+    mainAxisSpacing: 8,
+    crossAxisSpacing: 8,
+    childAspectRatio: 1.2,
+  ),
+);
+```
+
 ## MIGRATE TO 0.7.0
 
 ### Selector lifecycle callbacks renamed to `onSelect*` on `PopupSelectBar` / `PopupSelectButton`

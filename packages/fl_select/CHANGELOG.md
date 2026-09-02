@@ -1,16 +1,16 @@
 ## Next
 
-- **BUGFIX** unify the action bar visibility on `SelectController.hasMultipleMode` across all layouts: `ListSelect` and `ExpandableSelect` now match `GridSelect`, `WrapSelect`, `TabNavSelect`, `SideNavSelect` and `CascadingSelect`. `ExpandableSelect` previously hid the action bar when only a category opted into multiple selection (delegate-level single), while taps still deferred to "Apply" — leaving the multi-selection impossible to apply; it now shows the bar in that mixed mode.
+- **BUGFIX** unify the action bar visibility on `SelectController.hasMultipleMode` across all layouts.
 
-- **FEATURE** `ExpandableSelect` now badges a category tile whose category holds a "real" selection — at least one selected child that is not the "Any" placeholder, so selecting only "Any" leaves the tile unbadged — with a small dot in the top-right corner of the tile title, matching `SideNavSelect` and `TabNavSelect`; a collapsed tile keeps its badge, so a selection hidden inside it stays visible. `SelectExpansionTile` gains `showBadge` (defaults to `false`, so custom tiles are unaffected) and `badgeColor`, which falls back to the resolved `selectedColor`.
+- **FEATURE** `ExpandableSelect` now badges a category tile whose category holds a real selection.
 
-- **FEATURE** `TabNavSelect` now badges a category tab whose category holds a "real" selection — at least one selected child that is not the "Any" placeholder, so selecting only "Any" leaves the tab unbadged — with a small dot in the top-right corner of the tab label, matching `SideNavSelect`; the badge is driven by the selection rather than by focus, so it stays visible after switching to another tab (and disappears again when that tab's selection is reset).
+- **FEATURE** `TabNavSelect` now badges a category tab whose category holds a real selection.
 
-- **FEATURE** add `SelectController.badgedCategories`: the categories holding a "real" selection (at least one selected child that is not the "Any" placeholder), i.e. the exact set `SideNavSelect`, `CascadingSelect` and `TabNavSelect` pass to `SelectSideBar.selectedCategories` / `SelectTabBar.selectedCategories`. It replaces three copies of the same inline filter and is the single place to read (or override in a custom layout) the category badge rule.
+- **FEATURE** add `SelectController.badgedCategories`, the single place to read or override the category badge rule.
 
-- **BREAKING** `SelectTabBar.selectedCategories` now drives the badge instead of the active appearance, which is driven by `focusedIndex` alone — the same split `SelectSideBar` already uses; code that passed the active category to `selectedCategories` should pass its index to `focusedIndex` instead (as a side effect, two categories comparing equal no longer light up more than one tab).
+- **BREAKING** `SelectTabBar.selectedCategories` now drives the badge instead of the active appearance, which is driven by `focusedIndex` alone.
 
-- **BUGFIX** `showSelect` no longer ignores the ambient dialog theme's `insetPadding`: the fallback chain is now the explicit `insetPadding` argument → `DialogThemeData.insetPadding` → Flutter's own `EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0)`, the same order `AlertDialog` resolves, so a global `ThemeData(dialogTheme: ...)` finally applies to select dialogs while the default look (40/24) is unchanged.
+- **BUGFIX** `showSelect` no longer ignores the ambient dialog theme's `insetPadding`.
 
 ## 0.11.2
 
@@ -70,52 +70,46 @@
 
 ## 0.8.0
 
-- **FEATURE** add `toQueryMap()` and `toQueryParameters()` extensions on `SelectEntries` to serialize a selection tree into URL query parameters. Each category contributes key/value pairs keyed by its own id with the deepest selected leaf ids as values; header/footer subtrees are keyed by their own ids; an "any" leaf resolves to its parent id; and a custom `SelectRangeEntry` formats as `min-max`.
-  - `toQueryMap()` returns a `Map<String, List<String>>` mirroring `Uri.queryParametersAll`, so repeated keys can be read back without losing values, or handed to HTTP clients that accept multi-value maps directly.
-  - `toQueryParameters({arrayFormat, delimiter, encode})` renders the map into a query string, with multi-value layouts selected by the new `SelectArrayFormat` enum: `repeat` (default, `cate1=a&cate1=b`), `brackets` (`cate1[]=a`), `comma` (`cate1=a,b`), `indices` (`cate1[0]=a`), and `delimited` (`cate1=a|b` with a custom `delimiter`, covering OpenAPI `pipeDelimited`/`spaceDelimited`). Values are percent-encoded by default.
+- **FEATURE** add `toQueryMap()` and `toQueryParameters()` extensions on `SelectEntries` to serialize a selection tree into URL query parameters ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-080)).
 
-- **BUGFIX** fix cascading selection state handling around search and cross-category clearing in `CascadingSelect`: focusing a category no longer clears other categories' selections; per-category single mode only clears selections within its own subtree; header/footer selections are cleared across categories; deeper search matches are auto-expanded; canceling a search restores the original unfiltered tree entries.
+- **BUGFIX** fix cascading selection state handling around search and cross-category clearing in `CascadingSelect` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-080)).
 
-- **BUGFIX** fix cross-category clearing in two-level category trees (`GridSelect`, `ListSelect`, `FlattenSelect`): selecting a leaf in one category now clears every other category's selections when the delegate is in single mode, mirroring the cascading behavior.
+- **BUGFIX** fix cross-category clearing in two-level category trees ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-080)).
 
-- **FEATURE** add search filtering to the select panel. Every `SelectDelegate` accepts `searchEnabled`, `searchPredicate`, `searchHintText` and `searchDebounceDuration`; when enabled, a `SelectSearchBar` renders above the body and filters displayed entries (debounced 300 ms by default) while preserving layout and selection state. The search bar's look is customizable via the new `SelectSearchBarTheme`, per delegate or globally via `SelectThemeData`.
+- **FEATURE** add search filtering to the select panel ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-080)).
 
-- **DEPRECATION** rename the `previousSelected` / `resetSelected` API surface to `selectedEntries` / `resetEntries` to align naming across the library. Only the public API keeps the old names as deprecated aliases for backward compatibility; they **will be removed in a future minor version**. No behavior changes.
+- **DEPRECATION** rename the `previousSelected` / `resetSelected` API surface to `selectedEntries` / `resetEntries` to align naming across the library ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-080)).
 
 ## 0.7.2
 
-- **BUGFIX** fix custom range input handling across `SelectListView`, `SelectGridView` and `SelectRangeView`:
-  - **values not refreshing after normalization** — `_commitCustomRange` now writes the canonical (min ≤ max) order back into the min/max fields, so entering an inverted range (e.g. min `222` / max `100`) immediately reflects `100` / `222` on screen.
-  - **min value being lost** — an inverted range is only swapped when both fields are non-empty; an empty field (parsed as `0`) no longer spuriously triggers a swap that clears the min field while typing min first.
-  - **premature swap while typing** — `SelectListView` now listens only to the focus nodes and commits on focus loss (matching `SelectGridView`), instead of committing on every keystroke, so typing `222` then starting `111` no longer flips the fields before the user finishes.
-  - **cross-category contamination** — when multiple `SelectCategoryEntry`s each own a `SelectRangeEntry.custom()` (all sharing the same `custom` id) inside a `ListSelect` tree, restoring the slider/fields now scopes to the entry whose `parentId` matches the current category, so committing a value in one category no longer leaks into another category's inputs or slider.
+- **BUGFIX** fix custom range input handling across `SelectListView`, `SelectGridView` and `SelectRangeView` — normalization, min-value loss, premature swapping and cross-category contamination.
 
-- **BUGFIX** fix `SelectController.select` / `unselect` not affecting root-level entries in a flat structure. `findPath` returns a single-element path for such entries, so the flat-handling branch (which required `path.isEmpty`) was never reached and `select`/`unselect` silently no-op'd. The flat branch now also matches when the path's first element is not a `SelectCategoryEntry`. This fixes committing a custom range in single mode not deselecting the previously selected option.
+- **BUGFIX** fix `SelectController.select` / `unselect` not affecting root-level entries in a flat structure.
 
-- **BUGFIX** harden against build-phase crashes that previously froze the UI with no console output: `SelectController.validateEntries` now additionally asserts that every top-level entry is a `SelectCategoryEntry` in a two-level-or-deeper structure, so `SelectPanel` routes malformed structures to the error UI instead of hanging the frame. The four `as SelectCategoryEntry` casts in `GridSelect`/`ListSelect`/`FlattenSelect`/`CascadingSelect` were replaced with `is`-checked safe conversions as a second line of defense.
+- **BUGFIX** route malformed entry structures to the error UI instead of hanging the frame during the build phase.
 
-- **DEPRECATION** mark `FlattenSelectDelegate.crossAxisCount`, `FlattenSelectDelegate.mainAxisSpacing`, `FlattenSelectDelegate.crossAxisSpacing` and `FlattenSelectDelegate.childAspectRatio` as deprecated. `FlattenSelect` now falls back to `SelectChipLayout` when `SelectCategoryEntry.layout` is null, so these delegate grid parameters no longer affect rendering. Set a `SelectGridLayout` on `SelectCategoryEntry.layout` instead.
+- **DEPRECATION** deprecate the `FlattenSelectDelegate` / `FlattenSelect` grid parameters in favor of `SelectGridLayout` on `SelectCategoryEntry.layout` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-072)).
 
-- **FEATURE** when `SelectCategoryEntry.layout` is null, `FlattenSelect` now falls back to a wrapable `SelectChipBar` (`SelectChipLayout`) instead of a grid built from the widget's own cross-axis parameters.
+- **FEATURE** `FlattenSelect` now falls back to a wrapable `SelectChipBar` when `SelectCategoryEntry.layout` is null.
 
-- **FEATURE** add the `children` factory constructors on `SelectCategoryEntry`, `SelectChildEntry` and `SelectTextEntry`. Each automatically injects its own `id` as the `SelectChildEntry.parentId` of every child (recursively), so you never need to write `parentId` on children by hand when building two-level-or-deeper trees — `SelectCategoryEntry.children` covers the category (root) level, while `SelectChildEntry.children` (and the type-preserving `SelectTextEntry.children`) cover deeper (non-root) levels. All share the injection logic via a common `_injectParentId` helper.
+- **FEATURE** add the `children` factory constructors on `SelectCategoryEntry`, `SelectChildEntry` and `SelectTextEntry`, which inject their own `id` as every child's `parentId`.
 
 ## 0.7.1
 
-- **FEATURE** `showSelect` now accepts optional `leading`, `trailing` and `centerTitle` widgets to attach to the header row, mirroring `showModalBottomSelect`. Both entries now share a common `SelectHeader` widget that lays the title out with an outer `Stack` so the title stays truly centered across the full header width even when `leading` / `trailing` are asymmetrical.
+- **FEATURE** `showSelect` now accepts optional `leading`, `trailing` and `centerTitle` widgets for its header row, mirroring `showModalBottomSelect`.
 
 ## 0.7.0
 
-- **BREAKING** make `PopupSelectBar.selectDelegates` required — it is now a non-nullable `List<SelectDelegate>` and must be provided to `PopupSelectBar`. `PopupSelectBar.onApplied` is likewise now required (`PopupSelectBarResultCallback`, non-nullable). Update call sites that previously omitted either parameter to pass them explicitly.
+- **BREAKING** make `PopupSelectBar.selectDelegates` and `PopupSelectBar.onApplied` required.
 
-- **BREAKING** make `PopupSelectButton.selectDelegate` required — it is now a non-nullable `SelectDelegate` and must be provided to every `PopupSelectButton` constructor. `PopupSelectButton.onApplied` is likewise now required (`PopupSelectButtonResultCallback`, non-nullable). Update call sites that previously omitted either parameter to pass them explicitly.
+- **BREAKING** make `PopupSelectButton.selectDelegate` and `PopupSelectButton.onApplied` required.
 
-- **BREAKING** make `SelectDelegate.entriesLoader` required — it is now a non-nullable `Future<SelectEntries> Function()` and must be provided by every delegate. `SelectView.onChanged` is likewise now required (`SelectCallback`, non-nullable). Update call sites that previously omitted either parameter to pass them explicitly.
+- **BREAKING** make `SelectDelegate.entriesLoader` and `SelectView.onChanged` required ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-070)).
 
-- **BREAKING** remove all deprecated aliases, parameters, getters and methods introduced in 0.5.0 by the `Select*` / `PopupSelect*` renaming. This includes: the `Selector*Entry*` / `SelectorEntries` aliases, `SelectorBox`, `showSelector`, `showModalBottomSelector`, `SelectorTheme` / `SelectorThemeData`, `SelectorPanelTheme`, `SelectorDelegate` / `CascadingSelectorDelegate` / `ListSelectorDelegate` / `GridSelectorDelegate` / `FlattenSelectorDelegate`, `SelectorController` / `SelectorControllerProvider`, `SelectorCallback`, `SelectorLayout` / `SelectorListLayout` / `SelectorGridLayout` / `SelectorChipLayout` / `SelectorRangeLayout`, `SelectorLocalizations` / `SelectorLocalizationsDelegate`, `SelectorLabelLoader` / `SelectorLabelState`, `DropdownOverlayStyle`, `kSelectorListTileHeight`, the `DropdownSelector*` → `PopupSelect*` aliases (`DropdownSelectorBar`, `DropdownTab`, `DropdownSelectController`, `DropdownTabData`, `DropdownSelectControllerProvider`, `DropdownSelectorBarTheme`, `DropdownSelectorButton`, `DropdownSelectorButtonTheme`, `DropdownSelectorButtonVariant`, `DropdownSelectorButtonResultCallback`, `DropdownSelectorButtonWillToggleCallback`, `kDropdownSelectorButtonHeight`, `DropdownSelectorDirection`), and the `selectorDelegates` / `selectorTheme` / `selectorDelegate` parameters and getters, `previousSelectorDelegate`, `selectorController` and `attachSelectorDelegates` members. Use the `Select*` / `PopupSelect*` names instead; see the [Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-050) for the full old → new tables.
+- **BREAKING** remove all deprecated aliases, parameters, getters and methods introduced in 0.5.0 by the `Select*` / `PopupSelect*` renaming; use the `Select*` / `PopupSelect*` names instead ([Migration guide](https://github.com/amlzq/criteria_selector/blob/main/MIGRATION.md#migrate-to-050)).
 
-- **DEPRECATION** rename the selector lifecycle callbacks on `PopupSelectBar` and `PopupSelectButton` — `onSelectorShowed` / `onSelectorHidden` / `onSelectorWillShow` / `onSelectorWillHide` → `onSelectShowed` / `onSelectHidden` / `onSelectWillShow` / `onSelectWillHide`. The old names are retained as deprecated constructor parameters and getters that delegate to the new names (passing both at the same call site triggers an assertion) and will be removed in a future minor version.
+- **DEPRECATION** rename the `onSelector*` lifecycle callbacks on `PopupSelectBar` and `PopupSelectButton` to `onSelect*`, with the old names kept as deprecated aliases ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-070)).
 
-- **DEPRECATION** rename `PopupSelectController.hideSelector` → `hideSelect`, `toggleSelector` → `toggleSelect`, and `isSelectorShowing` → `isSelectShowing` to drop the redundant `Selector` wording. The old names are retained as deprecated methods / getters that delegate to the new names and will be removed in a future minor version.
+- **DEPRECATION** rename the `PopupSelectController` `*Selector*` lifecycle members to `*Select*`, with the old names kept as deprecated aliases ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-070)).
 
-- **FEATURE** `FlattenSelect` now consumes `SelectCategoryEntry.layout` via an exhaustive `switch (layout)`, matching the behavior already present in `ListSelect` / `GridSelect`. Each category's right-side content renders as a `SelectListView`, `SelectGridView`, `SelectChipBar`, `SelectRangeView`, or `SelectCounter` depending on its layout, with the grid/list/counter/range layout-specific parameters (`crossAxisCount`, spacing, `childAspectRatio`, `toText`, etc.) and the delegate theme overrides (grid/field/chip) honored. When `layout` is null, it falls back to the grid using the widget's own `crossAxisCount` / `mainAxisSpacing` / `crossAxisSpacing` / `childAspectRatio`, so existing default behavior is unchanged.
+- **FEATURE** `FlattenSelect` now renders each category according to its `SelectCategoryEntry.layout`, matching `ListSelect` / `GridSelect`.
