@@ -43,8 +43,9 @@ Future<SelectEntries?> showSelect({
   Widget? trailing,
   bool? centerTitle,
   double? elevation,
-  ShapeBorder? shape,
+  EdgeInsets? insetPadding,
   Clip? clipBehavior,
+  ShapeBorder? shape,
   TransitionBuilder? builder,
   Color? barrierColor,
   RouteSettings? routeSettings,
@@ -58,8 +59,9 @@ Future<SelectEntries?> showSelect({
       trailing: trailing,
       centerTitle: centerTitle,
       elevation: elevation,
-      shape: shape,
+      insetPadding: insetPadding,
       clipBehavior: clipBehavior,
+      shape: shape,
     ),
     barrierDismissible: barrierDismissible,
     barrierColor: barrierColor ?? Colors.black54,
@@ -127,8 +129,9 @@ class _SelectDialog extends StatefulWidget {
     this.trailing,
     this.centerTitle,
     this.elevation,
-    this.shape,
+    this.insetPadding,
     this.clipBehavior,
+    this.shape,
   });
 
   final SelectDelegate delegate;
@@ -137,8 +140,9 @@ class _SelectDialog extends StatefulWidget {
   final Widget? trailing;
   final bool? centerTitle;
   final double? elevation;
-  final ShapeBorder? shape;
+  final EdgeInsets? insetPadding;
   final Clip? clipBehavior;
+  final ShapeBorder? shape;
 
   @override
   State<_SelectDialog> createState() => _SelectDialogState();
@@ -169,7 +173,12 @@ class _SelectDialogState extends State<_SelectDialog> {
       elevation: widget.elevation,
       shape: widget.shape,
       clipBehavior: widget.clipBehavior ?? Clip.antiAlias,
-      insetPadding:
+      // Fallback chain: explicit argument -> DialogTheme.insetPadding ->
+      // the framework's default (horizontal 40 / vertical 24). Mirrors how
+      // AlertDialog resolves its padding, and stays compilable on older
+      // Flutter versions where Dialog.insetPadding is non-nullable.
+      insetPadding: widget.insetPadding ??
+          Theme.of(context).dialogTheme.insetPadding ??
           const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
       child: ConstrainedBox(
         constraints: BoxConstraints(

@@ -30,6 +30,10 @@ import 'widgets/widgets.dart';
 ///   two numeric fields are shown for min/max input.
 /// - When an entry's `immediate` is true, selection is applied immediately
 ///   without requiring the action bar.
+/// - A category tab renders a small badge dot in the top-right corner of its
+///   label while the category holds a "real" selection (at least one selected
+///   child that is not the "Any" placeholder), so selections made in the
+///   other tabs stay visible.
 /// - In multi-selection mode, the action bar is shown and "Apply" produces
 ///   the final clipped selection tree.
 class TabNavSelect extends StatefulWidget {
@@ -289,6 +293,17 @@ class TabNavSelectState extends State<TabNavSelect> {
     /// Focused category index
     final tempSelectedCategoryIndex = _displayEntries.indexOf(category);
 
+    // A category badge should only appear when it has a "real" selection,
+    // i.e. at least one selected child that is not the "Any" placeholder.
+    // Selecting only "Any" must not trigger the badge.
+    final selectedCategories =
+        (controller?.selectedEntriesAtLevel(0) ?? {}).where((entry) {
+      if (entry is! SelectCategoryEntry) return false;
+      final children =
+          controller?.selectedEntriesForParent(entry.id, level: 1) ?? {};
+      return children.any((e) => e is SelectChildEntry && !e.isAny);
+    }).toSet();
+
     final categoryHeader = category.header;
     final categoryFooter = category.footer;
     final headerSelected = _headerSelectedFor(category.id);
@@ -303,7 +318,7 @@ class TabNavSelectState extends State<TabNavSelect> {
             onChanged: (_, item) =>
                 _onCategoryItemTap(item as SelectCategoryEntry),
             entries: _displayEntries,
-            selectedCategories: {category},
+            selectedCategories: selectedCategories,
             focusedIndex: tempSelectedCategoryIndex,
           ),
         Flexible(

@@ -48,7 +48,7 @@ import 'package:fl_select/fl_select.dart';
 
 #### Delegates
 
-A delegate controls both data loading and how the body is rendered, and works with every entry point above. Flat delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) render parentless leaves created with `.name(...)`, while category delegates (`CascadingSelectDelegate`, `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) render a tree of `SelectCategoryEntry` roots whose children follow `category.layout` (list / grid / chips / range slider / counter):
+A delegate controls both data loading and how the body is rendered, and works with every entry point above. Flat delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) render parentless leaves created with `.name(...)`, while category delegates (`CascadingSelectDelegate`, `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) render a tree of `SelectCategoryEntry` roots whose children follow `category.layout` (list / grid / wrap / range slider / counter):
 
 | `ListSelectDelegate`        | `GridSelectDelegate`        | `WrapSelectDelegate`        | `CascadingSelectDelegate`   | `TabNavSelectDelegate`      | `SideNavSelectDelegate`     | `ExpandableSelectDelegate`  |
 | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- |

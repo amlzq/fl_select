@@ -1,5 +1,6 @@
 export 'action_bar.dart';
 export 'action_bar_theme.dart';
+export 'badge.dart';
 export 'chip_bar.dart';
 export 'chip_bar_theme.dart';
 export 'constants.dart';

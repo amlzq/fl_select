@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../select_entry.dart';
 import '../select_theme.dart';
 import '../select_theme_data.dart';
+import 'badge.dart';
 import 'constants.dart';
 import 'skeleton_view.dart';
 import 'tab_bar_theme.dart';
@@ -15,6 +16,9 @@ enum SelectTabBarIndicatorSize {
 /// The fixed height of [SelectTabBar], matching [TabBar]'s text-only tab
 /// height (`_kTabHeight`).
 const double _kTabBarHeight = 48.0;
+
+/// Horizontal padding applied inside every tab, around its label.
+const double _kTabHorizontalPadding = 4.5;
 
 class SelectTabBar extends StatefulWidget {
   const SelectTabBar({
@@ -42,18 +46,21 @@ class SelectTabBar extends StatefulWidget {
   /// number of tabs equals the length of this list.
   final List<SelectEntry> entries;
 
-  /// The set of currently selected categories.
+  /// The set of categories that hold a "real" selection, i.e. at least one
+  /// selected child that is not the "Any" placeholder.
   ///
-  /// A tab is rendered as selected when its entry is contained in this set,
-  /// and its indicator is shown accordingly.
+  /// A tab renders a small badge dot in the top-right corner of its label when
+  /// its entry is contained in this set. This mirrors [SelectSideBar]'s
+  /// `selectedCategories`: the badge is driven by the selection, not by
+  /// [focusedIndex], so a tab stays badged while another tab is focused.
   final SelectEntries selectedCategories;
 
-  /// The index of the tab that should be considered focused.
+  /// The index of the tab that is currently active.
   ///
-  /// Used to track which tab receives visual emphasis or keyboard focus; it
-  /// does not by itself change the selected state. When [isScrollable] is
-  /// true, a change of this index scrolls the newly focused tab to the center
-  /// of the bar.
+  /// The tab at this index is rendered as selected — its label uses
+  /// [selectedLabelStyle] and its indicator is shown — and, when
+  /// [isScrollable] is true, a change of this index scrolls the newly focused
+  /// tab to the center of the bar.
   final int focusedIndex;
 
   /// The padding around the whole tab bar.
@@ -272,13 +279,18 @@ class _SelectTabBarState extends State<SelectTabBar> {
 
     final tabs = List<Widget>.generate(widget.entries.length, (int index) {
       final entry = widget.entries[index] as SelectCategoryEntry;
-      final selected = widget.selectedCategories.contains(entry);
+      // The active appearance follows [focusedIndex], mirroring
+      // [SelectSideBar]; [selectedCategories] only drives the badge, so a tab
+      // can be badged while another one is active.
+      final selected = index == widget.focusedIndex;
       final label = entry.name ?? '';
 
       Widget tab = _Tab(
         label: label,
         isScrollable: widget.isScrollable,
         selected: selected,
+        showBadge: widget.selectedCategories.contains(entry),
+        badgeColor: effectiveSelectedColor,
         padding: effectivePadding,
         selectedColor: effectiveSelectedColor,
         labelStyle:
@@ -292,10 +304,12 @@ class _SelectTabBarState extends State<SelectTabBar> {
       );
 
       if (widget.isScrollable) {
-        const double horizontalPadding = 4.5;
         final double labelWidth =
             _measureLabelWidth(context, label, effectiveLabelStyle);
-        tab = SizedBox(width: labelWidth + horizontalPadding * 2, child: tab);
+        tab = SizedBox(
+          width: labelWidth + _kTabHorizontalPadding * 2,
+          child: tab,
+        );
         tab = KeyedSubtree(key: _tabKeys[index], child: tab);
       } else {
         tab = Expanded(child: tab);
@@ -341,6 +355,8 @@ class _Tab extends StatelessWidget {
     required this.labelStyle,
     required this.isScrollable,
     required this.selected,
+    required this.showBadge,
+    this.badgeColor,
     required this.padding,
     required this.selectedColor,
     required this.indicatorColor,
@@ -358,6 +374,17 @@ class _Tab extends StatelessWidget {
   final bool selected;
 
   final bool isScrollable;
+
+  /// Whether a badge dot is rendered in the top-right corner of the label.
+  ///
+  /// Driven by [SelectTabBar.selectedCategories]; it is independent of
+  /// [selected] so a tab can be badged while another one is active.
+  final bool showBadge;
+
+  /// The color of the badge dot rendered when [showBadge] is true.
+  ///
+  /// When null, [selectedColor] is used, matching [SelectSideBar]'s badge.
+  final Color? badgeColor;
 
   final EdgeInsetsGeometry padding;
 
@@ -412,47 +439,84 @@ class _Tab extends StatelessWidget {
                   ? labelIndicatorWidth
                   : maxIndicatorWidth;
 
-          return Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 4.5),
-            // Like [TabBar]'s underline indicator: the label centers in the
-            // space above the indicator, and the indicator sits at the bottom
-            // edge of the (fixed-height) tab.
-            child: Column(
-              children: [
-                Expanded(
-                  child: Center(
-                    child: Text(
-                      label,
-                      style: labelStyle,
-                      strutStyle: StrutStyle(
-                        fontSize: fontSize,
-                        height: 20 / fontSize,
-                        forceStrutHeight: true,
+          // Right edge of the (possibly ellipsized) label, relative to this
+          // tab's own box: the label is centered inside the horizontal
+          // padding, so its right edge sits half of the leftover space away
+          // from the center. Used to hang the badge off that corner.
+          final double innerWidth =
+              (constraints.maxWidth - _kTabHorizontalPadding * 2)
+                  .clamp(0.0, double.infinity)
+                  .toDouble();
+          final double visibleLabelWidth = _measureLabelWidth(
+            context,
+            label,
+            labelStyle,
+          ).clamp(0.0, innerWidth).toDouble();
+          final double labelRight =
+              _kTabHorizontalPadding + (innerWidth + visibleLabelWidth) / 2;
+
+          return Stack(
+            // `expand` forwards tight constraints to the tab content, so the
+            // tab keeps the exact layout — and the full-width/full-height tap
+            // target — it had before the badge was introduced.
+            fit: StackFit.expand,
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: _kTabHorizontalPadding),
+                // Like [TabBar]'s underline indicator: the label centers in
+                // the space above the indicator, and the indicator sits at the
+                // bottom edge of the (fixed-height) tab.
+                child: Column(
+                  children: [
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          label,
+                          style: labelStyle,
+                          strutStyle: StrutStyle(
+                            fontSize: fontSize,
+                            height: 20 / fontSize,
+                            forceStrutHeight: true,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                  ),
-                ),
-                Padding(
-                  padding: indicatorPadding,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: AnimatedContainer(
-                      duration: indicatorAnimationDuration,
-                      curve: Curves.easeOut,
-                      height: indicatorHeight,
-                      width: selected ? indicatorWidth : 0,
-                      decoration: BoxDecoration(
-                        color: indicatorColor,
-                        borderRadius:
-                            BorderRadius.circular(indicatorHeight / 2),
+                    Padding(
+                      padding: indicatorPadding,
+                      child: Align(
+                        alignment: Alignment.center,
+                        child: AnimatedContainer(
+                          duration: indicatorAnimationDuration,
+                          curve: Curves.easeOut,
+                          height: indicatorHeight,
+                          width: selected ? indicatorWidth : 0,
+                          decoration: BoxDecoration(
+                            color: indicatorColor,
+                            borderRadius:
+                                BorderRadius.circular(indicatorHeight / 2),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              if (showBadge)
+                Positioned(
+                  top: 8.0,
+                  // The badge box is 10 wide and its 6-wide dot is centered
+                  // in it, so this offset puts the dot's center 2px outside
+                  // the label's top-right corner. Clamped so a label that
+                  // fills the tab keeps its badge inside the tab.
+                  right: (constraints.maxWidth - labelRight - 7.0)
+                      .clamp(0.0, double.infinity)
+                      .toDouble(),
+                  child: SelectBadge(color: badgeColor ?? selectedColor),
+                ),
+            ],
           );
         },
       ),

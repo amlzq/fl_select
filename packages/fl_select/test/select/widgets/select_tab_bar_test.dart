@@ -25,7 +25,7 @@ Widget _harness({
     home: Scaffold(
       body: SelectTabBar(
         entries: _categories,
-        selectedCategories: {_categories[focusedIndex]},
+        selectedCategories: <SelectEntry>{},
         focusedIndex: focusedIndex,
         isScrollable: isScrollable,
         onChanged: onChanged ?? (_, __) {},
@@ -87,5 +87,32 @@ void main() {
     // horizontal padding around the label).
     final rect = tester.getRect(find.text('Category 4'));
     expect(rect.width, closeTo(800 / 16 - 9, 1));
+  });
+
+  testWidgets('selectedCategories badges that tab at its top-right corner',
+      (tester) async {
+    await tester.pumpWidget(MaterialApp(
+      home: Scaffold(
+        body: SelectTabBar(
+          entries: _categories,
+          // Category 2 is badged while Category 0 stays the active tab.
+          selectedCategories: {_categories[2]},
+          focusedIndex: 0,
+          isScrollable: true,
+          onChanged: (_, __) {},
+        ),
+      ),
+    ));
+    await tester.pumpAndSettle();
+
+    // Only the badged category renders a badge...
+    expect(find.byType(SelectBadge), findsOneWidget);
+
+    // ...and it hangs off the top-right corner of that tab's label, not of
+    // the active one.
+    final badge = tester.getRect(find.byType(SelectBadge));
+    final label = tester.getRect(find.text('Category 2'));
+    expect(badge.right, greaterThan(label.right));
+    expect(badge.center.dy, lessThan(label.center.dy));
   });
 }
