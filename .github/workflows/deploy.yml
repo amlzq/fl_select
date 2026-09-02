@@ -39,5 +39,6 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: flselect
+          branch: main
           directory: packages/fl_select_playground/build/web
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
