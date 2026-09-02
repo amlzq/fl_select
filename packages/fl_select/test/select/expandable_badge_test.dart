@@ -103,8 +103,8 @@ void main() {
   testWidgets('selecting only the "Any" entry does not badge its tile',
       (tester) async {
     final controller = SelectController(selectionMode: SelectionMode.multiple);
-    await tester.pumpWidget(
-        _harness(controller, entries: _categoryEntriesWithAny));
+    await tester
+        .pumpWidget(_harness(controller, entries: _categoryEntriesWithAny));
     await tester.pumpAndSettle();
 
     // "Any" is selected by default (initializeAnyIfEmpty)...

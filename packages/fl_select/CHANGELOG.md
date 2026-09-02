@@ -2,15 +2,11 @@
 
 - **BUGFIX** unify the action bar visibility on `SelectController.hasMultipleMode` across all layouts.
 
+- **BUGFIX** `showSelect` no longer ignores the ambient dialog theme's `insetPadding`.
+
 - **FEATURE** `ExpandableSelect` now badges a category tile whose category holds a real selection.
 
 - **FEATURE** `TabNavSelect` now badges a category tab whose category holds a real selection.
-
-- **FEATURE** add `SelectController.badgedCategories`, the single place to read or override the category badge rule.
-
-- **BREAKING** `SelectTabBar.selectedCategories` now drives the badge instead of the active appearance, which is driven by `focusedIndex` alone.
-
-- **BUGFIX** `showSelect` no longer ignores the ambient dialog theme's `insetPadding`.
 
 ## 0.11.2
 
