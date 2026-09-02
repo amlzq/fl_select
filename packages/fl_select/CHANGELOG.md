@@ -2,6 +2,14 @@
 
 - **BUGFIX** unify the action bar visibility on `SelectController.hasMultipleMode` across all layouts: `ListSelect` and `ExpandableSelect` now match `GridSelect`, `WrapSelect`, `TabNavSelect`, `SideNavSelect` and `CascadingSelect`. `ExpandableSelect` previously hid the action bar when only a category opted into multiple selection (delegate-level single), while taps still deferred to "Apply" — leaving the multi-selection impossible to apply; it now shows the bar in that mixed mode.
 
+- **FEATURE** `TabNavSelect` now badges a category tab whose category holds a "real" selection — at least one selected child that is not the "Any" placeholder, so selecting only "Any" leaves the tab unbadged — with a small dot in the top-right corner of the tab label, matching `SideNavSelect`; the badge is driven by the selection rather than by focus, so it stays visible after switching to another tab (and disappears again when that tab's selection is reset).
+
+- **FEATURE** add `SelectController.badgedCategories`: the categories holding a "real" selection (at least one selected child that is not the "Any" placeholder), i.e. the exact set `SideNavSelect`, `CascadingSelect` and `TabNavSelect` pass to `SelectSideBar.selectedCategories` / `SelectTabBar.selectedCategories`. It replaces three copies of the same inline filter and is the single place to read (or override in a custom layout) the category badge rule.
+
+- **BREAKING** `SelectTabBar.selectedCategories` now drives the badge instead of the active appearance, which is driven by `focusedIndex` alone — the same split `SelectSideBar` already uses; code that passed the active category to `selectedCategories` should pass its index to `focusedIndex` instead (as a side effect, two categories comparing equal no longer light up more than one tab).
+
+- **BUGFIX** `showSelect` no longer ignores the ambient dialog theme's `insetPadding`: the fallback chain is now the explicit `insetPadding` argument → `DialogThemeData.insetPadding` → Flutter's own `EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0)`, the same order `AlertDialog` resolves, so a global `ThemeData(dialogTheme: ...)` finally applies to select dialogs while the default look (40/24) is unchanged.
+
 ## 0.11.2
 
 - **FEATURE** localize all built-in widget labels via `SelectLocalizations`.

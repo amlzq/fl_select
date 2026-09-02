@@ -575,13 +575,7 @@ class SideNavSelectState extends State<SideNavSelect> {
     // A category badge should only appear when it has a "real" selection,
     // i.e. at least one selected child that is not the "Any" placeholder.
     // Selecting only "Any" must not trigger the badge.
-    final rawSelectedCategories = controller?.selectedEntriesAtLevel(0) ?? {};
-    final selectedCategories = rawSelectedCategories.where((entry) {
-      if (entry is! SelectCategoryEntry) return false;
-      final children =
-          controller?.selectedEntriesForParent(entry.id, level: 1) ?? {};
-      return children.any((e) => e is SelectChildEntry && !e.isAny);
-    }).toSet();
+    final selectedCategories = controller?.badgedCategories ?? <SelectEntry>{};
 
     final categoryBackgroundColor = theme.backgroundColor;
     final terminalBackgroundColor = theme.backgroundColorHigh;

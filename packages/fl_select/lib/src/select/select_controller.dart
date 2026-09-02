@@ -218,6 +218,26 @@ class SelectController extends ChangeNotifier {
   SelectEntries selectedFooterEntriesFor(String categoryId) =>
       tree.selectedFooterEntriesFor(categoryId);
 
+  /// The categories that hold a "real" selection: at least one selected child
+  /// that is not the "Any" placeholder.
+  ///
+  /// This is the set passed to [SelectSideBar.selectedCategories] and
+  /// [SelectTabBar.selectedCategories] to badge a category: it follows the
+  /// selection rather than the focused category, so a selection stays visible
+  /// after the user switches to another category.
+  ///
+  /// A category whose only selected child is "Any" is left out — "Any" is the
+  /// absence of a choice, not a choice — so it is narrower than
+  /// [selectedEntriesAtLevel](0), which also holds categories that are only
+  /// focused/initialized.
+  SelectEntries get badgedCategories {
+    return selectedEntriesAtLevel(0).where((entry) {
+      if (entry is! SelectCategoryEntry) return false;
+      final children = selectedEntriesForParent(entry.id, level: 1);
+      return children.any((e) => e is SelectChildEntry && !e.isAny);
+    }).toSet();
+  }
+
   void focusCategoryEntry(
     SelectCategoryEntry category, {
     required SelectionMode selectionMode,
