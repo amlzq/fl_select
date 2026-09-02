@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../select_theme.dart';
 import '../select_theme_data.dart';
+import 'badge.dart';
 import 'expansion_tile_theme.dart';
 
 const kSelectExpansionTileAnimationDuration = Duration(milliseconds: 200);
@@ -13,6 +14,8 @@ class SelectExpansionTile extends StatefulWidget {
     this.titleStyle,
     this.selectedColor,
     required this.child,
+    this.showBadge = false,
+    this.badgeColor,
     this.showTrailingIcon = true,
     this.titlePadding,
     this.childPadding,
@@ -42,6 +45,20 @@ class SelectExpansionTile extends StatefulWidget {
 
   /// The content displayed below the header when the tile is expanded.
   final Widget child;
+
+  /// Whether a badge dot is rendered in the top-right corner of the [title].
+  ///
+  /// Defaults to false. The badge is rendered even while the tile is expanded,
+  /// so it can mark a tile whose own content is currently hidden — e.g. an
+  /// [ExpandableSelect] category that holds a selection while collapsed.
+  final bool showBadge;
+
+  /// The color of the badge dot rendered when [showBadge] is true.
+  ///
+  /// If null, [badgeColor] falls back to [selectedColor] (and then to
+  /// [SelectExpansionTileTheme.selectedColor], [SelectThemeData.selectedColor]),
+  /// matching [SelectSideBar]'s and [SelectTabBar]'s badges.
+  final Color? badgeColor;
 
   /// Whether to show the expand/collapse icon at the end of the header.
   ///
@@ -227,6 +244,11 @@ class _SelectExpansionTileState extends State<SelectExpansionTile>
     // final effectiveSelectedColor =
     //     widget.selectedColor ?? theme.selectedColor ?? defaults.selectedColor!;
 
+    final effectiveBadgeColor = widget.badgeColor ??
+        widget.selectedColor ??
+        theme.selectedColor ??
+        defaults.selectedColor!;
+
     final trailingIcon = widget.showTrailingIcon
         ? RotationTransition(
             turns: _iconTurns,
@@ -241,9 +263,13 @@ class _SelectExpansionTileState extends State<SelectExpansionTile>
       padding: widget.titlePadding ?? theme.titlePadding ?? EdgeInsets.zero,
       child: Row(
         children: [
-          Expanded(
-            child: Text(widget.title, style: effectiveTitleStyle),
+          _BadgedTitle(
+            title: widget.title,
+            style: effectiveTitleStyle,
+            showBadge: widget.showBadge,
+            badgeColor: effectiveBadgeColor,
           ),
+          Spacer(),
           trailingIcon,
         ],
       ),
@@ -298,6 +324,49 @@ class _SelectExpansionTileState extends State<SelectExpansionTile>
       animation: _animationController.view,
       builder: _buildChildren,
       child: shouldRemoveChildren ? null : result,
+    );
+  }
+}
+
+/// The tile title, with a badge dot hung off its top-right corner.
+///
+/// The dot is a [Stack] sibling of the text (not part of it), so turning the
+/// badge on or off never changes the title's layout or its measured size.
+class _BadgedTitle extends StatelessWidget {
+  const _BadgedTitle({
+    required this.title,
+    required this.style,
+    required this.showBadge,
+    this.badgeColor,
+  });
+
+  final String title;
+
+  final TextStyle style;
+
+  final bool showBadge;
+
+  final Color? badgeColor;
+
+  @override
+  Widget build(BuildContext context) {
+    final text = Text(title, style: style);
+    if (!showBadge) return text;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        text,
+        Positioned(
+          // The badge box is 10 wide and its 6-wide dot is centered in it, so
+          // these offsets put the dot's center 3px outside the title's right
+          // edge and 1px below its top edge — the same superscript corner
+          // [SelectTabBar] hangs its badge from.
+          top: -2.0,
+          right: -8.0,
+          child: SelectBadge(color: badgeColor),
+        ),
+      ],
     );
   }
 }

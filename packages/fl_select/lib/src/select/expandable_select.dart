@@ -24,6 +24,10 @@ import 'widgets/widgets.dart';
 ///   (cascading) data.
 /// - When an entry's `immediate` is true, selection is applied immediately
 ///   without requiring the action bar.
+/// - A category tile renders a small badge dot in the top-right corner of its
+///   title while the category holds a "real" selection (at least one selected
+///   child that is not the "Any" placeholder), so a selection stays visible
+///   after its tile is collapsed.
 /// - The action bar is shown when multiple selection is active anywhere
 ///   (delegate-level `SelectionMode.multiple`, or any category opting into
 ///   multiple), matching the other layouts; "Apply" produces the final
@@ -188,6 +192,11 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
 
   @override
   Widget build(BuildContext context) {
+    // A category badge should only appear when it has a "real" selection,
+    // i.e. at least one selected child that is not the "Any" placeholder.
+    // Selecting only "Any" must not trigger the badge.
+    final badgedCategories = controller?.badgedCategories ?? <SelectEntry>{};
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -225,6 +234,7 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                 return SelectExpansionTile(
                   title: category.name ?? '',
                   titlePadding: const EdgeInsets.symmetric(vertical: 10),
+                  showBadge: badgedCategories.contains(category),
                   initiallyExpanded: true,
                   child: hasHeader || hasFooter
                       ? Column(
