@@ -80,7 +80,7 @@ class SideNavSelect extends StatefulWidget {
 
 class SideNavSelectState extends State<SideNavSelect> {
   /// Focused category entry
-  int _tempSelectedCategoryIndex = 0;
+  int _focusedCategoryIndex = 0;
 
   var _isScrollingProgrammatically = false;
 
@@ -117,10 +117,10 @@ class SideNavSelectState extends State<SideNavSelect> {
   void didUpdateWidget(covariant SideNavSelect oldWidget) {
     super.didUpdateWidget(oldWidget);
     _updateSelectController(context);
-    // Clamp the selected category index when search results reduce the number
+    // Clamp the focused category index when search results reduce the number
     // of categories.
-    if (_tempSelectedCategoryIndex >= _displayEntries.length) {
-      _tempSelectedCategoryIndex =
+    if (_focusedCategoryIndex >= _displayEntries.length) {
+      _focusedCategoryIndex =
           _displayEntries.isEmpty ? 0 : _displayEntries.length - 1;
     }
   }
@@ -141,11 +141,6 @@ class SideNavSelectState extends State<SideNavSelect> {
 
   void _handleSelectControllerTick() {
     if (mounted) setState(() {});
-  }
-
-  SelectCategoryEntry? get selectedCategory {
-    final entry = _displayEntries.elementAtOrNull(_tempSelectedCategoryIndex);
-    return entry is SelectCategoryEntry ? entry : null;
   }
 
   bool _onScrollNotification(ScrollNotification notification) {
@@ -201,9 +196,9 @@ class SideNavSelectState extends State<SideNavSelect> {
     }
 
     if (firstVisibleIndex != null &&
-        firstVisibleIndex != _tempSelectedCategoryIndex) {
+        firstVisibleIndex != _focusedCategoryIndex) {
       setState(() {
-        _tempSelectedCategoryIndex = firstVisibleIndex!;
+        _focusedCategoryIndex = firstVisibleIndex!;
       });
     }
   }
@@ -228,7 +223,7 @@ class SideNavSelectState extends State<SideNavSelect> {
   }
 
   void _onCategoryItemTap(int index) {
-    if (_tempSelectedCategoryIndex == index) return;
+    if (_focusedCategoryIndex == index) return;
 
     final category = _displayEntries[index] as SelectCategoryEntry;
     controller?.focusCategoryEntry(
@@ -237,7 +232,7 @@ class SideNavSelectState extends State<SideNavSelect> {
     );
 
     setState(() {
-      _tempSelectedCategoryIndex = index;
+      _focusedCategoryIndex = index;
     });
 
     // With the right column's generous prefetch extent (see build), the
@@ -451,7 +446,7 @@ class SideNavSelectState extends State<SideNavSelect> {
 
   void _onResetTap() {
     controller?.resetState(initializeAnyIfEmpty: true);
-    _tempSelectedCategoryIndex = 0;
+    _focusedCategoryIndex = 0;
     setState(() {});
     controller?.reset();
   }
@@ -599,7 +594,7 @@ class SideNavSelectState extends State<SideNavSelect> {
                 selectedTileColor: terminalBackgroundColor,
                 entries: _displayEntries,
                 selectedCategories: selectedCategories,
-                focusedIndex: _tempSelectedCategoryIndex,
+                focusedIndex: _focusedCategoryIndex,
                 onChanged: (index, entry) => _onCategoryItemTap(index),
               ),
               // Right content area with NotificationListener

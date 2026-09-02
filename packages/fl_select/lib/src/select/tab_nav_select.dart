@@ -65,7 +65,7 @@ class TabNavSelect extends StatefulWidget {
 
 class TabNavSelectState extends State<TabNavSelect> {
   /// Focused category entry.
-  SelectCategoryEntry? _tempSelectedCategory;
+  SelectCategoryEntry? _focusedCategory;
 
   SelectController? controller;
   bool _didInitCategoryFromState = false;
@@ -77,13 +77,13 @@ class TabNavSelectState extends State<TabNavSelect> {
           predicate: widget.searchPredicate)
       : widget.entries;
 
-  /// Returns the currently selected category that exists in [_displayEntries],
+  /// Returns the focused category when it still exists in [_displayEntries],
   /// or falls back to the first available category.
-  SelectCategoryEntry? get _effectiveSelectedCategory {
+  SelectCategoryEntry? get _effectiveFocusedCategory {
     final cats = _displayEntries.whereType<SelectCategoryEntry>();
-    if (_tempSelectedCategory != null &&
-        cats.any((c) => c.id == _tempSelectedCategory!.id)) {
-      return _tempSelectedCategory;
+    if (_focusedCategory != null &&
+        cats.any((c) => c.id == _focusedCategory!.id)) {
+      return _focusedCategory;
     }
     return cats.firstOrNull;
   }
@@ -92,7 +92,7 @@ class TabNavSelectState extends State<TabNavSelect> {
   void initState() {
     super.initState();
     final first = widget.entries.firstOrNull;
-    _tempSelectedCategory = first is SelectCategoryEntry ? first : null;
+    _focusedCategory = first is SelectCategoryEntry ? first : null;
   }
 
   @override
@@ -129,7 +129,7 @@ class TabNavSelectState extends State<TabNavSelect> {
           .whereType<SelectCategoryEntry>()
           .firstOrNull;
       if (selectedCategory != null) {
-        _tempSelectedCategory = selectedCategory;
+        _focusedCategory = selectedCategory;
       }
       _didInitCategoryFromState = true;
     }
@@ -142,8 +142,8 @@ class TabNavSelectState extends State<TabNavSelect> {
   }
 
   void _onCategoryItemTap(SelectCategoryEntry entry) {
-    if (entry == _tempSelectedCategory) return;
-    _tempSelectedCategory = entry;
+    if (entry == _focusedCategory) return;
+    _focusedCategory = entry;
     controller?.focusCategoryEntry(
       entry,
       selectionMode: delegate.selectionMode,
@@ -208,7 +208,7 @@ class TabNavSelectState extends State<TabNavSelect> {
     int chipIndex,
     SelectChildEntry entry,
   ) {
-    final category = _effectiveSelectedCategory;
+    final category = _effectiveFocusedCategory;
     if (category == null) return;
 
     final selectionMode = isHeader
@@ -228,7 +228,7 @@ class TabNavSelectState extends State<TabNavSelect> {
     // Reset only the currently focused category (tab) rather than every
     // category, so selections in the other tabs are preserved.
     controller?.resetCategoryState(
-      _tempSelectedCategory!,
+      _focusedCategory!,
       initializeAnyIfEmpty: true,
     );
     setState(() {});
@@ -259,7 +259,7 @@ class TabNavSelectState extends State<TabNavSelect> {
 
   @override
   Widget build(BuildContext context) {
-    final category = _effectiveSelectedCategory;
+    final category = _effectiveFocusedCategory;
     if (category == null) {
       // No categories match the search query.
       return Column(
@@ -291,7 +291,7 @@ class TabNavSelectState extends State<TabNavSelect> {
     }
 
     /// Focused category index
-    final tempSelectedCategoryIndex = _displayEntries.indexOf(category);
+    final focusedCategoryIndex = _displayEntries.indexOf(category);
 
     // A category badge should only appear when it has a "real" selection,
     // i.e. at least one selected child that is not the "Any" placeholder.
@@ -313,7 +313,7 @@ class TabNavSelectState extends State<TabNavSelect> {
                 _onCategoryItemTap(item as SelectCategoryEntry),
             entries: _displayEntries,
             selectedCategories: selectedCategories,
-            focusedIndex: tempSelectedCategoryIndex,
+            focusedIndex: focusedCategoryIndex,
           ),
         Flexible(
           child: Padding(
@@ -340,7 +340,7 @@ class TabNavSelectState extends State<TabNavSelect> {
                 Flexible(
                   child: _buildCategoryView(
                     category,
-                    index: tempSelectedCategoryIndex,
+                    index: focusedCategoryIndex,
                   ),
                 ),
                 if (categoryFooter != null && categoryFooter.children != null)

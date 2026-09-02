@@ -54,9 +54,16 @@ class CascadingSelect extends StatefulWidget {
 }
 
 class CascadingSelectState extends State<CascadingSelect> {
-  /// Temporarily selected (focused) item per level (usually a parent node)
-  /// Terminal nodes do not need to be included in the temporary selection list
-  final List<SelectEntry> _tempSelectedEntryPerLevel = [];
+  /// Focused (not yet selected) item per level (usually a parent node).
+  ///
+  /// This is the widget-side counterpart of the `focusedPath` passed to
+  /// [SelectController.toggleCascadingEntry]: the same list drives the
+  /// cascade columns and is handed to the controller as the ancestor path.
+  ///
+  /// It holds navigation state only — the "tentative" selection that is not
+  /// committed until "Apply" lives in the controller's state tree.
+  /// Terminal nodes are not included: they end the cascade.
+  final List<SelectEntry> _focusedEntryPerLevel = [];
 
   /// Cascading lists: index0 is first-level children, index1 is second-level children, and so on
   final List<List<SelectEntry>> _cascadingList = [];
@@ -116,7 +123,7 @@ class CascadingSelectState extends State<CascadingSelect> {
     // every tap — even though entries and selectedEntries are unchanged.
     // Unconditionally calling _updateSelectController (which calls
     // _rebuildSelectionState) discards the in-memory focused-path state
-    // (_tempSelectedEntryPerLevel) and rebuilds it from the state tree.
+    // (_focusedEntryPerLevel) and rebuilds it from the state tree.
     // While that rebuild is usually correct, it is unnecessary work and can
     // cause the UI to jump to a different category under certain timing
     // conditions. Guarding the call avoids the extra rebuild.
@@ -173,9 +180,8 @@ class CascadingSelectState extends State<CascadingSelect> {
   void _rebuildSelectionState() {
     // Capture the currently focused category before clearing, so a search
     // rebuild can keep focusing it when it still matches the filter.
-    final previousFocusedCategoryId =
-        _tempSelectedEntryPerLevel.firstOrNull?.id;
-    _tempSelectedEntryPerLevel.clear();
+    final previousFocusedCategoryId = _focusedEntryPerLevel.firstOrNull?.id;
+    _focusedEntryPerLevel.clear();
     _currentLevel = 0;
     _cascadingList.clear();
     _disposeScrollControllers();
@@ -193,7 +199,7 @@ class CascadingSelectState extends State<CascadingSelect> {
       }
       firstCategory ??= entries.whereType<SelectCategoryEntry>().firstOrNull;
       if (firstCategory != null) {
-        _tempSelectedEntryPerLevel.add(firstCategory);
+        _focusedEntryPerLevel.add(firstCategory);
         _cascadingList.add(firstCategory.children?.toList() ?? []);
         _scrollControllers.add(ScrollController());
         // Keep expanding along the first branch that still has children so
@@ -203,7 +209,7 @@ class CascadingSelectState extends State<CascadingSelect> {
           if (currentEntries == null) break;
           final next = currentEntries.firstWhereOrNull((e) => e.hasChildren);
           if (next == null) break;
-          _tempSelectedEntryPerLevel.add(next);
+          _focusedEntryPerLevel.add(next);
           _cascadingList.add(next.children?.toList() ?? []);
           _scrollControllers.add(ScrollController());
         }
@@ -213,12 +219,12 @@ class CascadingSelectState extends State<CascadingSelect> {
       return;
     }
 
-    _initializeTempSelectedEntryPerLevel(null, 0);
+    _initializeFocusedEntryPerLevel(null, 0);
 
-    if (_tempSelectedEntryPerLevel.isEmpty && widget.entries.isNotEmpty) {
+    if (_focusedEntryPerLevel.isEmpty && widget.entries.isNotEmpty) {
       final firstEntry = widget.entries.first;
       if (firstEntry is SelectCategoryEntry) {
-        _tempSelectedEntryPerLevel.add(firstEntry);
+        _focusedEntryPerLevel.add(firstEntry);
         _cascadingList.add(firstEntry.children?.toList() ?? []);
         _currentLevel = 1;
         _scrollControllers.add(ScrollController());
@@ -257,13 +263,13 @@ class CascadingSelectState extends State<CascadingSelect> {
       final entries = _cascadingList[columnIndex];
       if (entries.isEmpty) continue;
 
-      final parent = _tempSelectedEntryPerLevel.elementAtOrNull(columnIndex);
+      final parent = _focusedEntryPerLevel.elementAtOrNull(columnIndex);
       final selectionLevel = columnIndex + 1;
       final selectedAtLevel =
           controller?.selectedEntriesAtLevel(selectionLevel) ?? {};
 
       SelectEntry? target =
-          _tempSelectedEntryPerLevel.elementAtOrNull(columnIndex + 1);
+          _focusedEntryPerLevel.elementAtOrNull(columnIndex + 1);
 
       if (target == null && parent != null) {
         target = selectedAtLevel
@@ -426,7 +432,7 @@ class CascadingSelectState extends State<CascadingSelect> {
   }
 
   /// Builds a connected focused path from state tree selections.
-  void _initializeTempSelectedEntryPerLevel(SelectEntry? parent, int level) {
+  void _initializeFocusedEntryPerLevel(SelectEntry? parent, int level) {
     final picked = _pickFocusedEntryForLevel(parent, level);
     if (picked == null) return;
 
@@ -434,12 +440,12 @@ class CascadingSelectState extends State<CascadingSelect> {
     // complete children, not the search-filtered subset.
     final selectedEntry = _resolveFromSource(parent, picked) ?? picked;
 
-    _tempSelectedEntryPerLevel.add(selectedEntry);
+    _focusedEntryPerLevel.add(selectedEntry);
     if (selectedEntry.hasChildren) {
       _cascadingList.add(selectedEntry.children?.toList() ?? []);
       _currentLevel = level + 1;
       _scrollControllers.add(ScrollController());
-      _initializeTempSelectedEntryPerLevel(selectedEntry, level + 1);
+      _initializeFocusedEntryPerLevel(selectedEntry, level + 1);
     }
   }
 
@@ -472,36 +478,36 @@ class CascadingSelectState extends State<CascadingSelect> {
     return maxDepth;
   }
 
-  /// Focused Category Item
-  SelectCategoryEntry get tempSelectedCategory =>
-      _tempSelectedEntryPerLevel.first as SelectCategoryEntry;
+  /// The focused category: the first entry of [_focusedEntryPerLevel].
+  SelectCategoryEntry get focusedCategory =>
+      _focusedEntryPerLevel.first as SelectCategoryEntry;
 
-  /// Selection Mode for the selected category sub-items
+  /// Selection Mode for the focused category's sub-items
   SelectionMode get childrenSelectionMode =>
-      tempSelectedCategory.effectiveSelectionMode(delegate.selectionMode);
+      focusedCategory.effectiveSelectionMode(delegate.selectionMode);
 
   /// Tap handler for a category item
   void _onCategoryItemTap(SelectCategoryEntry newCategoryEntry) {
     final selectionMode = controller?.selectionMode;
     if (SelectionMode.single == selectionMode) {
-      _tempSelectedEntryPerLevel.clear();
+      _focusedEntryPerLevel.clear();
       _cascadingList.clear();
       _disposeScrollControllers();
 
       // Select the new category
-      _tempSelectedEntryPerLevel.add(newCategoryEntry);
-      _cascadingList.add(tempSelectedCategory.children?.toList() ?? []);
+      _focusedEntryPerLevel.add(newCategoryEntry);
+      _cascadingList.add(focusedCategory.children?.toList() ?? []);
       _currentLevel = 1;
       _scrollControllers.add(ScrollController());
     } else {
       // Multi-select mode: keep previous selection and only switch the focused category
-      if (_tempSelectedEntryPerLevel.isEmpty ||
-          _tempSelectedEntryPerLevel.firstOrNull is! SelectCategoryEntry) {
-        _tempSelectedEntryPerLevel
+      if (_focusedEntryPerLevel.isEmpty ||
+          _focusedEntryPerLevel.firstOrNull is! SelectCategoryEntry) {
+        _focusedEntryPerLevel
           ..clear()
           ..add(newCategoryEntry);
       } else {
-        _tempSelectedEntryPerLevel[0] = newCategoryEntry;
+        _focusedEntryPerLevel[0] = newCategoryEntry;
       }
 
       _cascadingList
@@ -522,7 +528,7 @@ class CascadingSelectState extends State<CascadingSelect> {
   /// Tap handler for a middle node
   /// Only selecting a terminal node is an actual selection; otherwise it just expands children
   void _onMiddleItemTap(int cascadeIndex, SelectEntry entry) {
-    if (entry == _tempSelectedEntryPerLevel.lastOrNull) {
+    if (entry == _focusedEntryPerLevel.lastOrNull) {
       // Re-tapping the same node: no-op
       return;
     }
@@ -531,10 +537,10 @@ class CascadingSelectState extends State<CascadingSelect> {
 
     // items.firstWhere((e) => e.isAny).selected = false;
 
-    while (_tempSelectedEntryPerLevel.length > level) {
-      _tempSelectedEntryPerLevel.removeLast();
+    while (_focusedEntryPerLevel.length > level) {
+      _focusedEntryPerLevel.removeLast();
     }
-    _tempSelectedEntryPerLevel.add(entry);
+    _focusedEntryPerLevel.add(entry);
 
     // Remove all levels after the current level
     while (_cascadingList.length > level) {
@@ -570,10 +576,10 @@ class CascadingSelectState extends State<CascadingSelect> {
       while (_cascadingList.length > level) {
         _cascadingList.removeLast();
       }
-      while (_tempSelectedEntryPerLevel.length > level) {
-        _tempSelectedEntryPerLevel.removeLast();
+      while (_focusedEntryPerLevel.length > level) {
+        _focusedEntryPerLevel.removeLast();
       }
-      _tempSelectedEntryPerLevel.add(entry);
+      _focusedEntryPerLevel.add(entry);
       _currentLevel = level;
       controller?.toggleCascadingEntry(
         entry,
@@ -582,8 +588,8 @@ class CascadingSelectState extends State<CascadingSelect> {
         // category opts into multiple, disabling the clearing.
         selectionMode: controller?.selectionMode ?? SelectionMode.single,
         childrenSelectionMode: childrenSelectionMode,
-        focusedPath: _tempSelectedEntryPerLevel.take(cascadeIndex + 1).toList(),
-        category: tempSelectedCategory,
+        focusedPath: _focusedEntryPerLevel.take(cascadeIndex + 1).toList(),
+        category: focusedCategory,
       );
       _setStateOrImmediateApply(entry);
       return;
@@ -594,8 +600,8 @@ class CascadingSelectState extends State<CascadingSelect> {
       // Delegate-level mode; see the Any-skip branch above for rationale.
       selectionMode: controller?.selectionMode ?? SelectionMode.single,
       childrenSelectionMode: childrenSelectionMode,
-      focusedPath: _tempSelectedEntryPerLevel.take(cascadeIndex + 1).toList(),
-      category: tempSelectedCategory,
+      focusedPath: _focusedEntryPerLevel.take(cascadeIndex + 1).toList(),
+      category: focusedCategory,
     );
 
     _setStateOrImmediateApply(entry);
@@ -617,12 +623,10 @@ class CascadingSelectState extends State<CascadingSelect> {
     SelectChildEntry entry,
   ) {
     final selectionMode = isHeader
-        ? tempSelectedCategory
-            .effectiveHeaderSelectionMode(delegate.selectionMode)
-        : tempSelectedCategory
-            .effectiveFooterSelectionMode(delegate.selectionMode);
+        ? focusedCategory.effectiveHeaderSelectionMode(delegate.selectionMode)
+        : focusedCategory.effectiveFooterSelectionMode(delegate.selectionMode);
     controller?.toggleHeaderOrFooterEntry(
-      categoryId: tempSelectedCategory.id,
+      categoryId: focusedCategory.id,
       entry: entry,
       selectionMode: selectionMode,
       isHeader: isHeader,
@@ -636,11 +640,11 @@ class CascadingSelectState extends State<CascadingSelect> {
   }
 
   void _onResetTap() {
-    final previousSelectedCategoryId = tempSelectedCategory.id;
+    final previousFocusedCategoryId = focusedCategory.id;
     controller?.resetState(initializeAnyIfEmpty: false);
     _rebuildSelectionState();
     final newCategory = _effectiveEntries.firstWhereOrNull(
-        (e) => e.id == previousSelectedCategoryId) as SelectCategoryEntry?;
+        (e) => e.id == previousFocusedCategoryId) as SelectCategoryEntry?;
     if (newCategory != null) {
       _onCategoryItemTap(newCategory);
     }
@@ -692,7 +696,7 @@ class CascadingSelectState extends State<CascadingSelect> {
               );
             }
           } else {
-            final selected = _tempSelectedEntryPerLevel.contains(entry);
+            final selected = _focusedEntryPerLevel.contains(entry);
             final selectedCount = controller
                     ?.selectedEntriesAtLevel(level + 1)
                     .where(
@@ -754,14 +758,14 @@ class CascadingSelectState extends State<CascadingSelect> {
     }
 
     /// Maximum level for the current category
-    // final maxLevel = tempSelectedCategory.maxLevel;
+    // final maxLevel = focusedCategory.maxLevel;
     // final isMultipleSelectionMode =
-    //     SelectionMode.multiple == tempSelectedCategory.selectionMode;
+    //     SelectionMode.multiple == focusedCategory.selectionMode;
 
-    final categoryHeader = tempSelectedCategory.header;
-    final categoryFooter = tempSelectedCategory.footer;
-    final headerSelected = _headerSelectedFor(tempSelectedCategory.id);
-    final footerSelected = _footerSelectedFor(tempSelectedCategory.id);
+    final categoryHeader = focusedCategory.header;
+    final categoryFooter = focusedCategory.footer;
+    final headerSelected = _headerSelectedFor(focusedCategory.id);
+    final footerSelected = _footerSelectedFor(focusedCategory.id);
 
     final categoryBackgroundColor =
         _backgroundColors.firstOrNull ?? theme.backgroundColor;
@@ -773,8 +777,7 @@ class CascadingSelectState extends State<CascadingSelect> {
     final effectiveSelectedColor =
         delegate.selectedColor ?? theme.selectedColor;
 
-    final tempSelectedCategoryIndex =
-        _effectiveEntries.indexOf(tempSelectedCategory);
+    final focusedCategoryIndex = _effectiveEntries.indexOf(focusedCategory);
 
     // A category badge should only appear when it has a "real" selection,
     // i.e. at least one selected child that is not the "Any" placeholder.
@@ -797,7 +800,7 @@ class CascadingSelectState extends State<CascadingSelect> {
                 selectedTileColor: selectedTileColor,
                 entries: _effectiveEntries,
                 selectedCategories: selectedCategories,
-                focusedIndex: tempSelectedCategoryIndex,
+                focusedIndex: focusedCategoryIndex,
                 onChanged: (_, entry) =>
                     _onCategoryItemTap(entry as SelectCategoryEntry),
               ),
