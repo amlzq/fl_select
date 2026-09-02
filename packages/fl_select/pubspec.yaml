@@ -1,6 +1,6 @@
 name: fl_select
 description: "A customizable Flutter select widget for building filter bars, cascading menus, and pickers with single/multiple selection, async loading, search filtering, theming, and i18n."
-version: 0.11.2
+version: 0.11.3
 repository: https://github.com/amlzq/fl_select/tree/main/packages/fl_select
 issue_tracker: https://github.com/amlzq/fl_select/issues
 topics: [select, multiselect, dropdown, cascade, widget]

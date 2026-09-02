@@ -1,4 +1,4 @@
-## Next
+## 0.11.3
 
 - **BUGFIX** unify the action bar visibility on `SelectController.hasMultipleMode` across all layouts.
 
