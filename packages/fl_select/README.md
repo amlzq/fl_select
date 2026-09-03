@@ -1,4 +1,4 @@
-A customizable Flutter select widget for building filter bars, cascading menus, and pickers with single/multiple selection, async loading, search filtering, theming, and i18n.
+A Flutter package for building **selection** UIs (e.g. filter bars) on a composable architecture of **entry points, delegates, and layouts**. A2UI-ready, with single & multiple selection, sync/async loading, search filtering, theming, and i18n built in.
 
 [Playground](https://flselect.zeaon.dev/)
 
@@ -18,17 +18,19 @@ Then just ask your agent to build a filter bar or select UI with `fl_select`. Th
 
 ### Features
 
-Two layers work together: **entry points** decide _where_ the select appears, and **delegates** decide _how_ entries are laid out — any delegate plugs into any entry point.
+A composable architecture of **entry points, delegates, and layouts** — any delegate plugs into any entry point, and any layout into any category.
 
-- **Entry points** — five ways to show a select: `SelectView` , `PopupSelectBar` , `PopupSelectButton` , `showSelect` , `showModalBottomSelect` .
-- **Delegates** — seven single-purpose styles. Flat data: `ListSelectDelegate` , `GridSelectDelegate` , `WrapSelectDelegate` ; two-level (category) data: `CascadingSelectDelegate` , `TabNavSelectDelegate` , `SideNavSelectDelegate` , `ExpandableSelectDelegate` . In the two-level styles (all but cascading), each category's children are laid out by `category.layout` — list / grid / chips / range slider / counter.
-- Single & multiple selection via `SelectionMode` (per category or as a delegate fallback).
-- Async data loading through `entriesLoader`, or synchronous data via `entries` / `selectedEntries` / `resetEntries` (rendered on the first frame, no skeleton).
-- Search filtering: set `searchEnabled` on any delegate and a `SelectSearchBar` filters entries as you type (debounced, with a customizable predicate and theme).
-- Flexible entries: the "Any" entry clears a category, `SelectRangeEntry.custom` takes user min/max input, and an `immediate` entry applies on tap without the action bar.
-- `itemBuilder` &`skeletonBuilder` & `errorBuilder` & `actionBarBuilder` for loading and error states.
-- Theming via `SelectThemeData` and the `PopupSelectBarTheme` / `PopupSelectButtonTheme` extensions.
-- Built-in i18n in 10 languages via `SelectLocalizationsDelegate`.
+- **5 entry points**: inline, button, bar, dialog, bottom sheet — `SelectView`, `PopupSelectButton`, `PopupSelectBar`, `showSelect`, `showModalBottomSelect`.
+- **7 delegates**: `ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`, `CascadingSelectDelegate`, `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`.
+- **5 category layouts**: list, grid, wrap, range slider, counter.
+- Sync & async data loading.
+- Single & multiple selection.
+- Text, Range, Category, "Any", and custom entries.
+- Custom item view, skeleton, error state, and action bar.
+- Result serialization to URL query parameters.
+- Search filtering.
+- Light & dark theming with rich styles.
+- Built-in i18n in 10 languages.
 
 ### Getting started
 
@@ -74,24 +76,20 @@ Flat data for `ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate`
 SelectEntries get listData => {
       SelectTextEntry.name(id: 'a', name: 'Kiwi'),
       SelectTextEntry.name(id: 'b', name: 'Grape'),
-      SelectTextEntry.name(id: 'c', name: 'Strawberry'),
-      SelectTextEntry.name(id: 'd', name: 'Pineapple'),
+      // ...
     };
 
 SelectEntries get gridData => {
       SelectRangeEntry.custom(), // user-input min/max
       SelectTextEntry.name(id: 'a', name: '0-100'),
       SelectTextEntry.name(id: 'b', name: '100-500'),
-      SelectTextEntry.name(id: 'c', name: '500-1000'),
-      SelectTextEntry.name(id: 'd', name: '1000-2000'),
+      // ...
     };
 
 SelectEntries get wrapData => {
       SelectTextEntry.name(id: 'a', name: 'Tiger'),
       SelectTextEntry.name(id: 'b', name: 'Lion'),
-      SelectTextEntry.name(id: 'c', name: 'Bear'),
-      SelectTextEntry.name(id: 'd', name: 'Elephant'),
-      SelectTextEntry.name(id: 'e', name: 'Monkey'),
+      // ...
     };
 ```
 
@@ -105,8 +103,7 @@ SelectEntries get multiCategoryData => {
         children: {
           SelectTextEntry.name(id: 'a', name: 'Football'),
           SelectTextEntry.name(id: 'b', name: 'Basketball'),
-          SelectTextEntry.name(id: 'c', name: 'Baseball'),
-          SelectTextEntry.name(id: 'd', name: 'Tennis'),
+          // ...
         },
         selectionMode: SelectionMode.single,
         footer: SelectTextEntry.children(
@@ -114,29 +111,10 @@ SelectEntries get multiCategoryData => {
           name: 'Letter Grade',
           children: {
             SelectTextEntry.name(id: 'f-a', name: 'A'),
-            SelectTextEntry.name(id: 'f-b', name: 'B'),
-            SelectTextEntry.name(id: 'f-c', name: 'C'),
+            // ...
           },
         ),
-        footerSelectionMode: SelectionMode.single,
-      ),
-      SelectCategoryEntry.children(
-        id: 'cate2',
-        name: 'Cate 2',
-        header: SelectTextEntry.children(
-          id: 'c2-h',
-          name: 'Letter Grade',
-          children: {
-            SelectTextEntry.name(id: 'h-a', name: 'A'),
-            SelectTextEntry.name(id: 'h-b', name: 'B'),
-          },
-        ),
-        headerSelectionMode: SelectionMode.single,
-        children: {
-          SelectTextEntry.name(id: 'a', name: 'Mathematics'),
-          SelectTextEntry.name(id: 'b', name: 'Language'),
-        },
-        selectionMode: SelectionMode.single,
+        footerSelectionMode: SelectionMode.single, // header: ... works the same
       ),
       SelectCategoryEntry.children(
         id: 'cate5',
@@ -154,17 +132,7 @@ SelectEntries get multiCategoryData => {
         selectionMode: SelectionMode.single,
         layout: const SelectRangeLayout(), // range slider
       ),
-      SelectCategoryEntry.children(
-        id: 'cate6',
-        name: 'Cate 6',
-        children: {
-          SelectTextEntry.name(id: 'a', name: '1'),
-          SelectTextEntry.name(id: 'b', name: '2'),
-          SelectTextEntry.name(id: 'c', name: '3'),
-        },
-        selectionMode: SelectionMode.single,
-        layout: const SelectCounterLayout(), // stepper
-      ),
+      // cate6 uses `layout: const SelectCounterLayout()` (stepper), etc.
     };
 ```
 
@@ -180,7 +148,7 @@ Future<SelectEntries> fetchCascadingData() async {
       children: {
         SelectTextEntry.any(parentId: '', name: 'Any', immediate: true), // parentId auto-injected
         SelectTextEntry.name(id: 'north', name: 'North'),
-        SelectTextEntry.name(id: 'south', name: 'South'),
+        // ...
       },
       selectionMode: SelectionMode.multiple,
     ),
@@ -208,43 +176,18 @@ SelectView(
   margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
   delegate: ListSelectDelegate(entries: listData),
   onChanged: (SelectEntries selected) {
-    // selected is the SelectEntries when the selection changes
     print('toQueryParameters: ${selected.toQueryParameters()}');
   },
 );
 
 SelectView(
-  margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
   delegate: CascadingSelectDelegate(
     entriesLoader: fetchCascadingData,
     selectionMode: SelectionMode.multiple,
     sideBarTheme: const SelectSideBarTheme(width: 120),
-    isScrollable: true,
   ),
   onChanged: (SelectEntries selected) {
     print('toQueryMap: ${selected.toQueryMap()}');
-  },
-);
-
-SelectView(
-  delegate: TabNavSelectDelegate(
-    defaultLayout: SelectGridLayout(
-      crossAxisCount: 3,
-      childAspectRatio: 3,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-    ),
-    entries: multiCategoryData,
-    selectionMode: SelectionMode.multiple,
-    gridTileTheme: const SelectGridTileTheme(
-      variant: SelectGridTileVariant.outlined,
-    ),
-    fieldTileTheme: const SelectFieldTileTheme(
-      variant: SelectFieldTileVariant.outlined,
-    ),
-  ),
-  onChanged: (SelectEntries selected) {
-    print('onChanged: $selected');
   },
 );
 ```
@@ -253,89 +196,36 @@ SelectView(
 
 #### PopupSelectButton
 
-A single-trigger alternative to `PopupSelectBar` — opens a select overlay on tap, like `PopupMenuButton`. It takes one `selectDelegate`, a `label`/`child`, and a required `onApplied` callback. Four variants: text (default), `.filled(...)`, `.elevated(...)`, and `.outlined(...)`; use `direction` to open above the trigger.
+Opens a select overlay on tap, like `PopupMenuButton`. It takes one `selectDelegate`, a `label`/`child`, and a required `onApplied` callback. Four variants: text (default), `.elevated(...)`, `.filled(...)`, and `.outlined(...)`; use `direction` to open above the trigger.
 
 ```dart
 PopupSelectButton(
   label: 'List',
   selectDelegate: ListSelectDelegate(entries: listData),
-  onApplied: (selected) {
-    print('toQueryMap: ${selected.toQueryMap()}');
-    print('toQueryParameters: ${selected.toQueryParameters()}');
-  },
+  onApplied: (selected) => print('toQueryMap: ${selected.toQueryMap()}'),
 );
 
+// Variants: .elevated(...) / .filled(...) / .outlined(...)
 PopupSelectButton.elevated(
-  label: 'Grid',
-  selectDelegate: GridSelectDelegate(
-    entries: gridData,
-    crossAxisCount: 3,
-    childAspectRatio: 3,
-    mainAxisSpacing: 10,
-    crossAxisSpacing: 10,
-  ),
-  onApplied: (selected) {
-    print('onApplied: $selected');
-  },
-);
-
-PopupSelectButton.filled(
-  label: 'Wrap',
-  selectDelegate: WrapSelectDelegate(
-    entries: wrapData,
-    selectionMode: SelectionMode.multiple,
-    spacing: 12.0,
-    runSpacing: 12.0,
-  ),
-  onApplied: (selected) {
-    print('onApplied: $selected');
-  },
-);
-
-PopupSelectButton.outlined(
   label: 'Cascading',
   selectDelegate: CascadingSelectDelegate(
     entriesLoader: fetchCascadingData,
     selectionMode: SelectionMode.multiple,
-    sideBarTheme: const SelectSideBarTheme(width: 120),
   ),
-  onApplied: (selected) {
-    print('onApplied: $selected');
-  },
-);
-```
-
-Category delegates work the same way — set `defaultLayout` to control how each category's children are laid out, and `direction` to open the overlay above the trigger:
-
-```dart
-PopupSelectButton(
-  label: 'TabNav',
-  selectDelegate: TabNavSelectDelegate(
-    defaultLayout: SelectGridLayout(
-      crossAxisCount: 3,
-      childAspectRatio: 3,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-    ),
-    entries: multiCategoryData,
-    selectionMode: SelectionMode.multiple,
-  ),
-  onApplied: (selected) {
-    print('onApplied: $selected');
-  },
+  onApplied: (selected) => print('onApplied: $selected'),
 );
 
+// Category delegates: defaultLayout controls the children layout,
+// direction opens the overlay above the trigger
 PopupSelectButton(
   direction: PopupSelectDirection.above,
-  label: 'Expandable',
-  selectDelegate: ExpandableSelectDelegate(
-    defaultLayout: SelectListLayout(),
+  label: 'TabNav',
+  selectDelegate: TabNavSelectDelegate(
+    defaultLayout: SelectGridLayout(crossAxisCount: 3, childAspectRatio: 3),
     entries: multiCategoryData,
     selectionMode: SelectionMode.multiple,
   ),
-  onApplied: (selected) {
-    print('onApplied: $selected');
-  },
+  onApplied: (selected) => print('onApplied: $selected'),
 );
 ```
 
@@ -351,58 +241,18 @@ PopupSelectBar(
   tabs: const [
     PopupTab(label: 'List'),
     PopupTab(label: 'Grid'),
-    PopupTab(child: Icon(Icons.wrap_text)),
-    PopupTab(label: 'Cascading'),
-    PopupTab(label: 'TabNav'),
-    PopupTab(label: 'SideNav'),
-    PopupTab(child: Icon(Icons.expand)),
+    PopupTab(child: Icon(Icons.wrap_text)), // icon tab
+    // ... one PopupTab per delegate
   ],
   selectDelegates: [
     ListSelectDelegate(entries: listData),
-    GridSelectDelegate(
-      entries: gridData,
-      crossAxisCount: 3,
-      childAspectRatio: 3.2,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-    ),
-    WrapSelectDelegate(
-      entries: wrapData,
-      selectionMode: SelectionMode.multiple,
-      spacing: 12.0,
-      runSpacing: 12.0,
-    ),
-    CascadingSelectDelegate(
-      entriesLoader: fetchCascadingData,
-      selectionMode: SelectionMode.multiple,
-      sideBarTheme: const SelectSideBarTheme(width: 120),
-    ),
-    TabNavSelectDelegate(
-      defaultLayout: SelectGridLayout(
-        crossAxisCount: 3,
-        childAspectRatio: 3,
-        mainAxisSpacing: 10,
-        crossAxisSpacing: 10,
-      ),
-      entries: multiCategoryData,
-      selectionMode: SelectionMode.multiple,
-    ),
-    SideNavSelectDelegate(
-      defaultLayout: SelectWrapLayout(spacing: 12, runSpacing: 12),
-      entries: multiCategoryData,
-      selectionMode: SelectionMode.multiple,
-    ),
-    ExpandableSelectDelegate(
-      defaultLayout: SelectListLayout(),
-      entries: multiCategoryData,
-      selectionMode: SelectionMode.multiple,
-    ),
+    GridSelectDelegate(entries: gridData, crossAxisCount: 3),
+    WrapSelectDelegate(entries: wrapData, selectionMode: SelectionMode.multiple),
+    // ... one delegate per tab, in the same order
   ],
   onApplied: (tabData, selected) {
     // tabData is the PopupTabData; selected is the SelectEntries
-    print('onApplied: $tabData, $selected');
     print('toQueryMap: ${selected.toQueryMap()}');
-    print('toQueryParameters: ${selected.toQueryParameters()}');
   },
 );
 ```
@@ -422,7 +272,6 @@ final SelectEntries? result = await showSelect(
 );
 
 if (result != null) {
-  print('toQueryMap: ${result.toQueryMap()}');
   print('toQueryParameters: ${result.toQueryParameters()}');
 }
 ```
@@ -432,26 +281,10 @@ Any delegate works, and the header is configurable:
 ```dart
 await showSelect(
   context: context,
-  delegate: CascadingSelectDelegate(
-    entriesLoader: fetchCascadingData,
-    selectionMode: SelectionMode.multiple,
-    sideBarTheme: const SelectSideBarTheme(width: 120),
-    isScrollable: true,
-  ),
-);
-
-await showSelect(
-  context: context,
   delegate: TabNavSelectDelegate(
-    defaultLayout: SelectGridLayout(
-      crossAxisCount: 2,
-      childAspectRatio: 3.6,
-      mainAxisSpacing: 10,
-      crossAxisSpacing: 10,
-    ),
+    defaultLayout: SelectGridLayout(crossAxisCount: 2),
     entries: multiCategoryData,
     selectionMode: SelectionMode.multiple,
-    isScrollable: true,
   ),
   title: const Text('TabNavSelect'),
   trailing: const CloseButton(),
@@ -474,7 +307,6 @@ final SelectEntries? result = await showModalBottomSelect(
 );
 
 if (result != null) {
-  print('toQueryMap: ${result.toQueryMap()}');
   print('toQueryParameters: ${result.toQueryParameters()}');
 }
 ```
@@ -484,22 +316,8 @@ if (result != null) {
 ```dart
 await showModalBottomSelect(
   context: context,
-  delegate: GridSelectDelegate(
-    entries: gridData,
-    crossAxisCount: 3,
-    childAspectRatio: 3,
-    mainAxisSpacing: 10,
-    crossAxisSpacing: 10,
-  ),
-  title: const Text('GridSelect'),
-  centerTitle: false,
-  trailing: const CloseButton(),
-);
-
-await showModalBottomSelect(
-  context: context,
   delegate: SideNavSelectDelegate(
-    defaultLayout: SelectWrapLayout(spacing: 12, runSpacing: 12),
+    defaultLayout: SelectWrapLayout(spacing: 12),
     entries: multiCategoryData,
     selectionMode: SelectionMode.multiple,
   ),
@@ -516,17 +334,10 @@ Set `searchEnabled: true` on any delegate to render a `SelectSearchBar` above th
 ```dart
 CascadingSelectDelegate(
   entriesLoader: fetchCascadingData,
-  searchEnabled: true,
+  searchEnabled: true, // works on any delegate
   searchHintText: 'Search',
   searchDebounceDuration: const Duration(milliseconds: 300),
-  // searchPredicate: (entry, query) {
-  //   return entry.name?.contains(query) == true;
-  // },
-);
-
-ListSelectDelegate(
-  entries: listData,
-  searchEnabled: true,
+  // searchPredicate: (entry, query) => entry.name?.contains(query) == true,
 );
 ```
 
@@ -594,29 +405,16 @@ Values are percent-encoded by default; pass `encode: false` when the caller hand
 ```dart
 GridSelectDelegate(
   entries: gridData,
-  crossAxisCount: 3,
   selectedColor: Theme.of(context).colorScheme.primary,
   onSelectedColor: Theme.of(context).colorScheme.onPrimary,
-  gridTileTheme: const SelectGridTileTheme(
-    variant: SelectGridTileVariant.outlined,
-  ),
-  fieldTileTheme: const SelectFieldTileTheme(
-    variant: SelectFieldTileVariant.outlined,
-  ),
-);
-
-CascadingSelectDelegate(
-  entriesLoader: fetchCascadingData,
-  sideBarTheme: const SelectSideBarTheme(width: 120),
+  gridTileTheme: const SelectGridTileTheme(variant: SelectGridTileVariant.outlined),
 );
 
 PopupSelectBar(
   tabs: ...,
   selectDelegates: ...,
-  selectTheme: SelectThemeData(Theme.of(context)),
-  onApplied: (tabData, selected) {
-    // tabData is the PopupTabData; selected is the SelectEntries
-  },
+  selectTheme: SelectThemeData(Theme.of(context)), // overrides every tab's delegate
+  onApplied: (tabData, selected) {},
 );
 ```
 
@@ -649,22 +447,16 @@ MaterialApp(
   darkTheme: darkTheme,
   builder: (context, child) {
     final baseTheme = Theme.of(context);
-    final theme = baseTheme.copyWith(
-      extensions: <ThemeExtension<dynamic>>[
-        PopupSelectBarTheme(
-          overlayStyle: const SelectOverlayStyle(
-            barrierColor: Colors.black54,
-          ),
-          selectTheme: SelectThemeData(baseTheme),
-        ),
-        PopupSelectButtonTheme(
-          backgroundColor: baseTheme.colorScheme.primary,
-          foregroundColor: baseTheme.colorScheme.onPrimary,
-        ),
-      ],
-    );
     return Theme(
-      data: theme,
+      data: baseTheme.copyWith(
+        extensions: <ThemeExtension<dynamic>>[
+          PopupSelectBarTheme(selectTheme: SelectThemeData(baseTheme)),
+          PopupSelectButtonTheme(
+            backgroundColor: baseTheme.colorScheme.primary,
+            foregroundColor: baseTheme.colorScheme.onPrimary,
+          ),
+        ],
+      ),
       child: child ?? const SizedBox.shrink(),
     );
   },
