@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 /// Simulates a network round-trip so the playground exercises its real
 /// skeleton/loading states, mirroring the example app's `entry_data.dart`.
@@ -9,8 +12,9 @@ Future<void> _simulateNetworkDelay(int milliseconds) =>
 /// Hard-coded, language-independent select entries for the playground.
 ///
 /// One data set backs every delegate family regardless of the UI language.
-/// It is declared in plain Dart after `fl_select/example/lib/entry_data.dart`
-/// instead of being loaded from JSON assets.
+/// It is declared in plain Dart after `fl_select/example/lib/entry_data.dart`,
+/// except for the cascading sample which is loaded from the `assets/cascading.json`
+/// asset (a copy of `fl_select/example/assets/cascading.json`).
 ///
 /// Each sample exposes the trio the playground expects: a `fetch…Data()`
 /// entries loader, a `…SelectedData` initial selection and a `…ResetData`
@@ -38,9 +42,7 @@ class EntryRepository {
   /// Latest applied list selection, if any.
   SelectEntries? listResult;
 
-  SelectEntries get _listInitialSelected => <SelectTextEntry>{
-    SelectTextEntry.id(id: 'newest'),
-  };
+  SelectEntries get _listInitialSelected => <SelectEntry>{};
 
   /// List entries applied when the select opens.
   SelectEntries get listSelectedData => listResult ?? _listInitialSelected;
@@ -50,7 +52,7 @@ class EntryRepository {
 
   Future<SelectEntries> fetchListData() async {
     await _simulateNetworkDelay(250);
-    final entries = <SelectTextEntry>{
+    final entries = <SelectEntry>{
       SelectTextEntry.name(id: 'newest', name: 'Newest', immediate: true),
       SelectTextEntry.name(id: 'oldest', name: 'Oldest', immediate: true),
       SelectTextEntry.name(
@@ -75,82 +77,75 @@ class EntryRepository {
   }
 
   // -------------------------------------------------------------------------
-  // Counters — two counter categories for the Grid / Wrap delegates.
+  // Grid — flat entries for the Grid delegate.
   // -------------------------------------------------------------------------
 
-  /// Latest applied counters selection, if any.
-  SelectEntries? counterResult;
+  /// Latest applied grid selection, if any.
+  SelectEntries? gridResult;
 
-  SelectEntries get _counterInitialSelected => <SelectCategoryEntry>{
-    SelectCategoryEntry(
-      id: 'apples',
-      name: '',
-      children: {SelectTextEntry(parentId: 'apples', id: '2', name: '')},
-    ),
-    SelectCategoryEntry(
-      id: 'oranges',
-      name: '',
-      children: {SelectTextEntry(parentId: 'oranges', id: '1', name: '')},
-    ),
-  };
+  SelectEntries get _gridInitialSelected => <SelectEntry>{};
 
-  /// Counters entries applied when the select opens.
-  SelectEntries get counterSelectedData =>
-      counterResult ?? _counterInitialSelected;
+  /// List entries applied when the select opens.
+  SelectEntries get gridSelectedData => gridResult ?? _gridInitialSelected;
 
-  /// Counters entries restored by the reset action.
-  SelectEntries get counterResetData => <SelectCategoryEntry>{
-    SelectCategoryEntry(
-      id: 'apples',
-      name: '',
-      children: {SelectTextEntry.any(parentId: 'apples', name: '')},
-    ),
-    SelectCategoryEntry(
-      id: 'oranges',
-      name: '',
-      children: {SelectTextEntry.any(parentId: 'oranges', name: '')},
-    ),
-  };
+  /// List entries restored by the reset action.
+  SelectEntries get gridResetData => _gridInitialSelected;
 
-  Future<SelectEntries> fetchCounterData() async {
-    await _simulateNetworkDelay(450);
-    final entries = <SelectCategoryEntry>{
-      SelectCategoryEntry.children(
-        id: 'apples',
-        name: 'Apples',
-        selectionMode: SelectionMode.single,
-        layout: const SelectCounterLayout(),
-        children: {
-          SelectTextEntry.any(parentId: '', name: anyEntryText),
-          SelectTextEntry.name(id: '0', name: 'None'),
-          SelectTextEntry.name(id: '1', name: '1'),
-          SelectTextEntry.name(id: '2', name: '2'),
-          SelectTextEntry.name(id: '3', name: '3'),
-          SelectTextEntry.name(id: '4', name: '4'),
-          SelectTextEntry.name(id: '5', name: '5+'),
-        },
+  Future<SelectEntries> fetchGridData() async {
+    await _simulateNetworkDelay(250);
+    final entries = <SelectEntry>{
+      SelectRangeEntry.custom(
+        minHintText: noMinHintText,
+        maxHintText: noMaxHintText,
       ),
-      SelectCategoryEntry.children(
-        id: 'oranges',
-        name: 'Oranges',
-        selectionMode: SelectionMode.single,
-        layout: const SelectCounterLayout(),
-        children: {
-          SelectTextEntry.any(parentId: '', name: anyEntryText),
-          SelectTextEntry.name(id: '1', name: '1'),
-          SelectTextEntry.name(id: '2', name: '2'),
-          SelectTextEntry.name(id: '3', name: '3'),
-          SelectTextEntry.name(id: '4', name: '4'),
-          SelectTextEntry.name(id: '5', name: '5+'),
-        },
-      ),
+      SelectTextEntry.name(id: 'a', name: '0-100'),
+      SelectTextEntry.name(id: 'b', name: '100-500'),
+      SelectTextEntry.name(id: 'c', name: '500-1000'),
+      SelectTextEntry.name(id: 'd', name: '1000-2000'),
     };
-    debugPrint('counters length: ${entries.length}');
+    debugPrint('grid length: ${entries.length}');
     return entries;
   }
 
   // -------------------------------------------------------------------------
-  // Cascading — two-level hierarchy for the Cascading delegate.
+  // Wrap — flat entries for the Wrap delegate.
+  // -------------------------------------------------------------------------
+
+  /// Latest applied grid selection, if any.
+  SelectEntries? wrapResult;
+
+  SelectEntries get _wrapInitialSelected => <SelectEntry>{};
+
+  /// List entries applied when the select opens.
+  SelectEntries get wrapSelectedData => wrapResult ?? _wrapInitialSelected;
+
+  /// List entries restored by the reset action.
+  SelectEntries get wrapResetData => _wrapInitialSelected;
+
+  Future<SelectEntries> fetchWrapData() async {
+    await _simulateNetworkDelay(250);
+    final entries = <SelectEntry>{
+      SelectTextEntry.name(id: 'a', name: 'Tiger'),
+      SelectTextEntry.name(id: 'b', name: 'Lion'),
+      SelectTextEntry.name(id: 'c', name: 'Bear'),
+      SelectTextEntry.name(id: 'd', name: 'Elephant'),
+      SelectTextEntry.name(id: 'e', name: 'Monkey'),
+      SelectTextEntry.name(id: 'f', name: 'Dog'),
+      SelectTextEntry.name(id: 'g', name: 'Cat'),
+      SelectTextEntry.name(id: 'h', name: 'Pig'),
+      SelectTextEntry.name(id: 'i', name: 'Horse'),
+      SelectTextEntry.name(id: 'j', name: 'Sheep'),
+      SelectTextEntry.name(id: 'k', name: 'Cow'),
+      SelectTextEntry.name(id: 'l', name: 'Chicken'),
+      SelectTextEntry.name(id: 'm', name: 'Duck'),
+      SelectTextEntry.name(id: 'n', name: 'Penguin'),
+    };
+    debugPrint('wrap length: ${entries.length}');
+    return entries;
+  }
+
+  // -------------------------------------------------------------------------
+  // Cascading — multi-level hierarchy loaded from `assets/cascading.json`.
   // -------------------------------------------------------------------------
 
   /// Latest applied cascading selection, if any.
@@ -158,9 +153,11 @@ class EntryRepository {
 
   SelectEntries get _cascadingInitialSelected => <SelectCategoryEntry>{
     SelectCategoryEntry(
-      id: 'animals',
+      id: 'residential',
       name: '',
-      children: {SelectTextEntry.any(parentId: 'animals', name: '')},
+      children: {
+        SelectTextEntry.any(parentId: 'residential', name: anyEntryText),
+      },
     ),
   };
 
@@ -173,63 +170,44 @@ class EntryRepository {
 
   Future<SelectEntries> fetchCascadingData() async {
     await _simulateNetworkDelay(250);
-    final entries = <SelectCategoryEntry>{
-      SelectCategoryEntry.children(
-        id: 'animals',
-        name: 'Animals',
-        selectionMode: SelectionMode.multiple,
-        children: {
-          SelectTextEntry.any(
-            parentId: '',
-            name: anyEntryText,
-            immediate: true,
-          ),
-          SelectTextEntry.children(
-            id: 'mammals',
-            name: 'Mammals',
+    final jsonString = await rootBundle.loadString('assets/cascading.json');
+    final entries = cascadingFromJson(jsonString)
+        .map(
+          (category) => SelectCategoryEntry.children(
+            id: category.id!,
+            name: category.name!,
+            selectionMode: SelectionMode.multiple,
             children: {
-              SelectTextEntry.name(id: 'tiger', name: 'Tiger'),
-              SelectTextEntry.name(id: 'lion', name: 'Lion'),
-              SelectTextEntry.name(id: 'bear', name: 'Bear'),
-              SelectTextEntry.name(id: 'elephant', name: 'Elephant'),
+              SelectTextEntry.any(
+                parentId: '',
+                name: anyEntryText,
+                immediate: true,
+              ),
+              ...?category.data?.map(
+                (node) => _cascadingTextEntry(node, category.id!),
+              ),
             },
           ),
-          SelectTextEntry.children(
-            id: 'birds',
-            name: 'Birds',
-            children: {
-              SelectTextEntry.name(id: 'penguin', name: 'Penguin'),
-              SelectTextEntry.name(id: 'eagle', name: 'Eagle'),
-              SelectTextEntry.name(id: 'parrot', name: 'Parrot'),
-              SelectTextEntry.name(id: 'owl', name: 'Owl'),
-            },
-          ),
-          SelectTextEntry.children(
-            id: 'reptiles',
-            name: 'Reptiles',
-            children: {
-              SelectTextEntry.name(id: 'crocodile', name: 'Crocodile'),
-              SelectTextEntry.name(id: 'turtle', name: 'Turtle'),
-              SelectTextEntry.name(id: 'snake', name: 'Snake'),
-              SelectTextEntry.name(id: 'lizard', name: 'Lizard'),
-            },
-          ),
-          SelectTextEntry.children(
-            id: 'sea_life',
-            name: 'Sea Life',
-            children: {
-              SelectTextEntry.name(id: 'dolphin', name: 'Dolphin'),
-              SelectTextEntry.name(id: 'shark', name: 'Shark'),
-              SelectTextEntry.name(id: 'whale', name: 'Whale'),
-              SelectTextEntry.name(id: 'octopus', name: 'Octopus'),
-            },
-          ),
-        },
-      ),
-    };
+        )
+        .toSet();
     debugPrint('cascading length: ${entries.length}');
     return entries;
   }
+
+  /// Recursively turns a [CascadingData] node into a [SelectTextEntry].
+  ///
+  /// The cascading delegate renders one column per level, so every nested
+  /// `data` array becomes another level of children.
+  SelectTextEntry _cascadingTextEntry(CascadingData node, String parentId) =>
+      SelectTextEntry(
+        parentId: parentId,
+        id: node.id!,
+        name: node.name!,
+        enabled: node.enabled ?? true,
+        children: node.data
+            ?.map((child) => _cascadingTextEntry(child, node.id!))
+            .toSet(),
+      );
 
   // -------------------------------------------------------------------------
   // Two-level — categories for the TabNav / SideNav / Expandable delegates.
@@ -252,89 +230,59 @@ class EntryRepository {
     await _simulateNetworkDelay(850);
     final entries = <SelectCategoryEntry>{
       SelectCategoryEntry.children(
-        id: 'category',
-        name: 'Category',
-        selectionMode: SelectionMode.multiple,
-        layout: const SelectGridLayout(
-          crossAxisCount: 2,
-          childAspectRatio: 5,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
+        id: 'cate1',
+        name: 'Sport',
         children: {
-          SelectTextEntry.name(id: 'phones', name: 'Phones'),
-          SelectTextEntry.name(id: 'laptops', name: 'Laptops'),
-          SelectTextEntry.name(id: 'tablets', name: 'Tablets'),
-          SelectTextEntry.name(id: 'watches', name: 'Watches'),
-          SelectTextEntry.name(id: 'headphones', name: 'Headphones'),
-          SelectTextEntry.name(id: 'cameras', name: 'Cameras'),
+          SelectTextEntry.name(id: 'a', name: 'Football'),
+          SelectTextEntry.name(id: 'b', name: 'Basketball'),
+          SelectTextEntry.name(id: 'c', name: 'Baseball'),
+          SelectTextEntry.name(id: 'd', name: 'Tennis'),
         },
+        selectionMode: SelectionMode.single,
+        footer: SelectTextEntry.children(
+          id: 'c1-f',
+          name: 'Letter Grade',
+          children: {
+            SelectTextEntry.name(id: 'f-a', name: 'A'),
+            SelectTextEntry.name(id: 'f-b', name: 'B'),
+            SelectTextEntry.name(id: 'f-c', name: 'C'),
+            SelectTextEntry.name(id: 'f-d', name: 'D'),
+            SelectTextEntry.name(id: 'f-d', name: 'E'),
+          },
+        ),
+        footerSelectionMode: SelectionMode.single,
       ),
       SelectCategoryEntry.children(
-        id: 'price',
-        name: 'Price',
-        selectionMode: SelectionMode.multiple,
-        layout: const SelectRangeLayout(toText: 'to'),
+        id: 'cate2',
+        name: 'Cuisine',
+        header: SelectTextEntry.children(
+          id: 'c2-h',
+          name: 'Letter Grade',
+          children: {
+            SelectTextEntry.name(id: 'h-a', name: '1'),
+            SelectTextEntry.name(id: 'h-b', name: '2'),
+            SelectTextEntry.name(id: 'h-c', name: '3'),
+            SelectTextEntry.name(id: 'h-d', name: '4'),
+            SelectTextEntry.name(id: 'h-d', name: '5'),
+          },
+        ),
+        headerSelectionMode: SelectionMode.single,
         children: {
-          SelectIntEntry(
-            id: '0-25',
-            name: '\$0-\$25',
-            min: 0,
-            max: 25,
-            divisions: 40,
-          ),
-          SelectIntEntry(
-            id: '25-50',
-            name: '\$25-\$50',
-            min: 25,
-            max: 50,
-            divisions: 40,
-          ),
-          SelectIntEntry(
-            id: '50-100',
-            name: '\$50-\$100',
-            min: 50,
-            max: 100,
-            divisions: 40,
-          ),
-          SelectIntEntry(
-            id: '100-250',
-            name: '\$100-\$250',
-            min: 100,
-            max: 250,
-            divisions: 40,
-          ),
-          SelectIntEntry(
-            id: '250-500',
-            name: '\$250-\$500',
-            min: 250,
-            max: 500,
-            divisions: 40,
-          ),
-          SelectIntEntry(
-            id: '500-1000',
-            name: '\$500-\$1000',
-            min: 500,
-            max: 1000,
-            divisions: 40,
-          ),
+          SelectTextEntry.name(id: 'a', name: 'Chinese'),
+          SelectTextEntry.name(id: 'b', name: 'French'),
+          SelectTextEntry.name(id: 'c', name: 'Indian'),
+          SelectTextEntry.name(id: 'd', name: 'Turkish'),
+        },
+        selectionMode: SelectionMode.single,
+      ),
+      SelectCategoryEntry.children(
+        id: 'cate3',
+        name: 'Storage (GB)',
+        children: {
           SelectIntEntry.custom(
             minHintText: noMinHintText,
             maxHintText: noMaxHintText,
           ),
-        },
-      ),
-      SelectCategoryEntry.children(
-        id: 'storage',
-        name: 'Storage (GB)',
-        selectionMode: SelectionMode.multiple,
-        layout: const SelectGridLayout(
-          crossAxisCount: 3,
-          childAspectRatio: 3,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        children: {
           SelectRangeEntry(id: '0-64', name: '0-64', min: 0, max: 64),
           SelectRangeEntry(id: '64-128', name: '64-128', min: 64, max: 128),
           SelectRangeEntry(id: '128-256', name: '128-256', min: 128, max: 256),
@@ -351,45 +299,90 @@ class EntryRepository {
             min: 1024,
             max: 2048,
           ),
-          SelectIntEntry.custom(
+        },
+        selectionMode: SelectionMode.single,
+      ),
+      SelectCategoryEntry.children(
+        id: 'cate4',
+        name: 'Animal',
+        children: {
+          SelectTextEntry.name(id: 'a', name: 'Tiger'),
+          SelectTextEntry.name(id: 'b', name: 'Lion'),
+          SelectTextEntry.name(id: 'c', name: 'Bear'),
+          SelectTextEntry.name(id: 'd', name: 'Elephant'),
+          SelectTextEntry.name(id: 'e', name: 'Monkey'),
+          SelectTextEntry.name(id: 'f', name: 'Dog'),
+          SelectTextEntry.name(id: 'g', name: 'Cat'),
+          SelectTextEntry.name(id: 'h', name: 'Pig'),
+          SelectTextEntry.name(id: 'i', name: 'Horse'),
+          SelectTextEntry.name(id: 'j', name: 'Sheep'),
+          SelectTextEntry.name(id: 'k', name: 'Cow'),
+          SelectTextEntry.name(id: 'l', name: 'Chicken'),
+          SelectTextEntry.name(id: 'm', name: 'Duck'),
+          SelectTextEntry.name(id: 'n', name: 'Pig'),
+        },
+      ),
+      SelectCategoryEntry.children(
+        id: 'cate5',
+        name: 'Price (Dollar)',
+        children: {
+          SelectRangeEntry(
+            id: 'a',
+            name: '0-2000000',
+            min: 0,
+            max: 2000000,
+            divisions: 80,
+          ),
+          SelectRangeEntry.custom(
             minHintText: noMinHintText,
             maxHintText: noMaxHintText,
           ),
         },
-      ),
-      SelectCategoryEntry.children(
-        id: 'features',
-        name: 'Features',
-        selectionMode: SelectionMode.multiple,
-        layout: const SelectGridLayout(
-          crossAxisCount: 3,
-          childAspectRatio: 3,
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-        ),
-        children: {
-          SelectTextEntry.name(id: 'wireless', name: 'Wireless'),
-          SelectTextEntry.name(id: 'waterproof', name: 'Waterproof'),
-          SelectTextEntry.name(id: 'portable', name: 'Portable'),
-          SelectTextEntry.name(id: 'rechargeable', name: 'Rechargeable'),
-          SelectTextEntry.name(id: 'foldable', name: 'Foldable'),
-          SelectTextEntry.name(id: 'lightweight', name: 'Lightweight'),
-        },
-      ),
-      SelectCategoryEntry.children(
-        id: 'availability',
-        name: 'Availability',
         selectionMode: SelectionMode.single,
-        layout: const SelectWrapLayout(),
+        layout: const SelectRangeLayout(),
+      ),
+      SelectCategoryEntry.children(
+        id: 'cate6',
+        name: 'Counter',
         children: {
-          SelectTextEntry.name(id: 'in_stock', name: 'In Stock'),
-          SelectTextEntry.name(id: 'pre_order', name: 'Pre-order'),
-          SelectTextEntry.name(id: 'backordered', name: 'Backordered'),
-          SelectTextEntry.name(id: 'discontinued', name: 'Discontinued'),
+          SelectTextEntry.any(parentId: 'cate6', name: anyEntryText),
+          SelectTextEntry.name(id: 'a', name: '1'),
+          SelectTextEntry.name(id: 'b', name: '2'),
+          SelectTextEntry.name(id: 'c', name: '3'),
+          SelectTextEntry.name(id: 'd', name: '4'),
+          SelectTextEntry.name(id: 'e', name: '5'),
+          SelectTextEntry.name(id: 'e', name: '5+'),
         },
+        selectionMode: SelectionMode.single,
+        layout: const SelectCounterLayout(),
       ),
     };
     debugPrint('two-level length: ${entries.length}');
     return entries;
   }
 }
+
+/// Recursive node of the cascading tree stored in `assets/cascading.json`.
+class CascadingData {
+  CascadingData({this.id, this.name, this.enabled, this.data});
+
+  String? id;
+  String? name;
+  bool? enabled;
+  List<CascadingData>? data;
+
+  factory CascadingData.fromJson(Map<String, dynamic> json) => CascadingData(
+    id: json['id'] as String?,
+    name: json['name'] as String?,
+    enabled: json['enabled'] as bool?,
+    data: (json['data'] as List<dynamic>?)
+        ?.map((e) => CascadingData.fromJson(e as Map<String, dynamic>))
+        .toList(),
+  );
+}
+
+/// Decodes the `assets/cascading.json` payload into [CascadingData] nodes.
+List<CascadingData> cascadingFromJson(String str) =>
+    (json.decode(str) as List<dynamic>)
+        .map((e) => CascadingData.fromJson(e as Map<String, dynamic>))
+        .toList();

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import 'generated/l10n/app_localizations.dart';
+import 'playground_params.dart';
 
 /// Supported UI languages for the playground, aligned with the locales
 /// supported by `fl_select`'s built-in translations (13 locales). The demo
@@ -118,17 +119,35 @@ class PlaygroundL10n {
   String get tileVariant => _l10n.tileVariant;
   String get seedColor => _l10n.seedColor;
 
+  // Geometry sliders. The value is part of the label so the current setting
+  // is readable without looking at the slider thumb.
   String columns(int value) => _l10n.columns(value);
   String aspectRatio(String value) => _l10n.aspectRatio(value);
+  String columnSpacing(int value) => _l10n.columnSpacing(value);
+  String rowSpacing(int value) => _l10n.rowSpacing(value);
   String spacing(int value) => _l10n.spacing(value);
+  String runSpacing(int value) => _l10n.runSpacing(value);
+
+  // Popup bar / button parameters.
+  String get scrollable => _l10n.scrollable;
+  String get direction => _l10n.direction;
+  String get directionBelow => _l10n.directionBelow;
+  String get directionAbove => _l10n.directionAbove;
+  String get directionAdaptive => _l10n.directionAdaptive;
+  String get buttonVariant => _l10n.buttonVariant;
 
   // Selection mode segments.
   String get single => _l10n.single;
   String get multiple => _l10n.multiple;
 
-  // Tile variant segments.
+  // Search-bar visibility switch.
+  String get searchEnabled => _l10n.searchEnabled;
+
+  // Tile variant & button variant segments.
   String get filled => _l10n.filled;
   String get outlined => _l10n.outlined;
+  String get elevated => _l10n.elevated;
+  String get text => _l10n.text;
 
   // Material 3 switch.
   String get material3 => 'Material 3';
@@ -164,26 +183,22 @@ class PlaygroundL10n {
   String get tapBarHint => _l10n.tapBarHint;
   String get openSelect => _l10n.openSelect;
 
-  // Per-delegate open buttons (Dialog / Bottom Sheet entry points).
-  String get openListSelect => _l10n.openListSelect;
-  String get openGridSelect => _l10n.openGridSelect;
-  String get openWrapSelect => _l10n.openWrapSelect;
-  String get openCascadingSelect => _l10n.openCascadingSelect;
-  String get openTabNavSelect => _l10n.openTabNavSelect;
-  String get openSideNavSelect => _l10n.openSideNavSelect;
-  String get openExpandableSelect => _l10n.openExpandableSelect;
-
-  // Per-delegate titles for the Dialog / Bottom Sheet selects.
-  String get titleListSelect => _l10n.titleListSelect;
-  String get titleGridSelect => _l10n.titleGridSelect;
-  String get titleWrapSelect => _l10n.titleWrapSelect;
-  String get titleCascadingSelect => _l10n.titleCascadingSelect;
-  String get titleTabNavSelect => _l10n.titleTabNavSelect;
-  String get titleSideNavSelect => _l10n.titleSideNavSelect;
-  String get titleExpandableSelect => _l10n.titleExpandableSelect;
+  // Per-delegate titles, used as the header of the Dialog / Bottom Sheet
+  // select and as the label of the PopupSelectButton trigger.
+  String titleOf(Delegate delegate) => switch (delegate) {
+    Delegate.list => _l10n.listSelect,
+    Delegate.grid => _l10n.gridSelect,
+    Delegate.wrap => _l10n.wrapSelect,
+    Delegate.cascading => _l10n.cascadingSelect,
+    Delegate.tabNav => _l10n.tabNavSelect,
+    Delegate.sideNav => _l10n.sideNavSelect,
+    Delegate.expandable => _l10n.expandableSelect,
+  };
 
   // Callback result panel.
   String get resultPanelTitle => _l10n.resultPanelTitle;
+  String get resultPanelExpand => _l10n.resultPanelExpand;
+  String get resultPanelCollapse => _l10n.resultPanelCollapse;
   String get onChangedLabel => 'onChanged';
   String get onAppliedLabel => 'onApplied';
 

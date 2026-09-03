@@ -57,6 +57,21 @@ class AppLocalizationsJa extends AppLocalizations {
   }
 
   @override
+  String columnSpacing(int value) {
+    return '列間隔（$value）';
+  }
+
+  @override
+  String rowSpacing(int value) {
+    return '行間隔（$value）';
+  }
+
+  @override
+  String runSpacing(int value) {
+    return '折り返し間隔（$value）';
+  }
+
+  @override
   String get single => '単一';
 
   @override
@@ -67,6 +82,33 @@ class AppLocalizationsJa extends AppLocalizations {
 
   @override
   String get outlined => '枠線';
+
+  @override
+  String get elevated => '立体';
+
+  @override
+  String get text => 'テキスト';
+
+  @override
+  String get scrollable => 'スクロール可';
+
+  @override
+  String get searchEnabled => '検索';
+
+  @override
+  String get direction => '方向';
+
+  @override
+  String get directionBelow => '下';
+
+  @override
+  String get directionAbove => '上';
+
+  @override
+  String get directionAdaptive => '自動';
+
+  @override
+  String get buttonVariant => 'ボタンスタイル';
 
   @override
   String get brightness => '明暗';
@@ -132,46 +174,31 @@ class AppLocalizationsJa extends AppLocalizations {
   String get openSelect => 'セレクターを開く';
 
   @override
-  String get openListSelect => 'リストセレクターを開く';
+  String get listSelect => 'リストセレクター';
 
   @override
-  String get openGridSelect => 'グリッドセレクターを開く';
+  String get gridSelect => 'グリッドセレクター';
 
   @override
-  String get openWrapSelect => '折り返しセレクターを開く';
+  String get wrapSelect => '折り返しセレクター';
 
   @override
-  String get openCascadingSelect => 'カスケードセレクターを開く';
+  String get cascadingSelect => 'カスケードセレクター';
 
   @override
-  String get openTabNavSelect => 'タブナビセレクターを開く';
+  String get tabNavSelect => 'タブナビセレクター';
 
   @override
-  String get openSideNavSelect => 'サイドナビセレクターを開く';
+  String get sideNavSelect => 'サイドナビセレクター';
 
   @override
-  String get openExpandableSelect => '展開セレクターを開く';
+  String get expandableSelect => '展開セレクター';
 
   @override
-  String get titleListSelect => 'リストセレクター';
+  String get resultPanelExpand => '展開';
 
   @override
-  String get titleGridSelect => 'グリッドセレクター';
-
-  @override
-  String get titleWrapSelect => '折り返しセレクター';
-
-  @override
-  String get titleCascadingSelect => 'カスケードセレクター';
-
-  @override
-  String get titleTabNavSelect => 'タブナビセレクター';
-
-  @override
-  String get titleSideNavSelect => 'サイドナビセレクター';
-
-  @override
-  String get titleExpandableSelect => '展開セレクター';
+  String get resultPanelCollapse => '折りたたむ';
 
   @override
   String get resultPanelTitle => 'コールバック結果';

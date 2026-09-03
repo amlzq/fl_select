@@ -57,6 +57,21 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String columnSpacing(int value) {
+    return 'Espacement des colonnes ($value)';
+  }
+
+  @override
+  String rowSpacing(int value) {
+    return 'Espacement des lignes ($value)';
+  }
+
+  @override
+  String runSpacing(int value) {
+    return 'Espacement des retours à la ligne ($value)';
+  }
+
+  @override
   String get single => 'Unique';
 
   @override
@@ -67,6 +82,33 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get outlined => 'Contour';
+
+  @override
+  String get elevated => 'En relief';
+
+  @override
+  String get text => 'Texte';
+
+  @override
+  String get scrollable => 'Défilable';
+
+  @override
+  String get searchEnabled => 'Recherche';
+
+  @override
+  String get direction => 'Direction';
+
+  @override
+  String get directionBelow => 'Vers le bas';
+
+  @override
+  String get directionAbove => 'Vers le haut';
+
+  @override
+  String get directionAdaptive => 'Adaptatif';
+
+  @override
+  String get buttonVariant => 'Variante de bouton';
 
   @override
   String get brightness => 'Luminosité';
@@ -132,46 +174,31 @@ class AppLocalizationsFr extends AppLocalizations {
   String get openSelect => 'Ouvrir le sélecteur';
 
   @override
-  String get openListSelect => 'Ouvrir le sélecteur de liste';
+  String get listSelect => 'Sélecteur de liste';
 
   @override
-  String get openGridSelect => 'Ouvrir le sélecteur de grille';
+  String get gridSelect => 'Sélecteur de grille';
 
   @override
-  String get openWrapSelect => 'Ouvrir le sélecteur de flux';
+  String get wrapSelect => 'Sélecteur de flux';
 
   @override
-  String get openCascadingSelect => 'Ouvrir le sélecteur en cascade';
+  String get cascadingSelect => 'Sélecteur en cascade';
 
   @override
-  String get openTabNavSelect => 'Ouvrir le sélecteur à onglets';
+  String get tabNavSelect => 'Sélecteur à onglets';
 
   @override
-  String get openSideNavSelect => 'Ouvrir le sélecteur latéral';
+  String get sideNavSelect => 'Sélecteur latéral';
 
   @override
-  String get openExpandableSelect => 'Ouvrir le sélecteur dépliable';
+  String get expandableSelect => 'Sélecteur dépliable';
 
   @override
-  String get titleListSelect => 'Sélecteur de liste';
+  String get resultPanelExpand => 'Déplier';
 
   @override
-  String get titleGridSelect => 'Sélecteur de grille';
-
-  @override
-  String get titleWrapSelect => 'Sélecteur de flux';
-
-  @override
-  String get titleCascadingSelect => 'Sélecteur en cascade';
-
-  @override
-  String get titleTabNavSelect => 'Sélecteur à onglets';
-
-  @override
-  String get titleSideNavSelect => 'Sélecteur latéral';
-
-  @override
-  String get titleExpandableSelect => 'Sélecteur dépliable';
+  String get resultPanelCollapse => 'Replier';
 
   @override
   String get resultPanelTitle => 'Résultats des callbacks';

@@ -2,7 +2,7 @@ import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
 
 /// Where the select is rendered inside the simulated phone.
-enum EntryPoint { view, popupBar, popupButton, dialog, bottomSheet }
+enum EntryPoint { view, bar, button, dialog, bottomSheet }
 
 /// Select delegate family.
 enum Delegate { list, grid, wrap, cascading, tabNav, sideNav, expandable }
@@ -10,44 +10,29 @@ enum Delegate { list, grid, wrap, cascading, tabNav, sideNav, expandable }
 /// Visual style of grid / chip tiles.
 enum TileVariant { filled, outlined }
 
-/// Default [PlaygroundParams.crossAxisCount] per [Delegate]. Only the
-/// column-based delegates own the value (see [PlaygroundControlSpec.
-/// isColumnBased]): grid defaults to 4 columns, sideNav to 2 (the side bar
-/// takes width), tabNav / expandable to 3 (the library's tab-nav default);
-/// the others fall back to 4.
-const Map<Delegate, int> defaultCrossAxisCountByDelegate = <Delegate, int>{
-  Delegate.list: 4,
-  Delegate.grid: 4,
-  Delegate.wrap: 4,
-  Delegate.cascading: 4,
-  Delegate.tabNav: 3,
-  Delegate.sideNav: 2,
-  Delegate.expandable: 3,
-};
-
-/// Default [PlaygroundParams.childAspectRatio] per [Delegate]. Only the
-/// column-based delegates own the value; sideNav pairs its 2-column grid
-/// with shorter tiles (3.0), the others fall back to 2.5.
-const Map<Delegate, double> defaultChildAspectRatioByDelegate =
-    <Delegate, double>{
-      Delegate.list: 2.5,
-      Delegate.grid: 2.5,
-      Delegate.wrap: 2.5,
-      Delegate.cascading: 2.5,
-      Delegate.tabNav: 2.5,
-      Delegate.sideNav: 3.0,
-      Delegate.expandable: 2.5,
-    };
-
 /// All tunable parameters of the interactive demo, held in a single immutable
 /// value so the controls panel can replace it in one [setState] call.
 class PlaygroundParams {
   final EntryPoint entryPoint;
   final Delegate delegate;
   final SelectionMode selectionMode;
+
+  /// Geometry of [GridSelectDelegate]: column count, tile aspect ratio and
+  /// the two gutters.
   final int crossAxisCount;
   final double childAspectRatio;
+  final double crossAxisSpacing;
+  final double mainAxisSpacing;
+
+  /// Geometry of [WrapSelectDelegate]: the chip gaps within a row and
+  /// between rows.
   final double spacing;
+  final double runSpacing;
+
+  /// [CascadingSelectDelegate.isScrollable]: whether the cascading columns
+  /// scroll horizontally instead of dividing the available width equally.
+  final bool cascadingScrollable;
+
   final TileVariant tileVariant;
   final Color seedColor;
   final bool useMaterial3;
@@ -64,6 +49,22 @@ class PlaygroundParams {
   /// [showModalBottomSelect].
   final bool centerTitle;
 
+  /// [PopupSelectBar.isScrollable]: whether the bar's tabs scroll
+  /// horizontally instead of dividing the available width equally.
+  final bool isScrollable;
+
+  /// [PopupSelectDirection] of the overlay opened by [PopupSelectBar] /
+  /// [PopupSelectButton].
+  final PopupSelectDirection direction;
+
+  /// [PopupSelectButton.variant] when the entry point is
+  /// [EntryPoint.button].
+  final PopupSelectButtonVariant buttonVariant;
+
+  /// [SelectDelegate.searchEnabled]: whether the select shows a search bar
+  /// that filters the displayed entries (via `searchPredicate`).
+  final bool searchEnabled;
+
   /// Explicit brightness of the simulated phone preview. When `null`, the
   /// preview follows the app's resolved brightness (the [ThemeMode] set by the
   /// top-right button, including `system`). This keeps the independent-preview
@@ -76,10 +77,18 @@ class PlaygroundParams {
     required this.selectionMode,
     required this.crossAxisCount,
     required this.childAspectRatio,
+    required this.crossAxisSpacing,
+    required this.mainAxisSpacing,
     required this.spacing,
+    required this.runSpacing,
+    this.cascadingScrollable = false,
     required this.tileVariant,
     required this.seedColor,
     required this.useMaterial3,
+    required this.isScrollable,
+    required this.direction,
+    required this.buttonVariant,
+    this.searchEnabled = true,
     this.headerLeading = false,
     this.headerTrailing = false,
     this.centerTitle = true,
@@ -92,10 +101,18 @@ class PlaygroundParams {
     SelectionMode? selectionMode,
     int? crossAxisCount,
     double? childAspectRatio,
+    double? crossAxisSpacing,
+    double? mainAxisSpacing,
     double? spacing,
+    double? runSpacing,
+    bool? cascadingScrollable,
     TileVariant? tileVariant,
     Color? seedColor,
     bool? useMaterial3,
+    bool? isScrollable,
+    PopupSelectDirection? direction,
+    PopupSelectButtonVariant? buttonVariant,
+    bool? searchEnabled,
     bool? headerLeading,
     bool? headerTrailing,
     bool? centerTitle,
@@ -110,10 +127,18 @@ class PlaygroundParams {
       selectionMode: selectionMode ?? this.selectionMode,
       crossAxisCount: crossAxisCount ?? this.crossAxisCount,
       childAspectRatio: childAspectRatio ?? this.childAspectRatio,
+      crossAxisSpacing: crossAxisSpacing ?? this.crossAxisSpacing,
+      mainAxisSpacing: mainAxisSpacing ?? this.mainAxisSpacing,
       spacing: spacing ?? this.spacing,
+      runSpacing: runSpacing ?? this.runSpacing,
+      cascadingScrollable: cascadingScrollable ?? this.cascadingScrollable,
       tileVariant: tileVariant ?? this.tileVariant,
       seedColor: seedColor ?? this.seedColor,
       useMaterial3: useMaterial3 ?? this.useMaterial3,
+      isScrollable: isScrollable ?? this.isScrollable,
+      direction: direction ?? this.direction,
+      buttonVariant: buttonVariant ?? this.buttonVariant,
+      searchEnabled: searchEnabled ?? this.searchEnabled,
       headerLeading: headerLeading ?? this.headerLeading,
       headerTrailing: headerTrailing ?? this.headerTrailing,
       centerTitle: centerTitle ?? this.centerTitle,
@@ -142,17 +167,32 @@ enum PlaygroundControl {
   /// Single vs. multiple selection.
   selectionMode,
 
-  /// Filled vs. outlined tiles.
+  /// [SelectDelegate.searchEnabled] search-bar switch (every delegate).
+  searchEnabled,
+
+  /// Filled vs. outlined tiles (grid tiles / wrap chips only).
   tileVariant,
 
-  /// Grid column count.
+  /// [GridSelectDelegate.crossAxisCount].
   crossAxisCount,
 
-  /// Grid tile aspect ratio.
+  /// [GridSelectDelegate.childAspectRatio].
   childAspectRatio,
 
-  /// Grid gutter between tiles.
+  /// [GridSelectDelegate.crossAxisSpacing].
+  crossAxisSpacing,
+
+  /// [GridSelectDelegate.mainAxisSpacing].
+  mainAxisSpacing,
+
+  /// [WrapSelectDelegate.spacing].
   spacing,
+
+  /// [WrapSelectDelegate.runSpacing].
+  runSpacing,
+
+  /// [CascadingSelectDelegate.isScrollable].
+  cascadingScrollable,
 
   /// Theme seed color swatches.
   seedColor,
@@ -162,6 +202,15 @@ enum PlaygroundControl {
 
   /// Material 3 switch.
   useMaterial3,
+
+  /// [PopupSelectBar.isScrollable].
+  isScrollable,
+
+  /// [PopupSelectDirection] of the bar / button overlay.
+  direction,
+
+  /// [PopupSelectButton.variant].
+  buttonVariant,
 
   /// Header leading widget switch (Dialog / Bottom Sheet only).
   headerLeading,
@@ -176,23 +225,26 @@ enum PlaygroundControl {
 /// Declares which [PlaygroundControl]s the controls panel shows, scoped along
 /// two axes:
 ///
-/// - common (公共): controls shared by every entry point — selection mode,
-///   tile variant and the theme controls.
-/// - entry-point private (私有): the delegate picker only drives the inline
-///   [SelectView]; the popup / dialog entry points render all four delegate
-///   families at once with their own per-family defaults.
-/// - delegate private (私有): the grid geometry sliders (Columns / Aspect
-///   Ratio) belong to the column-based delegates only — [Delegate.grid] and
-///   the two-level delegates ([Delegate.tabNav], [Delegate.sideNav],
-///   [Delegate.expandable]). The others carry no such parameters, so the
-///   sliders hide while they are active.
+/// - common (公共): controls shared by every entry point — selection mode and
+///   the theme controls.
+/// - entry-point private (私有): the bar exposes its own [PopupSelectBar]
+///   parameters, the button its [PopupSelectButton] ones, and the dialog /
+///   bottom sheet the header switches of `showSelect` / `showModalBottomSelect`.
+/// - delegate private (私有): the delegate picker drives every entry point
+///   except the bar (which renders all seven delegate families at once as
+///   tabs); grid and wrap carry geometry parameters and consume a tile
+///   variant, and cascading exposes its column scroll mode. The other
+///   families hide the whole group.
+///
+/// Controls that the active combination does not support are hidden entirely
+/// rather than disabled.
 abstract final class PlaygroundControlSpec {
   const PlaygroundControlSpec._();
 
   /// Controls shared by every entry point, in panel display order.
   static const List<PlaygroundControl> commonControls = <PlaygroundControl>[
     PlaygroundControl.selectionMode,
-    PlaygroundControl.tileVariant,
+    PlaygroundControl.searchEnabled,
     PlaygroundControl.brightness,
     PlaygroundControl.seedColor,
     PlaygroundControl.useMaterial3,
@@ -202,7 +254,16 @@ abstract final class PlaygroundControlSpec {
   /// Entry points missing from this map expose the common controls only.
   static const Map<EntryPoint, List<PlaygroundControl>>
   entryPointPrivateControls = <EntryPoint, List<PlaygroundControl>>{
-    EntryPoint.view: <PlaygroundControl>[PlaygroundControl.delegate],
+    // The bar renders one tab per delegate family, so there is no single
+    // "active delegate" to tune; its own parameters take the slot instead.
+    EntryPoint.bar: <PlaygroundControl>[
+      PlaygroundControl.isScrollable,
+      PlaygroundControl.direction,
+    ],
+    EntryPoint.button: <PlaygroundControl>[
+      PlaygroundControl.buttonVariant,
+      PlaygroundControl.direction,
+    ],
     // The dialog / bottom sheet entry points additionally expose the header
     // (leading / trailing / centerTitle) parameters of showSelect /
     // showModalBottomSelect.
@@ -218,30 +279,42 @@ abstract final class PlaygroundControlSpec {
     ],
   };
 
-  /// Controls private to the column-based delegates, in panel display order.
-  static const List<PlaygroundControl> columnBasedDelegateControls =
+  /// Controls private to specific delegates, in panel display order.
+  /// Delegates missing from this map carry no private controls.
+  static const Map<Delegate, List<PlaygroundControl>> delegatePrivateControls =
+      <Delegate, List<PlaygroundControl>>{
+        Delegate.grid: <PlaygroundControl>[
+          PlaygroundControl.crossAxisCount,
+          PlaygroundControl.childAspectRatio,
+          PlaygroundControl.crossAxisSpacing,
+          PlaygroundControl.mainAxisSpacing,
+          PlaygroundControl.tileVariant,
+        ],
+        Delegate.wrap: <PlaygroundControl>[
+          PlaygroundControl.spacing,
+          PlaygroundControl.runSpacing,
+          PlaygroundControl.tileVariant,
+        ],
+        Delegate.cascading: <PlaygroundControl>[
+          PlaygroundControl.cascadingScrollable,
+        ],
+      };
+
+  /// Whether the delegate picker drives the active entry point: every entry
+  /// point but the bar opens a single select whose content is chosen by it.
+  static bool isDelegateVisible(EntryPoint entryPoint) =>
+      entryPoint != EntryPoint.bar;
+
+  /// The full control list the panel renders for [params], in display order:
+  /// entry-point private, then the delegate picker with the delegate private
+  /// ones, then common.
+  static List<PlaygroundControl> visibleControls(PlaygroundParams params) =>
       <PlaygroundControl>[
-        PlaygroundControl.crossAxisCount,
-        PlaygroundControl.childAspectRatio,
+        ...?entryPointPrivateControls[params.entryPoint],
+        if (isDelegateVisible(params.entryPoint)) ...<PlaygroundControl>[
+          PlaygroundControl.delegate,
+          ...?delegatePrivateControls[params.delegate],
+        ],
+        ...commonControls,
       ];
-
-  /// Whether [delegate] renders a column-based grid that owns the
-  /// Columns / Aspect Ratio / Spacing parameters.
-  static bool isColumnBased(Delegate delegate) =>
-      delegate == Delegate.grid ||
-      delegate == Delegate.tabNav ||
-      delegate == Delegate.sideNav ||
-      delegate == Delegate.expandable;
-
-  /// Whether the Columns / Aspect Ratio sliders take effect: they only drive
-  /// the inline view's column-based delegate (the popup / dialog entry points
-  /// pin per-family defaults instead).
-  static bool isGeometryActive(PlaygroundParams params) =>
-      params.entryPoint == EntryPoint.view && isColumnBased(params.delegate);
-
-  /// Whether the spacing slider takes effect: every non-view entry point
-  /// embeds grid-family samples that read it, while the inline view limits it
-  /// to the column-based delegates.
-  static bool isSpacingActive(PlaygroundParams params) =>
-      params.entryPoint != EntryPoint.view || isColumnBased(params.delegate);
 }

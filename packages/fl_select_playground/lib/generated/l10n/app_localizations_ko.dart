@@ -57,6 +57,21 @@ class AppLocalizationsKo extends AppLocalizations {
   }
 
   @override
+  String columnSpacing(int value) {
+    return '열 간격($value)';
+  }
+
+  @override
+  String rowSpacing(int value) {
+    return '행 간격($value)';
+  }
+
+  @override
+  String runSpacing(int value) {
+    return '줄바꿈 간격($value)';
+  }
+
+  @override
   String get single => '단일';
 
   @override
@@ -67,6 +82,33 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get outlined => '외곽선';
+
+  @override
+  String get elevated => '입체';
+
+  @override
+  String get text => '텍스트';
+
+  @override
+  String get scrollable => '스크롤 가능';
+
+  @override
+  String get searchEnabled => '검색';
+
+  @override
+  String get direction => '방향';
+
+  @override
+  String get directionBelow => '아래';
+
+  @override
+  String get directionAbove => '위';
+
+  @override
+  String get directionAdaptive => '자동';
+
+  @override
+  String get buttonVariant => '버튼 스타일';
 
   @override
   String get brightness => '밝기';
@@ -132,46 +174,31 @@ class AppLocalizationsKo extends AppLocalizations {
   String get openSelect => '선택기 열기';
 
   @override
-  String get openListSelect => '목록 선택기 열기';
+  String get listSelect => '목록 선택기';
 
   @override
-  String get openGridSelect => '그리드 선택기 열기';
+  String get gridSelect => '그리드 선택기';
 
   @override
-  String get openWrapSelect => '줄바꿈 선택기 열기';
+  String get wrapSelect => '줄바꿈 선택기';
 
   @override
-  String get openCascadingSelect => '계단식 선택기 열기';
+  String get cascadingSelect => '계단식 선택기';
 
   @override
-  String get openTabNavSelect => '상단 탐색 선택기 열기';
+  String get tabNavSelect => '상단 탐색 선택기';
 
   @override
-  String get openSideNavSelect => '측면 탐색 선택기 열기';
+  String get sideNavSelect => '측면 탐색 선택기';
 
   @override
-  String get openExpandableSelect => '확장 선택기 열기';
+  String get expandableSelect => '확장 선택기';
 
   @override
-  String get titleListSelect => '목록 선택기';
+  String get resultPanelExpand => '펼치기';
 
   @override
-  String get titleGridSelect => '그리드 선택기';
-
-  @override
-  String get titleWrapSelect => '줄바꿈 선택기';
-
-  @override
-  String get titleCascadingSelect => '계단식 선택기';
-
-  @override
-  String get titleTabNavSelect => '상단 탐색 선택기';
-
-  @override
-  String get titleSideNavSelect => '측면 탐색 선택기';
-
-  @override
-  String get titleExpandableSelect => '확장 선택기';
+  String get resultPanelCollapse => '접기';
 
   @override
   String get resultPanelTitle => '콜백 결과';

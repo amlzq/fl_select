@@ -210,6 +210,24 @@ abstract class AppLocalizations {
   /// **'Spacing ({value})'**
   String spacing(int value);
 
+  /// No description provided for @columnSpacing.
+  ///
+  /// In en, this message translates to:
+  /// **'Column Spacing ({value})'**
+  String columnSpacing(int value);
+
+  /// No description provided for @rowSpacing.
+  ///
+  /// In en, this message translates to:
+  /// **'Row Spacing ({value})'**
+  String rowSpacing(int value);
+
+  /// No description provided for @runSpacing.
+  ///
+  /// In en, this message translates to:
+  /// **'Run Spacing ({value})'**
+  String runSpacing(int value);
+
   /// No description provided for @single.
   ///
   /// In en, this message translates to:
@@ -233,6 +251,60 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Outlined'**
   String get outlined;
+
+  /// No description provided for @elevated.
+  ///
+  /// In en, this message translates to:
+  /// **'Elevated'**
+  String get elevated;
+
+  /// No description provided for @text.
+  ///
+  /// In en, this message translates to:
+  /// **'Text'**
+  String get text;
+
+  /// No description provided for @scrollable.
+  ///
+  /// In en, this message translates to:
+  /// **'Scrollable'**
+  String get scrollable;
+
+  /// No description provided for @searchEnabled.
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get searchEnabled;
+
+  /// No description provided for @direction.
+  ///
+  /// In en, this message translates to:
+  /// **'Direction'**
+  String get direction;
+
+  /// No description provided for @directionBelow.
+  ///
+  /// In en, this message translates to:
+  /// **'Below'**
+  String get directionBelow;
+
+  /// No description provided for @directionAbove.
+  ///
+  /// In en, this message translates to:
+  /// **'Above'**
+  String get directionAbove;
+
+  /// No description provided for @directionAdaptive.
+  ///
+  /// In en, this message translates to:
+  /// **'Adaptive'**
+  String get directionAdaptive;
+
+  /// No description provided for @buttonVariant.
+  ///
+  /// In en, this message translates to:
+  /// **'Button Variant'**
+  String get buttonVariant;
 
   /// No description provided for @brightness.
   ///
@@ -360,89 +432,59 @@ abstract class AppLocalizations {
   /// **'Open Select'**
   String get openSelect;
 
-  /// No description provided for @openListSelect.
-  ///
-  /// In en, this message translates to:
-  /// **'Open List Select'**
-  String get openListSelect;
-
-  /// No description provided for @openGridSelect.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Grid Select'**
-  String get openGridSelect;
-
-  /// No description provided for @openWrapSelect.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Wrap Select'**
-  String get openWrapSelect;
-
-  /// No description provided for @openCascadingSelect.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Cascading Select'**
-  String get openCascadingSelect;
-
-  /// No description provided for @openTabNavSelect.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Tab Nav Select'**
-  String get openTabNavSelect;
-
-  /// No description provided for @openSideNavSelect.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Side Nav Select'**
-  String get openSideNavSelect;
-
-  /// No description provided for @openExpandableSelect.
-  ///
-  /// In en, this message translates to:
-  /// **'Open Expandable Select'**
-  String get openExpandableSelect;
-
-  /// No description provided for @titleListSelect.
+  /// No description provided for @listSelect.
   ///
   /// In en, this message translates to:
   /// **'List Select'**
-  String get titleListSelect;
+  String get listSelect;
 
-  /// No description provided for @titleGridSelect.
+  /// No description provided for @gridSelect.
   ///
   /// In en, this message translates to:
   /// **'Grid Select'**
-  String get titleGridSelect;
+  String get gridSelect;
 
-  /// No description provided for @titleWrapSelect.
+  /// No description provided for @wrapSelect.
   ///
   /// In en, this message translates to:
   /// **'Wrap Select'**
-  String get titleWrapSelect;
+  String get wrapSelect;
 
-  /// No description provided for @titleCascadingSelect.
+  /// No description provided for @cascadingSelect.
   ///
   /// In en, this message translates to:
   /// **'Cascading Select'**
-  String get titleCascadingSelect;
+  String get cascadingSelect;
 
-  /// No description provided for @titleTabNavSelect.
+  /// No description provided for @tabNavSelect.
   ///
   /// In en, this message translates to:
   /// **'Tab Nav Select'**
-  String get titleTabNavSelect;
+  String get tabNavSelect;
 
-  /// No description provided for @titleSideNavSelect.
+  /// No description provided for @sideNavSelect.
   ///
   /// In en, this message translates to:
   /// **'Side Nav Select'**
-  String get titleSideNavSelect;
+  String get sideNavSelect;
 
-  /// No description provided for @titleExpandableSelect.
+  /// No description provided for @expandableSelect.
   ///
   /// In en, this message translates to:
   /// **'Expandable Select'**
-  String get titleExpandableSelect;
+  String get expandableSelect;
+
+  /// No description provided for @resultPanelExpand.
+  ///
+  /// In en, this message translates to:
+  /// **'Expand'**
+  String get resultPanelExpand;
+
+  /// No description provided for @resultPanelCollapse.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse'**
+  String get resultPanelCollapse;
 
   /// No description provided for @resultPanelTitle.
   ///

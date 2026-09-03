@@ -17,32 +17,6 @@ SelectChipVariant _chipVariant(TileVariant v) => v == TileVariant.outlined
 Widget _radioBuilder(BuildContext context, bool selected) =>
     MyRadio(value: selected);
 
-/// Strips the per-category [SelectCategoryEntry.layout] from two-level
-/// entries.
-///
-/// The entry repository's two-level sample assigns a fixed layout to every
-/// category, which would override the delegate's `defaultLayout`.
-/// [_twoLevelEntriesWithoutLayout] rebuilds every category with a null
-/// layout so the TabNav / SideNav / Expandable delegates fall back to the
-/// `defaultLayout` built from the panel params — Columns / Aspect Ratio /
-/// Spacing keep driving the two-level delegates too.
-Future<SelectEntries> _twoLevelEntriesWithoutLayout(
-  Future<SelectEntries> Function() loader,
-) async {
-  final entries = await loader();
-  return entries.map((entry) {
-    if (entry is SelectCategoryEntry) {
-      return SelectCategoryEntry(
-        id: entry.id,
-        name: entry.name,
-        children: entry.children,
-        selectionMode: entry.selectionMode,
-      );
-    }
-    return entry;
-  }).toSet();
-}
-
 Widget _checkboxBuilder(BuildContext context, bool selected) =>
     MyCheckbox(value: selected);
 
@@ -85,13 +59,8 @@ class PlaygroundDataSource {
 
   /// Builds the demo data set from [repo].
   factory PlaygroundDataSource.fromRepository(EntryRepository repo) {
-    // Wrap reuses the counter sample; the two-level delegates
-    // (tabNav / sideNav / expandable) share the two-level sample.
-    final counters = DelegateLoaders(
-      entriesLoader: repo.fetchCounterData,
-      selected: repo.counterSelectedData,
-      reset: repo.counterResetData,
-    );
+    // the two-level delegates (tabNav / sideNav / expandable)
+    // share the two-level sample.
     final twoLevel = DelegateLoaders(
       entriesLoader: repo.fetchTwoLevelData,
       selected: repo.twoLevelSelectedData,
@@ -103,8 +72,16 @@ class PlaygroundDataSource {
         selected: repo.listSelectedData,
         reset: repo.listResetData,
       ),
-      grid: counters,
-      wrap: counters,
+      grid: DelegateLoaders(
+        entriesLoader: repo.fetchGridData,
+        selected: repo.gridSelectedData,
+        reset: repo.gridResetData,
+      ),
+      wrap: DelegateLoaders(
+        entriesLoader: repo.fetchWrapData,
+        selected: repo.wrapSelectedData,
+        reset: repo.wrapResetData,
+      ),
       cascading: DelegateLoaders(
         entriesLoader: repo.fetchCascadingData,
         selected: repo.cascadingSelectedData,
@@ -119,42 +96,42 @@ class PlaygroundDataSource {
 
 /// Reusable delegates keyed by the params that affect the delegate identity.
 ///
-/// Column count / aspect ratio / spacing ARE part of the key: the grid and
-/// two-level delegates read `crossAxisCount`, `childAspectRatio` and the
-/// spacings at build time — [GridSelectDelegate] from its constructor, the
-/// TabNav / SideNav / Expandable delegates from their `defaultLayout` (fed
-/// with the panel params after [_twoLevelEntriesWithoutLayout] strips the
-/// per-category layouts) — so excluding them would keep reusing a stale
-/// delegate and make the Columns / Aspect / Spacing controls have no effect.
+/// Every geometry value is part of the key: grid reads `crossAxisCount` /
+/// `childAspectRatio` / `crossAxisSpacing` / `mainAxisSpacing` and wrap reads
+/// `spacing` / `runSpacing` from their constructors at build time, so
+/// excluding them would keep reusing a stale delegate and make the geometry
+/// controls have no effect.
 ///
 /// The delegate is still cached so that changing *other* params (e.g. seed
 /// color, theme) does not discard the applied selection stored in
 /// [SelectDelegate.selectedData]; only the params in this key recreate it.
 String _delegateKey(PlaygroundParams p) =>
     '${p.delegate}|${p.selectionMode}|${p.tileVariant}|'
-    '${p.crossAxisCount}|${p.childAspectRatio}|${p.spacing}';
+    '${p.crossAxisCount}|${p.childAspectRatio}|'
+    '${p.crossAxisSpacing}|${p.mainAxisSpacing}|'
+    '${p.spacing}|${p.runSpacing}|${p.cascadingScrollable}|'
+    '${p.searchEnabled}';
 
 /// Selection-identity key: the params that define *which* selection state a
-/// delegate carries. Column count / aspect ratio / spacing are intentionally
-/// excluded — those only affect rendering and are handled by [buildDelegate]
-/// so the applied selection survives a Columns / Aspect / Spacing tweak.
+/// delegate carries. Geometry is intentionally excluded — it only affects
+/// rendering and is handled by [buildDelegate] so the applied selection
+/// survives a Columns / Aspect Ratio / Spacing tweak.
 String _selectionKey(PlaygroundParams p) =>
     '${p.delegate}|${p.selectionMode}|${p.tileVariant}';
 
 /// Builds (or reuses) a [SelectDelegate] for the current [PlaygroundParams].
 ///
 /// The delegate is cached in [delegateCache] (keyed by the full param set,
-/// including column count / aspect ratio / spacing) so changing those renders
-/// with a delegate that actually carries the new values — the library reads
-/// `crossAxisCount`, `childAspectRatio` and the spacings from the delegate at
-/// build time.
+/// including geometry) so changing those renders with a delegate that
+/// actually carries the new values — the library reads the geometry from the
+/// delegate at build time.
 ///
 /// Because [handleApply] writes the applied selection back to the delegate via
-/// [SelectDelegate.selectedData], recreating the delegate on a Columns /
-/// Aspect / Spacing tweak would otherwise drop that state. [selectionCache]
-/// (keyed by the selection-identity params only) keeps the most recent delegate
-/// for a given selection, and its `selectedData` is carried over to the freshly
-/// built delegate so reopening the panel still restores the selection.
+/// [SelectDelegate.selectedData], recreating the delegate on a geometry tweak
+/// would otherwise drop that state. [selectionCache] (keyed by the
+/// selection-identity params only) keeps the most recent delegate for a given
+/// selection, and its `selectedData` is carried over to the freshly built
+/// delegate so reopening the panel still restores the selection.
 SelectDelegate buildDelegate(
   PlaygroundParams p,
   PlaygroundDataSource data, {
@@ -185,12 +162,12 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
         listTileTheme: const SelectListTileTheme(),
         radioBuilder: _radioBuilder,
         checkboxBuilder: _checkboxBuilder,
-        chipBarTheme: chipBarTheme,
+        searchEnabled: p.searchEnabled,
+        searchPredicate: (entry, query) {
+          return entry.name?.contains(query) == true;
+        },
       );
     case Delegate.grid:
-      // Grid / Wrap / TabNav / SideNav / Expandable delegates use the default
-      // radio & checkbox widgets, so the custom [MyRadio]/[MyCheckbox]
-      // builders are not forwarded here.
       return GridSelectDelegate(
         entriesLoader: data.grid.entriesLoader,
         selectedEntries: data.grid.selected,
@@ -198,22 +175,29 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
         selectionMode: p.selectionMode,
         crossAxisCount: p.crossAxisCount,
         childAspectRatio: p.childAspectRatio,
-        crossAxisSpacing: p.spacing,
-        mainAxisSpacing: p.spacing,
+        crossAxisSpacing: p.crossAxisSpacing,
+        mainAxisSpacing: p.mainAxisSpacing,
         gridTileTheme: SelectGridTileTheme(
           variant: _gridVariant(p.tileVariant),
         ),
-        chipBarTheme: chipBarTheme,
+        searchEnabled: p.searchEnabled,
+        searchPredicate: (entry, query) {
+          return entry.name?.contains(query) == true;
+        },
       );
     case Delegate.wrap:
-      // Wrap chips ignore Columns / Aspect Ratio; Spacing drives the chip
-      // gaps via the chip bar theme.
       return WrapSelectDelegate(
         entriesLoader: data.wrap.entriesLoader,
         selectedEntries: data.wrap.selected,
         resetEntries: data.wrap.reset,
         selectionMode: p.selectionMode,
+        spacing: p.spacing,
+        runSpacing: p.runSpacing,
         chipBarTheme: chipBarTheme,
+        searchEnabled: p.searchEnabled,
+        searchPredicate: (entry, query) {
+          return entry.name?.contains(query) == true;
+        },
       );
     case Delegate.cascading:
       return CascadingSelectDelegate(
@@ -224,66 +208,68 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
         radioBuilder: _radioBuilder,
         checkboxBuilder: _checkboxBuilder,
         chipBarTheme: chipBarTheme,
-        sideBarTheme: const SelectSideBarTheme(width: 150),
+        sideBarTheme: const SelectSideBarTheme(width: 120),
+        isScrollable: p.cascadingScrollable,
+        searchEnabled: p.searchEnabled,
+        searchPredicate: (entry, query) {
+          return entry.name?.contains(query) == true;
+        },
       );
     case Delegate.tabNav:
-      // The two-level delegates take their geometry (columns / aspect ratio /
-      // spacing) from `defaultLayout`: [_twoLevelEntriesWithoutLayout]
-      // strips the per-category layouts baked into the sample data so the
-      // fallback takes effect.
       return TabNavSelectDelegate(
-        entriesLoader: () =>
-            _twoLevelEntriesWithoutLayout(data.tabNav.entriesLoader),
+        defaultLayout: SelectGridLayout(
+          crossAxisCount: 3,
+          childAspectRatio: 3,
+          mainAxisSpacing: 10,
+          crossAxisSpacing: 10,
+        ),
+        entriesLoader: data.tabNav.entriesLoader,
         selectedEntries: data.tabNav.selected,
         resetEntries: data.tabNav.reset,
         selectionMode: p.selectionMode,
-        defaultLayout: SelectGridLayout(
-          crossAxisCount: p.crossAxisCount,
-          childAspectRatio: p.childAspectRatio,
-          mainAxisSpacing: p.spacing,
-          crossAxisSpacing: p.spacing,
-        ),
         gridTileTheme: SelectGridTileTheme(
           variant: _gridVariant(p.tileVariant),
         ),
         chipBarTheme: chipBarTheme,
+        isScrollable: true,
+        searchEnabled: p.searchEnabled,
+        searchPredicate: (entry, query) {
+          return entry.name?.contains(query) == true;
+        },
       );
     case Delegate.sideNav:
       return SideNavSelectDelegate(
-        entriesLoader: () =>
-            _twoLevelEntriesWithoutLayout(data.sideNav.entriesLoader),
+        defaultLayout: SelectWrapLayout(spacing: 12, runSpacing: 12),
+        entriesLoader: data.sideNav.entriesLoader,
         selectedEntries: data.sideNav.selected,
         resetEntries: data.sideNav.reset,
         selectionMode: p.selectionMode,
-        defaultLayout: SelectGridLayout(
-          crossAxisCount: p.crossAxisCount,
-          childAspectRatio: p.childAspectRatio,
-          mainAxisSpacing: p.spacing,
-          crossAxisSpacing: p.spacing,
-        ),
         gridTileTheme: SelectGridTileTheme(
           variant: _gridVariant(p.tileVariant),
         ),
         chipBarTheme: chipBarTheme,
         sideBarTheme: const SelectSideBarTheme(width: 110),
+        searchEnabled: p.searchEnabled,
+        searchPredicate: (entry, query) {
+          return entry.name?.contains(query) == true;
+        },
       );
     case Delegate.expandable:
       return ExpandableSelectDelegate(
-        entriesLoader: () =>
-            _twoLevelEntriesWithoutLayout(data.expandable.entriesLoader),
+        entriesLoader: data.expandable.entriesLoader,
         selectedEntries: data.expandable.selected,
         resetEntries: data.expandable.reset,
         selectionMode: p.selectionMode,
-        defaultLayout: SelectGridLayout(
-          crossAxisCount: p.crossAxisCount,
-          childAspectRatio: p.childAspectRatio,
-          mainAxisSpacing: p.spacing,
-          crossAxisSpacing: p.spacing,
-        ),
+        radioBuilder: _radioBuilder,
+        checkboxBuilder: _checkboxBuilder,
         gridTileTheme: SelectGridTileTheme(
           variant: _gridVariant(p.tileVariant),
         ),
         chipBarTheme: chipBarTheme,
+        searchEnabled: p.searchEnabled,
+        searchPredicate: (entry, query) {
+          return entry.name?.contains(query) == true;
+        },
       );
   }
 }
@@ -355,8 +341,54 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
   Object? _lastChanged;
   Object? _lastApplied;
 
+  /// Navigator hosting the route-backed select opened from this screen — i.e.
+  /// the dialog / bottom sheet pushed by [showSelect] /
+  /// [showModalBottomSelect].
+  ///
+  /// Captured so [dispose] can dismiss a select that is still open: those
+  /// routes live in the navigator's overlay rather than in this widget's
+  /// subtree, so they survive the entry-point switch that disposes this
+  /// screen and would otherwise stay on top of the newly built one.
+  NavigatorState? _selectNavigator;
+
   void _onChanged(Object? value) => setState(() => _lastChanged = value);
   void _onApplied(Object? value) => setState(() => _lastApplied = value);
+
+  @override
+  void didUpdateWidget(covariant EntryPointScreen oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // A dialog / bottom-sheet select captured the *old* delegate when it was
+    // opened; switching the delegate family leaves that stale popup on top
+    // of the rebuilt phone. Close it so the next open uses the new delegate.
+    if (oldWidget.params.delegate != widget.params.delegate &&
+        _selectNavigator != null) {
+      final navigator = _selectNavigator!;
+      _selectNavigator = null;
+      // Deferred by one frame, same reasoning as [dispose]: popping during
+      // the build that delivers the new params would mark the navigator
+      // dirty mid-build.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (navigator.mounted) navigator.popUntil((route) => route.isFirst);
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    final navigator = _selectNavigator;
+    _selectNavigator = null;
+    if (navigator != null) {
+      // Deferred by one frame: dispose() runs while the framework is still
+      // building, and popping synchronously would mark the navigator dirty
+      // in the middle of that build.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Only the pushed select routes are popped: `isFirst` is the phone's
+        // base page, which [PlaygroundPage] never removes.
+        if (navigator.mounted) navigator.popUntil((route) => route.isFirst);
+      });
+    }
+    super.dispose();
+  }
 
   /// Sample [SelectHeader.leading] widget for the Dialog / Bottom Sheet
   /// selects: closes the popup without a result.
@@ -372,76 +404,45 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
     onPressed: () => Navigator.of(context).pop('confirmed'),
   );
 
-  /// Builds the 7 per-delegate-family open buttons (List / Grid / Wrap /
-  /// Cascading / Tab Nav / Side Nav / Expandable). Each opens the current entry
-  /// point's select ([showSelect] or [showModalBottomSelect]) with the
-  /// matching delegate family, so users can exercise every delegate from a
-  /// single Dialog / Bottom Sheet screen.
-  ///
-  /// [open] is invoked with the resolved delegate and must return the select
-  /// result future; it should call [showSelect] for the Dialog entry point or
-  /// [showModalBottomSelect] for the Bottom Sheet entry point.
-  Widget _familyOpenButtons(
+  /// The single open button of the Dialog / Bottom Sheet entry points: it
+  /// opens the select of the delegate family chosen in the panel.
+  Widget _openButton(
     BuildContext context,
     Future<Object?> Function(BuildContext, SelectDelegate, Widget title) open,
   ) {
     final l10n = widget.l10n;
-    final entries = <(Delegate, String, String)>[
-      (Delegate.list, l10n.openListSelect, l10n.titleListSelect),
-      (Delegate.grid, l10n.openGridSelect, l10n.titleGridSelect),
-      (Delegate.wrap, l10n.openWrapSelect, l10n.titleWrapSelect),
-      (Delegate.cascading, l10n.openCascadingSelect, l10n.titleCascadingSelect),
-      (Delegate.tabNav, l10n.openTabNavSelect, l10n.titleTabNavSelect),
-      (Delegate.sideNav, l10n.openSideNavSelect, l10n.titleSideNavSelect),
-      (
-        Delegate.expandable,
-        l10n.openExpandableSelect,
-        l10n.titleExpandableSelect,
-      ),
-    ];
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: entries.map((e) {
-          final title = Text(e.$3);
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: TextButton(
-              onPressed: () async {
-                final result = await open(context, _tabDelegate(e.$1), title);
-                _onApplied(result);
-              },
-              child: Text(e.$2),
-            ),
+    return Center(
+      child: TextButton(
+        onPressed: () async {
+          _selectNavigator = Navigator.of(context);
+          final result = await open(
+            context,
+            widget.delegate,
+            Text(l10n.titleOf(widget.params.delegate)),
           );
-        }).toList(),
+          // The entry point may have switched (and this state been
+          // disposed) while the select was open.
+          if (!mounted) return;
+          _selectNavigator = null;
+          _onApplied(result);
+        },
+        child: Text(l10n.openSelect),
       ),
     );
   }
 
-  /// Builds a select delegate for one tab of the dropdown bar, using the
-  /// current playground params but a fixed delegate family so each tab shows a
+  /// Builds a select delegate for one tab of the popup bar, using the current
+  /// playground params but a fixed delegate family so each tab shows a
   /// distinct select (one per [Delegate] family).
   ///
-  /// Each tab applies the per-delegate default Columns / Aspect Ratio (see
-  /// [defaultCrossAxisCountByDelegate] / [defaultChildAspectRatioByDelegate])
-  /// so the bar always renders with the defaults for that family instead of
-  /// reusing the global (controls-panel) values.
-  SelectDelegate _tabDelegate(Delegate delegate) {
-    final tabParams = widget.params.copyWith(
-      delegate: delegate,
-      crossAxisCount: defaultCrossAxisCountByDelegate[delegate],
-      childAspectRatio: defaultChildAspectRatioByDelegate[delegate],
-    );
-    return buildDelegate(
-      tabParams,
-      widget.data,
-      delegateCache: widget.delegateCache,
-      selectionCache: widget.selectionCache,
-    );
-  }
+  /// The bar has no "active delegate" of its own, so every family renders
+  /// with the panel's current geometry — which only grid and wrap read.
+  SelectDelegate _tabDelegate(Delegate delegate) => buildDelegate(
+    widget.params.copyWith(delegate: delegate),
+    widget.data,
+    delegateCache: widget.delegateCache,
+    selectionCache: widget.selectionCache,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -462,19 +463,20 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
               Expanded(
                 child: SelectView(
                   // Key the view by every param that affects its rendered output.
-                  // Columns / aspect ratio / spacing MUST be included: changing
-                  // them yields a new delegate object, but the two-level
-                  // delegates' selects are stateful widgets and their [ListView]
-                  // children (each [SelectGridView] has
-                  // [AutomaticKeepAliveClientMixin]) can cache the old layout
+                  // Geometry MUST be included: changing it yields a new delegate
+                  // object, but the two-level delegates' selects are stateful
+                  // widgets and their [ListView] children (each [SelectGridView]
+                  // has [AutomaticKeepAliveClientMixin]) can cache the old layout
                   // when only the delegate object changes live.
                   // Re-keying the view forces a clean rebuild so Columns / Aspect
                   // Ratio actually take effect. The in-progress selection is not
                   // lost: [buildDelegate] restores it from [selectionCache].
                   key: ValueKey(
-                    '${p.delegate}|${p.crossAxisCount}|'
-                    '${p.childAspectRatio}|${p.spacing}|${p.selectionMode}|'
-                    '${p.tileVariant}',
+                    '${p.delegate}|${p.selectionMode}|${p.tileVariant}|'
+                    '${p.crossAxisCount}|${p.childAspectRatio}|'
+                    '${p.crossAxisSpacing}|${p.mainAxisSpacing}|'
+                    '${p.spacing}|${p.runSpacing}|${p.cascadingScrollable}|'
+                    '${p.searchEnabled}',
                   ),
                   delegate: widget.delegate,
                   margin: const EdgeInsets.symmetric(
@@ -492,94 +494,20 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
             ],
           ),
         );
-      case EntryPoint.popupButton:
+      case EntryPoint.button:
         return Scaffold(
           appBar: AppBar(title: Text(l10n.phonePopupButtonTitle)),
           body: Column(
             children: <Widget>[
               Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      // listSelect: elevated style, offset 100px from the left edge.
-                      Padding(
-                        padding: const EdgeInsets.only(left: 100),
-                        child: PopupSelectButton(
-                          selectDelegate: _tabDelegate(Delegate.list),
-                          label: l10n.titleListSelect,
-                          onChanged: (selected) => _onChanged(selected),
-                          onApplied: (selected) => _onApplied(selected),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // gridSelect: filled style, centered.
-                      Align(
-                        alignment: Alignment.center,
-                        child: PopupSelectButton.elevated(
-                          selectDelegate: _tabDelegate(Delegate.grid),
-                          label: l10n.titleGridSelect,
-                          onChanged: (selected) => _onChanged(selected),
-                          onApplied: (selected) => _onApplied(selected),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // wrapSelect: outlined style, aligned to the right.
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: PopupSelectButton.filled(
-                          selectDelegate: _tabDelegate(Delegate.wrap),
-                          label: l10n.titleWrapSelect,
-                          onChanged: (selected) => _onChanged(selected),
-                          onApplied: (selected) => _onApplied(selected),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // cascadingSelect: elevated style, aligned to the left.
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: PopupSelectButton.outlined(
-                          selectDelegate: _tabDelegate(Delegate.cascading),
-                          label: l10n.titleCascadingSelect,
-                          onChanged: (selected) => _onChanged(selected),
-                          onApplied: (selected) => _onApplied(selected),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // tabNavSelect: elevated style, aligned to the left.
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: PopupSelectButton(
-                          selectDelegate: _tabDelegate(Delegate.tabNav),
-                          label: l10n.titleTabNavSelect,
-                          onChanged: (selected) => _onChanged(selected),
-                          onApplied: (selected) => _onApplied(selected),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // sideNavSelect: elevated style, offset 100px from the left edge.
-                      Padding(
-                        padding: const EdgeInsets.only(left: 100),
-                        child: PopupSelectButton.elevated(
-                          selectDelegate: _tabDelegate(Delegate.sideNav),
-                          label: l10n.titleSideNavSelect,
-                          onChanged: (selected) => _onChanged(selected),
-                          onApplied: (selected) => _onApplied(selected),
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      // expandableSelect: filled style, centered.
-                      Align(
-                        alignment: Alignment.center,
-                        child: PopupSelectButton.filled(
-                          selectDelegate: _tabDelegate(Delegate.expandable),
-                          label: l10n.titleExpandableSelect,
-                          onChanged: (selected) => _onChanged(selected),
-                          onApplied: (selected) => _onApplied(selected),
-                        ),
-                      ),
-                    ],
+                child: Center(
+                  child: PopupSelectButton(
+                    selectDelegate: widget.delegate,
+                    label: l10n.titleOf(p.delegate),
+                    variant: p.buttonVariant,
+                    direction: p.direction,
+                    onChanged: (selected) => _onChanged(selected),
+                    onApplied: (selected) => _onApplied(selected),
                   ),
                 ),
               ),
@@ -587,40 +515,38 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
             ],
           ),
         );
-      case EntryPoint.popupBar:
-        final tabDelegates = <SelectDelegate>[
-          _tabDelegate(Delegate.list),
-          _tabDelegate(Delegate.grid),
-          _tabDelegate(Delegate.wrap),
-          _tabDelegate(Delegate.cascading),
-          _tabDelegate(Delegate.tabNav),
-          _tabDelegate(Delegate.sideNav),
-          _tabDelegate(Delegate.expandable),
+      case EntryPoint.bar:
+        final tabs = <(Delegate, String)>[
+          (Delegate.list, l10n.layoutList),
+          (Delegate.grid, l10n.layoutGrid),
+          (Delegate.wrap, l10n.layoutWrap),
+          (Delegate.cascading, l10n.layoutCascading),
+          (Delegate.tabNav, l10n.layoutTabNav),
+          (Delegate.sideNav, l10n.layoutSideNav),
+          (Delegate.expandable, l10n.layoutExpandable),
         ];
         return Scaffold(
-          appBar: AppBar(
-            title: Text(l10n.phonePopupBarTitle),
-            bottom: PopupSelectBar(
-              isScrollable: true,
-              tabs: <PopupTab>[
-                PopupTab(label: l10n.layoutList),
-                PopupTab(label: l10n.layoutGrid),
-                PopupTab(label: l10n.layoutWrap),
-                PopupTab(label: l10n.layoutCascading),
-                PopupTab(label: l10n.layoutTabNav),
-                PopupTab(label: l10n.layoutSideNav),
-                PopupTab(label: l10n.layoutExpandable),
-              ],
-              selectDelegates: tabDelegates,
-              onChanged: (tabData, selected) =>
-                  _onChanged((tabData: tabData, selected: selected)),
-              onApplied: (tabData, selected) =>
-                  _onApplied((tabData: tabData, selected: selected)),
-            ),
-          ),
+          appBar: AppBar(title: Text(l10n.phonePopupBarTitle)),
           body: Column(
             children: <Widget>[
-              Expanded(child: Center(child: Text(l10n.tapBarHint))),
+              Expanded(
+                child: Center(
+                  child: PopupSelectBar(
+                    isScrollable: p.isScrollable,
+                    direction: p.direction,
+                    tabs: <PopupTab>[
+                      for (final tab in tabs) PopupTab(label: tab.$2),
+                    ],
+                    selectDelegates: <SelectDelegate>[
+                      for (final tab in tabs) _tabDelegate(tab.$1),
+                    ],
+                    onChanged: (tabData, selected) =>
+                        _onChanged((tabData: tabData, selected: selected)),
+                    onApplied: (tabData, selected) =>
+                        _onApplied((tabData: tabData, selected: selected)),
+                  ),
+                ),
+              ),
               resultPanel,
             ],
           ),
@@ -633,19 +559,17 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
               Expanded(
                 child: Center(
                   child: Builder(
-                    builder: (ctx) => _familyOpenButtons(
+                    builder: (ctx) => _openButton(
                       ctx,
                       (c, delegate, title) => showSelect(
                         context: c,
                         delegate: delegate,
                         title: title,
-                        leading: widget.params.headerLeading
-                            ? _headerCloseButton(c)
-                            : null,
-                        trailing: widget.params.headerTrailing
+                        leading: p.headerLeading ? _headerCloseButton(c) : null,
+                        trailing: p.headerTrailing
                             ? _headerConfirmButton(c)
                             : null,
-                        centerTitle: widget.params.centerTitle,
+                        centerTitle: p.centerTitle,
                         useRootNavigator: false,
                       ),
                     ),
@@ -664,19 +588,17 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
               Expanded(
                 child: Center(
                   child: Builder(
-                    builder: (ctx) => _familyOpenButtons(
+                    builder: (ctx) => _openButton(
                       ctx,
                       (c, delegate, title) => showModalBottomSelect(
                         context: c,
                         delegate: delegate,
                         title: title,
-                        leading: widget.params.headerLeading
-                            ? _headerCloseButton(c)
-                            : null,
-                        trailing: widget.params.headerTrailing
+                        leading: p.headerLeading ? _headerCloseButton(c) : null,
+                        trailing: p.headerTrailing
                             ? _headerConfirmButton(c)
                             : null,
-                        centerTitle: widget.params.centerTitle,
+                        centerTitle: p.centerTitle,
                       ),
                     ),
                   ),
@@ -692,7 +614,11 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
 
 /// Footer panel that shows the most recent `onChanged` / `onApplied` values
 /// for the active entry point.
-class _ResultPanel extends StatelessWidget {
+///
+/// A snackbar-style action button in the header toggles the panel: tapping it
+/// expands the panel upwards over most of the body so long values stay
+/// readable; tapping again collapses it back to the compact strip.
+class _ResultPanel extends StatefulWidget {
   const _ResultPanel({required this.l10n, this.changed, this.applied});
 
   final PlaygroundL10n l10n;
@@ -700,8 +626,23 @@ class _ResultPanel extends StatelessWidget {
   final Object? applied;
 
   @override
+  State<_ResultPanel> createState() => _ResultPanelState();
+}
+
+class _ResultPanelState extends State<_ResultPanel> {
+  static const double _collapsedHeight = 112;
+
+  /// Share of the body height the panel covers when expanded.
+  static const double _expandedFactor = 0.65;
+
+  bool _expanded = false;
+
+  void _toggle() => setState(() => _expanded = !_expanded);
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = widget.l10n;
     final isDark = theme.brightness == Brightness.dark;
     final background = isDark
         ? Colors.white.withValues(alpha: 0.08)
@@ -713,38 +654,73 @@ class _ResultPanel extends StatelessWidget {
 
     String format(Object? value) => value == null ? '—' : value.toString();
 
-    return SizedBox(
+    // The phone preview renders inside a [FittedBox], so the incoming layout
+    // constraints are unbounded (maxHeight = infinity). The scoped
+    // [MediaQuery] above the phone [Navigator] carries the true phone size
+    // (kPhoneContentSize), so measure the expanded height against it instead.
+    final expandedHeight = MediaQuery.sizeOf(context).height * _expandedFactor;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 250),
+      curve: Curves.easeOutCubic,
       width: double.infinity,
-      height: 112,
-      child: DecoratedBox(
-        decoration: BoxDecoration(color: background),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Text(l10n.resultPanelTitle, style: labelStyle),
-              const SizedBox(height: 4),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      Text(
-                        '${l10n.onChangedLabel}: ${format(changed)}',
-                        style: valueStyle,
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        '${l10n.onAppliedLabel}: ${format(applied)}',
-                        style: valueStyle,
-                      ),
-                    ],
+      height: _expanded ? expandedHeight : _collapsedHeight,
+      decoration: BoxDecoration(color: background),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              children: <Widget>[
+                Expanded(child: Text(l10n.resultPanelTitle, style: labelStyle)),
+                // Snackbar-style action: compact text button, arrow hints
+                // the expand direction.
+                TextButton.icon(
+                  onPressed: _toggle,
+                  style: TextButton.styleFrom(
+                    visualDensity: VisualDensity.compact,
+                    minimumSize: const Size(0, 30),
+                    padding: const EdgeInsets.symmetric(horizontal: 8),
+                    textStyle: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  icon: Icon(
+                    _expanded
+                        ? Icons.keyboard_arrow_down
+                        : Icons.keyboard_arrow_up,
+                    size: 16,
+                  ),
+                  label: Text(
+                    _expanded
+                        ? l10n.resultPanelCollapse
+                        : l10n.resultPanelExpand,
                   ),
                 ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      '${l10n.onChangedLabel}: ${format(widget.changed)}',
+                      style: valueStyle,
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      '${l10n.onAppliedLabel}: ${format(widget.applied)}',
+                      style: valueStyle,
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

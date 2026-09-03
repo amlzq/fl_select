@@ -13,10 +13,18 @@ const PlaygroundParams kDefaultPlaygroundParams = PlaygroundParams(
   selectionMode: SelectionMode.multiple,
   crossAxisCount: 4,
   childAspectRatio: 2.5,
+  crossAxisSpacing: 8,
+  mainAxisSpacing: 8,
   spacing: 8,
+  runSpacing: 8,
+  cascadingScrollable: true,
   tileVariant: TileVariant.filled,
   seedColor: Colors.deepPurple,
   useMaterial3: true,
+  isScrollable: true,
+  direction: PopupSelectDirection.below,
+  buttonVariant: PopupSelectButtonVariant.text,
+  searchEnabled: true,
 );
 
 /// The complete restorable state of the playground: demo parameters, UI
@@ -51,8 +59,11 @@ abstract final class PlaygroundUrlCodec {
 
   static const Map<EntryPoint, String> _entryPointCodes = <EntryPoint, String>{
     EntryPoint.view: 'v',
-    EntryPoint.popupBar: 'pb',
-    EntryPoint.popupButton: 'pn',
+    // `pb` / `pn` are historical codes (popupBar / popupButton); kept so
+    // shared links stay valid after the entry points were renamed to
+    // `bar` / `button`.
+    EntryPoint.bar: 'pb',
+    EntryPoint.button: 'pn',
     EntryPoint.dialog: 'd',
     EntryPoint.bottomSheet: 'b',
   };
@@ -75,6 +86,21 @@ abstract final class PlaygroundUrlCodec {
 
   static const Map<TileVariant, String> _tileVariantCodes =
       <TileVariant, String>{TileVariant.filled: 'f', TileVariant.outlined: 'o'};
+
+  static const Map<PopupSelectDirection, String> _directionCodes =
+      <PopupSelectDirection, String>{
+        PopupSelectDirection.below: 'b',
+        PopupSelectDirection.above: 'a',
+        PopupSelectDirection.adaptive: 'ad',
+      };
+
+  static const Map<PopupSelectButtonVariant, String> _buttonVariantCodes =
+      <PopupSelectButtonVariant, String>{
+        PopupSelectButtonVariant.elevated: 'e',
+        PopupSelectButtonVariant.filled: 'f',
+        PopupSelectButtonVariant.outlined: 'o',
+        PopupSelectButtonVariant.text: 't',
+      };
 
   static const Map<PlaygroundLanguage, String> _languageCodes =
       <PlaygroundLanguage, String>{
@@ -110,11 +136,20 @@ abstract final class PlaygroundUrlCodec {
     if (p.selectionMode != d.selectionMode) {
       q['sm'] = _selectionModeCodes[p.selectionMode]!;
     }
-    if (p.crossAxisCount != d.crossAxisCount) q['cc'] = '${p.crossAxisCount}';
+    if (p.crossAxisCount != d.crossAxisCount) {
+      q['cc'] = '${p.crossAxisCount}';
+    }
     if (p.childAspectRatio != d.childAspectRatio) {
       q['ar'] = _formatDouble(p.childAspectRatio);
     }
+    if (p.crossAxisSpacing != d.crossAxisSpacing) {
+      q['cs'] = _formatDouble(p.crossAxisSpacing);
+    }
+    if (p.mainAxisSpacing != d.mainAxisSpacing) {
+      q['ms'] = _formatDouble(p.mainAxisSpacing);
+    }
     if (p.spacing != d.spacing) q['sp'] = _formatDouble(p.spacing);
+    if (p.runSpacing != d.runSpacing) q['rs'] = _formatDouble(p.runSpacing);
     if (p.tileVariant != d.tileVariant) {
       q['tv'] = _tileVariantCodes[p.tileVariant]!;
     }
@@ -125,6 +160,19 @@ abstract final class PlaygroundUrlCodec {
           .padLeft(6, '0');
     }
     if (p.useMaterial3 != d.useMaterial3) q['m3'] = p.useMaterial3 ? '1' : '0';
+    if (p.isScrollable != d.isScrollable) {
+      q['sb'] = p.isScrollable ? '1' : '0';
+    }
+    if (p.cascadingScrollable != d.cascadingScrollable) {
+      q['csb'] = p.cascadingScrollable ? '1' : '0';
+    }
+    if (p.direction != d.direction) q['dr'] = _directionCodes[p.direction]!;
+    if (p.buttonVariant != d.buttonVariant) {
+      q['bv'] = _buttonVariantCodes[p.buttonVariant]!;
+    }
+    if (p.searchEnabled != d.searchEnabled) {
+      q['se'] = p.searchEnabled ? '1' : '0';
+    }
     if (p.headerLeading != d.headerLeading) {
       q['hl'] = p.headerLeading ? '1' : '0';
     }
@@ -175,10 +223,37 @@ abstract final class PlaygroundUrlCodec {
           20,
           f.childAspectRatio,
         ),
+        crossAxisSpacing: _clamp(
+          double.tryParse(query['cs'] ?? ''),
+          0,
+          64,
+          f.crossAxisSpacing,
+        ),
+        mainAxisSpacing: _clamp(
+          double.tryParse(query['ms'] ?? ''),
+          0,
+          64,
+          f.mainAxisSpacing,
+        ),
         spacing: _clamp(double.tryParse(query['sp'] ?? ''), 0, 64, f.spacing),
+        runSpacing: _clamp(
+          double.tryParse(query['rs'] ?? ''),
+          0,
+          64,
+          f.runSpacing,
+        ),
         tileVariant: _decode(_tileVariantCodes, query['tv'], f.tileVariant),
         seedColor: _decodeColor(query['sc']) ?? f.seedColor,
         useMaterial3: _decodeBool(query['m3']) ?? f.useMaterial3,
+        isScrollable: _decodeBool(query['sb']) ?? f.isScrollable,
+        cascadingScrollable: _decodeBool(query['csb']) ?? f.cascadingScrollable,
+        direction: _decode(_directionCodes, query['dr'], f.direction),
+        buttonVariant: _decode(
+          _buttonVariantCodes,
+          query['bv'],
+          f.buttonVariant,
+        ),
+        searchEnabled: _decodeBool(query['se']) ?? f.searchEnabled,
         headerLeading: _decodeBool(query['hl']) ?? f.headerLeading,
         headerTrailing: _decodeBool(query['ht']) ?? f.headerTrailing,
         centerTitle: _decodeBool(query['ct']) ?? f.centerTitle,

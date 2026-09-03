@@ -12,15 +12,66 @@
   "tileVariant": "Tile Variant",
   "seedColor": "Seed Color",
   "columns": "Columns ({value})",
-  "@columns": {"placeholders": {"value": {"type": "int"}}},
+  "@columns": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
   "aspectRatio": "Aspect Ratio ({value})",
-  "@aspectRatio": {"placeholders": {"value": {"type": "String"}}},
+  "@aspectRatio": {
+    "placeholders": {
+      "value": {
+        "type": "String"
+      }
+    }
+  },
   "spacing": "Spacing ({value})",
-  "@spacing": {"placeholders": {"value": {"type": "int"}}},
+  "@spacing": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "columnSpacing": "Column Spacing ({value})",
+  "@columnSpacing": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "rowSpacing": "Row Spacing ({value})",
+  "@rowSpacing": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
+  "runSpacing": "Run Spacing ({value})",
+  "@runSpacing": {
+    "placeholders": {
+      "value": {
+        "type": "int"
+      }
+    }
+  },
   "single": "Single",
   "multiple": "Multiple",
   "filled": "Filled",
   "outlined": "Outlined",
+  "elevated": "Elevated",
+  "text": "Text",
+  "scrollable": "Scrollable",
+  "searchEnabled": "Search",
+  "direction": "Direction",
+  "directionBelow": "Below",
+  "directionAbove": "Above",
+  "directionAdaptive": "Adaptive",
+  "buttonVariant": "Button Variant",
   "brightness": "Brightness",
   "follow": "Follow App",
   "light": "Light",
@@ -42,20 +93,15 @@
   "phoneBottomSheetTitle": "Bottom Sheet",
   "tapBarHint": "Tap the bar to open the select",
   "openSelect": "Open Select",
-  "openListSelect": "Open List Select",
-  "openGridSelect": "Open Grid Select",
-  "openWrapSelect": "Open Wrap Select",
-  "openCascadingSelect": "Open Cascading Select",
-  "openTabNavSelect": "Open Tab Nav Select",
-  "openSideNavSelect": "Open Side Nav Select",
-  "openExpandableSelect": "Open Expandable Select",
-  "titleListSelect": "List Select",
-  "titleGridSelect": "Grid Select",
-  "titleWrapSelect": "Wrap Select",
-  "titleCascadingSelect": "Cascading Select",
-  "titleTabNavSelect": "Tab Nav Select",
-  "titleSideNavSelect": "Side Nav Select",
-  "titleExpandableSelect": "Expandable Select",
+  "listSelect": "List Select",
+  "gridSelect": "Grid Select",
+  "wrapSelect": "Wrap Select",
+  "cascadingSelect": "Cascading Select",
+  "tabNavSelect": "Tab Nav Select",
+  "sideNavSelect": "Side Nav Select",
+  "expandableSelect": "Expandable Select",
+  "resultPanelExpand": "Expand",
+  "resultPanelCollapse": "Collapse",
   "resultPanelTitle": "Callback results",
   "shareTooltip": "Copy link",
   "linkCopied": "Link copied to clipboard"

@@ -57,6 +57,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String columnSpacing(int value) {
+    return 'Column Spacing ($value)';
+  }
+
+  @override
+  String rowSpacing(int value) {
+    return 'Row Spacing ($value)';
+  }
+
+  @override
+  String runSpacing(int value) {
+    return 'Run Spacing ($value)';
+  }
+
+  @override
   String get single => 'Single';
 
   @override
@@ -67,6 +82,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get outlined => 'Outlined';
+
+  @override
+  String get elevated => 'Elevated';
+
+  @override
+  String get text => 'Text';
+
+  @override
+  String get scrollable => 'Scrollable';
+
+  @override
+  String get searchEnabled => 'Search';
+
+  @override
+  String get direction => 'Direction';
+
+  @override
+  String get directionBelow => 'Below';
+
+  @override
+  String get directionAbove => 'Above';
+
+  @override
+  String get directionAdaptive => 'Adaptive';
+
+  @override
+  String get buttonVariant => 'Button Variant';
 
   @override
   String get brightness => 'Brightness';
@@ -132,46 +174,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get openSelect => 'Open Select';
 
   @override
-  String get openListSelect => 'Open List Select';
+  String get listSelect => 'List Select';
 
   @override
-  String get openGridSelect => 'Open Grid Select';
+  String get gridSelect => 'Grid Select';
 
   @override
-  String get openWrapSelect => 'Open Wrap Select';
+  String get wrapSelect => 'Wrap Select';
 
   @override
-  String get openCascadingSelect => 'Open Cascading Select';
+  String get cascadingSelect => 'Cascading Select';
 
   @override
-  String get openTabNavSelect => 'Open Tab Nav Select';
+  String get tabNavSelect => 'Tab Nav Select';
 
   @override
-  String get openSideNavSelect => 'Open Side Nav Select';
+  String get sideNavSelect => 'Side Nav Select';
 
   @override
-  String get openExpandableSelect => 'Open Expandable Select';
+  String get expandableSelect => 'Expandable Select';
 
   @override
-  String get titleListSelect => 'List Select';
+  String get resultPanelExpand => 'Expand';
 
   @override
-  String get titleGridSelect => 'Grid Select';
-
-  @override
-  String get titleWrapSelect => 'Wrap Select';
-
-  @override
-  String get titleCascadingSelect => 'Cascading Select';
-
-  @override
-  String get titleTabNavSelect => 'Tab Nav Select';
-
-  @override
-  String get titleSideNavSelect => 'Side Nav Select';
-
-  @override
-  String get titleExpandableSelect => 'Expandable Select';
+  String get resultPanelCollapse => 'Collapse';
 
   @override
   String get resultPanelTitle => 'Callback results';

@@ -57,6 +57,21 @@ class AppLocalizationsZh extends AppLocalizations {
   }
 
   @override
+  String columnSpacing(int value) {
+    return '列间距（$value）';
+  }
+
+  @override
+  String rowSpacing(int value) {
+    return '行间距（$value）';
+  }
+
+  @override
+  String runSpacing(int value) {
+    return '换行间距（$value）';
+  }
+
+  @override
   String get single => '单选';
 
   @override
@@ -67,6 +82,33 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get outlined => '描边';
+
+  @override
+  String get elevated => '悬浮';
+
+  @override
+  String get text => '文本';
+
+  @override
+  String get scrollable => '可滚动';
+
+  @override
+  String get searchEnabled => '搜索';
+
+  @override
+  String get direction => '弹出方向';
+
+  @override
+  String get directionBelow => '向下';
+
+  @override
+  String get directionAbove => '向上';
+
+  @override
+  String get directionAdaptive => '自适应';
+
+  @override
+  String get buttonVariant => '按钮样式';
 
   @override
   String get brightness => '明暗';
@@ -132,46 +174,31 @@ class AppLocalizationsZh extends AppLocalizations {
   String get openSelect => '打开选择器';
 
   @override
-  String get openListSelect => '打开列表选择器';
+  String get listSelect => '列表选择器';
 
   @override
-  String get openGridSelect => '打开网格选择器';
+  String get gridSelect => '网格选择器';
 
   @override
-  String get openWrapSelect => '打开平铺选择器';
+  String get wrapSelect => '平铺选择器';
 
   @override
-  String get openCascadingSelect => '打开联动选择器';
+  String get cascadingSelect => '联动选择器';
 
   @override
-  String get openTabNavSelect => '打开顶导航选择器';
+  String get tabNavSelect => '顶导航选择器';
 
   @override
-  String get openSideNavSelect => '打开侧导航选择器';
+  String get sideNavSelect => '侧导航选择器';
 
   @override
-  String get openExpandableSelect => '打开分组选择器';
+  String get expandableSelect => '分组选择器';
 
   @override
-  String get titleListSelect => '列表选择器';
+  String get resultPanelExpand => '展开';
 
   @override
-  String get titleGridSelect => '网格选择器';
-
-  @override
-  String get titleWrapSelect => '平铺选择器';
-
-  @override
-  String get titleCascadingSelect => '联动选择器';
-
-  @override
-  String get titleTabNavSelect => '顶导航选择器';
-
-  @override
-  String get titleSideNavSelect => '侧导航选择器';
-
-  @override
-  String get titleExpandableSelect => '分组选择器';
+  String get resultPanelCollapse => '收起';
 
   @override
   String get resultPanelTitle => '回调结果';
@@ -236,6 +263,21 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   }
 
   @override
+  String columnSpacing(int value) {
+    return '列间距（$value）';
+  }
+
+  @override
+  String rowSpacing(int value) {
+    return '行间距（$value）';
+  }
+
+  @override
+  String runSpacing(int value) {
+    return '换行间距（$value）';
+  }
+
+  @override
   String get single => '单选';
 
   @override
@@ -246,6 +288,33 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get outlined => '描边';
+
+  @override
+  String get elevated => '悬浮';
+
+  @override
+  String get text => '文本';
+
+  @override
+  String get scrollable => '可滚动';
+
+  @override
+  String get searchEnabled => '搜索';
+
+  @override
+  String get direction => '弹出方向';
+
+  @override
+  String get directionBelow => '向下';
+
+  @override
+  String get directionAbove => '向上';
+
+  @override
+  String get directionAdaptive => '自适应';
+
+  @override
+  String get buttonVariant => '按钮样式';
 
   @override
   String get brightness => '明暗';
@@ -311,46 +380,31 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get openSelect => '打开选择器';
 
   @override
-  String get openListSelect => '打开列表选择器';
+  String get listSelect => '列表选择器';
 
   @override
-  String get openGridSelect => '打开网格选择器';
+  String get gridSelect => '网格选择器';
 
   @override
-  String get openWrapSelect => '打开平铺选择器';
+  String get wrapSelect => '平铺选择器';
 
   @override
-  String get openCascadingSelect => '打开联动选择器';
+  String get cascadingSelect => '联动选择器';
 
   @override
-  String get openTabNavSelect => '打开顶导航选择器';
+  String get tabNavSelect => '顶导航选择器';
 
   @override
-  String get openSideNavSelect => '打开侧导航选择器';
+  String get sideNavSelect => '侧导航选择器';
 
   @override
-  String get openExpandableSelect => '打开分组选择器';
+  String get expandableSelect => '分组选择器';
 
   @override
-  String get titleListSelect => '列表选择器';
+  String get resultPanelExpand => '展开';
 
   @override
-  String get titleGridSelect => '网格选择器';
-
-  @override
-  String get titleWrapSelect => '平铺选择器';
-
-  @override
-  String get titleCascadingSelect => '联动选择器';
-
-  @override
-  String get titleTabNavSelect => '顶导航选择器';
-
-  @override
-  String get titleSideNavSelect => '侧导航选择器';
-
-  @override
-  String get titleExpandableSelect => '分组选择器';
+  String get resultPanelCollapse => '收起';
 
   @override
   String get resultPanelTitle => '回调结果';
@@ -415,6 +469,21 @@ class AppLocalizationsZhHantHk extends AppLocalizationsZh {
   }
 
   @override
+  String columnSpacing(int value) {
+    return '列間距（$value）';
+  }
+
+  @override
+  String rowSpacing(int value) {
+    return '行間距（$value）';
+  }
+
+  @override
+  String runSpacing(int value) {
+    return '換行間距（$value）';
+  }
+
+  @override
   String get single => '單選';
 
   @override
@@ -425,6 +494,33 @@ class AppLocalizationsZhHantHk extends AppLocalizationsZh {
 
   @override
   String get outlined => '描邊';
+
+  @override
+  String get elevated => '立體';
+
+  @override
+  String get text => '文字';
+
+  @override
+  String get scrollable => '可捲動';
+
+  @override
+  String get searchEnabled => '搜尋';
+
+  @override
+  String get direction => '彈出方向';
+
+  @override
+  String get directionBelow => '向下';
+
+  @override
+  String get directionAbove => '向上';
+
+  @override
+  String get directionAdaptive => '自適應';
+
+  @override
+  String get buttonVariant => '按鈕樣式';
 
   @override
   String get brightness => '明暗';
@@ -490,46 +586,31 @@ class AppLocalizationsZhHantHk extends AppLocalizationsZh {
   String get openSelect => '打開選擇器';
 
   @override
-  String get openListSelect => '打開列表選擇器';
+  String get listSelect => '列表選擇器';
 
   @override
-  String get openGridSelect => '打開網格選擇器';
+  String get gridSelect => '網格選擇器';
 
   @override
-  String get openWrapSelect => '打開平鋪選擇器';
+  String get wrapSelect => '平鋪選擇器';
 
   @override
-  String get openCascadingSelect => '打開連動選擇器';
+  String get cascadingSelect => '連動選擇器';
 
   @override
-  String get openTabNavSelect => '打開頂導航選擇器';
+  String get tabNavSelect => '頂導航選擇器';
 
   @override
-  String get openSideNavSelect => '打開側導航選擇器';
+  String get sideNavSelect => '側導航選擇器';
 
   @override
-  String get openExpandableSelect => '打開分組選擇器';
+  String get expandableSelect => '分組選擇器';
 
   @override
-  String get titleListSelect => '列表選擇器';
+  String get resultPanelExpand => '展開';
 
   @override
-  String get titleGridSelect => '網格選擇器';
-
-  @override
-  String get titleWrapSelect => '平鋪選擇器';
-
-  @override
-  String get titleCascadingSelect => '連動選擇器';
-
-  @override
-  String get titleTabNavSelect => '頂導航選擇器';
-
-  @override
-  String get titleSideNavSelect => '側導航選擇器';
-
-  @override
-  String get titleExpandableSelect => '分組選擇器';
+  String get resultPanelCollapse => '收起';
 
   @override
   String get resultPanelTitle => '回呼結果';
@@ -594,6 +675,21 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   }
 
   @override
+  String columnSpacing(int value) {
+    return '列間距（$value）';
+  }
+
+  @override
+  String rowSpacing(int value) {
+    return '行間距（$value）';
+  }
+
+  @override
+  String runSpacing(int value) {
+    return '換行間距（$value）';
+  }
+
+  @override
   String get single => '單選';
 
   @override
@@ -604,6 +700,33 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
 
   @override
   String get outlined => '外框';
+
+  @override
+  String get elevated => '立體';
+
+  @override
+  String get text => '文字';
+
+  @override
+  String get scrollable => '可捲動';
+
+  @override
+  String get searchEnabled => '搜尋';
+
+  @override
+  String get direction => '彈出方向';
+
+  @override
+  String get directionBelow => '向下';
+
+  @override
+  String get directionAbove => '向上';
+
+  @override
+  String get directionAdaptive => '自適應';
+
+  @override
+  String get buttonVariant => '按鈕樣式';
 
   @override
   String get brightness => '明暗';
@@ -669,46 +792,31 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   String get openSelect => '開啟選擇器';
 
   @override
-  String get openListSelect => '開啟列表選擇器';
+  String get listSelect => '列表選擇器';
 
   @override
-  String get openGridSelect => '開啟網格選擇器';
+  String get gridSelect => '網格選擇器';
 
   @override
-  String get openWrapSelect => '開啟平鋪選擇器';
+  String get wrapSelect => '平鋪選擇器';
 
   @override
-  String get openCascadingSelect => '開啟連動選擇器';
+  String get cascadingSelect => '連動選擇器';
 
   @override
-  String get openTabNavSelect => '開啟頂導航選擇器';
+  String get tabNavSelect => '頂導航選擇器';
 
   @override
-  String get openSideNavSelect => '開啟側導航選擇器';
+  String get sideNavSelect => '側導航選擇器';
 
   @override
-  String get openExpandableSelect => '開啟分組選擇器';
+  String get expandableSelect => '分組選擇器';
 
   @override
-  String get titleListSelect => '列表選擇器';
+  String get resultPanelExpand => '展開';
 
   @override
-  String get titleGridSelect => '網格選擇器';
-
-  @override
-  String get titleWrapSelect => '平鋪選擇器';
-
-  @override
-  String get titleCascadingSelect => '連動選擇器';
-
-  @override
-  String get titleTabNavSelect => '頂導航選擇器';
-
-  @override
-  String get titleSideNavSelect => '側導航選擇器';
-
-  @override
-  String get titleExpandableSelect => '分組選擇器';
+  String get resultPanelCollapse => '收起';
 
   @override
   String get resultPanelTitle => '回呼結果';
@@ -773,6 +881,21 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   }
 
   @override
+  String columnSpacing(int value) {
+    return '列間距（$value）';
+  }
+
+  @override
+  String rowSpacing(int value) {
+    return '行間距（$value）';
+  }
+
+  @override
+  String runSpacing(int value) {
+    return '換行間距（$value）';
+  }
+
+  @override
   String get single => '單選';
 
   @override
@@ -783,6 +906,33 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get outlined => '描邊';
+
+  @override
+  String get elevated => '立體';
+
+  @override
+  String get text => '文字';
+
+  @override
+  String get scrollable => '可捲動';
+
+  @override
+  String get searchEnabled => '搜尋';
+
+  @override
+  String get direction => '彈出方向';
+
+  @override
+  String get directionBelow => '向下';
+
+  @override
+  String get directionAbove => '向上';
+
+  @override
+  String get directionAdaptive => '自適應';
+
+  @override
+  String get buttonVariant => '按鈕樣式';
 
   @override
   String get brightness => '明暗';
@@ -848,46 +998,31 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get openSelect => '打開選擇器';
 
   @override
-  String get openListSelect => '打開列表選擇器';
+  String get listSelect => '列表選擇器';
 
   @override
-  String get openGridSelect => '打開網格選擇器';
+  String get gridSelect => '網格選擇器';
 
   @override
-  String get openWrapSelect => '打開平鋪選擇器';
+  String get wrapSelect => '平鋪選擇器';
 
   @override
-  String get openCascadingSelect => '打開連動選擇器';
+  String get cascadingSelect => '連動選擇器';
 
   @override
-  String get openTabNavSelect => '打開頂導航選擇器';
+  String get tabNavSelect => '頂導航選擇器';
 
   @override
-  String get openSideNavSelect => '打開側導航選擇器';
+  String get sideNavSelect => '側導航選擇器';
 
   @override
-  String get openExpandableSelect => '打開分組選擇器';
+  String get expandableSelect => '分組選擇器';
 
   @override
-  String get titleListSelect => '列表選擇器';
+  String get resultPanelExpand => '展開';
 
   @override
-  String get titleGridSelect => '網格選擇器';
-
-  @override
-  String get titleWrapSelect => '平鋪選擇器';
-
-  @override
-  String get titleCascadingSelect => '連動選擇器';
-
-  @override
-  String get titleTabNavSelect => '頂導航選擇器';
-
-  @override
-  String get titleSideNavSelect => '側導航選擇器';
-
-  @override
-  String get titleExpandableSelect => '分組選擇器';
+  String get resultPanelCollapse => '收起';
 
   @override
   String get resultPanelTitle => '回調結果';

@@ -57,6 +57,21 @@ class AppLocalizationsVi extends AppLocalizations {
   }
 
   @override
+  String columnSpacing(int value) {
+    return 'Khoảng cách cột ($value)';
+  }
+
+  @override
+  String rowSpacing(int value) {
+    return 'Khoảng cách hàng ($value)';
+  }
+
+  @override
+  String runSpacing(int value) {
+    return 'Khoảng cách ngắt dòng ($value)';
+  }
+
+  @override
   String get single => 'Một';
 
   @override
@@ -67,6 +82,33 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get outlined => 'Viền ngoài';
+
+  @override
+  String get elevated => 'Nổi';
+
+  @override
+  String get text => 'Văn bản';
+
+  @override
+  String get scrollable => 'Cuộn được';
+
+  @override
+  String get searchEnabled => 'Tìm kiếm';
+
+  @override
+  String get direction => 'Hướng';
+
+  @override
+  String get directionBelow => 'Xuống dưới';
+
+  @override
+  String get directionAbove => 'Lên trên';
+
+  @override
+  String get directionAdaptive => 'Tự động';
+
+  @override
+  String get buttonVariant => 'Biến thể nút';
 
   @override
   String get brightness => 'Độ sáng';
@@ -132,46 +174,31 @@ class AppLocalizationsVi extends AppLocalizations {
   String get openSelect => 'Mở trình chọn';
 
   @override
-  String get openListSelect => 'Mở trình chọn danh sách';
+  String get listSelect => 'Trình chọn danh sách';
 
   @override
-  String get openGridSelect => 'Mở trình chọn lưới';
+  String get gridSelect => 'Trình chọn lưới';
 
   @override
-  String get openWrapSelect => 'Mở trình chọn ngắt dòng';
+  String get wrapSelect => 'Trình chọn ngắt dòng';
 
   @override
-  String get openCascadingSelect => 'Mở trình chọn liên hoàn';
+  String get cascadingSelect => 'Trình chọn liên hoàn';
 
   @override
-  String get openTabNavSelect => 'Mở trình chọn điều hướng tab';
+  String get tabNavSelect => 'Trình chọn điều hướng tab';
 
   @override
-  String get openSideNavSelect => 'Mở trình chọn điều hướng bên';
+  String get sideNavSelect => 'Trình chọn điều hướng bên';
 
   @override
-  String get openExpandableSelect => 'Mở trình chọn mở rộng';
+  String get expandableSelect => 'Trình chọn mở rộng';
 
   @override
-  String get titleListSelect => 'Trình chọn danh sách';
+  String get resultPanelExpand => 'Mở rộng';
 
   @override
-  String get titleGridSelect => 'Trình chọn lưới';
-
-  @override
-  String get titleWrapSelect => 'Trình chọn ngắt dòng';
-
-  @override
-  String get titleCascadingSelect => 'Trình chọn liên hoàn';
-
-  @override
-  String get titleTabNavSelect => 'Trình chọn điều hướng tab';
-
-  @override
-  String get titleSideNavSelect => 'Trình chọn điều hướng bên';
-
-  @override
-  String get titleExpandableSelect => 'Trình chọn mở rộng';
+  String get resultPanelCollapse => 'Thu gọn';
 
   @override
   String get resultPanelTitle => 'Kết quả callback';

@@ -57,6 +57,21 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
+  String columnSpacing(int value) {
+    return 'Jarak kolom ($value)';
+  }
+
+  @override
+  String rowSpacing(int value) {
+    return 'Jarak baris ($value)';
+  }
+
+  @override
+  String runSpacing(int value) {
+    return 'Jarak lipatan ($value)';
+  }
+
+  @override
   String get single => 'Tunggal';
 
   @override
@@ -67,6 +82,33 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get outlined => 'Bergaris';
+
+  @override
+  String get elevated => 'Timbul';
+
+  @override
+  String get text => 'Teks';
+
+  @override
+  String get scrollable => 'Dapat digulir';
+
+  @override
+  String get searchEnabled => 'Pencarian';
+
+  @override
+  String get direction => 'Arah';
+
+  @override
+  String get directionBelow => 'Ke bawah';
+
+  @override
+  String get directionAbove => 'Ke atas';
+
+  @override
+  String get directionAdaptive => 'Adaptif';
+
+  @override
+  String get buttonVariant => 'Varian tombol';
 
   @override
   String get brightness => 'Kecerahan';
@@ -132,46 +174,31 @@ class AppLocalizationsId extends AppLocalizations {
   String get openSelect => 'Buka pemilih';
 
   @override
-  String get openListSelect => 'Buka pemilih daftar';
+  String get listSelect => 'Pemilih daftar';
 
   @override
-  String get openGridSelect => 'Buka pemilih kisi';
+  String get gridSelect => 'Pemilih kisi';
 
   @override
-  String get openWrapSelect => 'Buka pemilih lipat';
+  String get wrapSelect => 'Pemilih lipat';
 
   @override
-  String get openCascadingSelect => 'Buka pemilih bertingkat';
+  String get cascadingSelect => 'Pemilih bertingkat';
 
   @override
-  String get openTabNavSelect => 'Buka pemilih navigasi tab';
+  String get tabNavSelect => 'Pemilih navigasi tab';
 
   @override
-  String get openSideNavSelect => 'Buka pemilih navigasi sisi';
+  String get sideNavSelect => 'Pemilih navigasi sisi';
 
   @override
-  String get openExpandableSelect => 'Buka pemilih yang dapat diperluas';
+  String get expandableSelect => 'Pemilih yang dapat diperluas';
 
   @override
-  String get titleListSelect => 'Pemilih daftar';
+  String get resultPanelExpand => 'Perluas';
 
   @override
-  String get titleGridSelect => 'Pemilih kisi';
-
-  @override
-  String get titleWrapSelect => 'Pemilih lipat';
-
-  @override
-  String get titleCascadingSelect => 'Pemilih bertingkat';
-
-  @override
-  String get titleTabNavSelect => 'Pemilih navigasi tab';
-
-  @override
-  String get titleSideNavSelect => 'Pemilih navigasi sisi';
-
-  @override
-  String get titleExpandableSelect => 'Pemilih yang dapat diperluas';
+  String get resultPanelCollapse => 'Ciutkan';
 
   @override
   String get resultPanelTitle => 'Hasil callback';

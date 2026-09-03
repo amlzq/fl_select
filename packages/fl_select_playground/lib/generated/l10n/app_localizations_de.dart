@@ -57,6 +57,21 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String columnSpacing(int value) {
+    return 'Spaltenabstand ($value)';
+  }
+
+  @override
+  String rowSpacing(int value) {
+    return 'Zeilenabstand ($value)';
+  }
+
+  @override
+  String runSpacing(int value) {
+    return 'Umbruchabstand ($value)';
+  }
+
+  @override
   String get single => 'Einzeln';
 
   @override
@@ -67,6 +82,33 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get outlined => 'Umrandet';
+
+  @override
+  String get elevated => 'Erhaben';
+
+  @override
+  String get text => 'Text';
+
+  @override
+  String get scrollable => 'Scrollbar';
+
+  @override
+  String get searchEnabled => 'Suche';
+
+  @override
+  String get direction => 'Richtung';
+
+  @override
+  String get directionBelow => 'Nach unten';
+
+  @override
+  String get directionAbove => 'Nach oben';
+
+  @override
+  String get directionAdaptive => 'Automatisch';
+
+  @override
+  String get buttonVariant => 'Schaltflächenvariante';
 
   @override
   String get brightness => 'Helligkeit';
@@ -133,46 +175,31 @@ class AppLocalizationsDe extends AppLocalizations {
   String get openSelect => 'Auswahl öffnen';
 
   @override
-  String get openListSelect => 'Listenauswahl öffnen';
+  String get listSelect => 'Listenauswahl';
 
   @override
-  String get openGridSelect => 'Rasterauswahl öffnen';
+  String get gridSelect => 'Rasterauswahl';
 
   @override
-  String get openWrapSelect => 'Umbruchauswahl öffnen';
+  String get wrapSelect => 'Umbruchauswahl';
 
   @override
-  String get openCascadingSelect => 'Kaskadierende Auswahl öffnen';
+  String get cascadingSelect => 'Kaskadierende Auswahl';
 
   @override
-  String get openTabNavSelect => 'Tab-Navigationsauswahl öffnen';
+  String get tabNavSelect => 'Tab-Navigationsauswahl';
 
   @override
-  String get openSideNavSelect => 'Seiten-Navigationsauswahl öffnen';
+  String get sideNavSelect => 'Seiten-Navigationsauswahl';
 
   @override
-  String get openExpandableSelect => 'Aufklappbare Auswahl öffnen';
+  String get expandableSelect => 'Aufklappbare Auswahl';
 
   @override
-  String get titleListSelect => 'Listenauswahl';
+  String get resultPanelExpand => 'Ausklappen';
 
   @override
-  String get titleGridSelect => 'Rasterauswahl';
-
-  @override
-  String get titleWrapSelect => 'Umbruchauswahl';
-
-  @override
-  String get titleCascadingSelect => 'Kaskadierende Auswahl';
-
-  @override
-  String get titleTabNavSelect => 'Tab-Navigationsauswahl';
-
-  @override
-  String get titleSideNavSelect => 'Seiten-Navigationsauswahl';
-
-  @override
-  String get titleExpandableSelect => 'Aufklappbare Auswahl';
+  String get resultPanelCollapse => 'Einklappen';
 
   @override
   String get resultPanelTitle => 'Callback-Ergebnisse';
