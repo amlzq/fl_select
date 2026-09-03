@@ -150,4 +150,58 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byType(SelectBadge), findsOneWidget);
   });
+
+  testWidgets(
+      'a later category owning "Any" does not steal the initial tab focus',
+      (tester) async {
+    final controller = SelectController(selectionMode: SelectionMode.multiple);
+    await tester.pumpWidget(
+      _harness(controller, entries: {
+        SelectCategoryEntry<dynamic>.children(
+          id: 'cate1',
+          name: 'Cate 1',
+          children: {
+            SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
+          },
+        ),
+        SelectCategoryEntry<dynamic>.children(
+          id: 'cate2',
+          name: 'Cate 2',
+          children: {
+            SelectTextEntry<dynamic>.any(parentId: 'cate2', name: 'Any'),
+          },
+        ),
+      }),
+    );
+    await tester.pumpAndSettle();
+
+    // initializeAnyIfEmpty auto-selects Cate 2's "Any" placeholder, but that
+    // is not a real selection: the first tab must stay focused and show its
+    // children.
+    expect(find.text('A 1'), findsOneWidget);
+    expect(find.text('Any'), findsNothing);
+  });
+
+  testWidgets('a restored real selection drives the initial tab focus',
+      (tester) async {
+    final controller = SelectController(
+      selectionMode: SelectionMode.multiple,
+      selectedEntries: {
+        SelectCategoryEntry<dynamic>.children(
+          id: 'cate2',
+          name: 'Cate 2',
+          children: {
+            SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1'),
+          },
+        ),
+      },
+    );
+    await tester.pumpWidget(_harness(controller));
+    await tester.pumpAndSettle();
+
+    // The restored selection lives in Cate 2, so that tab is focused even
+    // though Cate 1 comes first.
+    expect(find.text('B 1'), findsOneWidget);
+    expect(find.text('A 1'), findsNothing);
+  });
 }

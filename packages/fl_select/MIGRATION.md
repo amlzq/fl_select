@@ -1,5 +1,20 @@
 # Migration Guide
 
+## MIGRATE TO Next
+
+### `SelectController.badgedCategories` renamed to `realSelectedCategories`
+
+The getter is renamed to lead with its semantics — the categories holding a
+"real" selection (at least one selected child that is not the "Any"
+placeholder) — instead of the badge UI it happens to power. The old name is
+kept as a deprecated forwarding getter and will be removed in a future minor
+version.
+
+```diff
+-final categories = controller.badgedCategories;
++final categories = controller.realSelectedCategories;
+```
+
 ## MIGRATE TO 0.11.0
 
 The dual-mode delegates are split into single-purpose ones and the old

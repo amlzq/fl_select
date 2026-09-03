@@ -221,22 +221,31 @@ class SelectController extends ChangeNotifier {
   /// The categories that hold a "real" selection: at least one selected child
   /// that is not the "Any" placeholder.
   ///
-  /// This is the set passed to [SelectSideBar.selectedCategories] and
-  /// [SelectTabBar.selectedCategories] to badge a category: it follows the
-  /// selection rather than the focused category, so a selection stays visible
-  /// after the user switches to another category.
-  ///
-  /// A category whose only selected child is "Any" is left out — "Any" is the
-  /// absence of a choice, not a choice — so it is narrower than
+  /// "Any" is the absence of a choice, not a choice, so a category whose only
+  /// selected child is "Any" is left out. This set is therefore narrower than
   /// [selectedEntriesAtLevel](0), which also holds categories that are only
   /// focused/initialized.
-  SelectEntries get badgedCategories {
+  ///
+  /// Consumers follow the selection rather than the focused category: this is
+  /// the set passed to [SelectSideBar.selectedCategories] and
+  /// [SelectTabBar.selectedCategories] so a selection stays visible after the
+  /// user switches to another category, and it also drives TabNavSelect's
+  /// initial tab focus.
+  SelectEntries get realSelectedCategories {
     return selectedEntriesAtLevel(0).where((entry) {
       if (entry is! SelectCategoryEntry) return false;
       final children = selectedEntriesForParent(entry.id, level: 1);
       return children.any((e) => e is SelectChildEntry && !e.isAny);
     }).toSet();
   }
+
+  /// Deprecated alias of [realSelectedCategories], named after the badge UI
+  /// it powers rather than the semantics.
+  @Deprecated(
+    'Use realSelectedCategories instead. Will be removed in a future minor '
+    'version.',
+  )
+  SelectEntries get badgedCategories => realSelectedCategories;
 
   void focusCategoryEntry(
     SelectCategoryEntry category, {

@@ -195,7 +195,8 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
     // A category badge should only appear when it has a "real" selection,
     // i.e. at least one selected child that is not the "Any" placeholder.
     // Selecting only "Any" must not trigger the badge.
-    final badgedCategories = controller?.badgedCategories ?? <SelectEntry>{};
+    final realSelectedCategories =
+        controller?.realSelectedCategories ?? <SelectEntry>{};
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -234,7 +235,7 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                 return SelectExpansionTile(
                   title: category.name ?? '',
                   titlePadding: const EdgeInsets.symmetric(vertical: 10),
-                  showBadge: badgedCategories.contains(category),
+                  showBadge: realSelectedCategories.contains(category),
                   initiallyExpanded: true,
                   child: hasHeader || hasFooter
                       ? Column(

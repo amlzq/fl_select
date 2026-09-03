@@ -782,7 +782,8 @@ class CascadingSelectState extends State<CascadingSelect> {
     // A category badge should only appear when it has a "real" selection,
     // i.e. at least one selected child that is not the "Any" placeholder.
     // Selecting only "Any" must not trigger the badge.
-    final selectedCategories = controller?.badgedCategories ?? <SelectEntry>{};
+    final selectedCategories =
+        controller?.realSelectedCategories ?? <SelectEntry>{};
 
     return Column(
       mainAxisSize: MainAxisSize.min,
