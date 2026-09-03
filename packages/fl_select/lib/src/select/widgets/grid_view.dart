@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
+import '../select_delegate.dart';
 import '../select_entry.dart';
 import 'constants.dart';
 import 'field_tile.dart';
@@ -34,6 +35,7 @@ class SelectGridView extends StatefulWidget {
     this.padding,
     this.tileVariant,
     this.fieldVariant,
+    this.itemBuilder,
     this.showTitle = true,
     this.toText = '-',
   });
@@ -92,6 +94,17 @@ class SelectGridView extends StatefulWidget {
 
   /// The visual variant used to render the optional range input field.
   final SelectFieldTileVariant? fieldVariant;
+
+  /// Optional builder that fully replaces each grid tile's widget.
+  ///
+  /// When non-null, regular entries render as the returned widget instead of
+  /// the default grid tile; the builder renders its own selected-state
+  /// visuals from `selected` and wires `onTap` (e.g. via [InkWell]) to its own
+  /// gesture handler so taps keep flowing through this view's normal selection
+  /// logic. Custom range entries still render as the built-in min/max input
+  /// field. The `index` is the display index within [entries], excluding
+  /// custom range entries.
+  final SelectItemBuilder? itemBuilder;
 
   /// Whether to show the [category] name as a header above the grid.
   ///
@@ -336,6 +349,16 @@ class SelectGridViewState extends State<SelectGridView>
             itemBuilder: (context, index) {
               final entry = _entriesWithoutCustom[index];
               final selected = _selectedEntries.contains(entry);
+              final customBuilder = widget.itemBuilder;
+              if (customBuilder != null) {
+                return customBuilder(
+                  context,
+                  index,
+                  entry,
+                  selected: selected,
+                  onTap: () => _onItemTap(index, entry),
+                );
+              }
               return SelectGridTile(
                 onTap: () => _onItemTap.call(index, entry),
                 enabled: entry.enabled,

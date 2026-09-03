@@ -141,6 +141,7 @@ class ListSelectState extends State<ListSelect> {
             selectionMode: delegate.selectionMode,
             radioBuilder: delegate.radioBuilder,
             checkboxBuilder: delegate.checkboxBuilder,
+            itemBuilder: delegate.itemBuilder,
           ),
         ),
         if (controller?.hasMultipleMode == true &&

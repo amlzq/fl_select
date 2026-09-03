@@ -148,6 +148,7 @@ class GridSelectState extends State<GridSelect> {
               childAspectRatio: delegate.childAspectRatio,
               tileVariant: delegate.gridTileTheme?.variant,
               fieldVariant: delegate.fieldTileTheme?.variant,
+              itemBuilder: delegate.itemBuilder,
               entries: _displayEntries,
               selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
               onChanged: (_, entry) =>

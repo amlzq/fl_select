@@ -154,6 +154,7 @@ class WrapSelectState extends State<WrapSelect> {
               selectedChipColor: delegate.chipBarTheme?.selectedChipColor,
               labelStyle: delegate.chipBarTheme?.labelStyle,
               selectedLabelStyle: delegate.chipBarTheme?.selectedLabelStyle,
+              itemBuilder: delegate.itemBuilder,
               onChanged: (_, entry) =>
                   _onTerminalItemTap(entry as SelectChildEntry),
             ),

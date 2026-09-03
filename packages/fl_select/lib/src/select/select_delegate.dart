@@ -26,6 +26,25 @@ typedef SelectActionBarBuilder = Widget Function(
   required VoidCallback onApplyTap,
 });
 
+/// Builds a fully custom item widget for one select entry.
+///
+/// When provided to a delegate's `itemBuilder`, the returned widget replaces
+/// the default item widget (radio/checkbox list tile, grid tile or chip)
+/// entirely, including the built-in selected-state visuals. Render your own
+/// selected highlight from [selected] and wire [onTap] to a gesture handler
+/// (e.g. [InkWell.onTap]) so the entry toggles through the library's normal
+/// selection flow.
+///
+/// Only regular entries are passed to the builder; custom range entries keep
+/// rendering as the built-in min/max input field.
+typedef SelectItemBuilder = Widget Function(
+  BuildContext context,
+  int index,
+  SelectEntry entry, {
+  required bool selected,
+  required VoidCallback onTap,
+});
+
 /// Base configuration for a select.
 ///
 /// A [SelectDelegate] is responsible for:
@@ -288,97 +307,6 @@ abstract class SelectDelegate {
   }
 }
 
-/// A cascading select for two-level-or-deeper (category) tree data.
-///
-/// This layout shows categories on the left and cascading item columns to
-/// the right, expanding one column per level with unlimited depth
-/// (category -> child -> grandchild -> ...).
-///
-/// Flat (parentless) structures are not supported; use
-/// [ListSelectDelegate], [GridSelectDelegate] or [WrapSelectDelegate]
-/// for flat data.
-class CascadingSelectDelegate extends SelectDelegate {
-  CascadingSelectDelegate({
-    this.categoryBackgroundColor,
-    this.terminalBackgroundColor,
-    this.checkboxBuilder,
-    this.radioBuilder,
-    this.isScrollable = false,
-    super.selectionMode,
-    super.entries,
-    super.entriesLoader,
-    super.selectedEntries,
-    super.selectedEntriesLoader,
-    super.resetEntries,
-    super.resetEntriesLoader,
-    super.actionBarBuilder,
-    super.selectedColor,
-    super.onSelectedColor,
-    super.backgroundColor,
-    super.onBackgroundColor,
-    super.backgroundColorHigh,
-    super.backgroundColorHighest,
-    super.onBackgroundColorHighest,
-    super.resetText,
-    super.applyText,
-    super.searchEnabled,
-    super.searchPredicate,
-    super.searchHintText,
-    super.searchDebounceDuration,
-    super.searchBarTheme,
-    super.actionBarTheme,
-    super.tabBarTheme,
-    super.sideBarTheme,
-    super.gridTileTheme,
-    super.listTileTheme,
-    super.fieldTileTheme,
-    super.expansionTileTheme,
-    super.chipBarTheme,
-    super.panelTheme,
-    super.skeletonBuilder,
-    super.errorBuilder,
-  });
-
-  /// Background color used for the category column.
-  final Color? categoryBackgroundColor;
-
-  /// Background color used for the terminal (deepest) column.
-  final Color? terminalBackgroundColor;
-
-  /// Optional custom radio widget builder.
-  final ToggleWidgetBuilder? radioBuilder;
-
-  /// Optional custom checkbox widget builder.
-  final ToggleWidgetBuilder? checkboxBuilder;
-
-  final bool isScrollable;
-
-  @override
-  Widget buildBody(
-    BuildContext context,
-    List<SelectEntry> entries,
-    Set<SelectEntry>? selectedEntries, {
-    String searchQuery = '',
-  }) {
-    return CascadingSelect(
-      delegate: this,
-      entries: entries,
-      selectedEntries: selectedEntries,
-      searchQuery: searchQuery,
-      searchPredicate: searchPredicate,
-    );
-  }
-
-  @override
-  Widget buildSkeleton(BuildContext context) {
-    return skeletonBuilder?.call(context) ??
-        CascadingSelectSkeleton(
-          sideBarWidth: sideBarTheme?.width,
-          backgroundColor: backgroundColor,
-        );
-  }
-}
-
 /// A list select that renders entries as a single expandable list.
 ///
 /// Supports both flat and two-level structures:
@@ -393,6 +321,7 @@ class ListSelectDelegate extends SelectDelegate {
   ListSelectDelegate({
     this.checkboxBuilder,
     this.radioBuilder,
+    this.itemBuilder,
     super.selectionMode,
     super.entries,
     super.entriesLoader,
@@ -433,6 +362,20 @@ class ListSelectDelegate extends SelectDelegate {
 
   /// Optional custom checkbox widget builder.
   final ToggleWidgetBuilder? checkboxBuilder;
+
+  /// Optional builder that fully replaces each item's widget.
+  ///
+  /// When non-null, regular entries render as the returned widget instead of
+  /// the default radio/checkbox list tile; the builder renders its own
+  /// selected-state visuals from `selected` and wires `onTap` (e.g. via
+  /// [InkWell]) to trigger the selection. Custom range entries still render
+  /// as the built-in min/max input field.
+  ///
+  /// Only used when rendering flat (parentless) data; the deprecated
+  /// two-level fallback to [ExpandableSelectDelegate] does not forward it.
+  /// The `index` is the display index within the (search-filtered) entry
+  /// list.
+  final SelectItemBuilder? itemBuilder;
 
   @override
   Widget buildBody(
@@ -533,6 +476,7 @@ class GridSelectDelegate extends SelectDelegate {
     this.childAspectRatio = 1.0,
     this.checkboxBuilder,
     this.radioBuilder,
+    this.itemBuilder,
     super.selectionMode,
     super.entries,
     super.entriesLoader,
@@ -585,6 +529,19 @@ class GridSelectDelegate extends SelectDelegate {
 
   /// Optional custom checkbox widget builder.
   final ToggleWidgetBuilder? checkboxBuilder;
+
+  /// Optional builder that fully replaces each tile's widget.
+  ///
+  /// When non-null, regular entries render as the returned widget instead of
+  /// the default grid tile; the builder renders its own selected-state
+  /// visuals from `selected` and wires `onTap` (e.g. via [InkWell]) to
+  /// trigger the selection. Custom range entries still render as the built-in
+  /// min/max input field.
+  ///
+  /// Only used when rendering flat (parentless) data; the deprecated
+  /// two-level fallback to [TabNavSelectDelegate] does not forward it. The
+  /// `index` is the display index within the (search-filtered) entry list.
+  final SelectItemBuilder? itemBuilder;
 
   @override
   Widget buildBody(
@@ -673,6 +630,198 @@ class GridSelectDelegate extends SelectDelegate {
           mainAxisSpacing: mainAxisSpacing,
           crossAxisSpacing: crossAxisSpacing,
           childAspectRatio: childAspectRatio,
+        );
+  }
+}
+
+/// A wrap select for flat (parentless) data.
+///
+/// The top-level entries render directly as a wrapable chip bar; no
+/// category navigation is shown.
+///
+/// Two-level (category) structures are not supported; use
+/// [SideNavSelectDelegate] for two-level data.
+class WrapSelectDelegate extends SelectDelegate {
+  WrapSelectDelegate({
+    this.spacing = 0.0,
+    this.runSpacing = 0.0,
+    this.itemBuilder,
+    super.selectionMode,
+    super.entries,
+    super.entriesLoader,
+    super.selectedEntries,
+    super.selectedEntriesLoader,
+    super.resetEntries,
+    super.resetEntriesLoader,
+    super.actionBarBuilder,
+    super.selectedColor,
+    super.onSelectedColor,
+    super.backgroundColor,
+    super.onBackgroundColor,
+    super.backgroundColorHigh,
+    super.backgroundColorHighest,
+    super.onBackgroundColorHighest,
+    super.resetText,
+    super.applyText,
+    super.searchEnabled,
+    super.searchPredicate,
+    super.searchHintText,
+    super.searchDebounceDuration,
+    super.searchBarTheme,
+    super.actionBarTheme,
+    super.sideBarTheme,
+    super.tabBarTheme,
+    super.gridTileTheme,
+    super.listTileTheme,
+    super.fieldTileTheme,
+    super.expansionTileTheme,
+    super.chipBarTheme,
+    super.panelTheme,
+    super.skeletonBuilder,
+    super.errorBuilder,
+  }) : assert(
+          entries == null ||
+              entries.isEmpty ||
+              entries.first is! SelectCategoryEntry,
+          'WrapSelectDelegate only supports flat (parentless) data. '
+          'Use SideNavSelectDelegate for two-level (category) data.',
+        );
+
+  /// Horizontal spacing between chips in a wrapped row.
+  ///
+  /// Forwarded to [SelectChipBar.spacing]. Defaults to 0.0.
+  final double spacing;
+
+  /// Vertical spacing between wrapped chip rows.
+  ///
+  /// Forwarded to [SelectChipBar.runSpacing]. Defaults to 0.0.
+  final double runSpacing;
+
+  /// Optional builder that fully replaces each chip's widget.
+  ///
+  /// When non-null, regular entries render as the returned widget instead of
+  /// the default chip; the builder renders its own selected-state visuals
+  /// from `selected` and wires `onTap` (e.g. via [InkWell]) to trigger the
+  /// selection. Custom range entries still render as the built-in min/max
+  /// input field. The `index` is the display index within the
+  /// (search-filtered) entry list.
+  final SelectItemBuilder? itemBuilder;
+
+  @override
+  Widget buildBody(
+    BuildContext context,
+    List<SelectEntry> entries,
+    Set<SelectEntry>? selectedEntries, {
+    String searchQuery = '',
+  }) {
+    assert(
+      entries.isEmpty || entries.first is! SelectCategoryEntry,
+      'WrapSelectDelegate only supports flat (parentless) data. '
+      'Use SideNavSelectDelegate for two-level (category) data.',
+    );
+    return WrapSelect(
+      delegate: this,
+      entries: entries,
+      selectedEntries: selectedEntries,
+      searchQuery: searchQuery,
+      searchPredicate: searchPredicate,
+    );
+  }
+
+  @override
+  Widget buildSkeleton(BuildContext context) {
+    return skeletonBuilder?.call(context) ??
+        WrapSelectSkeleton(spacing: spacing, runSpacing: runSpacing);
+  }
+}
+
+/// A cascading select for two-level-or-deeper (category) tree data.
+///
+/// This layout shows categories on the left and cascading item columns to
+/// the right, expanding one column per level with unlimited depth
+/// (category -> child -> grandchild -> ...).
+///
+/// Flat (parentless) structures are not supported; use
+/// [ListSelectDelegate], [GridSelectDelegate] or [WrapSelectDelegate]
+/// for flat data.
+class CascadingSelectDelegate extends SelectDelegate {
+  CascadingSelectDelegate({
+    this.categoryBackgroundColor,
+    this.terminalBackgroundColor,
+    this.checkboxBuilder,
+    this.radioBuilder,
+    this.isScrollable = false,
+    super.selectionMode,
+    super.entries,
+    super.entriesLoader,
+    super.selectedEntries,
+    super.selectedEntriesLoader,
+    super.resetEntries,
+    super.resetEntriesLoader,
+    super.actionBarBuilder,
+    super.selectedColor,
+    super.onSelectedColor,
+    super.backgroundColor,
+    super.onBackgroundColor,
+    super.backgroundColorHigh,
+    super.backgroundColorHighest,
+    super.onBackgroundColorHighest,
+    super.resetText,
+    super.applyText,
+    super.searchEnabled,
+    super.searchPredicate,
+    super.searchHintText,
+    super.searchDebounceDuration,
+    super.searchBarTheme,
+    super.actionBarTheme,
+    super.tabBarTheme,
+    super.sideBarTheme,
+    super.gridTileTheme,
+    super.listTileTheme,
+    super.fieldTileTheme,
+    super.expansionTileTheme,
+    super.chipBarTheme,
+    super.panelTheme,
+    super.skeletonBuilder,
+    super.errorBuilder,
+  });
+
+  /// Background color used for the category column.
+  final Color? categoryBackgroundColor;
+
+  /// Background color used for the terminal (deepest) column.
+  final Color? terminalBackgroundColor;
+
+  /// Optional custom radio widget builder.
+  final ToggleWidgetBuilder? radioBuilder;
+
+  /// Optional custom checkbox widget builder.
+  final ToggleWidgetBuilder? checkboxBuilder;
+
+  final bool isScrollable;
+
+  @override
+  Widget buildBody(
+    BuildContext context,
+    List<SelectEntry> entries,
+    Set<SelectEntry>? selectedEntries, {
+    String searchQuery = '',
+  }) {
+    return CascadingSelect(
+      delegate: this,
+      entries: entries,
+      selectedEntries: selectedEntries,
+      searchQuery: searchQuery,
+      searchPredicate: searchPredicate,
+    );
+  }
+
+  @override
+  Widget buildSkeleton(BuildContext context) {
+    return skeletonBuilder?.call(context) ??
+        CascadingSelectSkeleton(
+          sideBarWidth: sideBarTheme?.width,
+          backgroundColor: backgroundColor,
         );
   }
 }
@@ -1031,96 +1180,6 @@ class SideNavSelectDelegate extends SelectDelegate {
         SideNavSelectSkeleton(
           sideBarWidth: sideBarTheme?.width,
         );
-  }
-}
-
-/// A wrap select for flat (parentless) data.
-///
-/// The top-level entries render directly as a wrapable chip bar; no
-/// category navigation is shown.
-///
-/// Two-level (category) structures are not supported; use
-/// [SideNavSelectDelegate] for two-level data.
-class WrapSelectDelegate extends SelectDelegate {
-  WrapSelectDelegate({
-    this.spacing = 0.0,
-    this.runSpacing = 0.0,
-    super.selectionMode,
-    super.entries,
-    super.entriesLoader,
-    super.selectedEntries,
-    super.selectedEntriesLoader,
-    super.resetEntries,
-    super.resetEntriesLoader,
-    super.actionBarBuilder,
-    super.selectedColor,
-    super.onSelectedColor,
-    super.backgroundColor,
-    super.onBackgroundColor,
-    super.backgroundColorHigh,
-    super.backgroundColorHighest,
-    super.onBackgroundColorHighest,
-    super.resetText,
-    super.applyText,
-    super.searchEnabled,
-    super.searchPredicate,
-    super.searchHintText,
-    super.searchDebounceDuration,
-    super.searchBarTheme,
-    super.actionBarTheme,
-    super.sideBarTheme,
-    super.tabBarTheme,
-    super.gridTileTheme,
-    super.listTileTheme,
-    super.fieldTileTheme,
-    super.expansionTileTheme,
-    super.chipBarTheme,
-    super.panelTheme,
-    super.skeletonBuilder,
-    super.errorBuilder,
-  }) : assert(
-          entries == null ||
-              entries.isEmpty ||
-              entries.first is! SelectCategoryEntry,
-          'WrapSelectDelegate only supports flat (parentless) data. '
-          'Use SideNavSelectDelegate for two-level (category) data.',
-        );
-
-  /// Horizontal spacing between chips in a wrapped row.
-  ///
-  /// Forwarded to [SelectChipBar.spacing]. Defaults to 0.0.
-  final double spacing;
-
-  /// Vertical spacing between wrapped chip rows.
-  ///
-  /// Forwarded to [SelectChipBar.runSpacing]. Defaults to 0.0.
-  final double runSpacing;
-
-  @override
-  Widget buildBody(
-    BuildContext context,
-    List<SelectEntry> entries,
-    Set<SelectEntry>? selectedEntries, {
-    String searchQuery = '',
-  }) {
-    assert(
-      entries.isEmpty || entries.first is! SelectCategoryEntry,
-      'WrapSelectDelegate only supports flat (parentless) data. '
-      'Use SideNavSelectDelegate for two-level (category) data.',
-    );
-    return WrapSelect(
-      delegate: this,
-      entries: entries,
-      selectedEntries: selectedEntries,
-      searchQuery: searchQuery,
-      searchPredicate: searchPredicate,
-    );
-  }
-
-  @override
-  Widget buildSkeleton(BuildContext context) {
-    return skeletonBuilder?.call(context) ??
-        WrapSelectSkeleton(spacing: spacing, runSpacing: runSpacing);
   }
 }
 

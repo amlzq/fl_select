@@ -4,6 +4,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
+import '../select_delegate.dart';
 import '../select_entry.dart';
 import 'constants.dart';
 import 'field_tile.dart';
@@ -30,6 +31,7 @@ class SelectListView extends StatefulWidget {
     this.selectionMode = SelectionMode.single,
     this.radioBuilder,
     this.checkboxBuilder,
+    this.itemBuilder,
     this.showTitle = true,
     this.toText = '-',
   });
@@ -77,6 +79,17 @@ class SelectListView extends StatefulWidget {
 
   /// Optional builder for the checkbox widget shown in [SelectionMode.multiple].
   final ToggleWidgetBuilder? checkboxBuilder;
+
+  /// Optional builder that fully replaces each list item's widget.
+  ///
+  /// When non-null, regular entries render as the returned widget instead of
+  /// the radio/checkbox list tile; the builder renders its own selected-state
+  /// visuals from `selected` and wires `onTap` (e.g. via [InkWell]) to its own
+  /// gesture handler so taps keep flowing through this view's normal selection
+  /// logic. Custom range entries still render as the built-in min/max input
+  /// field. The `index` is the display index within [entries], excluding
+  /// custom range entries.
+  final SelectItemBuilder? itemBuilder;
 
   /// Whether to show the [category] name as a header above the list.
   ///
@@ -321,6 +334,16 @@ class SelectListViewState extends State<SelectListView>
             itemBuilder: (context, index) {
               final entry = entriesWithoutCustom[index];
               final selected = widget.selectedEntries?.contains(entry) ?? false;
+              final customBuilder = widget.itemBuilder;
+              if (customBuilder != null) {
+                return customBuilder(
+                  context,
+                  index,
+                  entry,
+                  selected: selected,
+                  onTap: () => _onItemTap(index, entry),
+                );
+              }
               if (SelectionMode.single == widget.selectionMode) {
                 return SelectRadioListTile(
                   onTap: () => _onItemTap(index, entry),

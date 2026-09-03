@@ -2,7 +2,9 @@
 
 - **BUGFIX** `TabNavSelect` no longer lets a category whose only selection is the auto-initialized "Any" placeholder steal the initial tab focus; the initial tab now follows the first category holding a real selection, consistent with the tab badge.
 
-- **DEPRECATION** rename `SelectController.badgedCategories` to `realSelectedCategories`, leading with the semantics (categories holding a real selection) instead of the badge UI it happens to power; the old name is kept as a deprecated alias and **will be removed in a future minor version** ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+- **DEPRECATION** rename `SelectController.badgedCategories` to `realSelectedCategories`; the old name is a deprecated alias **will be removed in a future minor version** ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+
+- **FEATURE** the flat-data delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) now accept an `itemBuilder` to fully customize how each item is rendered.
 
 ## 0.11.3
 

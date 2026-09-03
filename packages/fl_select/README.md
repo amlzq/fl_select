@@ -26,7 +26,7 @@ Two layers work together: **entry points** decide _where_ the select appears, an
 - Async data loading through `entriesLoader`, or synchronous data via `entries` / `selectedEntries` / `resetEntries` (rendered on the first frame, no skeleton).
 - Search filtering: set `searchEnabled` on any delegate and a `SelectSearchBar` filters entries as you type (debounced, with a customizable predicate and theme).
 - Flexible entries: the "Any" entry clears a category, `SelectRangeEntry.custom` takes user min/max input, and an `immediate` entry applies on tap without the action bar.
-- `skeletonBuilder` & `errorBuilder` for loading and error states.
+- `itemBuilder` &`skeletonBuilder` & `errorBuilder` & `actionBarBuilder` for loading and error states.
 - Theming via `SelectThemeData` and the `PopupSelectBarTheme` / `PopupSelectButtonTheme` extensions.
 - Built-in i18n in 10 languages via `SelectLocalizationsDelegate`.
 
@@ -533,6 +533,34 @@ ListSelectDelegate(
 The default predicate (`defaultSelectSearchPredicate`) matches `SelectEntry.name` case-insensitively; provide a custom `searchPredicate` to match `id`, `extra`, or any other field. Style the bar via `searchBarTheme` (`SelectSearchBarTheme`) on the delegate, or globally through `SelectThemeData`.
 
 ![search](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/search.gif)
+
+#### Custom item builder
+
+The flat-data delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) accept an `itemBuilder` that replaces each regular item's widget — list tile, grid tile or chip — entirely. The builder receives the entry, its display index within the (search-filtered) list, the current `selected` state, and an `onTap` that you must wire to your own gesture handler (e.g. `InkWell.onTap`) so taps keep flowing through the library's normal selection logic:
+
+```dart
+ListSelectDelegate(
+  entries: listData,
+  itemBuilder: (context, index, entry, {required selected, required onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        color: selected ? Theme.of(context).colorScheme.primaryContainer : null,
+        child: Row(
+          children: [
+            if (selected) const Icon(Icons.check),
+            const SizedBox(width: 8),
+            Text(entry.name ?? ''),
+          ],
+        ),
+      ),
+    );
+  },
+);
+```
+
+Custom range entries (`SelectRangeEntry.custom`) are not passed to the builder — they keep rendering as the built-in min/max input field. Omitting `itemBuilder` keeps the default item widgets; the deprecated two-level fallback paths (list → expandable, grid → tab-nav) do not forward it.
 
 #### Serializing selections
 

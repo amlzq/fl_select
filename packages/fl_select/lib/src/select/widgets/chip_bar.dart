@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
+import '../select_delegate.dart';
 import '../select_entry.dart';
 import '../select_theme.dart';
 import '../select_theme_data.dart';
@@ -46,6 +47,7 @@ class SelectChipBar extends StatefulWidget {
     this.padding,
     this.variant,
     this.fieldVariant,
+    this.itemBuilder,
     this.chipColor,
     this.selectedChipColor,
     this.labelStyle,
@@ -118,6 +120,17 @@ class SelectChipBar extends StatefulWidget {
   /// The visual variant of the custom range input field, if [entries] contains
   /// a custom range entry.
   final SelectFieldTileVariant? fieldVariant;
+
+  /// Optional builder that fully replaces each chip's widget.
+  ///
+  /// When non-null, regular entries render as the returned widget instead of
+  /// the default chip; the builder renders its own selected-state visuals
+  /// from `selected` and wires `onTap` (e.g. via [InkWell]) to its own gesture
+  /// handler so taps keep flowing through this bar's normal selection logic.
+  /// Custom range entries still render as the built-in min/max input field.
+  /// The `index` is the display index within [entries], excluding custom
+  /// range entries.
+  final SelectItemBuilder? itemBuilder;
 
   /// The color of an unselected chip.
   ///
@@ -375,7 +388,9 @@ class _SelectChipBarState extends State<SelectChipBar> {
         .copyWith(inherit: true, color: selectedTextColor);
 
     // Custom entries render as input fields, not chips; their original indexes
-    // are preserved for the [onChanged] callback.
+    // are preserved for the [onChanged] callback. The display index passed to
+    // [itemBuilder] counts only the rendered chips.
+    var displayIndex = 0;
     final children = [
       for (final entry in widget.entries.asMap().entries)
         if (testNotCustomItem(entry.value))
@@ -383,6 +398,17 @@ class _SelectChipBarState extends State<SelectChipBar> {
             final index = entry.key;
             final item = entry.value;
             final selected = _selectedEntries.contains(item);
+            final itemDisplayIndex = displayIndex++;
+            final customBuilder = widget.itemBuilder;
+            if (customBuilder != null) {
+              return customBuilder(
+                context,
+                itemDisplayIndex,
+                item,
+                selected: selected,
+                onTap: () => _onItemTap(index, item),
+              );
+            }
             return _Chip(
               label: item.name ?? '',
               selected: selected,
