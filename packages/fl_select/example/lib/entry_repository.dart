@@ -106,16 +106,58 @@ SelectEntries get listData {
     SelectTextEntry.name(id: 'b', name: 'Grape'),
     SelectTextEntry.name(id: 'c', name: 'Strawberry'),
     SelectTextEntry.name(id: 'd', name: 'Pineapple'),
+    SelectTextEntry.name(id: 'e', name: 'Orange'),
+    SelectTextEntry.name(id: 'f', name: 'Banana'),
+    SelectTextEntry.name(id: 'g', name: 'Pine'),
+    SelectTextEntry.name(id: 'h', name: 'Mango'),
+    SelectTextEntry.name(id: 'i', name: 'Pear'),
+    SelectTextEntry.name(id: 'j', name: 'Peach'),
+    SelectTextEntry.name(id: 'k', name: 'Cherry'),
+    SelectTextEntry.name(id: 'l', name: 'Lemon'),
+    SelectTextEntry.name(id: 'm', name: 'Lime'),
+    SelectTextEntry.name(id: 'n', name: 'Grapefruit'),
   };
 }
 
 SelectEntries get gridData {
   return {
-    SelectRangeEntry.custom(),
-    SelectTextEntry.name(id: 'a', name: '0-100'),
-    SelectTextEntry.name(id: 'b', name: '100-500'),
-    SelectTextEntry.name(id: 'c', name: '500-1000'),
-    SelectTextEntry.name(id: 'd', name: '1000-2000'),
+    SelectIntEntry.custom(),
+    SelectIntEntry(
+      id: 'a',
+      name: '\$0-\$25',
+      min: 0,
+      max: 25,
+    ),
+    SelectIntEntry(
+      id: 'b',
+      name: '\$25-\$50',
+      min: 25,
+      max: 50,
+    ),
+    SelectIntEntry(
+      id: 'c',
+      name: '\$50-\$100',
+      min: 50,
+      max: 100,
+    ),
+    SelectIntEntry(
+      id: 'd',
+      name: '\$100-\$250',
+      min: 100,
+      max: 250,
+    ),
+    SelectIntEntry(
+      id: 'e',
+      name: '\$250-\$500',
+      min: 250,
+      max: 500,
+    ),
+    SelectIntEntry(
+      id: 'f',
+      name: '\$500-\$1000',
+      min: 500,
+      max: 1000,
+    ),
   };
 }
 
@@ -142,7 +184,7 @@ SelectEntries get multiCategoryData {
   return {
     SelectCategoryEntry.children(
       id: 'cate1',
-      name: 'Cate 1',
+      name: 'Sport',
       children: {
         SelectTextEntry.name(id: 'a', name: 'Football'),
         SelectTextEntry.name(id: 'b', name: 'Basketball'),
@@ -158,47 +200,61 @@ SelectEntries get multiCategoryData {
           SelectTextEntry.name(id: 'f-b', name: 'B'),
           SelectTextEntry.name(id: 'f-c', name: 'C'),
           SelectTextEntry.name(id: 'f-d', name: 'D'),
+          SelectTextEntry.name(id: 'f-d', name: 'E'),
         },
       ),
       footerSelectionMode: SelectionMode.single,
     ),
     SelectCategoryEntry.children(
       id: 'cate2',
-      name: 'Cate 2',
+      name: 'Cuisine',
       header: SelectTextEntry.children(
         id: 'c2-h',
         name: 'Letter Grade',
         children: {
-          SelectTextEntry.name(id: 'h-a', name: 'A'),
-          SelectTextEntry.name(id: 'h-b', name: 'B'),
-          SelectTextEntry.name(id: 'h-c', name: 'C'),
-          SelectTextEntry.name(id: 'h-d', name: 'D'),
+          SelectTextEntry.name(id: 'h-a', name: '1'),
+          SelectTextEntry.name(id: 'h-b', name: '2'),
+          SelectTextEntry.name(id: 'h-c', name: '3'),
+          SelectTextEntry.name(id: 'h-d', name: '4'),
+          SelectTextEntry.name(id: 'h-d', name: '5'),
         },
       ),
       headerSelectionMode: SelectionMode.single,
       children: {
-        SelectTextEntry.name(id: 'a', name: 'Mathematics'),
-        SelectTextEntry.name(id: 'b', name: 'Language'),
-        SelectTextEntry.name(id: 'c', name: 'Science'),
-        SelectTextEntry.name(id: 'd', name: 'History'),
+        SelectTextEntry.name(id: 'a', name: 'Chinese'),
+        SelectTextEntry.name(id: 'b', name: 'French'),
+        SelectTextEntry.name(id: 'c', name: 'Indian'),
+        SelectTextEntry.name(id: 'd', name: 'Turkish'),
       },
       selectionMode: SelectionMode.single,
     ),
     SelectCategoryEntry.children(
       id: 'cate3',
-      name: 'Cate 3',
+      name: 'Storage (GB)',
       children: {
-        SelectTextEntry.name(id: 'a', name: '0-100'),
-        SelectTextEntry.name(id: 'b', name: '100-500'),
-        SelectTextEntry.name(id: 'c', name: '500-1000'),
-        SelectTextEntry.name(id: 'd', name: '1000-2000'),
-        SelectRangeEntry.custom(),
+        SelectIntEntry.custom(),
+        SelectRangeEntry(id: '0-64', name: '0-64', min: 0, max: 64),
+        SelectRangeEntry(id: '64-128', name: '64-128', min: 64, max: 128),
+        SelectRangeEntry(id: '128-256', name: '128-256', min: 128, max: 256),
+        SelectRangeEntry(id: '256-512', name: '256-512', min: 256, max: 512),
+        SelectRangeEntry(
+          id: '512-1024',
+          name: '512-1024',
+          min: 512,
+          max: 1024,
+        ),
+        SelectRangeEntry(
+          id: '1024-2048',
+          name: '1024-2048',
+          min: 1024,
+          max: 2048,
+        ),
       },
       selectionMode: SelectionMode.single,
     ),
     SelectCategoryEntry.children(
       id: 'cate4',
-      name: 'Cate 4',
+      name: 'Animal',
       children: {
         SelectTextEntry.name(id: 'a', name: 'Tiger'),
         SelectTextEntry.name(id: 'b', name: 'Lion'),
@@ -214,18 +270,15 @@ SelectEntries get multiCategoryData {
         SelectTextEntry.name(id: 'l', name: 'Chicken'),
         SelectTextEntry.name(id: 'm', name: 'Duck'),
         SelectTextEntry.name(id: 'n', name: 'Pig'),
-        SelectTextEntry.name(id: 'o', name: 'Horse'),
-        SelectTextEntry.name(id: 'p', name: 'Sheep'),
-        SelectTextEntry.name(id: 'q', name: 'Cow'),
       },
     ),
     SelectCategoryEntry.children(
       id: 'cate5',
-      name: 'Cate 5',
+      name: 'Price (Dollar)',
       children: {
         SelectRangeEntry(
           id: 'a',
-          name: '\$0-\$2000000',
+          name: '0-2000000',
           min: 0,
           max: 2000000,
           divisions: 80,
@@ -237,13 +290,15 @@ SelectEntries get multiCategoryData {
     ),
     SelectCategoryEntry.children(
       id: 'cate6',
-      name: 'Cate 6',
+      name: 'Counter',
       children: {
+        SelectTextEntry.any(parentId: 'cate6', name: 'Any'),
         SelectTextEntry.name(id: 'a', name: '1'),
         SelectTextEntry.name(id: 'b', name: '2'),
         SelectTextEntry.name(id: 'c', name: '3'),
         SelectTextEntry.name(id: 'd', name: '4'),
         SelectTextEntry.name(id: 'e', name: '5'),
+        SelectTextEntry.name(id: 'e', name: '5+'),
       },
       selectionMode: SelectionMode.single,
       layout: const SelectCounterLayout(),

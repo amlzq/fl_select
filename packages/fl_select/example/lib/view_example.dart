@@ -1,4 +1,4 @@
-import 'package:example/entry_data.dart';
+import 'package:example/entry_repository.dart';
 import 'package:example/my_widgets.dart';
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
