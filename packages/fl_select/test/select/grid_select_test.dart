@@ -171,7 +171,7 @@ void main() {
       await tester.pumpWidget(_gridHarness({categoryWithHeaderFooter()}));
       await tester.pumpAndSettle();
 
-      expect(find.byType(SelectChipBar), findsNWidgets(2));
+      expect(find.byType(SelectWrapView), findsNWidgets(2));
       expect(find.text('H1'), findsOneWidget);
       expect(find.text('H2'), findsOneWidget);
       expect(find.text('One'), findsOneWidget);

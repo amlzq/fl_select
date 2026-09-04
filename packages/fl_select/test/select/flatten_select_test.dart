@@ -46,7 +46,7 @@ void main() {
       );
     }
 
-    testWidgets('renders a SelectChipBar without a sidebar', (tester) async {
+    testWidgets('renders a SelectWrapView without a sidebar', (tester) async {
       await tester.pumpWidget(
         harness({
           SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
@@ -55,7 +55,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(SelectChipBar), findsOneWidget);
+      expect(find.byType(SelectWrapView), findsOneWidget);
       expect(find.byType(SelectSideBar), findsNothing);
       expect(find.text('A 1'), findsOneWidget);
       expect(find.text('A 2'), findsOneWidget);
@@ -150,7 +150,7 @@ void main() {
       expect(find.text('One'), findsOneWidget);
     });
 
-    testWidgets('renders SelectChipBar for SelectWrapLayout', (tester) async {
+    testWidgets('renders SelectWrapView for SelectWrapLayout', (tester) async {
       await tester.pumpWidget(
         _flattenHarness({
           _category(
@@ -166,7 +166,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(SelectChipBar), findsOneWidget);
+      expect(find.byType(SelectWrapView), findsOneWidget);
       expect(find.text('One'), findsOneWidget);
     });
 
@@ -234,7 +234,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(SelectListView), findsOneWidget);
-      expect(find.byType(SelectChipBar), findsOneWidget);
+      expect(find.byType(SelectWrapView), findsOneWidget);
     });
   });
 

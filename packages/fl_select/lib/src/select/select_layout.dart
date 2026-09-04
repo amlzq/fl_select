@@ -115,7 +115,7 @@ class SelectWrapLayout extends SelectLayout {
 /// Deprecated alias of [SelectWrapLayout].
 ///
 /// `SelectChipLayout` was renamed to [SelectWrapLayout] to align with the
-/// wrap-style rendering (a wrapable [SelectChipBar]). The old name is kept
+/// wrap-style rendering (a wrapped chip group, [SelectWrapView]). The old name is kept
 /// as a deprecated subclass of [SelectWrapLayout] for backward
 /// compatibility and **will be removed in a future minor version**. The two
 /// are fully interchangeable — equal values compare equal and render

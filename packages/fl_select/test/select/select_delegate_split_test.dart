@@ -123,7 +123,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(SelectChipBar), findsOneWidget);
+      expect(find.byType(SelectWrapView), findsOneWidget);
       expect(find.byType(SelectSideBar), findsNothing);
       expect(find.text('A'), findsOneWidget);
 

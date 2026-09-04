@@ -63,7 +63,7 @@ void main() {
       // the initially expanded tile.
       expect(find.byType(SelectExpansionTile), findsOneWidget);
       expect(find.byType(SelectListView), findsOneWidget);
-      expect(find.byType(SelectChipBar), findsNWidgets(2));
+      expect(find.byType(SelectWrapView), findsNWidgets(2));
       expect(find.text('H1'), findsOneWidget);
       expect(find.text('H2'), findsOneWidget);
       expect(find.text('F1'), findsOneWidget);

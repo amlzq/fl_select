@@ -101,13 +101,12 @@ class SelectCategoryContentView extends StatelessWidget {
         :final spacing,
         :final runSpacing,
       ) =>
-        SelectChipBar(
+        SelectWrapView(
           key: ValueKey('category_$index'),
           category: category,
           entries: entries,
           selectedEntries: selectedEntries,
           showTitle: false,
-          isWrapable: true,
           direction: chipDirection ?? Axis.horizontal,
           spacing: spacing,
           runSpacing: runSpacing,

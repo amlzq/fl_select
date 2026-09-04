@@ -8,7 +8,7 @@ import 'select_search_filter.dart';
 import 'widgets/widgets.dart';
 
 /// Flat layout: the top-level (parentless) entries render directly as a
-/// wrapable chip bar.
+/// wrapped chip group ([SelectWrapView]).
 ///
 /// Only flat (single-level) structured data is supported; use
 /// [SideNavSelectDelegate] for two-level (category) data.
@@ -141,10 +141,9 @@ class WrapSelectState extends State<WrapSelect> {
         Flexible(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-            child: SelectChipBar(
+            child: SelectWrapView(
               entries: _displayEntries,
               selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
-              isWrapable: true,
               spacing: delegate.spacing,
               runSpacing: delegate.runSpacing,
               backgroundColor: delegate.chipBarTheme?.backgroundColor,

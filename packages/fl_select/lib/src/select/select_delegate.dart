@@ -632,8 +632,8 @@ class GridSelectDelegate extends SelectDelegate {
 
 /// A wrap select for flat (parentless) data.
 ///
-/// The top-level entries render directly as a wrapable chip bar; no
-/// category navigation is shown.
+/// The top-level entries render directly as a wrapped chip group
+/// ([SelectWrapView]); no category navigation is shown.
 ///
 /// Two-level (category) structures are not supported; use
 /// [SideNavSelectDelegate] for two-level data.
@@ -1081,7 +1081,7 @@ class FlattenSelectDelegate extends SelectDelegate {
 ///
 /// Category navigation sits on the left; tapping it scrolls the single
 /// right column to that category's children, laid out by the category's
-/// `layout` (defaulting to [defaultLayout], then to a wrapable chip
+/// `layout` (defaulting to [defaultLayout], then to a wrapped chip
 /// layout). Scrolling the right column highlights the left side.
 ///
 /// Flat (parentless) structures are not supported; use

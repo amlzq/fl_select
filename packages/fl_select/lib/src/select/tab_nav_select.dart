@@ -325,12 +325,11 @@ class TabNavSelectState extends State<TabNavSelect> {
                 if (categoryHeader != null && categoryHeader.children != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
-                    child: SelectChipBar(
+                    child: SelectWrapView(
                       category: categoryHeader,
                       entries: categoryHeader.children!.toList(),
                       selectedEntries: headerSelected,
                       variant: SelectChipVariant.filled,
-                      isWrapable: true,
                       spacing: 12.0,
                       runSpacing: 12.0,
                       onChanged: (index, entry) => _onHeaderOrFooterItemTap
@@ -346,12 +345,11 @@ class TabNavSelectState extends State<TabNavSelect> {
                 if (categoryFooter != null && categoryFooter.children != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
-                    child: SelectChipBar(
+                    child: SelectWrapView(
                       category: categoryFooter,
                       entries: categoryFooter.children!.toList(),
                       selectedEntries: footerSelected,
                       variant: SelectChipVariant.filled,
-                      isWrapable: true,
                       spacing: 12.0,
                       runSpacing: 12.0,
                       onChanged: (index, entry) => _onHeaderOrFooterItemTap

@@ -245,13 +245,12 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                             if (hasHeader)
                               Padding(
                                 padding: const EdgeInsets.only(bottom: 10),
-                                child: SelectChipBar(
+                                child: SelectWrapView(
                                   category: categoryHeader,
                                   entries: categoryHeader.children!.toList(),
                                   selectedEntries:
                                       _headerSelectedFor(category.id),
                                   variant: SelectChipVariant.filled,
-                                  isWrapable: true,
                                   spacing: 12.0,
                                   runSpacing: 12.0,
                                   onChanged: (index, entry) =>
@@ -266,13 +265,12 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                             if (hasFooter)
                               Padding(
                                 padding: const EdgeInsets.only(top: 10),
-                                child: SelectChipBar(
+                                child: SelectWrapView(
                                   category: categoryFooter,
                                   entries: categoryFooter.children!.toList(),
                                   selectedEntries:
                                       _footerSelectedFor(category.id),
                                   variant: SelectChipVariant.filled,
-                                  isWrapable: true,
                                   spacing: 12.0,
                                   runSpacing: 12.0,
                                   onChanged: (index, entry) =>

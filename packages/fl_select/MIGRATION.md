@@ -15,6 +15,51 @@ version.
 +final categories = controller.realSelectedCategories;
 ```
 
+### `SelectChipBar` wrap mode split into `SelectWrapView`
+
+The dual-form `SelectChipBar` is split into two single-purpose widgets: the
+horizontal single-row bar keeps the `SelectChipBar` name, and the wrap form
+(multi-row, height-adaptive) moves to the new `SelectWrapView`, which is now
+the dedicated rendering target of `SelectWrapLayout`. The split applies to
+the skeleton too: the wrap form of `SelectChipBarSkeleton` maps to the new
+`SelectWrapViewSkeleton`.
+
+`SelectChipBar.isWrapable` / `runSpacing` and the matching
+`SelectChipBarSkeleton` parameters are deprecated and keep working by
+delegating to the new widgets; they **will be removed in a future minor
+version**. Migration is a pure rename.
+
+```diff
+- SelectChipBar(
++ SelectWrapView(
+    entries: entries,
+    selectedEntries: selectedEntries,
+-   isWrapable: true,
+    spacing: 8,
+    runSpacing: 8,
+  );
+
+- SelectChipBarSkeleton(
++ SelectWrapViewSkeleton(
+    itemCount: 8,
+-   isWrapable: true,
+  );
+```
+
+Notes:
+
+- Call sites passing `isWrapable: false` (or omitting it) are unaffected —
+  `SelectChipBar` keeps rendering the single-row bar.
+- The split also exports `SelectChip` and
+  `SelectChipBarStyle` / `resolveSelectChipBarStyle`, so custom
+  `itemBuilder`s can reuse the built-in chip and its three-level style
+  resolution.
+- The built-in delegates (`WrapSelectDelegate`, the `TabNavSelectDelegate` /
+  `ExpandableSelectDelegate` header/footer bars, and categories laid out by
+  `SelectWrapLayout`) now render `SelectWrapView` internally, so widget tests
+  asserting `find.byType(SelectChipBar)` on those trees should assert
+  `SelectWrapView` instead.
+
 ## MIGRATE TO 0.11.0
 
 The dual-mode delegates are split into single-purpose ones and the old

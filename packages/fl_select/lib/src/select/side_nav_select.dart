@@ -30,7 +30,7 @@ const double _kRightColumnCacheExtent = 10000.0;
 /// - The sidebar drives which category's children
 ///   are shown; each category's children are laid out by the category's
 ///   `layout` (defaulting to [SideNavSelectDelegate.defaultLayout], then
-///   to a wrapable [SelectChipBar]).
+///   to a wrapped chip group, [SelectWrapView]).
 /// - At most two levels are rendered; levels nested deeper than the second
 ///   are not rendered.
 /// - A category's `header`/`footer` entries (if any) are rendered as chip
@@ -457,7 +457,7 @@ class SideNavSelectState extends State<SideNavSelect> {
 
   /// Builds the right-side content for a single category by exhaustively
   /// consuming [SelectCategoryEntry.layout].
-  /// When a category has no layout, it falls back to a wrapable [SelectChipBar].
+  /// When a category has no layout, it falls back to [SelectWrapView].
   Widget _buildCategoryView(
     SelectCategoryEntry category, {
     required int index,
@@ -516,7 +516,6 @@ class SideNavSelectState extends State<SideNavSelect> {
                         entries: categoryHeader.children!.toList(),
                         selectedEntries: _headerSelectedFor(category.id),
                         variant: SelectChipVariant.filled,
-                        isWrapable: false,
                         spacing: 12.0,
                         onChanged: (index, entry) =>
                             _onHeaderOrFooterItemTap.call(category, true, index,
@@ -532,7 +531,6 @@ class SideNavSelectState extends State<SideNavSelect> {
                         entries: categoryFooter.children!.toList(),
                         selectedEntries: _footerSelectedFor(category.id),
                         variant: SelectChipVariant.filled,
-                        isWrapable: false,
                         spacing: 12.0,
                         onChanged: (index, entry) =>
                             _onHeaderOrFooterItemTap.call(category, false,

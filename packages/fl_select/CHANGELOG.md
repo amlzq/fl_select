@@ -6,6 +6,8 @@
 
 - **FEATURE** the flat-data delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) now accept an `itemBuilder` to fully customize how each item is rendered.
 
+- **DEPRECATION** split the dual-form `SelectChipBar` into the single-row `SelectChipBar` and the wrap-form `SelectWrapView` / `SelectWrapViewSkeleton` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+
 ## 0.11.3
 
 - **BUGFIX** unify the action bar visibility on `SelectController.hasMultipleMode` across all layouts.
