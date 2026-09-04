@@ -165,10 +165,10 @@ class _SelectRangeViewState extends State<SelectRangeView> {
     // branch runs and the user's in-progress input is never clobbered.
     final oldHadCustom = (oldWidget.selectedEntries ?? const <SelectEntry>{})
         .whereType<SelectRangeEntry>()
-        .any(_isOwnCustom);
+        .any((e) => e.isOwnCustomOf(widget.category));
     final newHasCustom = (widget.selectedEntries ?? const <SelectEntry>{})
         .whereType<SelectRangeEntry>()
-        .any(_isOwnCustom);
+        .any((e) => e.isOwnCustomOf(widget.category));
     if (!oldHadCustom && newHasCustom) {
       final restored = _restoreFromSelected();
       if (restored != null) {
@@ -241,19 +241,6 @@ class _SelectRangeViewState extends State<SelectRangeView> {
     }
   }
 
-  /// Whether [e] is this view's own custom range entry.
-  ///
-  /// In a multi-category tree, every category shares the same level-1
-  /// selection set and custom entries all use the same id (`custom`). We must
-  /// therefore scope restoration to the entry owned by this category
-  /// ([widget.category].id) so a value committed in one category never leaks
-  /// into another category's slider/fields.
-  bool _isOwnCustom(SelectRangeEntry e) {
-    final categoryId = widget.category?.id;
-    if (categoryId == null) return e.isCustom;
-    return e.isCustom && e.parentId == categoryId;
-  }
-
   /// Restores the last-selected range from the custom entry carried in
   /// [selectedEntries].
   ///
@@ -266,7 +253,7 @@ class _SelectRangeViewState extends State<SelectRangeView> {
   /// so it is projected back to the corresponding slider bound here.
   RangeValues? _restoreFromSelected() {
     for (final e in widget.selectedEntries ?? const <SelectEntry>{}) {
-      if (e is SelectRangeEntry && _isOwnCustom(e)) {
+      if (e is SelectRangeEntry && e.isOwnCustomOf(widget.category)) {
         final start = (_toDouble(e.min) ?? _min).clamp(_min, _max).toDouble();
         final end = (_toDouble(e.max) ?? _max).clamp(_min, _max).toDouble();
         return RangeValues(start, end);
@@ -391,7 +378,12 @@ class _SelectRangeViewState extends State<SelectRangeView> {
     final atMax = range.end >= _max - _epsilon;
     entry.min = atMin ? null : _toEntryValue(range.start);
     entry.max = atMax ? null : _toEntryValue(range.end);
-    entry.name = '${entry.min}-${entry.max}';
+    // Same formatting rule as [CustomRangeHost] field commits (see
+    // [SelectRangeEntryExt.syncCustomName]): a bound left at the slider's
+    // extreme (null) renders as an empty segment, e.g. "-200", never
+    // "null-200". Unconditional — dragging back to the full range resets
+    // the name to the bare separator rather than leaving a stale range.
+    entry.syncCustomName(separator: widget.toText);
     final index = widget.entries.indexOf(entry);
     widget.onChanged.call(index < 0 ? 0 : index, entry);
   }

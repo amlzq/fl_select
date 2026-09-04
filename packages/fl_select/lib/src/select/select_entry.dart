@@ -418,10 +418,31 @@ extension SelectRangeEntryExt on SelectRangeEntry {
       (min != null && min.toString().isNotEmpty) ||
       (max != null && max.toString().isNotEmpty);
 
-  /// The display name of a custom entry is written back by the hosting view
-  /// when its range is committed (e.g. `'111-222'`); see `CustomRangeHost`
-  /// and [SelectRangeView].
+  /// Whether this entry is the custom entry owned by [category].
   ///
+  /// In a multi-category tree every category shares the same level-1
+  /// selection set and custom entries all use the same id (`custom`), so the
+  /// category id is what keeps a value committed in one category from
+  /// leaking into another category's fields. When [category] is null this
+  /// matches any custom entry.
+  bool isOwnCustomOf(SelectEntry? category) {
+    final categoryId = category?.id;
+    if (categoryId == null) return isCustom;
+    return isCustom && parentId == categoryId;
+  }
+
+  /// Rewrites [SelectEntry.name] to reflect the committed range, e.g.
+  /// `'111-222'`.
+  ///
+  /// A `null` bound (left at the extreme / empty field) renders as an empty
+  /// segment — `'111-'`, `'-222'` — never the string `'null'`. This is the
+  /// single formatting rule shared by `CustomRangeHost` (field commits) and
+  /// `SelectRangeView` (slider commits); safe to mutate because `name` is
+  /// not part of == / hashCode.
+  void syncCustomName({String separator = '-'}) {
+    name = '${min ?? ''}$separator${max ?? ''}';
+  }
+
   /// NOTE: there is deliberately no `name` getter here — an extension member
   /// can never shadow the instance field [SelectEntry.name], so such a getter
   /// would be unreachable dead code.

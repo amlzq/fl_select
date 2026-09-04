@@ -111,11 +111,12 @@ mixin CustomRangeHost<T extends StatefulWidget> on State<T> {
     _syncCustomEntries();
     _restoreCustomSelectionToInputs();
 
-    final oldHadCustom =
-        oldSelectedEntries.whereType<SelectRangeEntry>().any(_isOwnCustom);
+    final oldHadCustom = oldSelectedEntries
+        .whereType<SelectRangeEntry>()
+        .any((e) => e.isOwnCustomOf(customRangeCategory));
     final newHasCustom = customRangeSelectedEntries
         .whereType<SelectRangeEntry>()
-        .any(_isOwnCustom);
+        .any((e) => e.isOwnCustomOf(customRangeCategory));
     if (oldHadCustom && !newHasCustom) {
       clearCustomRangeInput();
     }
@@ -199,17 +200,11 @@ mixin CustomRangeHost<T extends StatefulWidget> on State<T> {
     _maxFocusNode!.addListener(_focusListener);
   }
 
-  /// Whether [e] is this host's own custom range entry.
-  bool _isOwnCustom(SelectRangeEntry e) {
-    final categoryId = customRangeCategory?.id;
-    if (categoryId == null) return e.isCustom;
-    return e.isCustom && e.parentId == categoryId;
-  }
-
   /// Writes the committed custom selection (if any) back into the fields.
   void _restoreCustomSelectionToInputs() {
     for (final selected in customRangeSelectedEntries) {
-      if (selected is SelectRangeEntry && _isOwnCustom(selected)) {
+      if (selected is SelectRangeEntry &&
+          selected.isOwnCustomOf(customRangeCategory)) {
         _minController?.text = selected.min?.toString() ?? '';
         _maxController?.text = selected.max?.toString() ?? '';
       }
@@ -248,10 +243,11 @@ mixin CustomRangeHost<T extends StatefulWidget> on State<T> {
     custom.max = (maxInt == 0) ? null : maxInt;
     // Keep the entry's name in sync with the committed range so downstream
     // consumers (e.g. the applied-result label on a popup trigger) show
-    // "111-222" instead of a null name. Mirrors [SelectRangeView]'s slider
-    // commit; safe because name is not part of == / hashCode.
+    // "111-222" instead of a null name. Shares the formatting rule with
+    // [SelectRangeView]'s slider commit via [SelectRangeEntryExt.
+    // syncCustomName]; safe because name is not part of == / hashCode.
     if (custom.hasCustomValue) {
-      custom.name = '${custom.min ?? ''}$customRangeToText${custom.max ?? ''}';
+      custom.syncCustomName(separator: customRangeToText);
     }
     // Reflect the canonical (swapped) order back into the fields so the
     // display immediately shows "left small, right big" instead of the raw
