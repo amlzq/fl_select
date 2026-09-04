@@ -1,0 +1,5 @@
+# Enables cross-origin isolation so skwasm can use multi-threaded rasterization.
+# Without these headers the Wasm build still works, but falls back to single-threaded rendering.
+/*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: credentialless
