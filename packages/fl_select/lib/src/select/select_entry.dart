@@ -419,8 +419,8 @@ extension SelectRangeEntryExt on SelectRangeEntry {
       (max != null && max.toString().isNotEmpty);
 
   /// The display name of a custom entry is written back by the hosting view
-  /// when its range is committed (e.g. `'111-222'`); see
-  /// `SelectGridViewState._commitCustomRange` and [SelectRangeView].
+  /// when its range is committed (e.g. `'111-222'`); see `CustomRangeHost`
+  /// and [SelectRangeView].
   ///
   /// NOTE: there is deliberately no `name` getter here — an extension member
   /// can never shadow the instance field [SelectEntry.name], so such a getter

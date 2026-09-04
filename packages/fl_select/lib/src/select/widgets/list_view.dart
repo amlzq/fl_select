@@ -1,13 +1,12 @@
 import 'dart:math';
 
-import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
 import '../select_delegate.dart';
 import '../select_entry.dart';
 import 'constants.dart';
-import 'field_tile.dart';
+import 'custom_range_host.dart';
 import 'list_tile.dart';
 import 'skeleton_view.dart';
 
@@ -103,19 +102,26 @@ class SelectListView extends StatefulWidget {
 }
 
 class SelectListViewState extends State<SelectListView>
-    with AutomaticKeepAliveClientMixin {
-  SelectRangeEntry? firstCustomEntry;
-  SelectRangeEntry? lastCustomEntry;
-
+    with CustomRangeHost, AutomaticKeepAliveClientMixin {
   late List<SelectEntry> entriesWithoutCustom;
 
-  TextEditingController? _minController;
-  TextEditingController? _maxController;
-
-  FocusNode? _minFocusNode;
-  FocusNode? _maxFocusNode;
-
   late SelectEntries _selectedEntries;
+
+  @override
+  List<SelectEntry> get customRangeEntries => widget.entries;
+
+  @override
+  SelectEntry? get customRangeCategory => widget.category;
+
+  @override
+  SelectEntries get customRangeSelectedEntries => _selectedEntries;
+
+  @override
+  String get customRangeToText => widget.toText;
+
+  @override
+  void notifyCustomRangeChanged(int index, SelectEntry entry) =>
+      widget.onChanged(index, entry);
 
   @override
   void initState() {
@@ -123,168 +129,41 @@ class SelectListViewState extends State<SelectListView>
 
     _selectedEntries = widget.selectedEntries ?? {};
 
-    firstCustomEntry = widget.entries.firstCustomOrNull;
-    lastCustomEntry = widget.entries.lastCustomOrNull;
+    initCustomRange();
 
-    entriesWithoutCustom = widget.entries;
-    if (firstCustomEntry != null || lastCustomEntry != null) {
-      entriesWithoutCustom = widget.entries.where(testNotCustomItem).toList();
-      _initializeInput();
-      _restoreCustomSelectionToInputs();
-    }
+    entriesWithoutCustom = hasCustomRange
+        ? widget.entries.where(testNotCustomItem).toList()
+        : widget.entries;
   }
 
   @override
   void didUpdateWidget(covariant SelectListView oldWidget) {
     super.didUpdateWidget(oldWidget);
+
     _selectedEntries = widget.selectedEntries ?? {};
 
-    firstCustomEntry = widget.entries.firstCustomOrNull;
-    lastCustomEntry = widget.entries.lastCustomOrNull;
-
-    entriesWithoutCustom = widget.entries;
-    if (firstCustomEntry != null || lastCustomEntry != null) {
-      entriesWithoutCustom = widget.entries.where(testNotCustomItem).toList();
-      _initializeInput();
-      _restoreCustomSelectionToInputs();
-    }
-
     // When the custom range was selected and is now removed (e.g. tapping a
-    // preset or clicking reset), clear the input fields so stale values are not
-    // left behind, mirroring [SelectGridViewState.didUpdateWidget]. We only
-    // react to this transition (not every rebuild) to avoid clobbering text the
-    // user is actively typing.
-    final oldHadCustom = (oldWidget.selectedEntries ?? {})
-        .whereType<SelectRangeEntry>()
-        .any(_isOwnCustom);
-    final newHasCustom =
-        _selectedEntries.whereType<SelectRangeEntry>().any(_isOwnCustom);
-    if (oldHadCustom && !newHasCustom) {
-      _clearAllInput();
-      _unfocusAllInput();
-    }
-  }
+    // preset or clicking reset), the shared host clears the input fields so
+    // stale values are not left behind. It only reacts to this transition
+    // (not every rebuild) to avoid clobbering text the user is actively
+    // typing.
+    updateCustomRange(oldSelectedEntries: oldWidget.selectedEntries ?? {});
 
-  /// Whether [e] is this view's own custom range entry.
-  ///
-  /// In a multi-category tree, every category shares the same level-1
-  /// selection set and custom entries all use the same id (`custom`). We must
-  /// therefore scope restoration to the entry owned by this category
-  /// ([widget.category].id) so a value committed in one category never leaks
-  /// into another category's input fields.
-  bool _isOwnCustom(SelectRangeEntry e) {
-    final categoryId = widget.category?.id;
-    if (categoryId == null) return e.isCustom;
-    return e.isCustom && e.parentId == categoryId;
-  }
-
-  void _restoreCustomSelectionToInputs() {
-    final selectedCustom = _selectedEntries
-        .whereType<SelectRangeEntry>()
-        .where(_isOwnCustom)
-        .firstWhereOrNull((e) => e.isCustom);
-    _minController?.text = selectedCustom?.min?.toString() ?? '';
-    _maxController?.text = selectedCustom?.max?.toString() ?? '';
+    entriesWithoutCustom = hasCustomRange
+        ? widget.entries.where(testNotCustomItem).toList()
+        : widget.entries;
   }
 
   @override
   void dispose() {
-    _minFocusNode?.removeListener(_focusListener);
-    _maxFocusNode?.removeListener(_focusListener);
-
-    _minController?.dispose();
-    _maxController?.dispose();
-
-    _minFocusNode?.dispose();
-    _maxFocusNode?.dispose();
+    disposeCustomRange();
 
     super.dispose();
   }
 
-  void _initializeInput() {
-    _minController ??= TextEditingController();
-    _maxController ??= TextEditingController();
-    _minFocusNode ??= FocusNode();
-    _maxFocusNode ??= FocusNode();
-    _minFocusNode?.addListener(_focusListener);
-    _maxFocusNode?.addListener(_focusListener);
-  }
-
-  /// Commits the current min/max input to [custom].
-  ///
-  /// Mirrors [SelectGridViewState]'s behavior: it is only invoked on focus loss
-  /// (from [_onFocusChanged]), never on every keystroke, so an inverted range is
-  /// always swapped and written back without clobbering in-progress typing.
-  void _commitCustomRange(SelectRangeEntry? custom) {
-    if (custom == null) return;
-    final minText = _minController!.text;
-    final maxText = _maxController!.text;
-    var minInt = int.tryParse(minText) ?? 0;
-    var maxInt = int.tryParse(maxText) ?? 0;
-    // Only normalize an inverted range when both bounds have actually been
-    // entered. Otherwise an empty field (parsed as 0) would spuriously trigger
-    // a swap and push a freshly-typed min value into the max field (or clear
-    // the min field), losing the user's input.
-    final bothEntered = minText.isNotEmpty && maxText.isNotEmpty;
-    final swapped = bothEntered && minInt > maxInt;
-    if (swapped) {
-      final temp = minInt;
-      minInt = maxInt;
-      maxInt = temp;
-    }
-    custom.min = (minInt == 0) ? null : minInt;
-    custom.max = (maxInt == 0) ? null : maxInt;
-    // Keep the entry's name in sync with the committed range so downstream
-    // consumers (e.g. the applied-result label on a popup trigger) show
-    // "111-222" instead of a null name. Mirrors [SelectRangeView]'s slider
-    // commit; safe because name is not part of == / hashCode.
-    if (custom.hasCustomValue) {
-      custom.name = '${custom.min ?? ''}${widget.toText}${custom.max ?? ''}';
-    }
-    // Reflect the canonical (swapped) order back into the fields so the display
-    // immediately shows "left small, right big" instead of the raw typed order.
-    if (swapped) {
-      _minController?.text = custom.min?.toString() ?? '';
-      _maxController?.text = custom.max?.toString() ?? '';
-    }
-    final index = widget.entries.indexOf(custom);
-    widget.onChanged(index, custom);
-  }
-
-  /// When the range input loses focus, commit the final normalized values.
-  void _focusListener() {
-    if (!(_minFocusNode?.hasFocus ?? false) &&
-        !(_maxFocusNode?.hasFocus ?? false)) {
-      _commitCustomRange(firstCustomEntry);
-      _commitCustomRange(lastCustomEntry);
-    }
-  }
-
-  bool get inputNotEmpty =>
-      (_minController?.text.isNotEmpty ?? false) ||
-      (_maxController?.text.isNotEmpty ?? false);
-
-  void _clearAllInput() {
-    if (inputNotEmpty) {
-      _minController?.clear();
-      _maxController?.clear();
-    }
-  }
-
-  bool get inputHasFocus =>
-      (_minFocusNode?.hasFocus ?? false) || (_maxFocusNode?.hasFocus ?? false);
-
-  void _unfocusAllInput() {
-    if (inputHasFocus) {
-      _minFocusNode?.unfocus();
-      _maxFocusNode?.unfocus();
-    }
-  }
-
   void _onItemTap(int index, SelectEntry entry) {
     // Clear custom input
-    _clearAllInput();
-    _unfocusAllInput();
+    clearCustomRangeInput();
     widget.onChanged(index, entry);
   }
 
@@ -292,90 +171,77 @@ class SelectListViewState extends State<SelectListView>
   Widget build(BuildContext context) {
     super.build(context);
     final showTitle = widget.showTitle && widget.category?.name != null;
-    return SingleChildScrollView(
-      physics: const ClampingScrollPhysics(),
-      padding: widget.padding,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Category label
-          if (showTitle)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: DefaultTextStyle.merge(
-                style: Theme.of(context).textTheme.titleSmall ??
-                    const TextStyle(fontSize: 16),
-                child: Text(widget.category?.name ?? ''),
+    return Scrollbar(
+      child: SingleChildScrollView(
+        physics: const ClampingScrollPhysics(),
+        padding: widget.padding,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Category label
+            if (showTitle)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: DefaultTextStyle.merge(
+                  style: Theme.of(context).textTheme.titleSmall ??
+                      const TextStyle(fontSize: 16),
+                  child: Text(widget.category?.name ?? ''),
+                ),
               ),
+            // An input item at header
+            if (firstCustomRange != null)
+              buildCustomRangeFieldTile(
+                isHeader: true,
+                padding: const EdgeInsets.only(top: 10.0),
+              ),
+            // List of items
+            ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              padding: EdgeInsets.zero,
+              itemCount: entriesWithoutCustom.length,
+              itemBuilder: (context, index) {
+                final entry = entriesWithoutCustom[index];
+                final selected =
+                    widget.selectedEntries?.contains(entry) ?? false;
+                final customBuilder = widget.itemBuilder;
+                if (customBuilder != null) {
+                  return customBuilder(
+                    context,
+                    entry,
+                    selected: selected,
+                    onTap: () => _onItemTap(index, entry),
+                  );
+                }
+                if (SelectionMode.single == widget.selectionMode) {
+                  return SelectRadioListTile(
+                    onTap: () => _onItemTap(index, entry),
+                    label: entry.name ?? '',
+                    selected: selected,
+                    radioBuilder: widget.radioBuilder,
+                  );
+                } else {
+                  return SelectCheckboxListTile(
+                    onTap: () => _onItemTap(index, entry),
+                    label: entry.name ?? '',
+                    checked: selected,
+                    checkboxBuilder: widget.checkboxBuilder,
+                  );
+                }
+              },
+              separatorBuilder: (BuildContext context, int index) {
+                return const SizedBox(height: 6);
+              },
             ),
-          // An input item at header
-          if (firstCustomEntry != null)
-            SelectFieldTile(
-              firstCustomEntry!,
-              padding: const EdgeInsets.only(top: 10.0),
-              minController: _minController,
-              maxController: _maxController,
-              minFocusNode: _minFocusNode,
-              maxFocusNode: _maxFocusNode,
-              separator: widget.toText,
-              // Pressing enter commits immediately instead of waiting for a
-              // focus loss (e.g. closing the panel without tapping outside).
-              onMinSubmitted: (_) => _commitCustomRange(firstCustomEntry),
-              onMaxSubmitted: (_) => _commitCustomRange(firstCustomEntry),
-            ),
-          // List of items
-          ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            padding: EdgeInsets.zero,
-            itemCount: entriesWithoutCustom.length,
-            itemBuilder: (context, index) {
-              final entry = entriesWithoutCustom[index];
-              final selected = widget.selectedEntries?.contains(entry) ?? false;
-              final customBuilder = widget.itemBuilder;
-              if (customBuilder != null) {
-                return customBuilder(
-                  context,
-                  entry,
-                  selected: selected,
-                  onTap: () => _onItemTap(index, entry),
-                );
-              }
-              if (SelectionMode.single == widget.selectionMode) {
-                return SelectRadioListTile(
-                  onTap: () => _onItemTap(index, entry),
-                  label: entry.name ?? '',
-                  selected: selected,
-                  radioBuilder: widget.radioBuilder,
-                );
-              } else {
-                return SelectCheckboxListTile(
-                  onTap: () => _onItemTap(index, entry),
-                  label: entry.name ?? '',
-                  checked: selected,
-                  checkboxBuilder: widget.checkboxBuilder,
-                );
-              }
-            },
-            separatorBuilder: (BuildContext context, int index) {
-              return const SizedBox(height: 6);
-            },
-          ),
-          // An input item at footer
-          if (lastCustomEntry != null)
-            SelectFieldTile(
-              lastCustomEntry!,
-              padding: const EdgeInsets.only(top: 10.0),
-              minController: _minController,
-              maxController: _maxController,
-              minFocusNode: _minFocusNode,
-              maxFocusNode: _maxFocusNode,
-              separator: widget.toText,
-              onMinSubmitted: (_) => _commitCustomRange(lastCustomEntry),
-              onMaxSubmitted: (_) => _commitCustomRange(lastCustomEntry),
-            ),
-        ],
+            // An input item at footer
+            if (lastCustomRange != null)
+              buildCustomRangeFieldTile(
+                isHeader: false,
+                padding: const EdgeInsets.only(top: 10.0),
+              ),
+          ],
+        ),
       ),
     );
   }
