@@ -250,6 +250,64 @@ void main() {
       expect(rootAfter.footer, isNull);
     });
 
+    test('clippingTree excludes a flat top-level "Any" placeholder', () {
+      final any = SelectTextEntry<dynamic>.any(parentId: '', name: 'Any');
+      final a = _text('', 'a', 'A');
+      final entries = <SelectEntry<dynamic>>{any, a};
+
+      // Only "Any" is selected → the clipped tree is empty.
+      SelectUtils.clippingTree(
+        entries,
+        [
+          <SelectEntry<dynamic>>{any},
+        ],
+        0,
+      );
+      expect(entries, isEmpty);
+    });
+
+    test('clippingTree excludes a category whose only selection is "Any"', () {
+      final any = SelectChildEntry<dynamic>.any(parentId: 'r', name: 'Any');
+      final c1 = _text('r', 'c1', 'C1');
+      final root = _category('r', 'R', children: {any, c1});
+      final entries = <SelectEntry<dynamic>>{root};
+
+      // Level 1 holds only the "Any" placeholder → drop the whole category.
+      SelectUtils.clippingTree(
+        entries,
+        [
+          <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
+          <SelectEntry<dynamic>>{any},
+        ],
+        0,
+      );
+      expect(entries, isEmpty);
+    });
+
+    test('clippingTree keeps a deep "Any" and a header-selected category',
+        () {
+      // A cascading middle-level "Any" is a real choice (the whole parent).
+      final deepAny = SelectChildEntry<dynamic>.any(parentId: 'c1', name: 'Any');
+      final c1 = _text('r', 'c1', 'C1', children: {deepAny});
+      final root = _category('r', 'R', children: {c1});
+      final entries = <SelectEntry<dynamic>>{root};
+
+      SelectUtils.clippingTree(
+        entries,
+        [
+          <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
+          <SelectEntry<dynamic>>{_text('r', 'c1', 'C1')},
+          <SelectEntry<dynamic>>{deepAny},
+        ],
+        0,
+      );
+
+      final rootAfter = entries.single as SelectCategoryEntry<dynamic>;
+      final c1After = rootAfter.children!.single as SelectTextEntry<dynamic>;
+      // The deep "Any" stays: it resolves to its parent's name.
+      expect(c1After.children!.single.id, deepAny.id);
+    });
+
     test('cloneTree clones only selected branches', () {
       final g1 = _text('c1', 'g1', 'G1');
       final g2 = _text('c1', 'g2', 'G2');
@@ -292,6 +350,69 @@ void main() {
       final clonedRoot = cloned.single as SelectCategoryEntry<dynamic>;
       final clonedC1 = clonedRoot.children!.single as SelectTextEntry<dynamic>;
       expect(clonedC1.children, isNull);
+    });
+
+    test('cloneTree excludes a flat top-level "Any" placeholder', () {
+      final any = SelectTextEntry<dynamic>.any(parentId: '', name: 'Any');
+      final a = _text('', 'a', 'A');
+      final entries = <SelectEntry<dynamic>>{any, a};
+
+      // Only "Any" is selected (e.g. via initialization or tapping it).
+      final cloned = SelectUtils.cloneTree(
+        entries,
+        [
+          <SelectEntry<dynamic>>{any},
+        ],
+      );
+      expect(cloned, isEmpty);
+
+      // A real selection still surfaces, and "Any" alone never does.
+      final clonedWithReal = SelectUtils.cloneTree(
+        entries,
+        [
+          <SelectEntry<dynamic>>{a},
+        ],
+      );
+      expect(clonedWithReal.map((e) => e.id), {'a'});
+    });
+
+    test('cloneTree excludes a category whose only selection is "Any"', () {
+      final any = SelectChildEntry<dynamic>.any(parentId: 'r', name: 'Any');
+      final root = _category('r', 'R', children: {any, _text('r', 'c1', 'C1')});
+
+      final cloned = SelectUtils.cloneTree(
+        {root},
+        [
+          <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
+          <SelectEntry<dynamic>>{any},
+        ],
+      );
+      expect(cloned, isEmpty);
+    });
+
+    test('cloneTree keeps a category with "Any" plus a header selection', () {
+      final any = SelectChildEntry<dynamic>.any(parentId: 'r', name: 'Any');
+      final h1 = _text('header', 'h1', 'H1');
+      final root = _category(
+        'r',
+        'R',
+        children: {any},
+        header: _text('r', 'header', 'Header', children: {h1}),
+      );
+
+      final cloned = SelectUtils.cloneTree(
+        {root},
+        [
+          <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
+          <SelectEntry<dynamic>>{any},
+        ],
+        selectedHeaderEntries: {
+          'r': <SelectEntry<dynamic>>{h1},
+        },
+      );
+
+      final clonedRoot = cloned.single as SelectCategoryEntry<dynamic>;
+      expect(clonedRoot.header, isNotNull);
     });
   });
 

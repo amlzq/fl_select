@@ -1,5 +1,7 @@
 ## Next
 
+- **BUGFIX** selecting "Any" no longer surfaces as a real selection: `SelectUtils.cloneTree` and the in-place `SelectUtils.clippingTree` now exclude a flat top-level "Any" placeholder and a category whose only selection is "Any" (with no header/footer selection), so the change/apply result (and thus `labelLoader`, `onChanged`, `onApplied` and `toQueryParameters`) falls back to its original label instead of e.g. "1 selected". Deeper cascading "Any" entries stay — they represent a real choice.
+
 - **BUGFIX** unselecting the last item in multiple mode now falls back to the auto-initialized "Any" placeholder on flat-data delegates (`WrapSelectDelegate`, `ListSelectDelegate`, `GridSelectDelegate`), matching the category-tree and cascading behaviour; also fixed for the programmatic `SelectController.unselect` path.
 
 - **BUGFIX** `TabNavSelect` no longer lets a category whose only selection is the auto-initialized "Any" placeholder steal the initial tab focus; the initial tab now follows the first category holding a real selection, consistent with the tab badge.

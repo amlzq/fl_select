@@ -386,6 +386,36 @@ class SelectUtils {
     }
     entries.removeWhere((e) => !selectedEntries.contains(e));
 
+    // Align with [cloneTree]: "Any" is the absence of a choice, not a choice.
+    // At the root level, drop a flat top-level "Any" placeholder and a
+    // category whose selected children are all "Any" (and that holds no
+    // header/footer selection). Deeper "Any" entries stay — they resolve to
+    // their parent's name and represent a real choice there.
+    if (level == 0) {
+      entries.removeWhere((entry) {
+        if (entry is SelectChildEntry && entry.isAny) return true;
+        if (entry is SelectCategoryEntry) {
+          final nextLevelSelection = selectedItemsPerLevel.elementAtOrNull(1);
+          if (nextLevelSelection == null || nextLevelSelection.isEmpty) {
+            return false;
+          }
+          final ownChildren = nextLevelSelection
+              .where((e) =>
+                  e is SelectCategoryEntry ||
+                  (e is SelectChildEntry && e.parentId == entry.id))
+              .toSet();
+          final onlyAnyChildren = ownChildren.isNotEmpty &&
+              ownChildren.every((e) => e is SelectChildEntry && e.isAny);
+          final hasHeaderSelection =
+              selectedHeaderEntries?[entry.id]?.isNotEmpty ?? false;
+          final hasFooterSelection =
+              selectedFooterEntries?[entry.id]?.isNotEmpty ?? false;
+          return onlyAnyChildren && !hasHeaderSelection && !hasFooterSelection;
+        }
+        return false;
+      });
+    }
+
     if (selectedHeaderEntries != null || selectedFooterEntries != null) {
       for (final entry in entries) {
         if (entry is! SelectCategoryEntry) continue;
@@ -547,6 +577,28 @@ class SelectUtils {
     final result = <SelectEntry>{};
     for (final entry in entries) {
       if (!selectedRoot.contains(entry)) continue;
+      // "Any" is the absence of a choice, not a choice. A selection that only
+      // exists to keep the placeholder checked must not surface as a real
+      // selection to change/apply consumers (labelLoader, onChanged,
+      // onApplied, toQueryParameters):
+      // - a flat structure: the top-level "Any" entry itself;
+      // - a category tree: a category whose selected children are all "Any"
+      //   and that holds no header/footer selection.
+      // Deeper "Any" entries (cascading child levels) stay: they resolve to
+      // their parent's name and represent a real choice there.
+      if (entry is SelectChildEntry && entry.isAny) continue;
+      if (entry is SelectCategoryEntry) {
+        final selectedChildren = selectedForParent(entry, 1);
+        final onlyAnyChildren = selectedChildren.isNotEmpty &&
+            selectedChildren.every((e) => e is SelectChildEntry && e.isAny);
+        final hasHeaderSelection =
+            selectedHeaderEntries?[entry.id]?.isNotEmpty ?? false;
+        final hasFooterSelection =
+            selectedFooterEntries?[entry.id]?.isNotEmpty ?? false;
+        if (onlyAnyChildren && !hasHeaderSelection && !hasFooterSelection) {
+          continue;
+        }
+      }
       result.add(cloneEntryAtLevel(entry, 0));
     }
     return result;
