@@ -1,5 +1,7 @@
 ## Next
 
+- **BUGFIX** unselecting the last item in multiple mode now falls back to the auto-initialized "Any" placeholder on flat-data delegates (`WrapSelectDelegate`, `ListSelectDelegate`, `GridSelectDelegate`), matching the category-tree and cascading behaviour; also fixed for the programmatic `SelectController.unselect` path.
+
 - **BUGFIX** `TabNavSelect` no longer lets a category whose only selection is the auto-initialized "Any" placeholder steal the initial tab focus; the initial tab now follows the first category holding a real selection, consistent with the tab badge.
 
 - **DEPRECATION** rename `SelectController.badgedCategories` to `realSelectedCategories`; the old name is a deprecated alias **will be removed in a future minor version** ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).

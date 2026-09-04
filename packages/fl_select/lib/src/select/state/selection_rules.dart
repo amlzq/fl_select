@@ -71,6 +71,14 @@ class SelectionRules {
       } else {
         if (selectedEntries.contains(item)) {
           selectedEntries.remove(item);
+          // Unselecting the last item falls back to the "Any" placeholder,
+          // mirroring the category-tree and cascading branches below.
+          if (selectedEntries.isEmpty) {
+            final anyItem = tree.entries.singleWhereOrNull(testAnyElement);
+            if (anyItem != null) {
+              selectedEntries.add(anyItem);
+            }
+          }
         } else {
           selectedEntries.add(item);
         }

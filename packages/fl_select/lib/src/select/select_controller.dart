@@ -486,6 +486,14 @@ class SelectController extends ChangeNotifier {
           ..addAll(any == null ? {} : {any});
       } else {
         selected0.remove(entry);
+        // Unselecting the last item falls back to the "Any" placeholder,
+        // matching the single-mode branch above.
+        if (selected0.isEmpty) {
+          final any = tree.entries.singleWhereOrNull(testAnyElement);
+          if (any != null) {
+            selected0.add(any);
+          }
+        }
       }
       _notifyListenersIfAlive();
       if (emitChange) emitChangeFromState();

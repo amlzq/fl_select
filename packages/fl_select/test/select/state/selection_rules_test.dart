@@ -237,6 +237,50 @@ void main() {
       expect(tree.selectedEntriesAtLevel(0).contains(b), isTrue);
     });
 
+    test(
+        'multiple mode: unselecting the last item falls back to Any when present',
+        () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final any = SelectTextEntry<dynamic>.any(parentId: '', name: 'Any');
+      final a = _text('', 'a', 'A');
+      tree.bind([any, a], initializeAnyIfEmpty: false);
+
+      tree.ensureLevels(1);
+      tree.mutableSelectedEntriesAtLevel(0).add(a);
+
+      rules.toggleFlatLeaf(
+        tree,
+        a,
+        selectionMode: SelectionMode.multiple,
+        isCategoryTree: false,
+      );
+
+      expect(tree.selectedEntriesAtLevel(0).contains(a), isFalse);
+      expect(tree.selectedEntriesAtLevel(0).contains(any), isTrue);
+    });
+
+    test(
+        'multiple mode: unselecting the last item keeps selection empty without Any',
+        () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final a = _text('', 'a', 'A');
+      tree.bind([a], initializeAnyIfEmpty: false);
+
+      tree.ensureLevels(1);
+      tree.mutableSelectedEntriesAtLevel(0).add(a);
+
+      rules.toggleFlatLeaf(
+        tree,
+        a,
+        selectionMode: SelectionMode.multiple,
+        isCategoryTree: false,
+      );
+
+      expect(tree.selectedEntriesAtLevel(0), isEmpty);
+    });
+
     test('removes Any entries when selecting non-Any', () {
       const rules = SelectionRules();
       final tree = StateTree();

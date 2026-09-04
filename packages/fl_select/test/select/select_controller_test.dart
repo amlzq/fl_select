@@ -314,6 +314,21 @@ void main() {
       expect(controller.selectedEntriesAtLevel(0).contains(a), isFalse);
     });
 
+    test(
+        'unselect last item in multiple mode for flat tree falls back to Any',
+        () {
+      final controller =
+          SelectController(selectionMode: SelectionMode.multiple);
+      final any = SelectTextEntry<dynamic>.any(parentId: '', name: 'Any');
+      final a = _text('', 'a', 'A');
+      controller.bindState([any, a], initializeAnyIfEmpty: false);
+
+      controller.select('a');
+      controller.unselect('a');
+      expect(controller.selectedEntriesAtLevel(0).contains(a), isFalse);
+      expect(controller.selectedEntriesAtLevel(0).contains(any), isTrue);
+    });
+
     test('unselect returns false for non-existent entry', () {
       final controller = SelectController(selectionMode: SelectionMode.single);
       final c = _category('c', 'C', children: {_text('c', 'a', 'A')});
