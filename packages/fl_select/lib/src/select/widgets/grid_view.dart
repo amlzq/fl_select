@@ -10,6 +10,7 @@ import 'custom_range_host.dart';
 import 'field_tile_theme.dart';
 import 'grid_tile.dart';
 import 'grid_tile_theme.dart';
+import 'scroll_chaining.dart';
 import 'skeleton_view.dart';
 
 /// A grid view that renders terminal-node [SelectEntry] entries as selectable
@@ -184,7 +185,7 @@ class SelectGridViewState extends State<SelectGridView>
     final showTitle = widget.showTitle && widget.category?.name != null;
     return Scrollbar(
       child: SingleChildScrollView(
-        physics: const ClampingScrollPhysics(),
+        physics: const ChainingClampingScrollPhysics(),
         padding: widget.padding,
         child: Column(
           mainAxisSize: MainAxisSize.min,

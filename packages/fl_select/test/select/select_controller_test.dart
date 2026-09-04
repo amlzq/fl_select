@@ -314,8 +314,7 @@ void main() {
       expect(controller.selectedEntriesAtLevel(0).contains(a), isFalse);
     });
 
-    test(
-        'unselect last item in multiple mode for flat tree falls back to Any',
+    test('unselect last item in multiple mode for flat tree falls back to Any',
         () {
       final controller =
           SelectController(selectionMode: SelectionMode.multiple);

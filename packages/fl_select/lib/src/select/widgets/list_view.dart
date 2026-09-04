@@ -8,6 +8,7 @@ import '../select_entry.dart';
 import 'constants.dart';
 import 'custom_range_host.dart';
 import 'list_tile.dart';
+import 'scroll_chaining.dart';
 import 'skeleton_view.dart';
 
 /// A list view that renders terminal-node [SelectEntry] entries as selectable
@@ -173,7 +174,7 @@ class SelectListViewState extends State<SelectListView>
     final showTitle = widget.showTitle && widget.category?.name != null;
     return Scrollbar(
       child: SingleChildScrollView(
-        physics: const ClampingScrollPhysics(),
+        physics: const ChainingClampingScrollPhysics(),
         padding: widget.padding,
         child: Column(
           mainAxisSize: MainAxisSize.min,

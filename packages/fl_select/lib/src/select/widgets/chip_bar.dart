@@ -284,8 +284,8 @@ class _SelectChipBarState extends State<SelectChipBar>
         physics: const ClampingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         child: Row(
-          children:
-              buildChipChildren(style).separateWith(SizedBox(width: widget.spacing)),
+          children: buildChipChildren(style)
+              .separateWith(SizedBox(width: widget.spacing)),
         ),
       ),
     );

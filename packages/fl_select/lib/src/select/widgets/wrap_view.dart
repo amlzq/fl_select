@@ -310,7 +310,8 @@ class SelectWrapViewSkeleton extends StatelessWidget {
         ),
     ];
 
-    final chipGroup = Wrap(spacing: spacing, runSpacing: runSpacing, children: chips);
+    final chipGroup =
+        Wrap(spacing: spacing, runSpacing: runSpacing, children: chips);
 
     final content = direction == Axis.vertical
         ? Column(

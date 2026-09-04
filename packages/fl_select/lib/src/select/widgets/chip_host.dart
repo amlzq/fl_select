@@ -191,8 +191,7 @@ SelectChipBarStyle resolveSelectChipBarStyle(
 }) {
   final theme = SelectChipBarTheme.of(context);
 
-  final effectiveVariant =
-      variant ?? theme.variant ?? SelectChipVariant.filled;
+  final effectiveVariant = variant ?? theme.variant ?? SelectChipVariant.filled;
 
   final defaults = SelectChipBarDefaults(context, effectiveVariant);
 
@@ -204,24 +203,25 @@ SelectChipBarStyle resolveSelectChipBarStyle(
   final effectiveChipColor =
       chipColor ?? theme.chipColor ?? defaults.chipColor!;
 
-  final effectiveSelectedChipColor =
-      selectedChipColor ?? theme.selectedChipColor ?? defaults.selectedChipColor!;
+  final effectiveSelectedChipColor = selectedChipColor ??
+      theme.selectedChipColor ??
+      defaults.selectedChipColor!;
 
-  final selectedTextColor =
-      effectiveVariant == SelectChipVariant.filled
-          ? (ThemeData.estimateBrightnessForColor(effectiveSelectedChipColor) ==
-                  Brightness.dark
-              ? Colors.white
-              : Colors.black)
-          : effectiveSelectedChipColor;
+  final selectedTextColor = effectiveVariant == SelectChipVariant.filled
+      ? (ThemeData.estimateBrightnessForColor(effectiveSelectedChipColor) ==
+              Brightness.dark
+          ? Colors.white
+          : Colors.black)
+      : effectiveSelectedChipColor;
 
   final effectiveLabelStyle =
       (labelStyle ?? theme.labelStyle ?? defaults.labelStyle!)
           .copyWith(inherit: true);
 
-  final effectiveSelectedLabelStyle =
-      (selectedLabelStyle ?? theme.selectedLabelStyle ?? defaults.selectedLabelStyle!)
-          .copyWith(inherit: true, color: selectedTextColor);
+  final effectiveSelectedLabelStyle = (selectedLabelStyle ??
+          theme.selectedLabelStyle ??
+          defaults.selectedLabelStyle!)
+      .copyWith(inherit: true, color: selectedTextColor);
 
   return SelectChipBarStyle(
     variant: effectiveVariant,

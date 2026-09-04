@@ -6,6 +6,7 @@ import '../select_theme_data.dart';
 import 'badge.dart';
 import 'constants.dart';
 import 'list_tile.dart';
+import 'scroll_chaining.dart';
 import 'side_bar_theme.dart';
 import 'skeleton_view.dart';
 
@@ -252,7 +253,7 @@ class _SelectSideBarState extends State<SelectSideBar> {
                   ScrollConfiguration.of(context).copyWith(overscroll: false),
               child: SingleChildScrollView(
                 controller: _scrollController,
-                physics: const ClampingScrollPhysics(),
+                physics: const ChainingClampingScrollPhysics(),
                 padding: widget.padding,
                 child: column,
               ),

@@ -284,10 +284,10 @@ void main() {
       expect(entries, isEmpty);
     });
 
-    test('clippingTree keeps a deep "Any" and a header-selected category',
-        () {
+    test('clippingTree keeps a deep "Any" and a header-selected category', () {
       // A cascading middle-level "Any" is a real choice (the whole parent).
-      final deepAny = SelectChildEntry<dynamic>.any(parentId: 'c1', name: 'Any');
+      final deepAny =
+          SelectChildEntry<dynamic>.any(parentId: 'c1', name: 'Any');
       final c1 = _text('r', 'c1', 'C1', children: {deepAny});
       final root = _category('r', 'R', children: {c1});
       final entries = <SelectEntry<dynamic>>{root};
