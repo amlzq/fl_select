@@ -39,7 +39,6 @@ typedef SelectActionBarBuilder = Widget Function(
 /// rendering as the built-in min/max input field.
 typedef SelectItemBuilder = Widget Function(
   BuildContext context,
-  int index,
   SelectEntry entry, {
   required bool selected,
   required VoidCallback onTap,
@@ -373,8 +372,6 @@ class ListSelectDelegate extends SelectDelegate {
   ///
   /// Only used when rendering flat (parentless) data; the deprecated
   /// two-level fallback to [ExpandableSelectDelegate] does not forward it.
-  /// The `index` is the display index within the (search-filtered) entry
-  /// list.
   final SelectItemBuilder? itemBuilder;
 
   @override
@@ -539,8 +536,7 @@ class GridSelectDelegate extends SelectDelegate {
   /// min/max input field.
   ///
   /// Only used when rendering flat (parentless) data; the deprecated
-  /// two-level fallback to [TabNavSelectDelegate] does not forward it. The
-  /// `index` is the display index within the (search-filtered) entry list.
+  /// two-level fallback to [TabNavSelectDelegate] does not forward it.
   final SelectItemBuilder? itemBuilder;
 
   @override
@@ -703,8 +699,7 @@ class WrapSelectDelegate extends SelectDelegate {
   /// the default chip; the builder renders its own selected-state visuals
   /// from `selected` and wires `onTap` (e.g. via [InkWell]) to trigger the
   /// selection. Custom range entries still render as the built-in min/max
-  /// input field. The `index` is the display index within the
-  /// (search-filtered) entry list.
+  /// input field.
   final SelectItemBuilder? itemBuilder;
 
   @override

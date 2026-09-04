@@ -26,23 +26,19 @@ class _CustomItem extends StatelessWidget {
   }
 }
 
-/// Builds a [_CustomItem] whose label is `name@displayIndex`.
+/// Builds a [_CustomItem] showing the entry's name.
 SelectItemBuilder get _itemBuilder =>
-    (context, index, entry, {required bool selected, required onTap}) =>
-        _CustomItem(
-          label: '${entry.name}@$index',
+    (context, entry, {required bool selected, required onTap}) => _CustomItem(
+          label: entry.name ?? '',
           selected: selected,
           onTap: onTap,
         );
 
 /// Flat entries: three regular items plus a trailing custom range entry.
 ///
-/// The set literal is a [LinkedHashSet], so the insertion order (and thus the
-/// display indexes) is stable: All=0, A=1, B=2. The custom range entry is
-/// excluded from the builder's display indexes. The first item deliberately
-/// avoids the id `any`: entries with that id are auto-selected when the
-/// selection starts empty, which would make the initial `selected` assertions
-/// non-deterministic.
+/// The first item deliberately avoids the id `any`: entries with that id are
+/// auto-selected when the selection starts empty, which would make the
+/// initial `selected` assertions non-deterministic.
 Set<SelectEntry> _flatEntries() => {
       SelectTextEntry<dynamic>.name(id: 'all', name: 'All'),
       SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
@@ -74,9 +70,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(_CustomItem), findsNWidgets(3));
-      expect(find.text('All@0'), findsOneWidget);
-      expect(find.text('A@1'), findsOneWidget);
-      expect(find.text('B@2'), findsOneWidget);
+      expect(find.text('All'), findsOneWidget);
+      expect(find.text('A'), findsOneWidget);
+      expect(find.text('B'), findsOneWidget);
       expect(find.byType(SelectRadioListTile), findsNothing);
     });
 
@@ -92,12 +88,12 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('A@1'));
+      await tester.tap(find.text('A'));
       await tester.pumpAndSettle();
 
       expect(applied.last.map((e) => e.id), contains('a'));
       // The `selected` flag updates after the tap.
-      expect(find.text('[A@1]'), findsOneWidget);
+      expect(find.text('[A]'), findsOneWidget);
     });
 
     testWidgets('selections accumulate until applied (multiple)',
@@ -120,14 +116,14 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('A@1'));
+      await tester.tap(find.text('A'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('B@2'));
+      await tester.tap(find.text('B'));
       await tester.pumpAndSettle();
 
       // Pending selections are visible through `selected` before applying.
-      expect(find.text('[A@1]'), findsOneWidget);
-      expect(find.text('[B@2]'), findsOneWidget);
+      expect(find.text('[A]'), findsOneWidget);
+      expect(find.text('[B]'), findsOneWidget);
 
       await tester.tap(find.text('Apply'));
       await tester.pumpAndSettle();
@@ -143,13 +139,13 @@ void main() {
       )));
       await tester.pumpAndSettle();
 
-      // The custom entry renders as an input field, never through the builder.
+      // The custom entry renders as an input field, never through the
+      // builder, so only the three regular items build [_CustomItem]s.
       expect(find.byType(SelectFieldTile), findsOneWidget);
       expect(find.byType(_CustomItem), findsNWidgets(3));
-      expect(find.text('Custom@3'), findsNothing);
     });
 
-    testWidgets('index follows the search-filtered display list',
+    testWidgets('search-filtered entries still pass through the builder',
         (tester) async {
       await tester.pumpWidget(_harness(ListSelectDelegate(
         searchEnabled: true,
@@ -161,13 +157,14 @@ void main() {
 
       // The custom range min/max fields are TextFields too; target the search
       // field through its hint text.
-      await tester
-          .enterText(find.widgetWithText(TextField, 'Search'), 'B');
+      await tester.enterText(find.widgetWithText(TextField, 'Search'), 'B');
       await tester.pump(const Duration(milliseconds: 400));
       await tester.pumpAndSettle();
 
       expect(find.byType(_CustomItem), findsOneWidget);
-      expect(find.text('B@0'), findsOneWidget);
+      // Match within the custom item: the search field's EditableText holds
+      // the typed 'B' as well.
+      expect(find.widgetWithText(_CustomItem, 'B'), findsOneWidget);
     });
 
     testWidgets('default tiles render when itemBuilder is omitted',
@@ -192,9 +189,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(_CustomItem), findsNWidgets(3));
-      expect(find.text('All@0'), findsOneWidget);
-      expect(find.text('A@1'), findsOneWidget);
-      expect(find.text('B@2'), findsOneWidget);
+      expect(find.text('All'), findsOneWidget);
+      expect(find.text('A'), findsOneWidget);
+      expect(find.text('B'), findsOneWidget);
       expect(find.byType(SelectGridTile), findsNothing);
     });
 
@@ -211,11 +208,11 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('A@1'));
+      await tester.tap(find.text('A'));
       await tester.pumpAndSettle();
 
       expect(applied.last.map((e) => e.id), contains('a'));
-      expect(find.text('[A@1]'), findsOneWidget);
+      expect(find.text('[A]'), findsOneWidget);
     });
 
     testWidgets('custom range entry still renders as the built-in input field',
@@ -227,9 +224,10 @@ void main() {
       )));
       await tester.pumpAndSettle();
 
+      // The custom entry renders as an input field, never through the
+      // builder, so only the three regular items build [_CustomItem]s.
       expect(find.byType(SelectFieldTile), findsOneWidget);
       expect(find.byType(_CustomItem), findsNWidgets(3));
-      expect(find.text('Custom@3'), findsNothing);
     });
 
     testWidgets('default tiles render when itemBuilder is omitted',
@@ -254,11 +252,9 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byType(_CustomItem), findsNWidgets(3));
-      expect(find.text('All@0'), findsOneWidget);
-      expect(find.text('A@1'), findsOneWidget);
-      expect(find.text('B@2'), findsOneWidget);
-      // The default chip label (plain name) is gone.
-      expect(find.text('A'), findsNothing);
+      expect(find.text('All'), findsOneWidget);
+      expect(find.text('A'), findsOneWidget);
+      expect(find.text('B'), findsOneWidget);
     });
 
     testWidgets('taps flow through the normal selection flow (single)',
@@ -273,11 +269,11 @@ void main() {
       ));
       await tester.pumpAndSettle();
 
-      await tester.tap(find.text('A@1'));
+      await tester.tap(find.text('A'));
       await tester.pumpAndSettle();
 
       expect(applied.last.map((e) => e.id), contains('a'));
-      expect(find.text('[A@1]'), findsOneWidget);
+      expect(find.text('[A]'), findsOneWidget);
     });
 
     testWidgets('custom range entry still renders as the built-in input field',
@@ -288,9 +284,10 @@ void main() {
       )));
       await tester.pumpAndSettle();
 
+      // The custom entry renders as an input field, never through the
+      // builder, so only the three regular items build [_CustomItem]s.
       expect(find.byType(SelectFieldTile), findsOneWidget);
       expect(find.byType(_CustomItem), findsNWidgets(3));
-      expect(find.text('Custom@3'), findsNothing);
     });
 
     testWidgets('default chips render when itemBuilder is omitted',

@@ -43,6 +43,105 @@ class MyCheckbox extends StatelessWidget {
   }
 }
 
+class MyListItem extends StatelessWidget {
+  const MyListItem({
+    super.key,
+    required this.entry,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final SelectEntry entry;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        color: selected ? Theme.of(context).colorScheme.primaryContainer : null,
+        child: Row(
+          children: [
+            Text(entry.name ?? ''),
+            Spacer(),
+            if (selected) const Icon(Icons.check),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class MyGridItem extends StatelessWidget {
+  const MyGridItem({
+    super.key,
+    required this.entry,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final SelectEntry entry;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+            alignment: Alignment.center,
+            color: selected
+                ? Theme.of(context).colorScheme.primaryContainer
+                : null,
+            child: Text(entry.name ?? ''),
+          ),
+          if (selected)
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: const Icon(Icons.check),
+            )
+        ],
+      ),
+    );
+  }
+}
+
+class MyWrapItem extends StatelessWidget {
+  const MyWrapItem({
+    super.key,
+    required this.entry,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final SelectEntry entry;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(24.0),
+          color:
+              selected ? Theme.of(context).colorScheme.primaryContainer : null,
+        ),
+        child: Text(entry.name ?? ''),
+      ),
+    );
+  }
+}
+
 class MyActionBar extends StatelessWidget {
   const MyActionBar({
     super.key,

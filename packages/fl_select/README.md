@@ -14,8 +14,6 @@ Install it with:
 npx skills add amlzq/fl_select
 ```
 
-Then just ask your agent to build a filter bar or select UI with `fl_select`. The skill lives in [`skills/fl-select`](https://github.com/amlzq/fl_select/tree/main/skills/fl-select).
-
 ### Features
 
 A composable architecture of **entry points, delegates, and layouts** — any delegate plugs into any entry point, and any layout into any category.
@@ -352,7 +350,7 @@ The flat-data delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelect
 ```dart
 ListSelectDelegate(
   entries: listData,
-  itemBuilder: (context, index, entry, {required selected, required onTap}) {
+  itemBuilder: (context, entry, {required selected, required onTap}) {
     return InkWell(
       onTap: onTap,
       child: Container(

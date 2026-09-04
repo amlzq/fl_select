@@ -87,8 +87,7 @@ class SelectListView extends StatefulWidget {
   /// visuals from `selected` and wires `onTap` (e.g. via [InkWell]) to its own
   /// gesture handler so taps keep flowing through this view's normal selection
   /// logic. Custom range entries still render as the built-in min/max input
-  /// field. The `index` is the display index within [entries], excluding
-  /// custom range entries.
+  /// field.
   final SelectItemBuilder? itemBuilder;
 
   /// Whether to show the [category] name as a header above the list.
@@ -338,7 +337,6 @@ class SelectListViewState extends State<SelectListView>
               if (customBuilder != null) {
                 return customBuilder(
                   context,
-                  index,
                   entry,
                   selected: selected,
                   onTap: () => _onItemTap(index, entry),

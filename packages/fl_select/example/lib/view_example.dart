@@ -22,7 +22,7 @@ class SelectViewExamplePage extends StatelessWidget {
               children: [
                 const Text(
                   'ListSelectDelegate',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
                   margin:
@@ -43,8 +43,35 @@ class SelectViewExamplePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 const Text(
+                  'ListSelectDelegate-itemBuilder',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SelectView(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  delegate: ListSelectDelegate(
+                    entries: listData,
+                    itemBuilder: (context, entry,
+                        {required selected, required onTap}) {
+                      return MyListItem(
+                          entry: entry, selected: selected, onTap: onTap);
+                    },
+                    // searchEnabled: true,
+                    // searchPredicate: (entry, query) {
+                    //   return entry.name?.contains(query) == true;
+                    // },
+                  ),
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters()}');
+                    showSelectResult(context, selected);
+                  },
+                ),
+                const SizedBox(height: 24),
+                const Text(
                   'GridSelectDelegate',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
                   margin:
@@ -70,8 +97,40 @@ class SelectViewExamplePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 const Text(
+                  'GridSelectDelegate-itemBuilder',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SelectView(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  delegate: GridSelectDelegate(
+                    entries: gridData,
+                    crossAxisCount: 3,
+                    childAspectRatio: 3,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                    itemBuilder: (context, entry,
+                        {required onTap, required selected}) {
+                      return MyGridItem(
+                          entry: entry, selected: selected, onTap: onTap);
+                    },
+                    gridTileTheme: const SelectGridTileTheme(
+                      variant: SelectGridTileVariant.outlined,
+                    ),
+                    fieldTileTheme: const SelectFieldTileTheme(
+                      variant: SelectFieldTileVariant.outlined,
+                    ),
+                  ),
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
+                    largePrint('toQueryMap: ${selected.toQueryMap()}');
+                    showSelectResult(context, selected);
+                  },
+                ),
+                const SizedBox(height: 24),
+                const Text(
                   'WrapSelectDelegate',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
                   margin:
@@ -91,8 +150,34 @@ class SelectViewExamplePage extends StatelessWidget {
                 ),
                 const SizedBox(height: 24),
                 const Text(
+                  'WrapSelectDelegate-itemBuilder',
+                  style: TextStyle(fontSize: 18),
+                ),
+                SelectView(
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  delegate: WrapSelectDelegate(
+                    entries: wrapData,
+                    selectionMode: SelectionMode.multiple,
+                    spacing: 12.0,
+                    runSpacing: 12.0,
+                    itemBuilder: (context, entry,
+                        {required onTap, required selected}) {
+                      return MyWrapItem(
+                          entry: entry, selected: selected, onTap: onTap);
+                    },
+                    sideBarTheme: const SelectSideBarTheme(width: 90),
+                  ),
+                  onChanged: (SelectEntries selected) {
+                    largePrint('onChanged: $selected');
+                    largePrint('toQueryMap: ${selected.toQueryMap()}');
+                    showSelectResult(context, selected);
+                  },
+                ),
+                const SizedBox(height: 24),
+                const Text(
                   'CascadingSelectDelegate',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
                   margin:
@@ -123,7 +208,7 @@ class SelectViewExamplePage extends StatelessWidget {
                 const SizedBox(height: 24),
                 const Text(
                   'CascadingSelectDelegate-1L',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
                   margin:
@@ -179,7 +264,7 @@ class SelectViewExamplePage extends StatelessWidget {
                 const SizedBox(height: 24),
                 const Text(
                   'TabNavSelectDelegate',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
                   margin:
@@ -210,7 +295,7 @@ class SelectViewExamplePage extends StatelessWidget {
                 const SizedBox(height: 24),
                 const Text(
                   'TabNavSelectDelegate-1L',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
                   margin:
@@ -267,7 +352,7 @@ class SelectViewExamplePage extends StatelessWidget {
                 const SizedBox(height: 24),
                 const Text(
                   'SideNavSelectDelegate',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
                   margin:
@@ -291,7 +376,7 @@ class SelectViewExamplePage extends StatelessWidget {
                 const SizedBox(height: 24),
                 const Text(
                   'SideNavSelectDelegate-1L',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
                   margin:
@@ -341,7 +426,7 @@ class SelectViewExamplePage extends StatelessWidget {
                 const SizedBox(height: 24),
                 const Text(
                   'ExpandableSelectDelegate',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
                   margin:
@@ -364,7 +449,7 @@ class SelectViewExamplePage extends StatelessWidget {
                 const SizedBox(height: 250),
                 const Text(
                   'ExpandableSelectDelegate-1L',
-                  style: TextStyle(fontSize: 20),
+                  style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
                   margin:
