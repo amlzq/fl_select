@@ -96,7 +96,7 @@ void main() {
       'tm': 'q',
     }, fallback: fallback);
 
-    expect(decoded.params.entryPoint, EntryPoint.view);
+    expect(decoded.params.entryPoint, EntryPoint.bar);
     expect(decoded.params.delegate, Delegate.cascading);
     expect(decoded.params.crossAxisCount, 12); // clamped
     expect(decoded.params.childAspectRatio, 2.5);

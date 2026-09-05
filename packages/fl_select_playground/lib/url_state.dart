@@ -8,7 +8,7 @@ import 'playground_params.dart';
 /// these values are encoded, so the default configuration maps to the bare
 /// URL with no query string.
 const PlaygroundParams kDefaultPlaygroundParams = PlaygroundParams(
-  entryPoint: EntryPoint.view,
+  entryPoint: EntryPoint.bar,
   delegate: Delegate.cascading,
   selectionMode: SelectionMode.multiple,
   crossAxisCount: 4,

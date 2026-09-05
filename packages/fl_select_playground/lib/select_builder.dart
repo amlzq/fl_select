@@ -20,6 +20,18 @@ Widget _radioBuilder(BuildContext context, bool selected) =>
 Widget _checkboxBuilder(BuildContext context, bool selected) =>
     MyCheckbox(value: selected);
 
+/// Places a popup trigger ([PopupSelectButton] / [PopupSelectBar]) opposite
+/// to where its overlay opens, so the popup always has room on screen:
+/// `below` opens downward below a top-aligned trigger, `above` upward above
+/// a bottom-aligned one, and `adaptive` keeps the trigger centered.
+Alignment _triggerAlignment(PopupSelectDirection direction) {
+  return switch (direction) {
+    PopupSelectDirection.below => Alignment.topCenter,
+    PopupSelectDirection.above => Alignment.bottomCenter,
+    PopupSelectDirection.adaptive => Alignment.center,
+  };
+}
+
 /// Loader trio (entries / current selection / reset selection) for a single
 /// delegate family. Keeping them together lets the playground swap a whole
 /// demo data set behind one interface.
@@ -500,14 +512,25 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
           body: Column(
             children: <Widget>[
               Expanded(
-                child: Center(
-                  child: PopupSelectButton(
-                    selectDelegate: widget.delegate,
-                    label: l10n.titleOf(p.delegate),
-                    variant: p.buttonVariant,
-                    direction: p.direction,
-                    onChanged: (selected) => _onChanged(selected),
-                    onApplied: (selected) => _onApplied(selected),
+                // Follow the overlay direction: below → top, above → bottom,
+                // adaptive → center, so the popup has room to open.
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Align(
+                    alignment: _triggerAlignment(p.direction),
+                    child: PopupSelectButton(
+                      // Re-key on the overlay direction: a direction switch
+                      // rebuilds the button, whose internal controller
+                      // disposes and closes any popup still open at the old
+                      // anchor.
+                      key: ValueKey(p.direction),
+                      selectDelegate: widget.delegate,
+                      label: l10n.titleOf(p.delegate),
+                      variant: p.buttonVariant,
+                      direction: p.direction,
+                      onChanged: (selected) => _onChanged(selected),
+                      onApplied: (selected) => _onApplied(selected),
+                    ),
                   ),
                 ),
               ),
@@ -530,20 +553,30 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
           body: Column(
             children: <Widget>[
               Expanded(
-                child: Center(
-                  child: PopupSelectBar(
-                    isScrollable: p.isScrollable,
-                    direction: p.direction,
-                    tabs: <PopupTab>[
-                      for (final tab in tabs) PopupTab(label: tab.$2),
-                    ],
-                    selectDelegates: <SelectDelegate>[
-                      for (final tab in tabs) _tabDelegate(tab.$1),
-                    ],
-                    onChanged: (tabData, selected) =>
-                        _onChanged((tabData: tabData, selected: selected)),
-                    onApplied: (tabData, selected) =>
-                        _onApplied((tabData: tabData, selected: selected)),
+                // Follow the overlay direction: below → top, above → bottom,
+                // adaptive → center, so the popup has room to open.
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  child: Align(
+                    alignment: _triggerAlignment(p.direction),
+                    child: PopupSelectBar(
+                      // Re-key on the overlay direction: a direction switch
+                      // rebuilds the bar, whose internal controller disposes
+                      // and closes any popup still open at the old anchor.
+                      key: ValueKey(p.direction),
+                      isScrollable: p.isScrollable,
+                      direction: p.direction,
+                      tabs: <PopupTab>[
+                        for (final tab in tabs) PopupTab(label: tab.$2),
+                      ],
+                      selectDelegates: <SelectDelegate>[
+                        for (final tab in tabs) _tabDelegate(tab.$1),
+                      ],
+                      onChanged: (tabData, selected) =>
+                          _onChanged((tabData: tabData, selected: selected)),
+                      onApplied: (tabData, selected) =>
+                          _onApplied((tabData: tabData, selected: selected)),
+                    ),
                   ),
                 ),
               ),
