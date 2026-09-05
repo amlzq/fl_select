@@ -202,90 +202,90 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(
-          child: SingleChildScrollView(
-            // Touch drags (and flings) the body cannot consume at its edges
-            // chain to the nearest same-direction ancestor scrollable,
-            // mimicking native nested scrolling. Pointer-wheel chaining is
-            // handled by the framework itself.
-            physics: const ChainingClampingScrollPhysics(),
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: List.generate(_displayEntries.length, (index) {
-                final category = _displayEntries[index] as SelectCategoryEntry;
-                final content = SelectCategoryContentView(
-                  category: category,
-                  index: index,
-                  selectedEntries: controller?.selectedEntriesAtLevel(1) ?? {},
-                  fallbackLayout:
-                      delegate.defaultLayout ?? const SelectListLayout(),
-                  delegate: delegate,
-                  radioBuilder: delegate.radioBuilder,
-                  checkboxBuilder: delegate.checkboxBuilder,
-                  onTerminalItemTap: _onTerminalItemTap,
-                );
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              physics: const ChainingClampingScrollPhysics(),
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: List.generate(_displayEntries.length, (index) {
+                  final category =
+                      _displayEntries[index] as SelectCategoryEntry;
+                  final content = SelectCategoryContentView(
+                    category: category,
+                    index: index,
+                    selectedEntries:
+                        controller?.selectedEntriesAtLevel(1) ?? {},
+                    fallbackLayout:
+                        delegate.defaultLayout ?? const SelectListLayout(),
+                    delegate: delegate,
+                    radioBuilder: delegate.radioBuilder,
+                    checkboxBuilder: delegate.checkboxBuilder,
+                    onTerminalItemTap: _onTerminalItemTap,
+                  );
 
-                final categoryHeader = category.header;
-                final categoryFooter = category.footer;
-                final hasHeader =
-                    categoryHeader != null && categoryHeader.children != null;
-                final hasFooter =
-                    categoryFooter != null && categoryFooter.children != null;
+                  final categoryHeader = category.header;
+                  final categoryFooter = category.footer;
+                  final hasHeader =
+                      categoryHeader != null && categoryHeader.children != null;
+                  final hasFooter =
+                      categoryFooter != null && categoryFooter.children != null;
 
-                return SelectExpansionTile(
-                  title: category.name ?? '',
-                  titlePadding: const EdgeInsets.symmetric(vertical: 10),
-                  showBadge: realSelectedCategories.contains(category),
-                  initiallyExpanded: true,
-                  child: hasHeader || hasFooter
-                      ? Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (hasHeader)
-                              Padding(
-                                padding: const EdgeInsets.only(bottom: 10),
-                                child: SelectWrapView(
-                                  category: categoryHeader,
-                                  entries: categoryHeader.children!.toList(),
-                                  selectedEntries:
-                                      _headerSelectedFor(category.id),
-                                  variant: SelectChipVariant.filled,
-                                  spacing: 12.0,
-                                  runSpacing: 12.0,
-                                  onChanged: (index, entry) =>
-                                      _onHeaderOrFooterItemTap.call(
-                                          category,
-                                          true,
-                                          index,
-                                          entry as SelectChildEntry),
+                  return SelectExpansionTile(
+                    title: category.name ?? '',
+                    titlePadding: const EdgeInsets.symmetric(vertical: 10),
+                    showBadge: realSelectedCategories.contains(category),
+                    initiallyExpanded: true,
+                    child: hasHeader || hasFooter
+                        ? Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (hasHeader)
+                                Padding(
+                                  padding: const EdgeInsets.only(bottom: 10),
+                                  child: SelectWrapView(
+                                    category: categoryHeader,
+                                    entries: categoryHeader.children!.toList(),
+                                    selectedEntries:
+                                        _headerSelectedFor(category.id),
+                                    variant: SelectChipVariant.filled,
+                                    spacing: 12.0,
+                                    runSpacing: 12.0,
+                                    onChanged: (index, entry) =>
+                                        _onHeaderOrFooterItemTap.call(
+                                            category,
+                                            true,
+                                            index,
+                                            entry as SelectChildEntry),
+                                  ),
                                 ),
-                              ),
-                            content,
-                            if (hasFooter)
-                              Padding(
-                                padding: const EdgeInsets.only(top: 10),
-                                child: SelectWrapView(
-                                  category: categoryFooter,
-                                  entries: categoryFooter.children!.toList(),
-                                  selectedEntries:
-                                      _footerSelectedFor(category.id),
-                                  variant: SelectChipVariant.filled,
-                                  spacing: 12.0,
-                                  runSpacing: 12.0,
-                                  onChanged: (index, entry) =>
-                                      _onHeaderOrFooterItemTap.call(
-                                          category,
-                                          false,
-                                          index,
-                                          entry as SelectChildEntry),
+                              content,
+                              if (hasFooter)
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 10),
+                                  child: SelectWrapView(
+                                    category: categoryFooter,
+                                    entries: categoryFooter.children!.toList(),
+                                    selectedEntries:
+                                        _footerSelectedFor(category.id),
+                                    variant: SelectChipVariant.filled,
+                                    spacing: 12.0,
+                                    runSpacing: 12.0,
+                                    onChanged: (index, entry) =>
+                                        _onHeaderOrFooterItemTap.call(
+                                            category,
+                                            false,
+                                            index,
+                                            entry as SelectChildEntry),
+                                  ),
                                 ),
-                              ),
-                          ],
-                        )
-                      : content,
-                );
-              }),
+                            ],
+                          )
+                        : content,
+                  );
+                }),
+              ),
             ),
           ),
         ),

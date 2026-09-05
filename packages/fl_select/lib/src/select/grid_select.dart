@@ -137,6 +137,7 @@ class GridSelectState extends State<GridSelect> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Flexible(
           child: Padding(
@@ -197,6 +198,7 @@ class GridSelectSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Flexible(
           child: Padding(

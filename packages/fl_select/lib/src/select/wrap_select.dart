@@ -137,6 +137,7 @@ class WrapSelectState extends State<WrapSelect> {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Flexible(
           child: Padding(
@@ -198,6 +199,7 @@ class WrapSelectSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Flexible(
           child: Padding(
