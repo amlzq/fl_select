@@ -140,20 +140,28 @@ class GridSelectState extends State<GridSelect> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Flexible(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
-            child: SelectGridView(
-              crossAxisCount: delegate.crossAxisCount,
-              mainAxisSpacing: delegate.mainAxisSpacing,
-              crossAxisSpacing: delegate.crossAxisSpacing,
-              childAspectRatio: delegate.childAspectRatio,
-              tileVariant: delegate.gridTileTheme?.variant,
-              fieldVariant: delegate.fieldTileTheme?.variant,
-              itemBuilder: delegate.itemBuilder,
-              entries: _displayEntries,
-              selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
-              onChanged: (_, entry) =>
-                  _onTerminalItemTap(entry as SelectChildEntry),
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              physics: ChainingClampingScrollPhysics(),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: 10,
+                  horizontal: 12,
+                ),
+                child: SelectGridView(
+                  crossAxisCount: delegate.crossAxisCount,
+                  mainAxisSpacing: delegate.mainAxisSpacing,
+                  crossAxisSpacing: delegate.crossAxisSpacing,
+                  childAspectRatio: delegate.childAspectRatio,
+                  tileVariant: delegate.gridTileTheme?.variant,
+                  fieldVariant: delegate.fieldTileTheme?.variant,
+                  itemBuilder: delegate.itemBuilder,
+                  entries: _displayEntries,
+                  selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
+                  onChanged: (_, entry) =>
+                      _onTerminalItemTap(entry as SelectChildEntry),
+                ),
+              ),
             ),
           ),
         ),

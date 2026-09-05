@@ -133,15 +133,20 @@ class ListSelectState extends State<ListSelect> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Flexible(
-          child: SelectListView(
-            entries: _displayEntries,
-            selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
-            onChanged: (_, entry) =>
-                _onTerminalItemTap(entry as SelectChildEntry),
-            selectionMode: delegate.selectionMode,
-            radioBuilder: delegate.radioBuilder,
-            checkboxBuilder: delegate.checkboxBuilder,
-            itemBuilder: delegate.itemBuilder,
+          child: Scrollbar(
+            child: SingleChildScrollView(
+              physics: ChainingClampingScrollPhysics(),
+              child: SelectListView(
+                entries: _displayEntries,
+                selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
+                onChanged: (_, entry) =>
+                    _onTerminalItemTap(entry as SelectChildEntry),
+                selectionMode: delegate.selectionMode,
+                radioBuilder: delegate.radioBuilder,
+                checkboxBuilder: delegate.checkboxBuilder,
+                itemBuilder: delegate.itemBuilder,
+              ),
+            ),
           ),
         ),
         if (controller?.hasMultipleMode == true &&

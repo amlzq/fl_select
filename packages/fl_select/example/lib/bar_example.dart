@@ -37,21 +37,21 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
               ],
               selectDelegates: [
                 ListSelectDelegate(
-                  entries: listData,
+                  entries: listDataWithAny,
                   searchEnabled: true,
                   searchPredicate: (entry, query) {
                     return entry.name?.contains(query) == true;
                   },
                 ),
                 GridSelectDelegate(
-                  entries: gridData,
+                  entries: gridDataWithAny,
                   crossAxisCount: 3,
                   childAspectRatio: 3.2,
                   mainAxisSpacing: 10,
                   crossAxisSpacing: 10,
                 ),
                 WrapSelectDelegate(
-                  entries: wrapData,
+                  entries: wrapDataWithAny,
                   selectionMode: SelectionMode.multiple,
                   spacing: 12.0,
                   runSpacing: 12.0,

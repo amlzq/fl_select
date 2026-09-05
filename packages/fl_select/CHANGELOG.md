@@ -1,18 +1,18 @@
 ## Next
 
-- **BUGFIX** selecting "Any" no longer surfaces as a real selection: `SelectUtils.cloneTree` and the in-place `SelectUtils.clippingTree` now exclude a flat top-level "Any" placeholder and a category whose only selection is "Any" (with no header/footer selection), so the change/apply result (and thus `labelLoader`, `onChanged`, `onApplied` and `toQueryParameters`) falls back to its original label instead of e.g. "1 selected". Deeper cascading "Any" entries stay — they represent a real choice.
+- **FEATURE** the flat-data delegates now accept an `itemBuilder` to customize item rendering.
 
-- **BUGFIX** unselecting the last item in multiple mode now falls back to the auto-initialized "Any" placeholder on flat-data delegates (`WrapSelectDelegate`, `ListSelectDelegate`, `GridSelectDelegate`), matching the category-tree and cascading behaviour; also fixed for the programmatic `SelectController.unselect` path.
+- **BUGFIX** selecting "Any" no longer surfaces as a real selection; the trigger label falls back to its original text.
 
-- **BUGFIX** `TabNavSelect` no longer lets a category whose only selection is the auto-initialized "Any" placeholder steal the initial tab focus; the initial tab now follows the first category holding a real selection, consistent with the tab badge.
+- **BUGFIX** unselecting the last item in multiple mode now falls back to the "Any" placeholder on flat-data delegates.
 
-- **DEPRECATION** rename `SelectController.badgedCategories` to `realSelectedCategories`; the old name is a deprecated alias **will be removed in a future minor version** ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+- **BUGFIX** a category whose only selection is "Any" no longer steals the initial tab focus in `TabNavSelect`.
 
-- **FEATURE** the flat-data delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) now accept an `itemBuilder` to fully customize how each item is rendered.
+- **BUGFIX** the remaining scrollable bodies now chain touch-drag scrolling to the enclosing page-level scrollable.
 
-- **DEPRECATION** split the dual-form `SelectChipBar` into the single-row `SelectChipBar` and the wrap-form `SelectWrapView` / `SelectWrapViewSkeleton`, deprecating `isWrapable` and the title-stacking `direction` along the way ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+- **DEPRECATION** rename `SelectController.badgedCategories` to `realSelectedCategories` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
 
-- **BUGFIX** the remaining scrollable bodies — `SelectListView` (used by `ListSelectDelegate` and the tab/flatten category layouts), `SelectGridView` and the `SideNavSelect` sidebar `SelectSideBar` — now chain touch-drag scrolling (and fling momentum) to the enclosing page-level scrollable once they reach their scroll edge, matching `ExpandableSelect` and `SideNavSelect`'s right column via the shared internal chaining physics; previously the drag stopped dead at the edge and the hosting page felt stuck. Falls back to plain clamping behavior when no same-direction ancestor scrollable exists.
+- **DEPRECATION** split the dual-form `SelectChipBar` into the single-row `SelectChipBar` and the wrap-form `SelectWrapView` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
 
 ## 0.11.3
 

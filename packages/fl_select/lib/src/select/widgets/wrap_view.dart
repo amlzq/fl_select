@@ -192,49 +192,42 @@ class _SelectWrapViewState extends State<SelectWrapView>
       selectedLabelStyle: widget.selectedLabelStyle,
     );
 
-    final chipGroup = Wrap(
-      spacing: widget.spacing,
-      runSpacing: widget.runSpacing,
-      children: buildChipChildren(style),
-    );
-
     final showTitle = widget.showTitle && widget.category?.name != null;
 
     return Container(
       color: style.backgroundColor,
       padding: style.padding,
-      child: Scrollbar(
-        child: SingleChildScrollView(
-          physics: ChainingClampingScrollPhysics(),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (showTitle)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: DefaultTextStyle.merge(
-                    style: Theme.of(context).textTheme.titleSmall ??
-                        const TextStyle(fontSize: 16),
-                    child: Text(widget.category?.name ?? ''),
-                  ),
-                ),
-              if (firstCustomRange != null)
-                buildCustomRangeFieldTile(
-                  isHeader: true,
-                  padding: const EdgeInsets.only(bottom: 10.0),
-                  variant: widget.fieldVariant,
-                ),
-              chipGroup,
-              if (lastCustomRange != null)
-                buildCustomRangeFieldTile(
-                  isHeader: false,
-                  padding: const EdgeInsets.only(top: 10.0),
-                  variant: widget.fieldVariant,
-                ),
-            ],
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (showTitle)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: DefaultTextStyle.merge(
+                style: Theme.of(context).textTheme.titleSmall ??
+                    const TextStyle(fontSize: 16),
+                child: Text(widget.category?.name ?? ''),
+              ),
+            ),
+          if (firstCustomRange != null)
+            buildCustomRangeFieldTile(
+              isHeader: true,
+              padding: const EdgeInsets.only(bottom: 10.0),
+              variant: widget.fieldVariant,
+            ),
+          Wrap(
+            spacing: widget.spacing,
+            runSpacing: widget.runSpacing,
+            children: buildChipChildren(style),
           ),
-        ),
+          if (lastCustomRange != null)
+            buildCustomRangeFieldTile(
+              isHeader: false,
+              padding: const EdgeInsets.only(top: 10.0),
+              variant: widget.fieldVariant,
+            ),
+        ],
       ),
     );
   }

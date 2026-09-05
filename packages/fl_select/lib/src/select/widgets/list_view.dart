@@ -8,7 +8,6 @@ import '../select_entry.dart';
 import 'constants.dart';
 import 'custom_range_host.dart';
 import 'list_tile.dart';
-import 'scroll_chaining.dart';
 import 'skeleton_view.dart';
 
 /// A list view that renders terminal-node [SelectEntry] entries as selectable
@@ -172,78 +171,71 @@ class SelectListViewState extends State<SelectListView>
   Widget build(BuildContext context) {
     super.build(context);
     final showTitle = widget.showTitle && widget.category?.name != null;
-    return Scrollbar(
-      child: SingleChildScrollView(
-        physics: const ChainingClampingScrollPhysics(),
-        padding: widget.padding,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Category label
-            if (showTitle)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: DefaultTextStyle.merge(
-                  style: Theme.of(context).textTheme.titleSmall ??
-                      const TextStyle(fontSize: 16),
-                  child: Text(widget.category?.name ?? ''),
-                ),
-              ),
-            // An input item at header
-            if (firstCustomRange != null)
-              buildCustomRangeFieldTile(
-                isHeader: true,
-                padding: const EdgeInsets.only(top: 10.0),
-              ),
-            // List of items
-            ListView.separated(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.zero,
-              itemCount: entriesWithoutCustom.length,
-              itemBuilder: (context, index) {
-                final entry = entriesWithoutCustom[index];
-                final selected =
-                    widget.selectedEntries?.contains(entry) ?? false;
-                final customBuilder = widget.itemBuilder;
-                if (customBuilder != null) {
-                  return customBuilder(
-                    context,
-                    entry,
-                    selected: selected,
-                    onTap: () => _onItemTap(index, entry),
-                  );
-                }
-                if (SelectionMode.single == widget.selectionMode) {
-                  return SelectRadioListTile(
-                    onTap: () => _onItemTap(index, entry),
-                    label: entry.name ?? '',
-                    selected: selected,
-                    radioBuilder: widget.radioBuilder,
-                  );
-                } else {
-                  return SelectCheckboxListTile(
-                    onTap: () => _onItemTap(index, entry),
-                    label: entry.name ?? '',
-                    checked: selected,
-                    checkboxBuilder: widget.checkboxBuilder,
-                  );
-                }
-              },
-              separatorBuilder: (BuildContext context, int index) {
-                return const SizedBox(height: 6);
-              },
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Category label
+        if (showTitle)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: DefaultTextStyle.merge(
+              style: Theme.of(context).textTheme.titleSmall ??
+                  const TextStyle(fontSize: 16),
+              child: Text(widget.category?.name ?? ''),
             ),
-            // An input item at footer
-            if (lastCustomRange != null)
-              buildCustomRangeFieldTile(
-                isHeader: false,
-                padding: const EdgeInsets.only(top: 10.0),
-              ),
-          ],
+          ),
+        // An input item at header
+        if (firstCustomRange != null)
+          buildCustomRangeFieldTile(
+            isHeader: true,
+            padding: const EdgeInsets.only(top: 10.0),
+          ),
+        // List of items
+        ListView.separated(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          itemCount: entriesWithoutCustom.length,
+          itemBuilder: (context, index) {
+            final entry = entriesWithoutCustom[index];
+            final selected = widget.selectedEntries?.contains(entry) ?? false;
+            final customBuilder = widget.itemBuilder;
+            if (customBuilder != null) {
+              return customBuilder(
+                context,
+                entry,
+                selected: selected,
+                onTap: () => _onItemTap(index, entry),
+              );
+            }
+            if (SelectionMode.single == widget.selectionMode) {
+              return SelectRadioListTile(
+                onTap: () => _onItemTap(index, entry),
+                label: entry.name ?? '',
+                selected: selected,
+                radioBuilder: widget.radioBuilder,
+              );
+            } else {
+              return SelectCheckboxListTile(
+                onTap: () => _onItemTap(index, entry),
+                label: entry.name ?? '',
+                checked: selected,
+                checkboxBuilder: widget.checkboxBuilder,
+              );
+            }
+          },
+          separatorBuilder: (BuildContext context, int index) {
+            return const SizedBox(height: 6);
+          },
         ),
-      ),
+        // An input item at footer
+        if (lastCustomRange != null)
+          buildCustomRangeFieldTile(
+            isHeader: false,
+            padding: const EdgeInsets.only(top: 10.0),
+          ),
+      ],
     );
   }
 

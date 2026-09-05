@@ -25,7 +25,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                   label: 'PopupSelectButton',
                   labelLoader: (selected) => '${selected.length} selected',
                   selectDelegate: ListSelectDelegate(
-                    entries: listData,
+                    entries: listDataWithAny,
                   ),
                   onApplied: (selected) {
                     largePrint('onApplied: $selected');
@@ -38,7 +38,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                 PopupSelectButton.elevated(
                   label: 'PopupSelectButton.elevated',
                   selectDelegate: GridSelectDelegate(
-                    entries: gridData,
+                    entries: gridDataWithAny,
                     crossAxisCount: 3,
                     childAspectRatio: 3,
                     mainAxisSpacing: 10,
@@ -52,7 +52,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                 PopupSelectButton.filled(
                   label: 'PopupSelectButton.filled',
                   selectDelegate: WrapSelectDelegate(
-                    entries: wrapData,
+                    entries: wrapDataWithAny,
                     selectionMode: SelectionMode.multiple,
                     spacing: 12.0,
                     runSpacing: 12.0,

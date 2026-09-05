@@ -10,7 +10,6 @@ import 'custom_range_host.dart';
 import 'field_tile_theme.dart';
 import 'grid_tile.dart';
 import 'grid_tile_theme.dart';
-import 'scroll_chaining.dart';
 import 'skeleton_view.dart';
 
 /// A grid view that renders terminal-node [SelectEntry] entries as selectable
@@ -183,74 +182,68 @@ class SelectGridViewState extends State<SelectGridView>
   Widget build(BuildContext context) {
     super.build(context);
     final showTitle = widget.showTitle && widget.category?.name != null;
-    return Scrollbar(
-      child: SingleChildScrollView(
-        physics: const ChainingClampingScrollPhysics(),
-        padding: widget.padding,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Category label
-            if (showTitle)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: DefaultTextStyle.merge(
-                  style: Theme.of(context).textTheme.titleSmall ??
-                      const TextStyle(fontSize: 16),
-                  child: Text(widget.category?.name ?? ''),
-                ),
-              ),
-            // An input item at header
-            if (firstCustomRange != null)
-              buildCustomRangeFieldTile(
-                isHeader: true,
-                padding: const EdgeInsets.only(bottom: 10.0),
-                variant: widget.fieldVariant,
-              ),
-            // Grid of items (3 columns)
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              padding: EdgeInsets.zero,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: widget.crossAxisCount,
-                childAspectRatio: widget.childAspectRatio,
-                mainAxisSpacing: widget.mainAxisSpacing,
-                crossAxisSpacing: widget.crossAxisSpacing,
-              ),
-              itemCount: _entriesWithoutCustom.length,
-              itemBuilder: (context, index) {
-                final entry = _entriesWithoutCustom[index];
-                final selected = _selectedEntries.contains(entry);
-                final customBuilder = widget.itemBuilder;
-                if (customBuilder != null) {
-                  return customBuilder(
-                    context,
-                    entry,
-                    selected: selected,
-                    onTap: () => _onItemTap(index, entry),
-                  );
-                }
-                return SelectGridTile(
-                  onTap: () => _onItemTap.call(index, entry),
-                  enabled: entry.enabled,
-                  label: entry.name ?? '',
-                  selected: selected,
-                  variant: widget.tileVariant,
-                );
-              },
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Category label
+        if (showTitle)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 10),
+            child: DefaultTextStyle.merge(
+              style: Theme.of(context).textTheme.titleSmall ??
+                  const TextStyle(fontSize: 16),
+              child: Text(widget.category?.name ?? ''),
             ),
-            // An input item at footer
-            if (lastCustomRange != null)
-              buildCustomRangeFieldTile(
-                isHeader: false,
-                padding: const EdgeInsets.only(top: 10.0),
-                variant: widget.fieldVariant,
-              ),
-          ],
+          ),
+        // An input item at header
+        if (firstCustomRange != null)
+          buildCustomRangeFieldTile(
+            isHeader: true,
+            padding: const EdgeInsets.only(bottom: 10.0),
+            variant: widget.fieldVariant,
+          ),
+        // Grid of items (3 columns)
+        GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: widget.crossAxisCount,
+            childAspectRatio: widget.childAspectRatio,
+            mainAxisSpacing: widget.mainAxisSpacing,
+            crossAxisSpacing: widget.crossAxisSpacing,
+          ),
+          itemCount: _entriesWithoutCustom.length,
+          itemBuilder: (context, index) {
+            final entry = _entriesWithoutCustom[index];
+            final selected = _selectedEntries.contains(entry);
+            final customBuilder = widget.itemBuilder;
+            if (customBuilder != null) {
+              return customBuilder(
+                context,
+                entry,
+                selected: selected,
+                onTap: () => _onItemTap(index, entry),
+              );
+            }
+            return SelectGridTile(
+              onTap: () => _onItemTap.call(index, entry),
+              enabled: entry.enabled,
+              label: entry.name ?? '',
+              selected: selected,
+              variant: widget.tileVariant,
+            );
+          },
         ),
-      ),
+        // An input item at footer
+        if (lastCustomRange != null)
+          buildCustomRangeFieldTile(
+            isHeader: false,
+            padding: const EdgeInsets.only(top: 10.0),
+            variant: widget.fieldVariant,
+          ),
+      ],
     );
   }
 

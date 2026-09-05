@@ -337,9 +337,14 @@ class TabNavSelectState extends State<TabNavSelect> {
                     ),
                   ),
                 Flexible(
-                  child: _buildCategoryView(
-                    category,
-                    index: focusedCategoryIndex,
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      physics: ChainingClampingScrollPhysics(),
+                      child: _buildCategoryView(
+                        category,
+                        index: focusedCategoryIndex,
+                      ),
+                    ),
                   ),
                 ),
                 if (categoryFooter != null && categoryFooter.children != null)

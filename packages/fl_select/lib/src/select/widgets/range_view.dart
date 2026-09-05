@@ -1,4 +1,3 @@
-import 'package:fl_select/src/select/widgets/scroll_chaining.dart';
 import 'package:flutter/material.dart';
 
 import '../select_entry.dart';
@@ -444,61 +443,56 @@ class _SelectRangeViewState extends State<SelectRangeView> {
     final showTitle = widget.showTitle && widget.category?.name != null;
     return Padding(
       padding: widget.padding ?? const EdgeInsets.symmetric(vertical: 4),
-      child: Scrollbar(
-        child: SingleChildScrollView(
-          physics: ChainingClampingScrollPhysics(),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (showTitle)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: DefaultTextStyle.merge(
-                    style: Theme.of(context).textTheme.titleSmall ??
-                        const TextStyle(fontSize: 16),
-                    child: Text(widget.category?.name ?? ''),
-                  ),
-                ),
-              SelectRangeSlider(
-                min: _min,
-                max: _max,
-                values: _currentRange,
-                divisions: _divisions,
-                // Show the parsed display labels at the bottom corners of the
-                // slider (e.g. "$1,500" / "$10M+"). When the entry name does not
-                // provide them, fall back to the numeric extremes.
-                minLabel: _minLabel ?? _formatBound(_min),
-                maxLabel: _maxLabel ?? _formatBound(_max),
-                onChanged: _onSliderChanged,
-                onChangeEnd: _onSliderChangeEnd,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (showTitle)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: DefaultTextStyle.merge(
+                style: Theme.of(context).textTheme.titleSmall ??
+                    const TextStyle(fontSize: 16),
+                child: Text(widget.category?.name ?? ''),
               ),
-              const SizedBox(height: 12),
-              // Reuse [SelectFieldTile] for the two text fields. It owns the
-              // visual treatment; the change/submit callbacks wire the deferred
-              // slider sync (see [_commitField]).
-              if (entry != null)
-                SelectFieldTile(
-                  entry,
-                  minController: _minController,
-                  maxController: _maxController,
-                  minFocusNode: _minFocusNode,
-                  maxFocusNode: _maxFocusNode,
-                  separator: widget.toText,
-                  variant: widget.fieldVariant,
-                  // The range view accepts fractional input while typing and
-                  // rounds/snaps on commit (see [_commitField]).
-                  allowDecimal: true,
-                  onMinChanged: _onFieldDraftChanged,
-                  onMaxChanged: _onFieldDraftChanged,
-                  onMinSubmitted: (text) => _commitField(true, text),
-                  onMaxSubmitted: (text) => _commitField(false, text),
-                )
-              else
-                const SizedBox.shrink(),
-            ],
+            ),
+          SelectRangeSlider(
+            min: _min,
+            max: _max,
+            values: _currentRange,
+            divisions: _divisions,
+            // Show the parsed display labels at the bottom corners of the
+            // slider (e.g. "$1,500" / "$10M+"). When the entry name does not
+            // provide them, fall back to the numeric extremes.
+            minLabel: _minLabel ?? _formatBound(_min),
+            maxLabel: _maxLabel ?? _formatBound(_max),
+            onChanged: _onSliderChanged,
+            onChangeEnd: _onSliderChangeEnd,
           ),
-        ),
+          const SizedBox(height: 12),
+          // Reuse [SelectFieldTile] for the two text fields. It owns the
+          // visual treatment; the change/submit callbacks wire the deferred
+          // slider sync (see [_commitField]).
+          if (entry != null)
+            SelectFieldTile(
+              entry,
+              minController: _minController,
+              maxController: _maxController,
+              minFocusNode: _minFocusNode,
+              maxFocusNode: _maxFocusNode,
+              separator: widget.toText,
+              variant: widget.fieldVariant,
+              // The range view accepts fractional input while typing and
+              // rounds/snaps on commit (see [_commitField]).
+              allowDecimal: true,
+              onMinChanged: _onFieldDraftChanged,
+              onMaxChanged: _onFieldDraftChanged,
+              onMinSubmitted: (text) => _commitField(true, text),
+              onMaxSubmitted: (text) => _commitField(false, text),
+            )
+          else
+            const SizedBox.shrink(),
+        ],
       ),
     );
   }
