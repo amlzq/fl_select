@@ -1,6 +1,6 @@
 # fl_select
 
-A monorepo for **fl_select** — a customizable Flutter select widget for building filter bars, cascading menus, and pickers with single/multiple selection, async loading, search filtering, theming, and i18n.
+A monorepo for **fl_select** — a Flutter package for building selection UIs (e.g. filter bars) on a composable architecture of **entry points, delegates, and layouts**, with single & multiple selection, sync/async loading, search filtering, theming, and i18n built in.
 
 [Playground](https://flselect.zeaon.dev/)
 
@@ -10,9 +10,9 @@ A monorepo for **fl_select** — a customizable Flutter select widget for buildi
 
 | Package | Pub | Description |
 | --- | --- | --- |
-| [`packages/fl_select`](packages/fl_select) | [![pub package](https://img.shields.io/pub/v/fl_select.svg)](https://pub.dev/packages/fl_select) | Core select widgets: `SelectView`, delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`, `CascadingSelectDelegate`, `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`), popup bar/button, dialogs, and bottom sheets. |
-| [`packages/fl_select_genui`](packages/fl_select_genui) | [![pub package](https://img.shields.io/pub/v/fl_select_genui.svg)](https://pub.dev/packages/fl_select_genui) | [GenUI SDK](https://pub.dev/packages/genui) / A2UI integration: ready-made `CatalogItem`s so conversational AI agents can render fl_select widgets and receive selections as structured data. |
-| [`packages/fl_select_playground`](packages/fl_select_playground) | — | Interactive playground for fl_select: live preview of `SelectView`, `PopupSelectBar`, `PopupSelectButton`, etc. with a control panel for behavior/appearance params and built-in demo data. Not published to pub. |
+| [`packages/fl_select`](packages/fl_select) | [![pub package](https://img.shields.io/pub/v/fl_select.svg)](https://pub.dev/packages/fl_select) | Core select widgets. |
+| [`packages/fl_select_genui`](packages/fl_select_genui) | [![pub package](https://img.shields.io/pub/v/fl_select_genui.svg)](https://pub.dev/packages/fl_select_genui) | GenUI / A2UI integration bridge. |
+| [`packages/fl_select_playground`](packages/fl_select_playground) | — | Interactive playground. |
 
 ## Repository structure
 
@@ -29,7 +29,7 @@ fl_select/
 
 ## Documentation
 
-- Full documentation, delegate reference: [`packages/fl_select/README.md`](packages/fl_select/README.md)
+- Select widgets docs: [`packages/fl_select/README.md`](packages/fl_select/README.md)
 - Changelog: [`packages/fl_select/CHANGELOG.md`](packages/fl_select/CHANGELOG.md)
 - Migration guide: [`packages/fl_select/MIGRATION.md`](packages/fl_select/MIGRATION.md)
 - GenUI integration docs: [`packages/fl_select_genui/README.md`](packages/fl_select_genui/README.md)
