@@ -9,7 +9,6 @@ export 'chip_host.dart'
         SelectChipBarStyle,
         kSelectChipBarHeight,
         resolveSelectChipBarStyle;
-export 'wrap_view.dart';
 export 'constants.dart';
 export 'counter.dart';
 export 'expansion_tile.dart';
@@ -33,3 +32,4 @@ export 'side_bar_theme.dart';
 export 'skeleton_view.dart';
 export 'tab_bar.dart';
 export 'tab_bar_theme.dart';
+export 'wrap_view.dart';

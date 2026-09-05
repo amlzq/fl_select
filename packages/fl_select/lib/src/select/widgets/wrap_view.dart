@@ -1,15 +1,12 @@
 import 'dart:math';
 
+import 'package:fl_select/src/select/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 
 import '../select_delegate.dart';
 import '../select_entry.dart';
-import 'chip_bar_theme.dart';
 import 'chip_host.dart';
-import 'constants.dart';
 import 'custom_range_host.dart';
-import 'field_tile_theme.dart';
-import 'skeleton_view.dart';
 
 /// A wrap chip group for selecting among sibling [SelectEntry] entries.
 ///
@@ -22,8 +19,6 @@ import 'skeleton_view.dart';
 /// not rendered as a chip. Instead it is rendered as a min/max input field
 /// above or below the chip group, mirroring [SelectGridView]. The committed
 /// value is reported through [onChanged] once both fields lose focus.
-///
-/// For the single-row, horizontally scrollable variant see [SelectChipBar].
 class SelectWrapView extends StatefulWidget {
   const SelectWrapView({
     super.key,
@@ -31,7 +26,6 @@ class SelectWrapView extends StatefulWidget {
     required this.entries,
     this.selectedEntries,
     this.showTitle = true,
-    this.direction = Axis.horizontal,
     this.spacing = 0.0,
     this.runSpacing = 0.0,
     this.backgroundColor,
@@ -61,14 +55,10 @@ class SelectWrapView extends StatefulWidget {
   final SelectEntries? selectedEntries;
 
   /// Whether to show the category title.
-  final bool showTitle;
-
-  /// The direction of the [category] title relative to the chip group.
   ///
-  /// Defaults to [Axis.horizontal], which lays the title to the left of the
-  /// chips in a single row. Set to [Axis.vertical] to stack the title above
-  /// the chip group.
-  final Axis direction;
+  /// The title is always stacked above the chip group — the wrap form has no
+  /// title-left layout.
+  final bool showTitle;
 
   /// Horizontal spacing between chips in a row; the [Wrap.spacing].
   final double spacing;
@@ -172,25 +162,20 @@ class _SelectWrapViewState extends State<SelectWrapView>
   @override
   void initState() {
     super.initState();
-
     _selectedEntries = widget.selectedEntries ?? {};
-
     initCustomRange();
   }
 
   @override
   void didUpdateWidget(covariant SelectWrapView oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     _selectedEntries = widget.selectedEntries ?? {};
-
     updateCustomRange(oldSelectedEntries: oldWidget.selectedEntries ?? {});
   }
 
   @override
   void dispose() {
     disposeCustomRange();
-
     super.dispose();
   }
 
@@ -213,20 +198,44 @@ class _SelectWrapViewState extends State<SelectWrapView>
       children: buildChipChildren(style),
     );
 
-    Widget content = layoutTitleAround(
-      chipGroup,
-      direction: widget.direction,
-      showTitle: widget.showTitle,
-      category: widget.category,
-    );
+    final showTitle = widget.showTitle && widget.category?.name != null;
 
-    content = wrapCustomRangeFields(content, fieldVariant: widget.fieldVariant);
-
-    // The wrapped group always grows to fit its rows — no fixed height.
     return Container(
       color: style.backgroundColor,
       padding: style.padding,
-      child: content,
+      child: Scrollbar(
+        child: SingleChildScrollView(
+          physics: ChainingClampingScrollPhysics(),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (showTitle)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: DefaultTextStyle.merge(
+                    style: Theme.of(context).textTheme.titleSmall ??
+                        const TextStyle(fontSize: 16),
+                    child: Text(widget.category?.name ?? ''),
+                  ),
+                ),
+              if (firstCustomRange != null)
+                buildCustomRangeFieldTile(
+                  isHeader: true,
+                  padding: const EdgeInsets.only(bottom: 10.0),
+                  variant: widget.fieldVariant,
+                ),
+              chipGroup,
+              if (lastCustomRange != null)
+                buildCustomRangeFieldTile(
+                  isHeader: false,
+                  padding: const EdgeInsets.only(top: 10.0),
+                  variant: widget.fieldVariant,
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
@@ -242,7 +251,6 @@ class SelectWrapViewSkeleton extends StatelessWidget {
     super.key,
     this.itemCount = 4,
     this.showTitle = true,
-    this.direction = Axis.horizontal,
     this.spacing = 0.0,
     this.runSpacing = 0.0,
     this.backgroundColor,
@@ -258,13 +266,6 @@ class SelectWrapViewSkeleton extends StatelessWidget {
   ///
   /// Defaults to true, matching [SelectWrapView.showTitle].
   final bool showTitle;
-
-  /// The direction of the title placeholder relative to the chip group.
-  ///
-  /// Defaults to [Axis.horizontal], which lays the title placeholder to the
-  /// left of the chips in a single row. Set to [Axis.vertical] to stack the
-  /// title placeholder above the chip group.
-  final Axis direction;
 
   /// Horizontal spacing between placeholder chips.
   ///
@@ -310,47 +311,27 @@ class SelectWrapViewSkeleton extends StatelessWidget {
         ),
     ];
 
-    final chipGroup =
-        Wrap(spacing: spacing, runSpacing: runSpacing, children: chips);
-
-    final content = direction == Axis.vertical
-        ? Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (showTitle)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 10),
-                  child: SkeletonTile(
-                    width: (random.nextInt(72) + 72).toDouble(),
-                    height: 24,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              chipGroup,
-            ],
-          )
-        : Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (showTitle)
-                Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: SkeletonTile(
-                    width: 60,
-                    height: 24,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              Expanded(child: chipGroup),
-              const SizedBox(width: 12),
-            ],
-          );
-
     return Container(
       color: effectiveBackgroundColor,
       padding: effectivePadding,
-      child: SkeletonView(child: content),
+      child: SkeletonView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (showTitle)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 10),
+                child: SkeletonTile(
+                  width: (random.nextInt(72) + 72).toDouble(),
+                  height: 24,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            Wrap(spacing: spacing, runSpacing: runSpacing, children: chips),
+          ],
+        ),
+      ),
     );
   }
 }

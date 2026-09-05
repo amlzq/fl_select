@@ -23,7 +23,6 @@ class SelectCategoryContentView extends StatelessWidget {
     required this.onTerminalItemTap,
     this.radioBuilder,
     this.checkboxBuilder,
-    this.chipDirection,
   });
 
   /// The category whose children are rendered.
@@ -48,10 +47,6 @@ class SelectCategoryContentView extends StatelessWidget {
   /// Optional custom radio/checkbox builders forwarded to the list branch.
   final ToggleWidgetBuilder? radioBuilder;
   final ToggleWidgetBuilder? checkboxBuilder;
-
-  /// Overrides the chip bar direction; hosts that stack the category title
-  /// above the chips (e.g. the side-nav right column) pass [Axis.vertical].
-  final Axis? chipDirection;
 
   @override
   Widget build(BuildContext context) {
@@ -107,7 +102,6 @@ class SelectCategoryContentView extends StatelessWidget {
           entries: entries,
           selectedEntries: selectedEntries,
           showTitle: false,
-          direction: chipDirection ?? Axis.horizontal,
           spacing: spacing,
           runSpacing: runSpacing,
           backgroundColor: delegate.chipBarTheme?.backgroundColor,

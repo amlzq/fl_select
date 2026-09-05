@@ -7,7 +7,6 @@ import '../select_theme.dart';
 import '../select_theme_data.dart';
 import 'chip_bar_theme.dart';
 import 'custom_range_host.dart';
-import 'field_tile_theme.dart';
 
 /// Default height of the single-row [SelectChipBar].
 const kSelectChipBarHeight = 44.0;
@@ -305,80 +304,5 @@ mixin SelectChipHost<T extends StatefulWidget> on CustomRangeHost<T> {
             );
           }(),
     ];
-  }
-
-  /// Lays the category title out around [chipGroup].
-  ///
-  /// [Axis.horizontal] (the default) puts the title to the left of the chip
-  /// group in a single row; [Axis.vertical] stacks the title above it.
-  Widget layoutTitleAround(
-    Widget chipGroup, {
-    required Axis direction,
-    required bool showTitle,
-    SelectEntry? category,
-  }) {
-    if (direction == Axis.vertical) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (showTitle && category?.name != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: DefaultTextStyle.merge(
-                style: Theme.of(context).textTheme.titleSmall ??
-                    const TextStyle(fontSize: 16),
-                child: Text(category?.name ?? ''),
-              ),
-            ),
-          chipGroup,
-        ],
-      );
-    }
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (showTitle && category?.name != null)
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: DefaultTextStyle.merge(
-              style: Theme.of(context).textTheme.titleSmall ??
-                  const TextStyle(fontSize: 16),
-              child: Text(category?.name ?? ''),
-            ),
-          ),
-        Expanded(child: chipGroup),
-        const SizedBox(width: 12),
-      ],
-    );
-  }
-
-  /// Scaffolds the custom range field (if any) around [content]: a header
-  /// field above when [CustomRangeHost.firstCustomRange] is set, a footer
-  /// field below when [CustomRangeHost.lastCustomRange] is set.
-  Widget wrapCustomRangeFields(
-    Widget content, {
-    SelectFieldTileVariant? fieldVariant,
-  }) {
-    if (!hasCustomRange) return content;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (firstCustomRange != null)
-          buildCustomRangeFieldTile(
-            isHeader: true,
-            padding: const EdgeInsets.only(bottom: 10.0),
-            variant: fieldVariant,
-          ),
-        content,
-        if (lastCustomRange != null)
-          buildCustomRangeFieldTile(
-            isHeader: false,
-            padding: const EdgeInsets.only(top: 10.0),
-            variant: fieldVariant,
-          ),
-      ],
-    );
   }
 }

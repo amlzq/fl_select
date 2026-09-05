@@ -46,6 +46,24 @@ version**. Migration is a pure rename.
   );
 ```
 
+### `SelectChipBar.direction` deprecated
+
+The single-row bar keeps only its title-left layout. `direction` — and the
+matching `SelectChipBarSkeleton.direction` — is deprecated: the vertical
+(title-above) layout is served by `SelectWrapView` / `SelectWrapViewSkeleton`,
+which always stack the title above the chips. The deprecated parameter keeps
+working and **will be removed in a future minor version**.
+
+```diff
+- SelectChipBar(
++ SelectWrapView(
+    category: category,
+    entries: entries,
+-   direction: Axis.vertical, // title above the chips
+    spacing: 8,
+  );
+```
+
 Notes:
 
 - Call sites passing `isWrapable: false` (or omitting it) are unaffected —
@@ -54,6 +72,9 @@ Notes:
   `SelectChipBarStyle` / `resolveSelectChipBarStyle`, so custom
   `itemBuilder`s can reuse the built-in chip and its three-level style
   resolution.
+- `SelectWrapView` (and the deprecated wrap delegation) always stacks the
+  category title above the chips; the title-left layout remains exclusive to
+  the single-row `SelectChipBar`.
 - The built-in delegates (`WrapSelectDelegate`, the `TabNavSelectDelegate` /
   `ExpandableSelectDelegate` header/footer bars, and categories laid out by
   `SelectWrapLayout`) now render `SelectWrapView` internally, so widget tests
