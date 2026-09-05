@@ -510,12 +510,13 @@ class SideNavSelectState extends State<SideNavSelect> {
                   if (hasHeader)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
-                      child: SelectChipBar(
+                      child: SelectWrapView(
                         category: categoryHeader,
                         entries: categoryHeader.children!.toList(),
                         selectedEntries: _headerSelectedFor(category.id),
                         variant: SelectChipVariant.filled,
                         spacing: 12.0,
+                        runSpacing: 12.0,
                         onChanged: (index, entry) =>
                             _onHeaderOrFooterItemTap.call(category, true, index,
                                 entry as SelectChildEntry),
@@ -525,12 +526,13 @@ class SideNavSelectState extends State<SideNavSelect> {
                   if (hasFooter)
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
-                      child: SelectChipBar(
+                      child: SelectWrapView(
                         category: categoryFooter,
                         entries: categoryFooter.children!.toList(),
                         selectedEntries: _footerSelectedFor(category.id),
                         variant: SelectChipVariant.filled,
                         spacing: 12.0,
+                        runSpacing: 12.0,
                         onChanged: (index, entry) =>
                             _onHeaderOrFooterItemTap.call(category, false,
                                 index, entry as SelectChildEntry),

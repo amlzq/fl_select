@@ -15,7 +15,7 @@ version.
 +final categories = controller.realSelectedCategories;
 ```
 
-### `SelectChipBar` wrap mode split into `SelectWrapView`
+### `SelectChipBar` split into `SelectChipBar` / `SelectWrapView`
 
 The dual-form `SelectChipBar` is split into two single-purpose widgets: the
 horizontal single-row bar keeps the `SelectChipBar` name, and the wrap form
@@ -24,10 +24,13 @@ the dedicated rendering target of `SelectWrapLayout`. The split applies to
 the skeleton too: the wrap form of `SelectChipBarSkeleton` maps to the new
 `SelectWrapViewSkeleton`.
 
-`SelectChipBar.isWrapable` / `runSpacing` and the matching
-`SelectChipBarSkeleton` parameters are deprecated and keep working by
+Accordingly, the single-row bar keeps only its title-left layout:
+`SelectChipBar.isWrapable` / `runSpacing` / `direction` — and the matching
+`SelectChipBarSkeleton` parameters — are deprecated and keep working by
 delegating to the new widgets; they **will be removed in a future minor
-version**. Migration is a pure rename.
+version**. The wrap form and the vertical (title-above) layout are both
+served by `SelectWrapView` / `SelectWrapViewSkeleton`. Migration is a pure
+rename.
 
 ```diff
 - SelectChipBar(
@@ -44,17 +47,7 @@ version**. Migration is a pure rename.
     itemCount: 8,
 -   isWrapable: true,
   );
-```
 
-### `SelectChipBar.direction` deprecated
-
-The single-row bar keeps only its title-left layout. `direction` — and the
-matching `SelectChipBarSkeleton.direction` — is deprecated: the vertical
-(title-above) layout is served by `SelectWrapView` / `SelectWrapViewSkeleton`,
-which always stack the title above the chips. The deprecated parameter keeps
-working and **will be removed in a future minor version**.
-
-```diff
 - SelectChipBar(
 + SelectWrapView(
     category: category,
@@ -66,8 +59,9 @@ working and **will be removed in a future minor version**.
 
 Notes:
 
-- Call sites passing `isWrapable: false` (or omitting it) are unaffected —
-  `SelectChipBar` keeps rendering the single-row bar.
+- Call sites passing `isWrapable: false` (or omitting it) and a horizontal
+  `direction` (or omitting it) are unaffected — `SelectChipBar` keeps
+  rendering the single-row bar.
 - The split also exports `SelectChip` and
   `SelectChipBarStyle` / `resolveSelectChipBarStyle`, so custom
   `itemBuilder`s can reuse the built-in chip and its three-level style

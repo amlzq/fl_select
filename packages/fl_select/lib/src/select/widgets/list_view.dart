@@ -162,7 +162,6 @@ class SelectListViewState extends State<SelectListView>
   }
 
   void _onItemTap(int index, SelectEntry entry) {
-    // Clear custom input
     clearCustomRangeInput();
     widget.onChanged(index, entry);
   }
@@ -175,7 +174,6 @@ class SelectListViewState extends State<SelectListView>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Category label
         if (showTitle)
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
@@ -185,13 +183,11 @@ class SelectListViewState extends State<SelectListView>
               child: Text(widget.category?.name ?? ''),
             ),
           ),
-        // An input item at header
         if (firstCustomRange != null)
           buildCustomRangeFieldTile(
             isHeader: true,
             padding: const EdgeInsets.only(top: 10.0),
           ),
-        // List of items
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -229,7 +225,6 @@ class SelectListViewState extends State<SelectListView>
             return const SizedBox(height: 6);
           },
         ),
-        // An input item at footer
         if (lastCustomRange != null)
           buildCustomRangeFieldTile(
             isHeader: false,

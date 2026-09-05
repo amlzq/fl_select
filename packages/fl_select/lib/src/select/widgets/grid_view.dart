@@ -173,7 +173,6 @@ class SelectGridViewState extends State<SelectGridView>
   }
 
   void _onItemTap(int index, SelectEntry item) {
-    // Clear custom input
     clearCustomRangeInput();
     widget.onChanged(index, item);
   }
@@ -186,7 +185,6 @@ class SelectGridViewState extends State<SelectGridView>
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Category label
         if (showTitle)
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
@@ -196,14 +194,12 @@ class SelectGridViewState extends State<SelectGridView>
               child: Text(widget.category?.name ?? ''),
             ),
           ),
-        // An input item at header
         if (firstCustomRange != null)
           buildCustomRangeFieldTile(
             isHeader: true,
             padding: const EdgeInsets.only(bottom: 10.0),
             variant: widget.fieldVariant,
           ),
-        // Grid of items (3 columns)
         GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
@@ -236,7 +232,6 @@ class SelectGridViewState extends State<SelectGridView>
             );
           },
         ),
-        // An input item at footer
         if (lastCustomRange != null)
           buildCustomRangeFieldTile(
             isHeader: false,

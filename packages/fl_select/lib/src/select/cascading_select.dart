@@ -806,7 +806,6 @@ class CascadingSelectState extends State<CascadingSelect> {
                     _onCategoryItemTap(entry as SelectCategoryEntry),
               ),
               // Children lists (right)
-              // delegate.isScrollable
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
