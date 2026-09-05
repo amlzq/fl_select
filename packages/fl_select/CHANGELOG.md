@@ -10,7 +10,7 @@
 
 - **FEATURE** the flat-data delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) now accept an `itemBuilder` to fully customize how each item is rendered.
 
-- **DEPRECATION** split the dual-form `SelectChipBar` into the single-row `SelectChipBar` and the wrap-form `SelectWrapView` / `SelectWrapViewSkeleton` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+- **DEPRECATION** split the dual-form `SelectChipBar` into the single-row `SelectChipBar` and the wrap-form `SelectWrapView` / `SelectWrapViewSkeleton`, deprecating `isWrapable` and the title-stacking `direction` along the way ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
 
 - **BUGFIX** the remaining scrollable bodies — `SelectListView` (used by `ListSelectDelegate` and the tab/flatten category layouts), `SelectGridView` and the `SideNavSelect` sidebar `SelectSideBar` — now chain touch-drag scrolling (and fling momentum) to the enclosing page-level scrollable once they reach their scroll edge, matching `ExpandableSelect` and `SideNavSelect`'s right column via the shared internal chaining physics; previously the drag stopped dead at the edge and the hosting page felt stuck. Falls back to plain clamping behavior when no same-direction ancestor scrollable exists.
 
