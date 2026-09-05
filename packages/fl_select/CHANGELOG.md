@@ -1,4 +1,4 @@
-## Next
+## 0.12.0
 
 - **FEATURE** the flat-data delegates now accept an `itemBuilder` to customize item rendering.
 
@@ -10,9 +10,9 @@
 
 - **BUGFIX** the remaining scrollable bodies now chain touch-drag scrolling to the enclosing page-level scrollable.
 
-- **DEPRECATION** rename `SelectController.badgedCategories` to `realSelectedCategories` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+- **DEPRECATION** rename `SelectController.badgedCategories` to `realSelectedCategories` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0120)).
 
-- **DEPRECATION** split the dual-form `SelectChipBar` into the single-row `SelectChipBar` and the wrap-form `SelectWrapView` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+- **DEPRECATION** split the dual-form `SelectChipBar` into the single-row `SelectChipBar` and the wrap-form `SelectWrapView` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0120)).
 
 ## 0.11.3
 

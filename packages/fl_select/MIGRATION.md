@@ -1,6 +1,6 @@
 # Migration Guide
 
-## MIGRATE TO Next
+## MIGRATE TO 0.12.0
 
 ### `SelectController.badgedCategories` renamed to `realSelectedCategories`
 

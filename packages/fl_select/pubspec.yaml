@@ -1,6 +1,6 @@
 name: fl_select
 description: "A Flutter package for building selection UIs (e.g. filter bars) on a composable architecture of entry points, delegates and layouts, A2UI-ready, with search, theming, and i18n."
-version: 0.11.3
+version: 0.12.0
 repository: https://github.com/amlzq/fl_select/tree/main/packages/fl_select
 issue_tracker: https://github.com/amlzq/fl_select/issues
 topics: [select, multiselect, dropdown, cascade, widget]
