@@ -1,7 +1,7 @@
 name: fl_select_playground
 description: "Interactive playground for the fl_select package."
 publish_to: "none"
-version: 0.11.3
+version: 0.12.0
 
 environment:
   sdk: ^3.10.9
