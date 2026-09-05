@@ -467,7 +467,7 @@ class SelectChipBarSkeleton extends StatelessWidget {
 
   /// Vertical spacing between wrapped placeholder chip rows.
   ///
-  /// Only read in the deprecated [isWrapable] mode.
+  /// Only read in the deprecated `isWrapable` mode.
   final double runSpacing;
 
   /// The background color of the skeleton.

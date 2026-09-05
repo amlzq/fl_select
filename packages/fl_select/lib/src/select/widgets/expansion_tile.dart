@@ -50,7 +50,7 @@ class SelectExpansionTile extends StatefulWidget {
   ///
   /// Defaults to false. The badge is rendered even while the tile is expanded,
   /// so it can mark a tile whose own content is currently hidden — e.g. an
-  /// [ExpandableSelect] category that holds a selection while collapsed.
+  /// `ExpandableSelect` category that holds a selection while collapsed.
   final bool showBadge;
 
   /// The color of the badge dot rendered when [showBadge] is true.

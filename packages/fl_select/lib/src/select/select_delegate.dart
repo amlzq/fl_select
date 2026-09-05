@@ -690,7 +690,7 @@ class WrapSelectDelegate extends SelectDelegate {
 
   /// Vertical spacing between wrapped chip rows.
   ///
-  /// Forwarded to [SelectChipBar.runSpacing]. Defaults to 0.0.
+  /// Forwarded to [SelectWrapView.runSpacing]. Defaults to 0.0.
   final double runSpacing;
 
   /// Optional builder that fully replaces each chip's widget.
