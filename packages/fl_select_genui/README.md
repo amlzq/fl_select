@@ -1,7 +1,7 @@
 [GenUI SDK](https://pub.dev/packages/genui) (A2UI) integration for
-[fl_select](https://pub.dev/packages/fl_select): exposes fl_select filter
-panels as `CatalogItem`s so conversational AI agents can render real,
-interactive filter UIs inside chat surfaces — and receive the user's
+[fl_select](https://pub.dev/packages/fl_select): exposes fl_select
+components as `CatalogItem`s so conversational AI agents can render real,
+interactive selection UIs inside chat surfaces — and receive the user's
 selections back as structured query data.
 
 ```
@@ -15,11 +15,11 @@ agent ──JSON payload──▶ SelectFilter (fl_select UI) ──selection─
 2. Your agent's system prompt includes
    [`FlSelectCatalogItems.systemPromptFragment`], which teaches it the
    `SelectFilter` vocabulary.
-3. When the user needs to narrow down results, the agent emits a
+3. When the user needs to pick values, the agent emits a
    `SelectFilter` payload — a `delegate` (list / grid / wrap / cascading /
    tabNav / sideNav / expandable) plus an `entries` tree authored
    in the `SelectEntryCodec` JSON format.
-4. The user interacts with a real fl_select panel; selections are written
+4. The user interacts with a real fl_select component; selections are written
    back to the GenUI data model at `<id>.value` as a
    `Map<String, List<String>>` (same shape as fl_select's `toQueryMap`),
    ready for the next agent turn or your query layer.

@@ -19,7 +19,7 @@ abstract final class FlSelectCatalogItems {
   /// ```
   static Catalog asCatalog() => Catalog(all, catalogId: 'fl_select');
 
-  /// A filter panel backed by [SelectView].
+  /// A selection component backed by [SelectView].
   ///
   /// The agent supplies an entry tree (`SelectEntryCodec` JSON format) and a
   /// delegate type; user selections are written back to the data model as a
@@ -28,9 +28,9 @@ abstract final class FlSelectCatalogItems {
     name: 'SelectFilter',
     dataSchema: S.object(
       description:
-          'A filter panel with categories, options, sliders and '
-          'range pickers. Use it whenever the user should narrow down a '
-          'result set by several criteria at once.',
+          'A selection component with categories, options, sliders and '
+          'range pickers. Use it whenever the user should pick one or more '
+          'values from a structured option set.',
       properties: {
         'delegate': S.string(
           description:
@@ -89,7 +89,7 @@ abstract final class FlSelectCatalogItems {
   /// System-prompt fragment documenting the entry-tree JSON format for
   /// agents using [selectFilter]. Append it to your agent instructions.
   static const String systemPromptFragment = '''
-When the user needs to narrow down results, render a `SelectFilter`:
+When the user needs to pick values from a structured option set, render a `SelectFilter`:
 - `delegate`: "list", "grid" (with `crossAxisCount`), "wrap" (flat chip
   cloud), "cascading" (drill-down menus), "tabNav" (category tabs on top),
   "sideNav" (recommended for category groups: left rail, options in one
@@ -97,8 +97,10 @@ When the user needs to narrow down results, render a `SelectFilter`:
   auto-fallback to match the `entries` shape; "flatten" is a legacy alias.
 - `entries`: a tree of nodes, each with a `type`:
   - `category`: group; requires `id`, `name`, non-empty `children`; optional
-    `selectionMode` ("single"/"multiple") and `layout`
-    (`{"kind":"grid","crossAxisCount":3}` etc.).
+    `selectionMode` ("single"/"multiple"), `layout`
+    (`{"kind":"grid","crossAxisCount":3}` etc.), and `header`/`footer`
+    (branch nodes whose `children` render as chip rows pinned above/below
+    the category children).
   - `text`: option (leaf) or sub-branch (with `children`); requires `id`,`name`.
   - `range`: slider option with `min`/`max`; requires `id`,`name`.
   - `any`: resets the category to "any" (no bounds) — omit `id`.
@@ -161,6 +163,7 @@ class _SelectFilterWidget extends StatelessWidget {
       'single' => SelectionMode.single,
       _ => SelectionMode.multiple,
     };
+    final searchEnabled = data['search'] == true;
     // Category-aware delegates assert on flat data (and flat delegates on
     // category data), so the requested layout is matched to the actual
     // entry-tree shape: grouped layouts fall back to their flat equivalent
@@ -168,37 +171,97 @@ class _SelectFilterWidget extends StatelessWidget {
     final isCategoryData =
         entries.isNotEmpty && entries.first is SelectCategoryEntry;
     return switch (delegateName) {
+      // List — flat list panel; category data falls through to the default
+      // arm below.
+      'list' when !isCategoryData => ListSelectDelegate(
+        searchEnabled: searchEnabled,
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
+
+      // Grid — flat grid; two-level data renders as tabNav with a grid
+      // layout.
       'grid' when isCategoryData => TabNavSelectDelegate(
         defaultLayout: SelectGridLayout(
           crossAxisCount: data['crossAxisCount'] as int? ?? 3,
         ),
+        searchEnabled: searchEnabled,
         selectionMode: selectionMode,
         entries: entries,
       ),
       'grid' => GridSelectDelegate(
         crossAxisCount: data['crossAxisCount'] as int? ?? 3,
+        searchEnabled: searchEnabled,
         selectionMode: selectionMode,
         entries: entries,
       ),
-      'cascading' => CascadingSelectDelegate(
+
+      // Wrap — flat chip cloud; two-level data (including the legacy
+      // sideNav share below) renders as sideNav.
+      'sideNav' ||
+      'wrap' ||
+      'chips' ||
+      'flatten' when isCategoryData => SideNavSelectDelegate(
+        searchEnabled: searchEnabled,
         selectionMode: selectionMode,
         entries: entries,
       ),
-      'tabNav' when isCategoryData => TabNavSelectDelegate(
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
-      'sideNav' || 'wrap' || 'chips' || 'flatten' when isCategoryData =>
-        SideNavSelectDelegate(selectionMode: selectionMode, entries: entries),
       'wrap' || 'chips' || 'flatten' => WrapSelectDelegate(
+        searchEnabled: searchEnabled,
         selectionMode: selectionMode,
         entries: entries,
       ),
+
+      // Cascading — drill-down tree, renders both shapes natively.
+      'cascading' => CascadingSelectDelegate(
+        searchEnabled: searchEnabled,
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
+
+      // TabNav — category tabs on top; flat data falls back to the list.
+      'tabNav' when isCategoryData => TabNavSelectDelegate(
+        searchEnabled: searchEnabled,
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
+      'tabNav' => ListSelectDelegate(
+        searchEnabled: searchEnabled,
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
+
+      // SideNav — left category rail; flat data falls back to the list.
+      'sideNav' => ListSelectDelegate(
+        searchEnabled: searchEnabled,
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
+
+      // Expandable — accordion groups; flat data falls back to the list.
+      'expandable' when isCategoryData => ExpandableSelectDelegate(
+        searchEnabled: searchEnabled,
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
+      'expandable' => ListSelectDelegate(
+        searchEnabled: searchEnabled,
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
+
+      // default / unknown tokens: category data groups as expandable,
+      // flat data as list.
       _ when isCategoryData => ExpandableSelectDelegate(
+        searchEnabled: searchEnabled,
         selectionMode: selectionMode,
         entries: entries,
       ),
-      _ => ListSelectDelegate(selectionMode: selectionMode, entries: entries),
+      _ => ListSelectDelegate(
+        searchEnabled: searchEnabled,
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
     };
   }
 

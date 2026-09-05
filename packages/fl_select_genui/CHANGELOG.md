@@ -1,3 +1,13 @@
+## Next
+
+- **FEATURE** Wire the `search` payload flag through to the delegates' `searchEnabled`.
+
+- **DOCS** Document the category `header`/`footer` nodes in the entry schema.
+
+- **DOCS** Describe the widget as a selection component instead of a filter panel.
+
+- **IMPROVEMENT** Bump fl_select to `^0.12.0`.
+
 ## 0.1.0
 
 - **FEATURE** Add `tabNav`, `sideNav` and `expandable` as first-class `delegate` tokens.

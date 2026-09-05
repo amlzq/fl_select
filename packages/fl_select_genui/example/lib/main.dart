@@ -109,7 +109,7 @@ class _FlSelectGenuiDemoState extends State<FlSelectGenuiDemo> {
                 ),
                 builder: (context, value, _) => SelectableText(
                   value == null
-                      ? '(nothing selected yet — tap a filter above)'
+                      ? '(nothing selected yet — tap an option above)'
                       : const JsonEncoder.withIndent('  ').convert(value),
                   style: const TextStyle(
                     fontFamily: 'monospace',

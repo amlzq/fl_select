@@ -48,6 +48,19 @@ abstract final class SelectEntrySchema {
             '|"range", ...}; grid also needs crossAxisCount.',
         additionalProperties: true,
       ),
+      'header': S.object(
+        description:
+            'category only: a branch node whose `children` render as a chip '
+            'row pinned above the category children (e.g. `{"type":"any"}` '
+            'as a reset).',
+        additionalProperties: true,
+      ),
+      'footer': S.object(
+        description:
+            'category only: a branch node whose `children` render as a chip '
+            'row pinned below the category children.',
+        additionalProperties: true,
+      ),
       'immediate': S.boolean(
         description: 'Apply the pick without waiting for the apply button.',
       ),

@@ -113,4 +113,88 @@ void main() {
       );
     }
   });
+
+  testWidgets('search flag toggles the search field', (tester) async {
+    await pumpFilter(tester, {
+      'delegate': 'flatten',
+      'entries': _entries,
+      'search': true,
+    });
+    expect(find.byType(TextField), findsOneWidget);
+
+    await pumpFilter(tester, {'delegate': 'flatten', 'entries': _entries});
+    expect(find.byType(TextField), findsNothing);
+  });
+
+  testWidgets('category layout is wired through', (tester) async {
+    await pumpFilter(tester, {
+      'delegate': 'tabNav',
+      'entries': [
+        {
+          'type': 'category',
+          'id': 'c',
+          'name': 'C',
+          'layout': {'kind': 'grid', 'crossAxisCount': 2},
+          'children': [
+            {'type': 'text', 'id': 'a', 'name': 'A'},
+            {'type': 'text', 'id': 'b', 'name': 'B'},
+            {'type': 'text', 'id': 'd', 'name': 'D'},
+            {'type': 'text', 'id': 'e', 'name': 'E'},
+          ],
+        },
+      ],
+    });
+    expect(find.byType(GridView), findsOneWidget);
+
+    // A malformed layout shows the error card instead of crashing.
+    await pumpFilter(tester, {
+      'delegate': 'tabNav',
+      'entries': [
+        {
+          'type': 'category',
+          'id': 'c',
+          'name': 'C',
+          'layout': {'kind': 'grid'},
+          'children': [
+            {'type': 'text', 'id': 'a', 'name': 'A'},
+          ],
+        },
+      ],
+    });
+    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+  });
+
+  testWidgets('category header/footer are wired through', (tester) async {
+    await pumpFilter(tester, {
+      'delegate': 'tabNav',
+      'entries': [
+        {
+          'type': 'category',
+          'id': 'c',
+          'name': 'C',
+          'header': {
+            'type': 'text',
+            'id': 'h',
+            'name': 'H',
+            'children': [
+              {'type': 'any', 'name': 'Any'},
+            ],
+          },
+          'footer': {
+            'type': 'text',
+            'id': 'f',
+            'name': 'F',
+            'children': [
+              {'type': 'text', 'id': 'f1', 'name': 'Footer'},
+            ],
+          },
+          'children': [
+            {'type': 'text', 'id': 'a', 'name': 'A'},
+          ],
+        },
+      ],
+    });
+    expect(find.text('Any'), findsOneWidget);
+    expect(find.text('Footer'), findsOneWidget);
+  });
 }
