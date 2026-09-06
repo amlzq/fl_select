@@ -1,6 +1,6 @@
 # Migration Guide
 
-## MIGRATE TO Next
+## MIGRATE TO 0.2.0
 
 The catalog item is renamed to `Select` to reflect that it is a selection
 component, not a filter panel.
