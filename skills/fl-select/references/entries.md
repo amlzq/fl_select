@@ -78,7 +78,7 @@ SelectCategoryEntry(
 
 ## Special behaviors
 
-- **"Any" entry** (`.any(...)`): selecting it clears the category. In `toQueryMap()` an "Any" leaf resolves to its parent id (e.g. `price: [price]`).
+- **"Any" entry** (`.any(...)`): selecting it clears the category. In `toQueryMap()` an "Any" leaf resolves to its parent id (e.g. `price: [price]`). An "Any"-only selection is not a "real" selection (0.12.0): it shows no category badge, does not steal TabNavSelect's initial tab focus, and the trigger label falls back to its original text. On flat delegates in multiple mode, unselecting the last item falls back to the "Any" entry as the placeholder (0.12.0).
 - **`immediate: true`** (multi-selection): the entry applies on tap, skipping the action bar — e.g. "Apply all"/date-shortcut entries.
 - **Custom range** (`SelectIntEntry.custom(...)`): renders as min/max text input; serializes as `min-max`.
 - **`extra`**: attach any payload (enum, id, whole model) for use in callbacks.

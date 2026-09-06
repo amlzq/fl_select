@@ -1,11 +1,13 @@
 ---
 name: fl-select
-description: A customizable Flutter select widget (the fl_select package) for filter bars, cascading menus, and pickers with single/multiple selection, sync (static `entries`) or async data loading, search filtering, theming, and i18n. Includes a JSON entry-tree codec (SelectEntryCodec) and a GenUI/A2UI bridge package (fl_select_genui) for AI-agent-rendered filter UIs. Use this skill when building filter UIs, dropdown menus with categories, cascading/grid/list/chip selects, range pickers, or whenever working with fl_select APIs (SelectView, PopupSelectBar, PopupSelectButton, showSelect, showModalBottomSelect, SelectDelegate, SelectEntry) or fl_select_genui.
+description: A Flutter package (fl_select) for building selection UIs (e.g. filter bar) on a composable architecture of entry points, delegates, and layouts — 5 entry points (`SelectView`, `PopupSelectButton`, `PopupSelectBar`, `showSelect`, `showModalBottomSelect`), 7 delegates (list, grid, wrap, cascading, tab-nav, side-nav, expandable), 5 category layouts (list, grid, wrap, range slider, counter), plus `SelectDelegate` and `SelectEntry` types. A2UI-ready, with single & multiple selection, sync/async loading, search filtering, theming, and i18n built in; includes a JSON entry-tree codec (`SelectEntryCodec`) and a GenUI bridge package (`fl_select_genui`). This skill should be used when building filter UIs, dropdown menus with categories, cascading/grid/list/chip selects, range pickers, or whenever working with fl_select APIs or `fl_select_genui`.
 ---
 
 # fl_select
 
 A Flutter package for building filter bars, cascading menus, and pickers.
+
+> Applies to fl_select `>=0.11.0` (verified against `0.12.0`).
 
 ## Mental model (two orthogonal layers)
 
@@ -14,7 +16,7 @@ A Flutter package for building filter bars, cascading menus, and pickers.
 2. **Delegates** decide *how* entries are laid out — seven single-purpose styles:
    flat data: `ListSelectDelegate` · `GridSelectDelegate` · `WrapSelectDelegate`; two-level (category) data: `CascadingSelectDelegate` · `TabNavSelectDelegate` · `SideNavSelectDelegate` · `ExpandableSelectDelegate`.
 
-Any delegate plugs into any entry point — there is exactly one delegate parameter, no per-entry-point variants. Custom layouts come from subclassing `SelectDelegate`, not from new entry points.
+Any delegate plugs into any entry point — there is exactly one delegate parameter, no per-entry-point variants. Custom layouts come from subclassing `SelectDelegate`, not from new entry points; custom item widgets come from `itemBuilder` on the flat delegates, not from subclassing.
 
 Data reaches the delegate either synchronously (`entries`, `selectedEntries`, `resetEntries` passed directly — static data renders on the first frame, no skeleton) or asynchronously via loaders (`entriesLoader`: `Future<SelectEntries> Function()`, where `SelectEntries` is `Set<SelectEntry>`). Pass exactly one of `entries` / `entriesLoader`; sync data is fixed for a delegate's lifetime — create a new delegate when the data changes.
 
@@ -58,6 +60,10 @@ final SelectEntries? selected = await showSelect(
 ## Common pitfalls
 
 - `GridSelectDelegate` requires `crossAxisCount`.
+- The flat delegates (`ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate`) accept an `itemBuilder` (0.12.0) that fully replaces each item widget — render your own selected state from `selected` and wire `onTap` so taps flow through the library's normal selection flow; custom range entries still render as the built-in min/max input.
+- `SelectChipBar.isWrapable` is deprecated (0.12.0): `SelectChipBar` is now single-row only; use `SelectWrapView` for the wrapping multi-row form (`WrapSelectDelegate` renders it internally).
+- `SelectController.badgedCategories` was renamed to `realSelectedCategories` (0.12.0); the old name is a deprecated alias. It returns the categories holding at least one non-"Any" selection and drives category badges and TabNavSelect's initial tab focus.
+- The deprecated dual-mode paths (0.11.0) still work via forwarding with a one-time warning and will be removed: `ListSelectDelegate` / `GridSelectDelegate` with two-level data forward to `ExpandableSelectDelegate` / `TabNavSelectDelegate`; `FlattenSelectDelegate` maps to `SideNavSelectDelegate` (two-level) / `WrapSelectDelegate` (flat).
 - Only `CascadingSelectDelegate` navigates a tree; the other two-level delegates lay out each category's `children` according to `category.layout` (list / grid / chips / range slider / counter).
 - `SelectChildEntry` is identified by its `parentId`. Prefer the `SelectCategoryEntry(children: {...})` factory, which injects `parentId` automatically.
 - Use `SelectTextEntry.name(...)` / `SelectIntEntry.name(...)` (parentless leaves) for flat single-level lists.
