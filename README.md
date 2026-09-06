@@ -1,6 +1,6 @@
 # fl_select
 
-A monorepo for **fl_select** — a Flutter package for building selection UIs (e.g. filter bars) on a composable architecture of **entry points, delegates, and layouts**, with single & multiple selection, sync/async loading, search filtering, theming, and i18n built in.
+A monorepo for **fl_select** — a Flutter package for building selection UIs (e.g. filter bar) on a composable architecture of **entry points, delegates, and layouts**, with single & multiple selection, sync/async loading, search filtering, theming, and i18n built in.
 
 [Playground](https://flselect.zeaon.dev/)
 

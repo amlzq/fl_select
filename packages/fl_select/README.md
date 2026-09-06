@@ -1,4 +1,4 @@
-A Flutter package for building **selection** UIs (e.g. filter bars) on a composable architecture of **entry points, delegates, and layouts**. A2UI-ready, with single & multiple selection, sync/async loading, search filtering, theming, and i18n built in.
+A Flutter package for building **selection** UIs (e.g. filter bar) on a composable architecture of **entry points, delegates, and layouts**. A2UI-ready, with single & multiple selection, sync/async loading, search filtering, theming, and i18n built in.
 
 [Playground](https://flselect.zeaon.dev/)
 
