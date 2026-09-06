@@ -79,7 +79,7 @@ class _FlSelectGenuiDemoState extends State<FlSelectGenuiDemo> {
               ),
             ),
             _Section(
-              title: '2. Rendered SelectFilter',
+              title: '2. Rendered Select',
               child: Builder(
                 builder: (buildContext) {
                   final item = FlSelectCatalogItems.select;

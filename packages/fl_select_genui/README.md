@@ -25,8 +25,6 @@ agent ──JSON payload──▶ Select (fl_select UI) ──selection──▶
    ready for the next agent turn or your query layer.
 
 Invalid agent payloads render an inline error card instead of crashing.
-Legacy payloads typed `SelectFilter` keep rendering via a deprecated alias
-(see the migration guide).
 
 ## Usage
 

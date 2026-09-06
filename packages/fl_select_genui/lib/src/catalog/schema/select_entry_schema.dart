@@ -1,7 +1,7 @@
 import 'package:json_schema_builder/json_schema_builder.dart';
 
 /// JSON-schema description of the `SelectEntryCodec` node format, used to
-/// tell AI agents how to author `entries` payloads for `SelectFilter`.
+/// tell AI agents how to author `entries` payloads for `Select`.
 ///
 /// Mirrors `SelectEntryCodec` in package:fl_select. Node shape:
 ///
