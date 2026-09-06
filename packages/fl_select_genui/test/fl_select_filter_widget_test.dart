@@ -3,20 +3,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
 
-/// Pumps the SelectFilter catalog widget with [data] as the agent-supplied
-/// payload and returns the DataContext so tests can inspect write-backs.
+/// Pumps the Select catalog widget with [data] as the agent-supplied payload
+/// and returns the DataContext so tests can inspect write-backs.
 Future<DataContext> pumpFilter(
   WidgetTester tester,
   Map<String, Object?> data, {
   String id = 'filter1',
+  CatalogItem? item,
 }) async {
+  item ??= FlSelectCatalogItems.select;
   final model = InMemoryDataModel();
   final context = DataContext(model, DataPath('root'));
   await tester.pumpWidget(const MaterialApp(home: Placeholder()));
   final itemContext = CatalogItemContext(
     data: data,
     id: id,
-    type: 'SelectFilter',
+    type: item.name,
     buildChild: (_, [_]) => const SizedBox.shrink(),
     dispatchEvent: (_) {},
     buildContext: tester.element(find.byType(Placeholder)),
@@ -28,11 +30,7 @@ Future<DataContext> pumpFilter(
   );
 
   await tester.pumpWidget(
-    MaterialApp(
-      home: Scaffold(
-        body: FlSelectCatalogItems.selectFilter.widgetBuilder(itemContext),
-      ),
-    ),
+    MaterialApp(home: Scaffold(body: item.widgetBuilder(itemContext))),
   );
   await tester.pumpAndSettle();
   return context;
@@ -196,5 +194,19 @@ void main() {
     });
     expect(find.text('Any'), findsOneWidget);
     expect(find.text('Footer'), findsOneWidget);
+  });
+
+  testWidgets('legacy SelectFilter payloads keep rendering', (tester) async {
+    final legacy = FlSelectCatalogItems.all.firstWhere(
+      (item) => item.name == 'SelectFilter',
+    );
+    await pumpFilter(tester, {
+      'delegate': 'flatten',
+      'entries': _entries,
+    }, item: legacy);
+
+    expect(find.text('More'), findsWidgets);
+    expect(find.text('A 1'), findsOneWidget);
+    expect(find.byIcon(Icons.warning_amber_rounded), findsNothing);
   });
 }

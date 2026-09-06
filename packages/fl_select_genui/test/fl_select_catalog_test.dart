@@ -7,8 +7,8 @@ import 'package:genui/genui.dart';
 
 void main() {
   test('schema + exampleData + catalog merge', () {
-    final item = FlSelectCatalogItems.selectFilter;
-    expect(item.name, 'SelectFilter');
+    final item = FlSelectCatalogItems.select;
+    expect(item.name, 'Select');
     expect(item.dataSchema.required, containsAll(['delegate', 'entries']));
 
     for (final example in item.exampleData) {
@@ -21,6 +21,16 @@ void main() {
       <CatalogItem>[],
       catalogId: 'base',
     ).copyWith(newItems: FlSelectCatalogItems.all);
-    expect(merged.items.length, 1);
+    expect(merged.items.length, 2);
+    expect(
+      merged.items.map((item) => item.name),
+      containsAll(['Select', 'SelectFilter']),
+    );
+  });
+
+  test('deprecated selectFilter getter aliases the legacy payload name', () {
+    // ignore: deprecated_member_use_from_same_package
+    final legacy = FlSelectCatalogItems.selectFilter;
+    expect(legacy.name, 'SelectFilter');
   });
 }

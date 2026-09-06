@@ -4,7 +4,7 @@ import 'package:fl_select_genui/fl_select_genui.dart';
 import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 
-/// A payload exactly like one an AI agent would emit for `SelectFilter`
+/// A payload exactly like one an AI agent would emit for `Select`
 /// (see [FlSelectCatalogItems.systemPromptFragment]).
 const agentPayload = '''
 {
@@ -82,7 +82,7 @@ class _FlSelectGenuiDemoState extends State<FlSelectGenuiDemo> {
               title: '2. Rendered SelectFilter',
               child: Builder(
                 builder: (buildContext) {
-                  final item = FlSelectCatalogItems.selectFilter;
+                  final item = FlSelectCatalogItems.select;
                   return item.widgetBuilder(
                     CatalogItemContext(
                       data: jsonDecode(agentPayload) as JsonMap,

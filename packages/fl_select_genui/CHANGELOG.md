@@ -2,9 +2,11 @@
 
 - **FEATURE** Wire the `search` payload flag through to the delegates' `searchEnabled`.
 
-- **DOCS** Document the category `header`/`footer` nodes in the entry schema.
+- **IMPROVEMENT** Document the category `header`/`footer` nodes in the entry schema.
 
-- **DOCS** Describe the widget as a selection component instead of a filter panel.
+- **DEPRECATION** Rename the catalog item to `Select` (`FlSelectCatalogItems.select`, payload type `Select`). The old `FlSelectCatalogItems.selectFilter` getter and the `SelectFilter` payload type keep working as deprecated aliases; both will be removed in a future minor release.
+
+- **IMPROVEMENT** Describe the widget as a selection component instead of a filter panel.
 
 - **IMPROVEMENT** Bump fl_select to `^0.12.0`.
 

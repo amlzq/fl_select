@@ -2,6 +2,19 @@
 
 ## MIGRATE TO Next
 
+The catalog item is renamed to `Select` to reflect that it is a selection
+component, not a filter panel.
+
+| | up to 0.1.0 | Next |
+| --- | --- | --- |
+| Dart getter | `FlSelectCatalogItems.selectFilter` | `FlSelectCatalogItems.select` |
+| payload `type` | `SelectFilter` | `Select` |
+
+The old getter and payload type keep working as deprecated aliases; both will
+be removed in a future minor release. Update the agent system prompt to the
+latest `FlSelectCatalogItems.systemPromptFragment` (it now documents `Select`
+and keeps accepting legacy `SelectFilter` payloads).
+
 ## MIGRATE TO 0.1.0
 
 The `delegate` token now routes to fl_select's single-purpose delegates instead

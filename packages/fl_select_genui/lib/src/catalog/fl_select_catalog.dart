@@ -8,7 +8,11 @@ import 'schema/select_entry_schema.dart';
 /// Catalog items exposing fl_select widgets to GenUI/A2UI agents.
 abstract final class FlSelectCatalogItems {
   /// All fl_select catalog items.
-  static List<CatalogItem> get all => [selectFilter];
+  ///
+  /// Includes the deprecated `SelectFilter` payload alias so legacy agent
+  /// payloads keep rendering; the alias will be dropped in a future minor
+  /// release.
+  static List<CatalogItem> get all => [select, _legacySelectFilter];
 
   /// The catalog as a whole, ready to be merged into a surface controller:
   ///
@@ -24,8 +28,29 @@ abstract final class FlSelectCatalogItems {
   /// The agent supplies an entry tree (`SelectEntryCodec` JSON format) and a
   /// delegate type; user selections are written back to the data model as a
   /// `Map<String, List<String>>` (same shape as `toQueryMap`).
-  static CatalogItem get selectFilter => CatalogItem(
-    name: 'SelectFilter',
+  static CatalogItem get select => _buildItem('Select');
+
+  /// Deprecated alias of [select], kept for backward compatibility.
+  ///
+  /// Legacy agent payloads typed `SelectFilter` keep rendering through
+  /// [all]. Both the alias and this getter will be removed in a future
+  /// minor release — migrate payloads to the `Select` type and Dart call
+  /// sites to [select].
+  @Deprecated(
+    'Use `select` instead. Will be removed in a future minor release.',
+  )
+  static CatalogItem get selectFilter => _legacySelectFilter;
+
+  /// The deprecated `SelectFilter` payload alias, registered in [all] so
+  /// legacy agent payloads keep rendering.
+  static final CatalogItem _legacySelectFilter = _buildItem('SelectFilter');
+
+  /// Builds the selection catalog item under the given payload [name].
+  ///
+  /// [name] exists twice: `Select` (current) and `SelectFilter` (deprecated
+  /// alias, see the `selectFilter` getter).
+  static CatalogItem _buildItem(String name) => CatalogItem(
+    name: name,
     dataSchema: S.object(
       description:
           'A selection component with categories, options, sliders and '
@@ -82,14 +107,14 @@ abstract final class FlSelectCatalogItems {
           ? data['path']! as String
           : '${itemContext.id}.value';
 
-      return _SelectFilterWidget(itemContext: itemContext, dataPath: path);
+      return _SelectWidget(itemContext: itemContext, dataPath: path);
     },
   );
 
   /// System-prompt fragment documenting the entry-tree JSON format for
-  /// agents using [selectFilter]. Append it to your agent instructions.
+  /// agents using [select]. Append it to your agent instructions.
   static const String systemPromptFragment = '''
-When the user needs to pick values from a structured option set, render a `SelectFilter`:
+When the user needs to pick values from a structured option set, render a `Select`:
 - `delegate`: "list", "grid" (with `crossAxisCount`), "wrap" (flat chip
   cloud), "cascading" (drill-down menus), "tabNav" (category tabs on top),
   "sideNav" (recommended for category groups: left rail, options in one
@@ -107,14 +132,12 @@ When the user needs to pick values from a structured option set, render a `Selec
   - `custom`: user-typed range with optional `minHintText`/`maxHintText`.
 - User selections are returned as `Map<String, List<String>>`
   (e.g. `{"price": ["0-100"], "amenities": ["wifi", "pool"]}`); a selected
-  category without leaf picks maps to its own id.''';
+  category without leaf picks maps to its own id.
+- Legacy payloads typed `SelectFilter` keep rendering this component.''';
 }
 
-class _SelectFilterWidget extends StatelessWidget {
-  const _SelectFilterWidget({
-    required this.itemContext,
-    required this.dataPath,
-  });
+class _SelectWidget extends StatelessWidget {
+  const _SelectWidget({required this.itemContext, required this.dataPath});
 
   final CatalogItemContext itemContext;
   final String dataPath;
@@ -127,8 +150,8 @@ class _SelectFilterWidget extends StatelessWidget {
 
     final entriesJson = data['entries'];
     if (entriesJson is! List || entriesJson.isEmpty) {
-      return const _SchemaError(
-        'SelectFilter requires a non-empty "entries" array.',
+      return _SchemaError(
+        '${itemContext.type} requires a non-empty "entries" array.',
       );
     }
 

@@ -5,7 +5,7 @@ interactive selection UIs inside chat surfaces — and receive the user's
 selections back as structured query data.
 
 ```
-agent ──JSON payload──▶ SelectFilter (fl_select UI) ──selection──▶ Map<String, List<String>>
+agent ──JSON payload──▶ Select (fl_select UI) ──selection──▶ Map<String, List<String>>
 ```
 
 ## How it works
@@ -14,9 +14,9 @@ agent ──JSON payload──▶ SelectFilter (fl_select UI) ──selection─
    GenUI `SurfaceController` alongside the basic catalog.
 2. Your agent's system prompt includes
    [`FlSelectCatalogItems.systemPromptFragment`], which teaches it the
-   `SelectFilter` vocabulary.
+   `Select` vocabulary.
 3. When the user needs to pick values, the agent emits a
-   `SelectFilter` payload — a `delegate` (list / grid / wrap / cascading /
+   `Select` payload — a `delegate` (list / grid / wrap / cascading /
    tabNav / sideNav / expandable) plus an `entries` tree authored
    in the `SelectEntryCodec` JSON format.
 4. The user interacts with a real fl_select component; selections are written
@@ -25,6 +25,8 @@ agent ──JSON payload──▶ SelectFilter (fl_select UI) ──selection─
    ready for the next agent turn or your query layer.
 
 Invalid agent payloads render an inline error card instead of crashing.
+Legacy payloads typed `SelectFilter` keep rendering via a deprecated alias
+(see the migration guide).
 
 ## Usage
 
