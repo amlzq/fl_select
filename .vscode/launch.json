@@ -5,38 +5,41 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "fl_select",
+            "name": "fl_select example",
+            "cwd": "packages/fl_select/example",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "fl_select (profile mode)",
+            "name": "fl_select example (profile mode)",
+            "cwd": "packages/fl_select/example",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "fl_select (release mode)",
+            "name": "fl_select example (release mode)",
+            "cwd": "packages/fl_select/example",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
         },
         {
-            "name": "example",
-            "cwd": "packages/fl_select/example",
+            "name": "fl_select_genui example",
+            "cwd": "packages/fl_select_genui/example",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "example (profile mode)",
-            "cwd": "packages/fl_select/example",
+            "name": "fl_select_genui example (profile mode)",
+            "cwd": "packages/fl_select_genui/example",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"
         },
         {
-            "name": "example (release mode)",
-            "cwd": "packages/fl_select/example",
+            "name": "fl_select_genui example (release mode)",
+            "cwd": "packages/fl_select_genui/example",
             "request": "launch",
             "type": "dart",
             "flutterMode": "release"
@@ -46,6 +49,20 @@
             "cwd": "packages/fl_select_playground",
             "request": "launch",
             "type": "dart"
+        },
+        {
+            "name": "fl_select_playground (profile mode)",
+            "cwd": "packages/fl_select_playground",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile"
+        },
+        {
+            "name": "fl_select_playground (release mode)",
+            "cwd": "packages/fl_select_playground",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release"
         }
     ]
 }
