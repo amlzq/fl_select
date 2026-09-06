@@ -38,11 +38,11 @@ class PlaygroundParams {
   final bool useMaterial3;
 
   /// Whether the [showSelect] / [showModalBottomSelect] header shows a sample
-  /// leading widget (close icon).
+  /// leading widget (decorative icon).
   final bool headerLeading;
 
   /// Whether the [showSelect] / [showModalBottomSelect] header shows a sample
-  /// trailing widget (confirm icon).
+  /// trailing widget (close button).
   final bool headerTrailing;
 
   /// Explicit [SelectHeader.centerTitle] for [showSelect] /

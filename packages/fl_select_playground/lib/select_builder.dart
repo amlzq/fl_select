@@ -403,17 +403,18 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
   }
 
   /// Sample [SelectHeader.leading] widget for the Dialog / Bottom Sheet
-  /// selects: closes the popup without a result.
+  /// selects: a purely decorative icon (no action).
+  Widget _headerLeadingIcon(BuildContext context) => const Icon(Icons.tune);
+
+  /// Sample [SelectHeader.trailing] widget for the Dialog / Bottom Sheet
+  /// selects: closes the popup without applying (result null).
+  ///
+  /// Applying the current selection is the job of the panel's action bar (the
+  /// Apply button), not the header — the header is a pure custom-widget slot
+  /// and does not couple to the panel's internal state.
   Widget _headerCloseButton(BuildContext context) => IconButton(
     icon: const Icon(Icons.close),
     onPressed: () => Navigator.of(context).pop(),
-  );
-
-  /// Sample [SelectHeader.trailing] widget for the Dialog / Bottom Sheet
-  /// selects: pops with a "confirmed" marker so the result panel reacts.
-  Widget _headerConfirmButton(BuildContext context) => IconButton(
-    icon: const Icon(Icons.check),
-    onPressed: () => Navigator.of(context).pop('confirmed'),
   );
 
   /// The single open button of the Dialog / Bottom Sheet entry points: it
@@ -598,9 +599,9 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
                         context: c,
                         delegate: delegate,
                         title: title,
-                        leading: p.headerLeading ? _headerCloseButton(c) : null,
+                        leading: p.headerLeading ? _headerLeadingIcon(c) : null,
                         trailing: p.headerTrailing
-                            ? _headerConfirmButton(c)
+                            ? _headerCloseButton(c)
                             : null,
                         centerTitle: p.centerTitle,
                         useRootNavigator: false,
@@ -627,9 +628,9 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
                         context: c,
                         delegate: delegate,
                         title: title,
-                        leading: p.headerLeading ? _headerCloseButton(c) : null,
+                        leading: p.headerLeading ? _headerLeadingIcon(c) : null,
                         trailing: p.headerTrailing
-                            ? _headerConfirmButton(c)
+                            ? _headerCloseButton(c)
                             : null,
                         centerTitle: p.centerTitle,
                       ),

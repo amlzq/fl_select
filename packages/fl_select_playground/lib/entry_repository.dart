@@ -53,24 +53,12 @@ class EntryRepository {
   Future<SelectEntries> fetchListData() async {
     await _simulateNetworkDelay(250);
     final entries = <SelectEntry>{
-      SelectTextEntry.name(id: 'newest', name: 'Newest', immediate: true),
-      SelectTextEntry.name(id: 'oldest', name: 'Oldest', immediate: true),
-      SelectTextEntry.name(
-        id: 'name_asc',
-        name: 'Name (A to Z)',
-        immediate: true,
-      ),
-      SelectTextEntry.name(
-        id: 'name_desc',
-        name: 'Name (Z to A)',
-        immediate: true,
-      ),
-      SelectTextEntry.name(
-        id: 'popular',
-        name: 'Most Popular',
-        immediate: true,
-      ),
-      SelectTextEntry.name(id: 'rating', name: 'Top Rated', immediate: true),
+      SelectTextEntry.name(id: 'newest', name: 'Newest'),
+      SelectTextEntry.name(id: 'oldest', name: 'Oldest'),
+      SelectTextEntry.name(id: 'name_asc', name: 'Name (A to Z)'),
+      SelectTextEntry.name(id: 'name_desc', name: 'Name (Z to A)'),
+      SelectTextEntry.name(id: 'popular', name: 'Most Popular'),
+      SelectTextEntry.name(id: 'rating', name: 'Top Rated'),
     };
     debugPrint('list length: ${entries.length}');
     return entries;
@@ -128,10 +116,10 @@ class EntryRepository {
       SelectTextEntry.name(id: 'a', name: 'Tiger'),
       SelectTextEntry.name(id: 'b', name: 'Lion'),
       SelectTextEntry.name(id: 'c', name: 'Bear'),
-      SelectTextEntry.name(id: 'd', name: 'Elephant'),
-      SelectTextEntry.name(id: 'e', name: 'Monkey'),
-      SelectTextEntry.name(id: 'f', name: 'Dog'),
-      SelectTextEntry.name(id: 'g', name: 'Cat'),
+      SelectTextEntry.name(id: 'd', name: 'Dog'),
+      SelectTextEntry.name(id: 'e', name: 'Cat'),
+      SelectTextEntry.name(id: 'f', name: 'Elephant'),
+      SelectTextEntry.name(id: 'g', name: 'Monkey'),
       SelectTextEntry.name(id: 'h', name: 'Pig'),
       SelectTextEntry.name(id: 'i', name: 'Horse'),
       SelectTextEntry.name(id: 'j', name: 'Sheep'),
@@ -178,11 +166,7 @@ class EntryRepository {
             name: category.name!,
             selectionMode: SelectionMode.multiple,
             children: {
-              SelectTextEntry.any(
-                parentId: '',
-                name: anyEntryText,
-                immediate: true,
-              ),
+              SelectTextEntry.any(parentId: '', name: anyEntryText),
               ...?category.data?.map(
                 (node) => _cascadingTextEntry(node, category.id!),
               ),

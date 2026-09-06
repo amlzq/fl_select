@@ -66,6 +66,21 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       PlaygroundDataSource.fromRepository(_repo);
 
   @override
+  void didUpdateWidget(covariant PlaygroundPage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // Switching the entry point starts a fresh demo: drop the cached
+    // delegates (and with them the applied selections written back by
+    // PopupSelectBar / PopupSelectButton / showSelect /
+    // showModalBottomSelect) so the new entry point rebuilds its delegates
+    // from the repository's default selection instead of inheriting the
+    // previous entry point's choices.
+    if (oldWidget.params.entryPoint != widget.params.entryPoint) {
+      _delegateCache.clear();
+      _selectionCache.clear();
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     // Inject the chosen language into the whole playground subtree (control
     // panel + phone) so both the playground UI and the select's built-in
