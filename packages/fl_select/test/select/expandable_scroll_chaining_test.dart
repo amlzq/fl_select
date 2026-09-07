@@ -112,7 +112,7 @@ void main() {
     await tester.pumpAndSettle();
   });
 
-  testWidgets('dragging back after chaining unwinds the outer view first',
+  testWidgets('dragging back scrolls the body first (inner-first chaining)',
       (tester) async {
     final outer = ScrollController();
     addTearDown(outer.dispose);
@@ -130,16 +130,17 @@ void main() {
         reason: 'precondition: the drag chained a usable offset to the '
             'outer view');
 
-    // Drag back down by 60px: that must unwind the chained outer offset
-    // before the body leaves its bottom edge.
+    // Drag back down by 60px: the body consumes the drag itself first —
+    // inner-first, like NestedScrollView and browsers — while the outer
+    // view keeps its chained offset.
     await gesture.moveBy(const Offset(0, 60));
     await tester.pump();
 
-    expect(outer.offset, closeTo(chained - 60, 2.0),
-        reason: 'the reverse drag unwinds the outer view first');
-    expect(inner.pixels, inner.maxScrollExtent,
-        reason: 'the body must stay pinned at its bottom edge while the '
-            'outer view unwinds');
+    expect(outer.offset, chained,
+        reason: 'the reverse drag must not move the outer view while the '
+            'body still has room to scroll');
+    expect(inner.pixels, closeTo(inner.maxScrollExtent - 60, 2.0),
+        reason: 'the body scrolls itself first when dragging back');
     await gesture.up();
     await tester.pumpAndSettle();
   });

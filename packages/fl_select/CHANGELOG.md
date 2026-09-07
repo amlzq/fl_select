@@ -1,3 +1,7 @@
+## Next
+
+- **BUGFIX** touch-drag chaining now follows the inner-first order used by `NestedScrollView` and browsers.
+
 ## 0.12.0
 
 - **FEATURE** the flat-data delegates now accept an `itemBuilder` to customize item rendering.

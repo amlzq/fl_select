@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/foundation.dart' show precisionErrorTolerance;
 import 'package:flutter/material.dart';
 
@@ -12,18 +10,25 @@ import 'package:flutter/material.dart';
 /// the inner scrollable wins the gesture arena and simply stops dead at its
 /// edge, which makes a panel hosted in a page-level scroll view feel stuck.
 ///
-/// [ChainingClampingScrollPhysics] restores the native nested-scrolling feel
-/// (iOS `UIScrollView` chaining, Android `NestedScrollingParent`) by handing
-/// unconsumed gestures to the nearest same-direction ancestor scrollable.
+/// [ChainingClampingScrollPhysics] restores the nested-scrolling feel with the same
+/// inner-first order used by Flutter's `NestedScrollView`, browsers (CSS
+/// scroll chaining) and Android `NestedScrollingParent`: unconsumed gestures
+/// are handed to the nearest same-direction ancestor scrollable, and the
+/// inner scrollable always consumes first — in both drag directions.
 
 /// [ClampingScrollPhysics] extended with touch-gesture scroll chaining.
 ///
-/// - Dragging past the end/start edge scrolls the ancestor by the leftover.
-/// - Dragging back first unwinds the ancestor's chained offset while the body
-///   rests at its edge, and only then scrolls the body itself.
+/// - Dragging past either edge of the body chains the leftover drag to the
+///   nearest same-direction ancestor scrollable.
+/// - Dragging back is inner-first, mirroring `NestedScrollView` and browsers:
+///   the body scrolls itself first, and only the leftover beyond its opposite
+///   edge reaches the ancestor.
 /// - A fling released while the body rests at an edge (and thus produces no
 ///   simulation of its own) hands its momentum to the ancestor by starting a
 ///   ballistic simulation on it.
+/// - A touch the body itself consumes stops any ballistic activity still
+///   running on the ancestor, mirroring how browsers halt all scrolling on
+///   touch.
 ///
 /// Falls back to plain [ClampingScrollPhysics] behavior whenever no
 /// same-direction scrollable ancestor exists.
@@ -82,22 +87,22 @@ class ChainingClampingScrollPhysics extends ClampingScrollPhysics {
       // Dragging past the start of the content chains likewise.
       _moveOuterBy(outer, target - position.minScrollExtent);
       target = position.minScrollExtent;
-    } else if (target < position.pixels &&
-        position.pixels >= position.maxScrollExtent - precisionErrorTolerance &&
-        outer.pixels > outer.minScrollExtent) {
-      // Dragging back towards the start while the body rests at its end
-      // and the ancestor still carries a chained offset: unwind the
-      // ancestor first — the body only scrolls once the ancestor is done.
-      final unwind = math.min(
-          position.pixels - target, outer.pixels - outer.minScrollExtent);
-      _moveOuterBy(outer, -unwind);
-      target += unwind;
     }
+    // No unwind branch: inner-first, like NestedScrollView and browsers.
+    // Dragging back simply scrolls the body; once it reaches the opposite
+    // edge, the leftover chains to the ancestor through the branches above.
 
     final result = position.pixels - target;
     if (result == 0.0) {
       // The whole gesture was consumed by the ancestor.
       return 0.0;
+    }
+    // A touch the body itself consumes takes over: stop any scrolling still
+    // running on the chained ancestor, ballistic or driven (mirroring
+    // browsers, where a touch halts all ongoing scrolling). Fires at most
+    // once — the ancestor is idle afterwards.
+    if (outer.isScrollingNotifier.value) {
+      outer.goBallistic(0);
     }
     return super.applyPhysicsToUserOffset(position, result);
   }

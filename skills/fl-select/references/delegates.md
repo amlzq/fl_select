@@ -51,7 +51,7 @@ Underlying chip widgets (0.12.0 split): `SelectChipBar` renders a single fixed-h
 
 Deprecated dual-mode paths (0.11.0, still working via forwarding with a one-time warning): `ListSelectDelegate` / `GridSelectDelegate` fed two-level data forward to `ExpandableSelectDelegate` / `TabNavSelectDelegate` (without forwarding `itemBuilder`); `FlattenSelectDelegate` maps to `SideNavSelectDelegate` (two-level) / `WrapSelectDelegate` (flat). See the package's MIGRATION.md for the diffs.
 
-Scrolling (0.11.1–0.12.0): every scrollable body uses `ChainingClampingScrollPhysics` — a touch drag past an edge hands the leftover drag (and fling momentum) to the enclosing page-level scrollable, restoring the native nested-scrolling feel with no changes required on hosting pages. In `SideNavSelectDelegate`, tapping a sidebar item animates that category's full section (including its top padding) to the top of the right column, and the sidebar highlights the category at the right column's scroll position.
+Scrolling (0.11.1–0.12.0): every scrollable body uses `ChainingClampingScrollPhysics` — a touch drag past an edge hands the leftover drag (and fling momentum) to the enclosing page-level scrollable, restoring the native nested-scrolling feel with no changes required on hosting pages. Since the next release, chaining follows the inner-first order of `NestedScrollView` and browsers: dragging back scrolls the body first, and the leftover only reaches the enclosing page once the body hits its edge. In `SideNavSelectDelegate`, tapping a sidebar item animates that category's full section (including its top padding) to the top of the right column, and the sidebar highlights the category at the right column's scroll position.
 
 ```dart
 PopupSelectBar(
