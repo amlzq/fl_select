@@ -12,7 +12,7 @@ import 'select_overlay_style.dart';
 /// This widget owns the boilerplate that used to be duplicated verbatim in both
 /// triggers:
 /// - [PopupSelectControllerProvider] to expose the [controller] to
-///   descendants (e.g. [SelectPanel]).
+/// descendants (e.g. [SelectPanel]).
 /// - [CompositedTransformTarget] + [OverlayPortal] + [CompositedTransformFollower]
 ///   to anchor the overlay to the trigger's actual painted position, which is
 ///   robust to scrolling and ancestor transforms ([SelectOverlay] relies on
@@ -20,12 +20,18 @@ import 'select_overlay_style.dart';
 /// - [SelectOverlay] to position, animate, and clip the [SelectPanel].
 ///
 /// The trigger only supplies its own UI ([triggerChild]) plus the already
-/// resolved [style], [selectTheme], and [direction], and optionally whether
-/// the panel should keep at least the trigger's width ([minWidthFromTrigger]).
+/// resolved [style], [selectTheme], and [direction], and optionally whether the
+/// panel should keep at least the trigger's width ([minWidthFromTrigger]).
+///
+/// Trigger geometry is measured in a post-frame callback and cached — never
+/// during [State.build]. Reading render geometry in the build phase crashes
+/// when an ancestor render object (e.g. a freshly inflated route-transition
+/// wrapper such as an aligned Transform) has not been laid out yet in the
+/// current frame.
 ///
 /// This widget is package-internal (kept in `lib/src/` and not re-exported from
 /// the public API barrel).
-class SelectOverlayHost extends StatelessWidget {
+class SelectOverlayHost extends StatefulWidget {
   const SelectOverlayHost({
     super.key,
     required this.controller,
@@ -49,84 +55,105 @@ class SelectOverlayHost extends StatelessWidget {
   /// The trigger UI (the bar or the button) that toggles the overlay.
   final Widget triggerChild;
 
-  /// Rect of this host (= the trigger) expressed in the coordinate system of
-  /// the [overlay] it is inserted into, used by [SelectOverlay] to position
-  /// the panel relative to the trigger and keep it on screen.
+  @override
+  State<SelectOverlayHost> createState() => _SelectOverlayHostState();
+}
+
+class _SelectOverlayHostState extends State<SelectOverlayHost> {
+  /// Trigger rect expressed in the coordinate system of the overlay the
+  /// portal is inserted into, used by [SelectOverlay] to position the panel
+  /// relative to the trigger and keep it on screen.
+  Rect _targetRect = Rect.zero;
+
+  /// Trigger size, kept for [SelectOverlayHost.minWidthFromTrigger].
+  Size _targetSize = Size.zero;
+
+  bool _measureScheduled = false;
+
+  /// Measures the trigger rect after layout completes and caches the result.
   ///
   /// Measuring relative to the overlay (rather than the global root) lets the
   /// overlay render correctly inside a scoped overlay — for example a phone
   /// preview that wraps the select in its own [Navigator]/[Overlay], possibly
-  /// behind a [FittedBox] transform. When [overlay] is `null` (no scoped
-  /// overlay, i.e. the default root overlay) the result is identical to the
-  /// previous root-global measurement, so behavior is unchanged for normal use.
-  Rect _targetRect(RenderBox? renderBox, RenderBox? overlayBox) {
-    if (renderBox == null) return Rect.zero;
-    final offset = overlayBox == null
-        ? renderBox.localToGlobal(Offset.zero)
-        : renderBox.localToGlobal(Offset.zero, ancestor: overlayBox);
-    return Rect.fromLTWH(
-      offset.dx,
-      offset.dy,
-      renderBox.size.width,
-      renderBox.size.height,
-    );
+  /// behind a [FittedBox] transform. When the scoped overlay cannot be
+  /// resolved (i.e. the default root overlay) the result is identical to a
+  /// root-global measurement.
+  void _scheduleMeasure() {
+    if (_measureScheduled) return;
+    _measureScheduled = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _measureScheduled = false;
+      if (!mounted) return;
+      final renderObject = context.findRenderObject();
+      if (renderObject is! RenderBox ||
+          !renderObject.attached ||
+          !renderObject.hasSize) {
+        return;
+      }
+      final overlayBox =
+          Overlay.maybeOf(context)?.context.findRenderObject() as RenderBox?;
+      final Offset offset = overlayBox == null || !overlayBox.hasSize
+          ? renderObject.localToGlobal(Offset.zero)
+          : renderObject.localToGlobal(Offset.zero, ancestor: overlayBox);
+      final rect = offset & renderObject.size;
+      if (rect != _targetRect || renderObject.size != _targetSize) {
+        setState(() {
+          _targetRect = rect;
+          _targetSize = renderObject.size;
+        });
+      }
+    });
   }
-
-  Size _targetSize(RenderBox? renderBox) => renderBox?.size ?? Size.zero;
 
   @override
   Widget build(BuildContext context) {
-    final renderBox = context.findRenderObject() as RenderBox?;
-    // Resolve the overlay the portal is inserted into so the trigger rect can
-    // be measured relative to it (see [_targetRect]).
-    final overlayBox =
-        Overlay.maybeOf(context)?.context.findRenderObject() as RenderBox?;
-    final targetRect = _targetRect(renderBox, overlayBox);
+    // Re-measure after this frame keeps the cached rect fresh; the
+    // CompositedTransformFollower still anchors the panel in real time
+    // between measurements.
+    _scheduleMeasure();
 
     // Keep the panel at least as wide as the trigger when requested (button).
     // An explicit style.minWidth always wins; any style maxWidth still applies
     // as a hard cap. SelectOverlay translates the panel to stay on screen
     // rather than shrinking it.
-    final resolvedStyle = minWidthFromTrigger
-        ? (style ?? const SelectOverlayStyle()).copyWith(
-            minWidth: style?.minWidth ??
-                (_targetSize(renderBox).width > 0
-                    ? _targetSize(renderBox).width
-                    : null),
+    final resolvedStyle = widget.minWidthFromTrigger
+        ? (widget.style ?? const SelectOverlayStyle()).copyWith(
+            minWidth: widget.style?.minWidth ??
+                (_targetSize.width > 0 ? _targetSize.width : null),
           )
-        : style;
+        : widget.style;
 
     return PopupSelectControllerProvider(
-      controller: controller,
+      controller: widget.controller,
       child: CompositedTransformTarget(
-        link: controller.layerLink,
+        link: widget.controller.layerLink,
         child: OverlayPortal(
-          controller: controller.portalCtrl,
+          controller: widget.controller.portalCtrl,
           overlayChildBuilder: (context) {
             return CompositedTransformFollower(
-              link: controller.layerLink,
+              link: widget.controller.layerLink,
               showWhenUnlinked: false,
               // Shift the follower origin from the trigger's top-left to the
               // screen's top-left. This ensures the Stack's hit-test bounds
               // (size = screenSize, origin = (0,0)) cover the entire screen,
               // so taps on panel areas that extend left of the trigger (when
               // the panel is clamped on screen) are not silently dropped.
-              offset: Offset(-targetRect.left, -targetRect.top),
+              offset: Offset(-_targetRect.left, -_targetRect.top),
               child: SelectOverlay(
-                targetRect: targetRect,
-                direction: direction,
+                targetRect: _targetRect,
+                direction: widget.direction,
                 style: resolvedStyle,
-                animation: controller.overlayAnimation,
-                onOverlayTap: () => controller.hideSelect(),
+                animation: widget.controller.overlayAnimation,
+                onOverlayTap: () => widget.controller.hideSelect(),
                 child: SelectPanel(
-                  controller: controller.selectController,
-                  delegate: controller.previousSelectDelegate!,
-                  selectTheme: selectTheme,
+                  controller: widget.controller.selectController,
+                  delegate: widget.controller.previousSelectDelegate!,
+                  selectTheme: widget.selectTheme,
                 ),
               ),
             );
           },
-          child: triggerChild,
+          child: widget.triggerChild,
         ),
       ),
     );
