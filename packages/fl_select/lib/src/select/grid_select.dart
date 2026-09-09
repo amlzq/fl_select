@@ -175,8 +175,6 @@ class GridSelectState extends State<GridSelect> {
               SelectActionBar(
                 resetText: delegate.resetText,
                 applyText: delegate.applyText,
-                resetFlex: delegate.actionBarTheme?.resetFlex,
-                applyFlex: delegate.actionBarTheme?.applyFlex,
                 onResetTap: _onResetTap,
                 onApplyTap: _onApplyTap,
               ),

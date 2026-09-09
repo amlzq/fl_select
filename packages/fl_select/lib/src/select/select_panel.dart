@@ -177,14 +177,15 @@ class _SelectPanelState extends State<SelectPanel> {
 
   @override
   Widget build(BuildContext context) {
-    // Merge the delegate-level [SelectPanelTheme] override (if any) into the
-    // ambient theme so that [_PanelDecoratedBox] picks it up. `copyWith` keeps
-    // the existing `panelTheme` when the delegate does not supply one.
     final baseTheme =
         widget.selectTheme ?? SelectThemeData.fallback(Theme.of(context));
-    final effectiveTheme = widget.delegate.panelTheme == null
-        ? baseTheme
-        : baseTheme.copyWith(panelTheme: widget.delegate.panelTheme);
+    final delegateActionBarTheme = widget.delegate.actionBarTheme;
+    final effectiveTheme = baseTheme.copyWith(
+      panelTheme: widget.delegate.panelTheme,
+      actionBarTheme: delegateActionBarTheme == null
+          ? null
+          : baseTheme.actionBarTheme.merge(delegateActionBarTheme),
+    );
     return SelectTheme(
       data: effectiveTheme,
       child: _PanelDecoratedBox(

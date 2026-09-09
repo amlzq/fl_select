@@ -52,6 +52,20 @@ class SelectActionBarTheme with Diagnosticable {
     );
   }
 
+  SelectActionBarTheme merge(SelectActionBarTheme? other) {
+    if (other == null) {
+      return this;
+    }
+    return SelectActionBarTheme(
+      backgroundColor: other.backgroundColor ?? backgroundColor,
+      padding: other.padding ?? padding,
+      resetFlex: other.resetFlex ?? resetFlex,
+      applyFlex: other.applyFlex ?? applyFlex,
+      resetButtonStyle: other.resetButtonStyle ?? resetButtonStyle,
+      applyButtonStyle: other.applyButtonStyle ?? applyButtonStyle,
+    );
+  }
+
   static SelectActionBarTheme of(BuildContext context) {
     return SelectTheme.of(context).actionBarTheme;
   }

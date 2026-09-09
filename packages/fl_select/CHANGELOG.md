@@ -1,5 +1,9 @@
 ## Next
 
+- **BUGFIX** the delegate-level `actionBarTheme` now styles the built-in action bar in every layout.
+
+- **BUGFIX** fix a crash when the popup trigger is inflated under an ancestor that has not been laid out yet: trigger geometry is now measured after layout instead of during build.
+
 - **BUGFIX** touch-drag chaining now follows the inner-first order used by `NestedScrollView` and browsers.
 
 ## 0.12.0

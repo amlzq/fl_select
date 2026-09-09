@@ -78,7 +78,12 @@ class _MyAppState extends State<MyApp> {
                     overlayStyle: const SelectOverlayStyle(
                       barrierColor: Colors.black54,
                     ),
-                    selectTheme: SelectThemeData(baseTheme),
+                    selectTheme: SelectThemeData(
+                      baseTheme,
+                      // actionBarTheme: SelectActionBarTheme(
+                      //   backgroundColor: Colors.red,
+                      // ),
+                    ),
                   ),
                 ],
               );

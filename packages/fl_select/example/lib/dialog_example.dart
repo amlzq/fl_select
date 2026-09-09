@@ -67,6 +67,9 @@ class _DialogExampleState extends State<DialogExample> {
                         selectionMode: SelectionMode.multiple,
                         spacing: 12.0,
                         runSpacing: 12.0,
+                        actionBarTheme: SelectActionBarTheme(
+                          backgroundColor: Colors.amber,
+                        ),
                       ),
                       leading: Icon(Icons.list),
                       title: Text('ListSelect'),

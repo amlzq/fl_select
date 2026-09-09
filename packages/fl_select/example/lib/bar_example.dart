@@ -13,10 +13,14 @@ class PopupSelectBarExample extends StatefulWidget {
 class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
   @override
   Widget build(BuildContext context) {
+    final PopupSelectBarTheme popupSelectBarTheme = PopupSelectBarTheme.maybeOf(
+      context,
+    )!;
     return Scaffold(
       appBar: AppBar(title: const Text('PopupSelectBar')),
       body: SafeArea(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             PopupSelectBar(
               isScrollable: true,
@@ -99,6 +103,124 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                   searchPredicate: (entry, query) {
                     return entry.name?.contains(query) == true;
                   },
+                ),
+              ],
+              onApplied: (tabData, selected) {
+                largePrint('onApplied: $tabData, $selected');
+                largePrint('toQueryMap: ${selected.toQueryMap()}');
+                largePrint(
+                    'toQueryParameters: ${selected.toQueryParameters()}');
+              },
+            ),
+            Theme(
+              data: Theme.of(context).copyWith(
+                extensions: <ThemeExtension<dynamic>>[
+                  popupSelectBarTheme.copyWith(
+                    selectTheme: SelectThemeData(
+                      Theme.of(context),
+                      actionBarTheme: SelectActionBarTheme(
+                        backgroundColor: Colors.blue,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              child: PopupSelectBar(
+                isScrollable: true,
+                direction: PopupSelectDirection.adaptive,
+                tabs: [
+                  PopupTab(
+                    label: 'List',
+                    labelLoader: (selected) => '${selected.length} selected',
+                  ),
+                  PopupTab(label: 'Cascading'),
+                  PopupTab(
+                    label: 'TabNav',
+                    labelLoader: (selected) => '${selected.length} selected',
+                  ),
+                ],
+                selectDelegates: [
+                  ListSelectDelegate(
+                    entries: listDataWithAny,
+                    searchEnabled: true,
+                    searchPredicate: (entry, query) {
+                      return entry.name?.contains(query) == true;
+                    },
+                  ),
+                  CascadingSelectDelegate(
+                    entriesLoader: fetchCascadingData,
+                    selectionMode: SelectionMode.multiple,
+                    sideBarTheme: const SelectSideBarTheme(width: 120),
+                    searchEnabled: true,
+                    searchPredicate: (entry, query) {
+                      return entry.name?.contains(query) == true;
+                    },
+                  ),
+                  TabNavSelectDelegate(
+                    defaultLayout: SelectGridLayout(
+                      crossAxisCount: 3,
+                      childAspectRatio: 3,
+                      mainAxisSpacing: 10,
+                      crossAxisSpacing: 10,
+                    ),
+                    entries: multiCategoryData,
+                    selectionMode: SelectionMode.multiple,
+                    searchEnabled: true,
+                    searchPredicate: (entry, query) {
+                      return entry.name?.contains(query) == true;
+                    },
+                    actionBarTheme: SelectActionBarTheme(
+                      backgroundColor: Colors.green,
+                    ),
+                  ),
+                ],
+                onApplied: (tabData, selected) {
+                  largePrint('onApplied: $tabData, $selected');
+                  largePrint('toQueryMap: ${selected.toQueryMap()}');
+                  largePrint(
+                      'toQueryParameters: ${selected.toQueryParameters()}');
+                },
+              ),
+            ),
+            PopupSelectBar(
+              isScrollable: true,
+              direction: PopupSelectDirection.above,
+              tabs: [
+                PopupTab(label: 'Grid'),
+                PopupTab(label: 'SideNav'),
+                PopupTab(child: Icon(Icons.expand)),
+              ],
+              selectDelegates: [
+                GridSelectDelegate(
+                  entries: gridDataWithAny,
+                  crossAxisCount: 3,
+                  childAspectRatio: 3.2,
+                  mainAxisSpacing: 10,
+                  crossAxisSpacing: 10,
+                ),
+                SideNavSelectDelegate(
+                  defaultLayout: SelectWrapLayout(
+                    spacing: 12,
+                    runSpacing: 12,
+                  ),
+                  entries: multiCategoryData,
+                  selectionMode: SelectionMode.multiple,
+                  searchEnabled: true,
+                  searchPredicate: (entry, query) {
+                    return entry.name?.contains(query) == true;
+                  },
+                ),
+                ExpandableSelectDelegate(
+                  defaultLayout: SelectListLayout(),
+                  entries: multiCategoryData,
+                  selectionMode: SelectionMode.multiple,
+                  searchEnabled: true,
+                  searchPredicate: (entry, query) {
+                    return entry.name?.contains(query) == true;
+                  },
+                  actionBarTheme: SelectActionBarTheme(
+                    backgroundColor: Colors.green,
+                  ),
                 ),
               ],
               onApplied: (tabData, selected) {
