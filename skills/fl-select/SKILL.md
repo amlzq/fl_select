@@ -68,7 +68,7 @@ final SelectEntries? selected = await showSelect(
 - `SelectChildEntry` is identified by its `parentId`. Prefer the `SelectCategoryEntry(children: {...})` factory, which injects `parentId` automatically.
 - Use `SelectTextEntry.name(...)` / `SelectIntEntry.name(...)` (parentless leaves) for flat single-level lists.
 - An "Any" entry (`.any(...)`) clears its category; in `toQueryMap()` it resolves to the parent id.
-- Serialize results with `selected.toQueryMap()` / `selected.toQueryParameters(arrayFormat: ...)` — do not hand-walk the tree.
+- Serialize results with `selected.toQueryMap()` / `selected.toQueryParameters(arrayFormat: ...)` for category trees, or `selected.toIdList()` for flat single-level panels — each throws `StateError` on the wrong structure, so misuse surfaces immediately; do not hand-walk the tree.
 
 ## JSON codec & GenUI bridge
 

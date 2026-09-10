@@ -153,26 +153,30 @@ extension SelectEntriesExtension on SelectEntries {
   ///
   /// The `Map<String, List<String>>` shape mirrors [Uri.queryParametersAll],
   /// which is required to read repeated keys back without losing values.
+  /// Use [toQueryParameters] to render this map as a query string.
+  ///
+  /// Throws a [StateError] when the set contains a top-level entry that is
+  /// not a [SelectCategoryEntry] (a flat, category-less selection); use
+  /// [toIdList] for those.
   ///
   /// Returns an empty map when nothing is selected.
   Map<String, List<String>> toQueryMap() {
     final map = <String, List<String>>{};
 
     void collect(SelectEntry entry, String rootKey, String parentId) {
-      if (entry is SelectRangeEntry && entry.hasCustomValue) {
-        (map[rootKey] ??= []).add('${entry.min}-${entry.max}');
-      } else if (!entry.hasChildren) {
-        final value = entry.id == kAnyEntryId ? parentId : entry.id;
+      for (final value in _entryValues(entry, parentId)) {
         (map[rootKey] ??= []).add(value);
-      } else {
-        for (final child in entry.children!) {
-          collect(child, rootKey, entry.id);
-        }
       }
     }
 
     for (final entry in this) {
-      if (entry is! SelectCategoryEntry) continue;
+      if (entry is! SelectCategoryEntry) {
+        throw StateError(
+          'toQueryMap() expects a category tree, but found top-level entry '
+          '"${entry.id}" that is not a SelectCategoryEntry. Use toIdList() '
+          'for flat (single-level) selections instead.',
+        );
+      }
       final header = entry.header;
       if (header != null && header.hasChildren) {
         for (final child in header.children!) {
@@ -214,6 +218,10 @@ extension SelectEntriesExtension on SelectEntries {
   /// with [Uri.encodeQueryComponent]. Set it to false only when the caller
   /// handles encoding.
   ///
+  /// Throws a [StateError] when the selection is flat (top-level entries are
+  /// not [SelectCategoryEntry] values) — see [toQueryMap]; use [toIdList]
+  /// for those.
+  ///
   /// Returns an empty string when nothing is selected.
   String toQueryParameters({
     SelectArrayFormat arrayFormat = SelectArrayFormat.repeat,
@@ -247,6 +255,60 @@ extension SelectEntriesExtension on SelectEntries {
       }
     }
     return pairs.join('&');
+  }
+
+  /// Converts a flat (single-level, category-less) selection into a list of
+  /// value strings, in selection order.
+  ///
+  /// The counterpart of [toQueryMap] for flat structures whose top level
+  /// holds no [SelectCategoryEntry] (e.g. a sort-order panel). The value
+  /// rules mirror [toQueryMap]:
+  ///
+  /// - a leaf contributes its id;
+  /// - a top-level entry with children contributes the ids of its deepest
+  ///   selected leaves;
+  /// - a custom [SelectRangeEntry] contributes `min-max`, e.g. `111-222`;
+  /// - an "any" leaf ([kAnyEntryId]) resolves to its parent id — a flat
+  ///   "any"-only selection never reaches consumers (it is filtered out as
+  ///   a non-choice).
+  ///
+  /// Throws a [StateError] when the set contains a [SelectCategoryEntry];
+  /// serialize category trees with [toQueryMap] / [toQueryParameters]
+  /// instead.
+  ///
+  /// Returns an empty list when nothing is selected.
+  List<String> toIdList() {
+    final ids = <String>[];
+    for (final entry in this) {
+      if (entry is SelectCategoryEntry) {
+        throw StateError(
+          'toIdList() expects a flat selection without categories, but found '
+          'category "${entry.id}". Use toQueryMap()/toQueryParameters() for '
+          'category trees instead.',
+        );
+      }
+      final parentId = entry is SelectChildEntry ? entry.parentId : '';
+      ids.addAll(_entryValues(entry, parentId));
+    }
+    return ids;
+  }
+}
+
+/// Shared value walk behind `SelectEntriesExtension.toQueryMap` and
+/// `SelectEntriesExtension.toIdList`.
+///
+/// Yields the serialized value(s) of [entry]: a custom [SelectRangeEntry]
+/// yields `min-max`; a leaf yields its id — an "any" leaf yields [parentId]
+/// instead; a branch yields the values of its deepest leaves.
+Iterable<String> _entryValues(SelectEntry entry, String parentId) sync* {
+  if (entry is SelectRangeEntry && entry.hasCustomValue) {
+    yield '${entry.min}-${entry.max}';
+  } else if (!entry.hasChildren) {
+    yield entry.id == kAnyEntryId ? parentId : entry.id;
+  } else {
+    for (final child in entry.children!) {
+      yield* _entryValues(child, entry.id);
+    }
   }
 }
 

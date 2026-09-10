@@ -107,9 +107,15 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
               ],
               onApplied: (tabData, selected) {
                 largePrint('onApplied: $tabData, $selected');
-                largePrint('toQueryMap: ${selected.toQueryMap()}');
-                largePrint(
-                    'toQueryParameters: ${selected.toQueryParameters()}');
+                if (tabData.index == 0 ||
+                    tabData.index == 1 ||
+                    tabData.index == 2) {
+                  largePrint('toIdList: ${selected.toIdList()}');
+                } else {
+                  largePrint('toQueryMap: ${selected.toQueryMap()}');
+                  largePrint(
+                      'toQueryParameters: ${selected.toQueryParameters()}');
+                }
               },
             ),
             Theme(
@@ -180,9 +186,13 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                 ],
                 onApplied: (tabData, selected) {
                   largePrint('onApplied: $tabData, $selected');
-                  largePrint('toQueryMap: ${selected.toQueryMap()}');
-                  largePrint(
-                      'toQueryParameters: ${selected.toQueryParameters()}');
+                  if (tabData.index == 0) {
+                    largePrint('toIdList: ${selected.toIdList()}');
+                  } else {
+                    largePrint('toQueryMap: ${selected.toQueryMap()}');
+                    largePrint(
+                        'toQueryParameters: ${selected.toQueryParameters()}');
+                  }
                 },
               ),
             ),
@@ -229,9 +239,13 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
               ],
               onApplied: (tabData, selected) {
                 largePrint('onApplied: $tabData, $selected');
-                largePrint('toQueryMap: ${selected.toQueryMap()}');
-                largePrint(
-                    'toQueryParameters: ${selected.toQueryParameters()}');
+                if (tabData.index == 0) {
+                  largePrint('toIdList: ${selected.toIdList()}');
+                } else {
+                  largePrint('toQueryMap: ${selected.toQueryMap()}');
+                  largePrint(
+                      'toQueryParameters: ${selected.toQueryParameters()}');
+                }
               },
             ),
           ],

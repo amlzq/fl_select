@@ -33,9 +33,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                   ),
                   onApplied: (selected) {
                     largePrint('onApplied: $selected');
-                    largePrint('toQueryMap: ${selected.toQueryMap()}');
-                    largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters()}');
+                    largePrint('toIdList: ${selected.toIdList()}');
                   },
                 ),
                 SizedBox(height: 24),
@@ -50,6 +48,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                   ),
                   onApplied: (selected) {
                     largePrint('onApplied: $selected');
+                    largePrint('toIdList: ${selected.toIdList()}');
                   },
                 ),
                 SizedBox(height: 24),
@@ -63,6 +62,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                   ),
                   onApplied: (selected) {
                     largePrint('onApplied: $selected');
+                    largePrint('toIdList: ${selected.toIdList()}');
                   },
                 ),
                 SizedBox(height: 24),

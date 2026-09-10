@@ -1,3 +1,7 @@
+## Next
+
+- **FEATURE** flat (non-category) panels: add the required payload-level `flatKey` under which the selection is written back.
+
 ## 0.2.0
 
 - **FEATURE** Wire the `search` payload flag through to the delegates' `searchEnabled`.

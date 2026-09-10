@@ -356,6 +356,19 @@ void main() {
     test('returns empty map for empty set', () {
       expect(<SelectEntry<dynamic>>{}.toQueryMap(), isEmpty);
     });
+
+    test('throws StateError for flat (non-category) selections', () {
+      final flat = <SelectEntry<dynamic>>{_text('', 'a', 'A')};
+
+      expect(() => flat.toQueryMap(), throwsStateError);
+    });
+
+    test('throws StateError for mixed category and flat entries', () {
+      final c = _category('c', 'C', children: {_text('c', 'a', 'A')});
+      final mixed = <SelectEntry<dynamic>>{c, _text('', 'b', 'B')};
+
+      expect(() => mixed.toQueryMap(), throwsStateError);
+    });
   });
 
   group('SelectEntriesExtension – toQueryParameters', () {
@@ -463,6 +476,66 @@ void main() {
 
     test('returns empty string for empty set', () {
       expect(<SelectEntry<dynamic>>{}.toQueryParameters(), '');
+    });
+
+    test('throws StateError for flat selections (propagates toQueryMap)', () {
+      final flat = <SelectEntry<dynamic>>{_text('', 'a', 'A')};
+
+      expect(() => flat.toQueryParameters(), throwsStateError);
+    });
+  });
+
+  group('SelectEntriesExtension – toIdList', () {
+    test('collects leaf ids in selection order', () {
+      final entries = <SelectEntry<dynamic>>{
+        _text('', 'a', 'A'),
+        _text('', 'b', 'B'),
+      };
+
+      expect(entries.toIdList(), ['a', 'b']);
+    });
+
+    test('walks to the deepest leaves of top-level branches', () {
+      final entries = <SelectEntry<dynamic>>{
+        _text('', 'p', 'P', children: {
+          _text('p', 'l1', 'L1'),
+          _text('p', 'l2', 'L2'),
+        }),
+      };
+
+      expect(entries.toIdList(), ['l1', 'l2']);
+    });
+
+    test('formats custom range entries as min-max', () {
+      final entries = <SelectEntry<dynamic>>{
+        SelectRangeEntry<int, dynamic>(
+          parentId: '',
+          id: 'custom',
+          name: null,
+          min: 111,
+          max: 222,
+        ),
+      };
+
+      expect(entries.toIdList(), ['111-222']);
+    });
+
+    test('resolves any leaves to their parent id', () {
+      final entries = <SelectEntry<dynamic>>{
+        _text('p', 'any', 'Any'),
+      };
+
+      expect(entries.toIdList(), ['p']);
+    });
+
+    test('throws StateError for category trees', () {
+      final c = _category('c', 'C', children: {_text('c', 'a', 'A')});
+
+      expect(() => {c}.toIdList(), throwsStateError);
+    });
+
+    test('returns empty list for empty set', () {
+      expect(<SelectEntry<dynamic>>{}.toIdList(), isEmpty);
     });
   });
 

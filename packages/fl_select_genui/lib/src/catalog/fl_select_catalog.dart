@@ -83,6 +83,12 @@ abstract final class FlSelectCatalogItems {
           description: 'Grid delegate only: columns.',
         ),
         'search': S.boolean(description: 'Enable search field.'),
+        'flatKey': S.string(
+          description:
+              'Key under which a flat (non-category) selection is written '
+              'back, e.g. "sort". Required when top-level entries are not '
+              'categories; ignored for category trees.',
+        ),
         'entries': SelectEntrySchema.tree(),
       },
       required: const ['delegate', 'entries'],
@@ -133,6 +139,9 @@ When the user needs to pick values from a structured option set, render a `Selec
 - User selections are returned as `Map<String, List<String>>`
   (e.g. `{"price": ["0-100"], "amenities": ["wifi", "pool"]}`); a selected
   category without leaf picks maps to its own id.
+- Flat panels (top-level `text`/`range` leaves, no `category`) additionally
+  require `flatKey`: the key under which the selection is written back
+  (e.g. `"sort"` → `{"sort": ["recent"]}`).
 - Legacy payloads typed `SelectFilter` keep rendering this component.''';
 }
 
@@ -164,23 +173,42 @@ class _SelectWidget extends StatelessWidget {
       return _SchemaError('Unsupported entries: ${e.message}');
     }
 
+    // Flat vs category shape decides both the delegate fallback below and
+    // the write-back encoding.
+    final isCategoryData =
+        entries.isNotEmpty && entries.first is SelectCategoryEntry;
+
+    // A flat selection has no category ids to key the write-back by, so the
+    // agent must name the key explicitly.
+    final flatKey = data['flatKey'] as String?;
+    if (!isCategoryData && (flatKey == null || flatKey.isEmpty)) {
+      return _SchemaError(
+        '${itemContext.type} with flat (non-category) entries requires a '
+        '"flatKey" so selections can be written back.',
+      );
+    }
+
     return SelectView(
-      delegate: _buildDelegate(data, entries),
+      delegate: _buildDelegate(data, entries, isCategoryData),
       onChanged: (selected) {
         // Write the selection back so the agent (and other widgets) can
-        // react to it. `toQueryMap` on the selected category tree yields
-        // Map<String, List<String>>; fall back to ids when flat.
+        // react to it. Category trees yield Map<String, List<String>> via
+        // `toQueryMap`; flat selections yield their ids under `flatKey`.
         itemContext.dataContext.update(
           DataPath(dataPath),
           selected.isEmpty
               ? <String, List<String>>{}
-              : _encodeSelection(selected),
+              : _encodeSelection(selected, flatKey),
         );
       },
     );
   }
 
-  SelectDelegate _buildDelegate(JsonMap data, Set<SelectEntry> entries) {
+  SelectDelegate _buildDelegate(
+    JsonMap data,
+    Set<SelectEntry> entries,
+    bool isCategoryData,
+  ) {
     final delegateName = data['delegate'] as String? ?? 'list';
     final selectionMode = switch (data['selectionMode']) {
       'single' => SelectionMode.single,
@@ -191,8 +219,6 @@ class _SelectWidget extends StatelessWidget {
     // category data), so the requested layout is matched to the actual
     // entry-tree shape: grouped layouts fall back to their flat equivalent
     // and vice versa.
-    final isCategoryData =
-        entries.isNotEmpty && entries.first is SelectCategoryEntry;
     return switch (delegateName) {
       // List — flat list panel; category data falls through to the default
       // arm below.
@@ -288,16 +314,15 @@ class _SelectWidget extends StatelessWidget {
     };
   }
 
-  static Map<String, List<String>> _encodeSelection(Set<SelectEntry> selected) {
-    try {
-      return selected.toQueryMap();
-    } on Exception {
-      // Selections that don't form a category tree (e.g. bare leaves).
-      return {
-        for (final e in selected)
-          (e as SelectChildEntry).parentId: <String>[e.id],
-      };
-    }
+  static Map<String, List<String>> _encodeSelection(
+    Set<SelectEntry> selected,
+    String? flatKey,
+  ) {
+    final isCategoryTree = selected.any((e) => e is SelectCategoryEntry);
+    if (isCategoryTree) return selected.toQueryMap();
+    // Flat selection: `flatKey` is guaranteed non-null by the build-time
+    // validation above.
+    return {flatKey!: selected.toIdList()};
   }
 }
 

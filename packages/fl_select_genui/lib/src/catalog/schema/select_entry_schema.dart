@@ -77,7 +77,10 @@ abstract final class SelectEntrySchema {
 
   /// Schema for a list of root entry nodes (the `entries` payload).
   static Schema tree() => S.list(
-    description: 'Root select entries; top-level nodes are categories.',
+    description:
+        'Root select entries: usually categories; a flat list of '
+        'text/range leaves (no categories) is also valid — pair it with '
+        'the payload-level `flatKey` so selections can be written back.',
     minItems: 1,
     items: node(),
   );

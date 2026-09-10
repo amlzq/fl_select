@@ -48,6 +48,11 @@ const _entries = [
   },
 ];
 
+const _flatEntries = [
+  {'type': 'text', 'id': 'recent', 'name': 'Recent'},
+  {'type': 'text', 'id': 'cheapest', 'name': 'Cheapest'},
+];
+
 void main() {
   testWidgets('renders entries authored by an agent', (tester) async {
     await pumpFilter(tester, {'delegate': 'flatten', 'entries': _entries});
@@ -71,6 +76,34 @@ void main() {
         context.getValue<dynamic>(DataPath('filter1.value'))
             as Map<dynamic, dynamic>;
     expect(value['more'], ['a2']);
+  });
+
+  testWidgets('flat entries write back under flatKey', (tester) async {
+    final context = await pumpFilter(tester, {
+      'delegate': 'list',
+      'selectionMode': 'single',
+      'flatKey': 'sort',
+      'entries': _flatEntries,
+    });
+
+    expect(find.byIcon(Icons.warning_amber_rounded), findsNothing);
+
+    await tester.tap(find.text('Recent'));
+    await tester.pumpAndSettle();
+
+    final value =
+        context.getValue<dynamic>(DataPath('filter1.value'))
+            as Map<dynamic, dynamic>;
+    expect(value['sort'], ['recent']);
+  });
+
+  testWidgets('flat entries without flatKey show an error card', (tester) async {
+    await pumpFilter(tester, {
+      'delegate': 'list',
+      'entries': _flatEntries,
+    });
+
+    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
   });
 
   testWidgets('shows an error card instead of crashing on bad entries', (

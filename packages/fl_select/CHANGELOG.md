@@ -1,5 +1,9 @@
 ## Next
 
+- **FEATURE** `toIdList()`: serialize a flat (category-less) selection into a list of value strings, the counterpart of `toQueryMap()` for single-level panels.
+
+- **BUGFIX** `toQueryMap()` / `toQueryParameters()` now throw `StateError` on flat (non-category) selections instead of silently skipping them.
+
 - **BUGFIX** delegate-level theme fields now merge field-wise into the ambient `SelectThemeData` instead of replacing it wholesale.
 
 - **BUGFIX** the select panel's search query no longer leaks into another delegate when switching tabs in a `PopupSelectBar` overlay.

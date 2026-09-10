@@ -101,3 +101,11 @@ selected?.toQueryParameters(
 ```
 
 Values are percent-encoded by default; pass `encode: false` when the caller handles encoding.
+
+Flat (single-level, category-less) panels — e.g. a sort-order list built from `SelectTextEntry.name(...)` — serialize with `toIdList()` instead. It applies the same value rules (leaf ids, `min-max` for custom ranges, "Any" → parent id) and returns them in selection order:
+
+```dart
+selected?.toIdList(); // [recent, cheapest]
+```
+
+The two paths are mutually exclusive: `toQueryMap()` / `toQueryParameters()` throw `StateError` on flat selections, and `toIdList()` throws `StateError` on category trees — misuse surfaces at development time instead of silently producing empty output.

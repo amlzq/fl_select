@@ -36,9 +36,7 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                       title: Text('ListSelect'),
                     );
                     largePrint('result: $result');
-                    largePrint('toQueryMap: ${result?.toQueryMap()}');
-                    largePrint(
-                        'toQueryParameters: ${result?.toQueryParameters()}');
+                    largePrint('toIdList: ${result?.toIdList()}');
                   },
                   child: const Text('showModalBottomListSelect'),
                 ),
@@ -59,6 +57,7 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                       trailing: CloseButton(),
                     );
                     largePrint('result: $result');
+                    largePrint('toIdList: ${result?.toIdList()}');
                   },
                   child: const Text('showModalBottomGridSelect'),
                 ),
@@ -78,6 +77,7 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                       trailing: CloseButton(),
                     );
                     largePrint('result: $result');
+                    largePrint('toIdList: ${result?.toIdList()}');
                   },
                   child: const Text('showModalBottomWrapSelect'),
                 ),

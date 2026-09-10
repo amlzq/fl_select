@@ -31,9 +31,7 @@ class _DialogExampleState extends State<DialogExample> {
                       title: Text('ListSelect'),
                     );
                     largePrint('result: $result');
-                    largePrint('toQueryMap: ${result?.toQueryMap()}');
-                    largePrint(
-                        'toQueryParameters: ${result?.toQueryParameters()}');
+                    largePrint('toIdList: ${result?.toIdList()}');
                   },
                   child: const Text('showListSelect'),
                 ),
@@ -54,6 +52,7 @@ class _DialogExampleState extends State<DialogExample> {
                       centerTitle: false,
                     );
                     largePrint('result: $result');
+                    largePrint('toIdList: ${result?.toIdList()}');
                   },
                   child: const Text('showGridSelect'),
                 ),
@@ -76,6 +75,7 @@ class _DialogExampleState extends State<DialogExample> {
                       trailing: CloseButton(),
                     );
                     largePrint('result: $result');
+                    largePrint('toIdList: ${result?.toIdList()}');
                   },
                   child: const Text('showWrapSelect'),
                 ),
