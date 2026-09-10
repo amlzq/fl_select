@@ -16,6 +16,12 @@ import 'theme_mode.dart';
 /// keep it from being popped by system back.
 const String _kPhoneBaseRouteName = 'playground-phone-base';
 
+/// Minimum viewport width for the wide layout (persistent side panel + framed
+/// phone preview). Below it the playground switches to the compact layout:
+/// the demo fills the screen without the decorative phone shell, and the
+/// parameter panel moves into a left drawer.
+const double _kWideBreakpoint = 820;
+
 /// Interactive demo: a parameter panel on one side and a simulated phone on
 /// the other. Changing any parameter rebuilds the phone's select immediately.
 ///
@@ -153,62 +159,82 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       ],
     );
 
-    // Scope the dropdown overlay, dialog and bottom sheet to the phone: a
-    // dedicated [Navigator] provides a local overlay, and a phone-sized
-    // [MediaQuery] makes the select position/clamp itself within the phone
-    // screen instead of the whole window.
-    final phoneScreen = Theme(
-      data: paramThemeWithExtensions,
-      child: MediaQuery(
-        data: MediaQuery.of(context).copyWith(
-          size: kPhoneContentSize,
-          padding: EdgeInsets.zero,
-          viewPadding: EdgeInsets.zero,
-          viewInsets: EdgeInsets.zero,
-        ),
-        child: Navigator(
-          // Use `pages` (not `onGenerateRoute`): `onGenerateRoute` is only
-          // invoked once, so the captured initial route would never reflect
-          // later parameter/theme changes and switching the entry point would
-          // appear to do nothing. With `pages` the base screen stays in sync
-          // with the latest `themedScreen`, while `showDialog` /
-          // `showModalBottomSheet` still push their routes on top.
-          onDidRemovePage: (page) {
-            // The base phone screen must never be removed. Pushed dialogs /
-            // bottom sheets are route-backed (not page-backed), so this
-            // callback is only ever invoked for the base page, which we
-            // intentionally keep.
-            if (page.name == _kPhoneBaseRouteName) return;
-          },
-          pages: <Page<void>>[
-            MaterialPage<void>(
-              // Keep a constant key so switching the playground theme does NOT
-              // tear down and rebuild the base route: a changing key would
-              // dispose the SelectView / PopupSelectBar subtrees, drop
-              // their controllers and re-fetch select data (showing a skeleton
-              // flash) — a visible hitch. Instead the theme is applied *inside*
-              // this page via the [Theme] below, whose dependents rebuild in
-              // place (elements kept, no data reload). The entry-point switch is
-              // still handled by the keyed [EntryPointScreen] inside
-              // [buildPhoneScreen], so this constant key only concerns the base.
-              key: const ValueKey(_kPhoneBaseRouteName),
-              name: _kPhoneBaseRouteName,
-              child: Theme(
-                data: paramThemeWithExtensions,
-                child: buildPhoneScreen(
-                  params,
-                  delegate,
-                  l10n,
-                  data: _dataSource,
-                  delegateCache: _delegateCache,
-                  selectionCache: _selectionCache,
+    // Scope the dropdown overlay, dialog and bottom sheet to the demo: a
+    // dedicated [Navigator] provides a local overlay, and a [MediaQuery]
+    // matching the demo's actual render area makes the select position /
+    // clamp itself within that area instead of the whole window.
+    //
+    // [size] pins the [MediaQuery] size: the framed phone's content size
+    // (kPhoneContentSize) in the wide layout, or the real body constraints in
+    // the compact fullscreen layout. [zeroInsets] clears the safe-area /
+    // keyboard metrics for the decorative shell (it simulates a bezel-to-bezel
+    // screen); the compact layout keeps them so the demo reacts to the real
+    // keyboard and system insets.
+    //
+    // [context] decides which metrics are inherited: pass a body-local context
+    // (e.g. from a [LayoutBuilder]) for the compact layout so the already
+    // AppBar-consumed paddings are used; any context works for the framed
+    // phone since its insets are zeroed anyway.
+    Widget buildScopedNavigator(
+      BuildContext context, {
+      required Size size,
+      bool zeroInsets = false,
+    }) {
+      final mq = MediaQuery.of(context).copyWith(
+        size: size,
+        padding: zeroInsets ? EdgeInsets.zero : null,
+        viewPadding: zeroInsets ? EdgeInsets.zero : null,
+        viewInsets: zeroInsets ? EdgeInsets.zero : null,
+      );
+      return Theme(
+        data: paramThemeWithExtensions,
+        child: MediaQuery(
+          data: mq,
+          child: Navigator(
+            // Use `pages` (not `onGenerateRoute`): `onGenerateRoute` is only
+            // invoked once, so the captured initial route would never reflect
+            // later parameter/theme changes and switching the entry point would
+            // appear to do nothing. With `pages` the base screen stays in sync
+            // with the latest `themedScreen`, while `showDialog` /
+            // `showModalBottomSheet` still push their routes on top.
+            onDidRemovePage: (page) {
+              // The base phone screen must never be removed. Pushed dialogs /
+              // bottom sheets are route-backed (not page-backed), so this
+              // callback is only ever invoked for the base page, which we
+              // intentionally keep.
+              if (page.name == _kPhoneBaseRouteName) return;
+            },
+            pages: <Page<void>>[
+              MaterialPage<void>(
+                // Keep a constant key so switching the playground theme does
+                // NOT tear down and rebuild the base route: a changing key
+                // would dispose the SelectView / PopupSelectBar subtrees, drop
+                // their controllers and re-fetch select data (showing a
+                // skeleton flash) — a visible hitch. Instead the theme is
+                // applied *inside* this page via the [Theme] below, whose
+                // dependents rebuild in place (elements kept, no data reload).
+                // The entry-point switch is still handled by the keyed
+                // [EntryPointScreen] inside [buildPhoneScreen], so this
+                // constant key only concerns the base.
+                key: const ValueKey(_kPhoneBaseRouteName),
+                name: _kPhoneBaseRouteName,
+                child: Theme(
+                  data: paramThemeWithExtensions,
+                  child: buildPhoneScreen(
+                    params,
+                    delegate,
+                    l10n,
+                    data: _dataSource,
+                    delegateCache: _delegateCache,
+                    selectionCache: _selectionCache,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-    );
+      );
+    }
 
     // Scale the native 390x844 phone down (or up) to fit the available area
     // while preserving aspect ratio. The padding keeps the shell from touching
@@ -217,12 +243,43 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       padding: const EdgeInsets.all(24),
       child: FittedBox(
         fit: BoxFit.contain,
-        child: PhoneFrame(screen: phoneScreen, brightness: effectiveBrightness),
+        child: PhoneFrame(
+          screen: buildScopedNavigator(
+            context,
+            size: kPhoneContentSize,
+            zeroInsets: true,
+          ),
+          brightness: effectiveBrightness,
+        ),
       ),
     );
 
+    // Wide layout: a persistent parameter panel next to the framed phone.
+    // Compact layout: the demo fills the screen without the decorative phone
+    // shell, and the parameters move into a left drawer (opened via the
+    // auto-implied AppBar menu button) so tweaking them while watching the
+    // demo stays one tap away.
+    final isWide = MediaQuery.sizeOf(context).width >= _kWideBreakpoint;
+
     return Scaffold(
+      // Null on wide layout: no drawer at all — no hamburger button and no
+      // edge-swipe open gesture competing with the demo's own gestures.
+      drawer: isWide
+          ? null
+          : Drawer(
+              child: SafeArea(
+                bottom: false,
+                child: ControlsPanel(
+                  params: params,
+                  l10n: l10n,
+                  onChanged: widget.onParamsChanged,
+                ),
+              ),
+            ),
       appBar: AppBar(
+        // No explicit leading: while `drawer` is non-null (compact layout) the
+        // AppBar implies a menu button that opens it; with `drawer` null (wide
+        // layout) no leading slot is rendered.
         title: _AppBarTitle(title: l10n.title, version: _packageVersion),
         actions: <Widget>[
           _ShareLinkButton(
@@ -241,10 +298,8 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           const SizedBox(width: 8),
         ],
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) {
-          if (constraints.maxWidth >= 820) {
-            return Row(
+      body: isWide
+          ? Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 SizedBox(
@@ -257,22 +312,17 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                 ),
                 Expanded(child: phonePreview),
               ],
-            );
-          }
-          return SingleChildScrollView(
-            child: Column(
-              children: <Widget>[
-                ControlsPanel(
-                  params: params,
-                  l10n: l10n,
-                  onChanged: widget.onParamsChanged,
-                ),
-                phonePreview,
-              ],
+            )
+          // Fullscreen demo: read the real body constraints so the scoped
+          // [MediaQuery] matches the actual render area (dropdown overlays /
+          // bottom sheets clamp correctly), while inheriting the body-local
+          // keyboard and safe-area insets.
+          : LayoutBuilder(
+              builder: (context, constraints) => buildScopedNavigator(
+                context,
+                size: constraints.biggest,
+              ),
             ),
-          );
-        },
-      ),
     );
   }
 }

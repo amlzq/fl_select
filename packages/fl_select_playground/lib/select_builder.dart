@@ -688,10 +688,12 @@ class _ResultPanelState extends State<_ResultPanel> {
 
     String format(Object? value) => value == null ? '—' : value.toString();
 
-    // The phone preview renders inside a [FittedBox], so the incoming layout
-    // constraints are unbounded (maxHeight = infinity). The scoped
-    // [MediaQuery] above the phone [Navigator] carries the true phone size
-    // (kPhoneContentSize), so measure the expanded height against it instead.
+    // In the wide layout the phone preview renders inside a [FittedBox], so
+    // the incoming layout constraints are unbounded (maxHeight = infinity);
+    // in the compact layout the demo fills the screen below the app bar. In
+    // both cases the scoped [MediaQuery] above the phone [Navigator] carries
+    // the effective screen size, so measure the expanded height against it
+    // instead of the constraints.
     final expandedHeight = MediaQuery.sizeOf(context).height * _expandedFactor;
 
     return AnimatedContainer(
