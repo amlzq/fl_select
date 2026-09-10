@@ -97,11 +97,10 @@ void main() {
     expect(value['sort'], ['recent']);
   });
 
-  testWidgets('flat entries without flatKey show an error card', (tester) async {
-    await pumpFilter(tester, {
-      'delegate': 'list',
-      'entries': _flatEntries,
-    });
+  testWidgets('flat entries without flatKey show an error card', (
+    tester,
+  ) async {
+    await pumpFilter(tester, {'delegate': 'list', 'entries': _flatEntries});
 
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
   });
