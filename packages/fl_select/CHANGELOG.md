@@ -1,4 +1,4 @@
-## Next
+## 0.12.2
 
 - **FEATURE** `toIdList()`: serialize a flat (category-less) selection into a list of value strings, the counterpart of `toQueryMap()` for single-level panels.
 
