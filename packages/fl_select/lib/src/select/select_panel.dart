@@ -150,6 +150,26 @@ class _SelectPanelState extends State<SelectPanel> {
       }
       _registerForwardingListeners();
     }
+    // A new delegate means a new select (e.g. switching tabs reuses this
+    // panel state inside a PopupSelectBar overlay). The search query is
+    // delegate-scoped, so clear it instead of leaking it into the other
+    // select.
+    if (widget.delegate != oldWidget.delegate) {
+      _resetSearchState();
+    }
+  }
+
+  /// Clears the search text, cancels any pending debounce and drops focus,
+  /// so a previously typed query does not filter the next delegate's entries.
+  void _resetSearchState() {
+    _debounceTimer?.cancel();
+    _searchQuery = '';
+    if (_searchController.text.isNotEmpty) {
+      _searchController.clear();
+    }
+    if (_searchFocusNode.hasFocus) {
+      _searchFocusNode.unfocus();
+    }
   }
 
   @override

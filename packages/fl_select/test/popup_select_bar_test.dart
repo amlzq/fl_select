@@ -359,5 +359,76 @@ void main() {
       await tester.pumpAndSettle();
       expect(controller.isSelectShowing, isTrue);
     });
+
+    testWidgets(
+        'switching tabs does not leak the search query into the other select',
+        (tester) async {
+      final controller = PopupSelectController();
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            appBar: PopupSelectBar(
+              tabs: const [
+                PopupTab(label: 'Fruits'),
+                PopupTab(label: 'Colors'),
+              ],
+              selectDelegates: [
+                ListSelectDelegate(
+                  searchEnabled: true,
+                  entriesLoader: () async => <SelectEntry<dynamic>>{
+                    SelectTextEntry<dynamic>.name(id: 'a', name: 'Apple'),
+                    SelectTextEntry<dynamic>.name(id: 'b', name: 'Banana'),
+                  },
+                ),
+                ListSelectDelegate(
+                  searchEnabled: true,
+                  entriesLoader: () async => <SelectEntry<dynamic>>{
+                    SelectTextEntry<dynamic>.name(id: 'c', name: 'Cherry'),
+                  },
+                ),
+              ],
+              onApplied: (_, __) {},
+              controller: controller,
+            ),
+            body: const SizedBox.expand(),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Fruits'));
+      await tester.pumpAndSettle();
+
+      await tester.enterText(find.byType(TextField), 'App');
+      // Wait out the search debounce (300 ms by default).
+      await tester.pump(const Duration(milliseconds: 350));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Apple'), findsOneWidget);
+      expect(find.text('Banana'), findsNothing);
+
+      // Switch to the other tab's select while the overlay is open.
+      await tester.tap(find.text('Colors'));
+      await tester.pumpAndSettle();
+
+      // The new select starts with an empty query: its entries are not
+      // filtered by "App" and the search field is cleared.
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        isEmpty,
+      );
+      expect(find.text('Cherry'), findsOneWidget);
+
+      // Switching back to the first select also starts with an empty query.
+      await tester.tap(find.text('Fruits'));
+      await tester.pumpAndSettle();
+
+      expect(
+        tester.widget<TextField>(find.byType(TextField)).controller!.text,
+        isEmpty,
+      );
+      expect(find.text('Apple'), findsOneWidget);
+      expect(find.text('Banana'), findsOneWidget);
+    });
   });
 }

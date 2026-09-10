@@ -2,6 +2,8 @@
 
 - **BUGFIX** delegate-level theme fields now merge field-wise into the ambient `SelectThemeData` instead of replacing it wholesale.
 
+- **BUGFIX** the select panel's search query no longer leaks into another delegate when switching tabs in a `PopupSelectBar` overlay.
+
 ## 0.12.1
 
 - **BUGFIX** the delegate-level `actionBarTheme` now styles the built-in action bar in every layout.
