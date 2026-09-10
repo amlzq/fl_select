@@ -11,7 +11,7 @@ workspace:
   - packages/fl_select_playground
 
 dev_dependencies:
-  melos: ^8.3.0
+  melos: ^8.7.0
 
 melos:
   commands:

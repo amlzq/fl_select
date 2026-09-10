@@ -2,13 +2,10 @@ import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Direct coverage for the four delegates introduced by the split:
+/// Direct coverage for the delegates introduced by the split:
 /// [WrapSelectDelegate], [TabNavSelectDelegate], [SideNavSelectDelegate]
-/// and [ExpandableSelectDelegate]. Each new delegate accepts exactly one
-/// data shape and asserts on the other; the deprecated dual-mode paths in
-/// [GridSelectDelegate], [FlattenSelectDelegate] and [ListSelectDelegate]
-/// are covered by their existing test files.
-
+/// and [ExpandableSelectDelegate]. Every delegate accepts exactly one data
+/// shape and asserts on the other.
 Set<SelectEntry> get _flatEntries => {
       SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
       SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
@@ -168,6 +165,24 @@ void main() {
     test('asserts on flat data', () {
       expect(
         () => ExpandableSelectDelegate(entries: _flatEntries),
+        throwsAssertionError,
+      );
+    });
+  });
+
+  group('GridSelectDelegate', () {
+    test('asserts on category data', () {
+      expect(
+        () => GridSelectDelegate(crossAxisCount: 3, entries: _categoryEntries),
+        throwsAssertionError,
+      );
+    });
+  });
+
+  group('ListSelectDelegate', () {
+    test('asserts on category data', () {
+      expect(
+        () => ListSelectDelegate(entries: _categoryEntries),
         throwsAssertionError,
       );
     });

@@ -1008,9 +1008,6 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
   ///   [SelectWrapLayout].
   /// - [ExpandableSelectDelegate] falls back to its `defaultLayout`, then to
   ///   a [SelectListLayout].
-  /// - [GridSelectDelegate] and [ListSelectDelegate] with two-level data
-  ///   (deprecated) forward to [TabNavSelectDelegate] and
-  ///   [ExpandableSelectDelegate] respectively.
   final SelectLayout? layout;
 
   SelectCategoryEntry<E> copyWith({

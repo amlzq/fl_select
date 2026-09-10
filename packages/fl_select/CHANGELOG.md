@@ -1,3 +1,7 @@
+## Next
+
+- **BREAKING** remove the dual-mode entry points deprecated since 0.11.0: `FlattenSelectDelegate` / `FlattenSelect` (use `SideNavSelectDelegate` for two-level data or `WrapSelectDelegate` for flat data), two-level data on `GridSelectDelegate` / `ListSelectDelegate` (they now assert on category data; use `TabNavSelectDelegate` / `ExpandableSelectDelegate` instead) and the `SelectChipLayout` alias (use `SelectWrapLayout`) ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0110)).
+
 ## 0.12.2
 
 - **FEATURE** `toIdList()`: serialize a flat (category-less) selection into a list of value strings, the counterpart of `toQueryMap()` for single-level panels.

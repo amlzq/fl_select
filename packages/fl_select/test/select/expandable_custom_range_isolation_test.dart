@@ -2,7 +2,7 @@ import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Builds a [SelectView] backed by a [ListSelectDelegate] with several
+/// Builds a [SelectView] backed by an [ExpandableSelectDelegate] with several
 /// categories, each owning its own custom range entry. All custom entries share
 /// the id `custom` and the whole level-1 selection set is handed to every
 /// category view, so this exercises the per-category scoping that prevents a
@@ -11,7 +11,7 @@ Widget _harness() {
   return MaterialApp(
     home: Scaffold(
       body: SelectView(
-        delegate: ListSelectDelegate(
+        delegate: ExpandableSelectDelegate(
           selectionMode: SelectionMode.single,
           entriesLoader: () async => {
             SelectCategoryEntry.children(
@@ -58,7 +58,7 @@ void main() {
     await tester.pumpWidget(_harness());
     await tester.pumpAndSettle();
 
-    // All three categories are rendered as expanded tiles in ListSelect.
+    // All three categories are rendered as expanded tiles in ExpandableSelect.
     expect(find.text('Cate 1'), findsOneWidget);
     expect(find.text('Cate 3'), findsOneWidget);
     expect(find.text('Cate 4'), findsOneWidget);

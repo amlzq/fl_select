@@ -34,7 +34,7 @@ GridSelectDelegate(
 );
 ```
 
-Rules: the builder renders its own selected-state visuals from `selected` and wires `onTap` (e.g. via `InkWell`) to its own gesture handler; custom range entries are not passed to the builder and keep rendering as the built-in min/max input field. Only used when rendering flat data (the deprecated two-level fallbacks on `ListSelectDelegate` / `GridSelectDelegate` do not forward it); two-level delegates customize per-category rendering via `category.layout` instead. `SelectChip` is publicly exported so builders can reuse the exact default chip visuals.
+Rules: the builder renders its own selected-state visuals from `selected` and wires `onTap` (e.g. via `InkWell`) to its own gesture handler; custom range entries are not passed to the builder and keep rendering as the built-in min/max input field. Only used when rendering flat data; two-level delegates customize per-category rendering via `category.layout` instead. `SelectChip` is publicly exported so builders can reuse the exact default chip visuals.
 
 Underlying chip widgets (0.12.0 split): `SelectChipBar` renders a single fixed-height row (`kSelectChipBarHeight`) with the title to its left; `SelectWrapView` renders the wrapping multi-row form — what `WrapSelectDelegate` and `SelectWrapLayout` render internally — and always stacks the title above the chips. `SelectChipBar.isWrapable` / `runSpacing` / `direction` are deprecated in favor of `SelectWrapView`; the skeleton split mirrors it (`SelectChipBarSkeleton` wrap form → `SelectWrapViewSkeleton`). `SelectChip`, `SelectChipBarStyle` and `resolveSelectChipBarStyle` are publicly exported so custom `itemBuilder`s can reuse the built-in chip and its three-level style resolution. Style a `WrapSelectDelegate`'s chips via its `chipBarTheme` (`SelectChipBarTheme`: `variant` (filled/outlined), `chipColor`, `selectedChipColor`, `labelStyle`, `selectedLabelStyle`, `backgroundColor`, `padding`). Widget tests on built-in delegate trees should assert `find.byType(SelectWrapView)`, not `SelectChipBar`.
 
@@ -48,8 +48,6 @@ Underlying chip widgets (0.12.0 split): `SelectChipBar` renders a single fixed-h
 | `ExpandableSelectDelegate` | One expandable group per category; header/footer entries render as chip bars around the expanded content. |
 
 `TabNavSelectDelegate`, `SideNavSelectDelegate` and `ExpandableSelectDelegate` badge a category (tab / sidebar item / expansion tile) that holds a real selection — driven by `SelectController.realSelectedCategories` (see [entry-points.md](entry-points.md)).
-
-Deprecated dual-mode paths (0.11.0, still working via forwarding with a one-time warning): `ListSelectDelegate` / `GridSelectDelegate` fed two-level data forward to `ExpandableSelectDelegate` / `TabNavSelectDelegate` (without forwarding `itemBuilder`); `FlattenSelectDelegate` maps to `SideNavSelectDelegate` (two-level) / `WrapSelectDelegate` (flat). See the package's MIGRATION.md for the diffs.
 
 Scrolling (0.11.1–0.12.0): every scrollable body uses `ChainingClampingScrollPhysics` — a touch drag past an edge hands the leftover drag (and fling momentum) to the enclosing page-level scrollable, restoring the native nested-scrolling feel with no changes required on hosting pages. Since the next release, chaining follows the inner-first order of `NestedScrollView` and browsers: dragging back scrolls the body first, and the leftover only reaches the enclosing page once the body hits its edge. In `SideNavSelectDelegate`, tapping a sidebar item animates that category's full section (including its top padding) to the top of the right column, and the sidebar highlights the category at the right column's scroll position.
 
@@ -108,7 +106,7 @@ In every delegate except `CascadingSelectDelegate`, each `SelectCategoryEntry.la
 | --- | --- | --- |
 | `SelectListLayout` | Vertical list of tiles; a custom range entry becomes an input field | `toText` (separator between min/max fields, default `'-'`) |
 | `SelectGridLayout` | Grid of tiles | `crossAxisCount` (required), `mainAxisSpacing`, `crossAxisSpacing`, `childAspectRatio`, `toText` |
-| `SelectWrapLayout` (deprecated alias: `SelectChipLayout`) | Wrapping row of chips | `spacing`, `runSpacing` |
+| `SelectWrapLayout` | Wrapping row of chips | `spacing`, `runSpacing` |
 | `SelectCounterLayout` | Spin-box (`-` value `+`) stepping through `SelectTextEntry` children ("Any", "1", "1+", "2", ...) | — |
 | `SelectRangeLayout` | "Price-range" control: range slider over two synced text fields; the category must expose exactly one custom `SelectRangeEntry` | `toText` |
 

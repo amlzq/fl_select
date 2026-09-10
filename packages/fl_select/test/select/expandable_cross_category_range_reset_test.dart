@@ -15,7 +15,7 @@ Widget _harness(List<SelectEntries> changes) {
   return MaterialApp(
     home: Scaffold(
       body: SelectView(
-        delegate: ListSelectDelegate(
+        delegate: ExpandableSelectDelegate(
           entries: {
             SelectCategoryEntry.children(
               id: 'cate2',

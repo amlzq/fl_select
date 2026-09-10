@@ -2,9 +2,10 @@ import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Builds a [SelectView] backed by a [ListSelectDelegate] so we can assert how
-/// [ListSelect] renders each category's `header`/`footer` entries.
-Widget _listHarness(
+/// Builds a [SelectView] backed by an [ExpandableSelectDelegate] so we can
+/// assert how [ExpandableSelect] renders each category's `header`/`footer`
+/// entries.
+Widget _expandableHarness(
   Set<SelectEntry> entries, {
   SelectionMode selectionMode = SelectionMode.multiple,
   void Function(Set<SelectEntry>)? onChanged,
@@ -12,7 +13,7 @@ Widget _listHarness(
   return MaterialApp(
     home: Scaffold(
       body: SelectView(
-        delegate: ListSelectDelegate(
+        delegate: ExpandableSelectDelegate(
           selectionMode: selectionMode,
           entriesLoader: () async => entries,
         ),
@@ -23,7 +24,7 @@ Widget _listHarness(
 }
 
 void main() {
-  group('ListSelect category header/footer', () {
+  group('ExpandableSelect category header/footer', () {
     SelectCategoryEntry<dynamic> categoryWithHeaderFooter() =>
         SelectCategoryEntry<dynamic>(
           id: 'c1',
@@ -56,7 +57,7 @@ void main() {
 
     testWidgets('renders header/footer chip bars inside the expanded tile',
         (tester) async {
-      await tester.pumpWidget(_listHarness({categoryWithHeaderFooter()}));
+      await tester.pumpWidget(_expandableHarness({categoryWithHeaderFooter()}));
       await tester.pumpAndSettle();
 
       // Category content (list) plus header and footer chip bars, all inside
@@ -87,7 +88,7 @@ void main() {
         (tester) async {
       final applied = <Set<SelectEntry>>[];
       await tester.pumpWidget(
-        _listHarness(
+        _expandableHarness(
           {categoryWithHeaderFooter()},
           onChanged: applied.add,
         ),
@@ -109,7 +110,7 @@ void main() {
     });
 
     testWidgets('collapsing the tile hides header/footer bars', (tester) async {
-      await tester.pumpWidget(_listHarness({categoryWithHeaderFooter()}));
+      await tester.pumpWidget(_expandableHarness({categoryWithHeaderFooter()}));
       await tester.pumpAndSettle();
 
       expect(find.text('H1'), findsOneWidget);

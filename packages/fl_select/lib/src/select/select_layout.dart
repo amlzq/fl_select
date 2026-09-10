@@ -112,28 +112,6 @@ class SelectWrapLayout extends SelectLayout {
   int get hashCode => Object.hash(spacing, runSpacing);
 }
 
-/// Deprecated alias of [SelectWrapLayout].
-///
-/// `SelectChipLayout` was renamed to [SelectWrapLayout] to align with the
-/// wrap-style rendering (a wrapped chip group, [SelectWrapView]). The old name is kept
-/// as a deprecated subclass of [SelectWrapLayout] for backward
-/// compatibility and **will be removed in a future minor version**. The two
-/// are fully interchangeable — equal values compare equal and render
-/// identically — so migrating is a pure rename.
-@Deprecated(
-  'Use SelectWrapLayout instead. Will be removed in a future minor version.',
-)
-class SelectChipLayout extends SelectWrapLayout {
-  /// Creates a deprecated chip wrap layout; use [SelectWrapLayout] instead.
-  ///
-  /// Defaults `spacing`/`runSpacing` to 12.0 (the historical default) for
-  /// backward compatibility, unlike [SelectWrapLayout] which defaults to 0.0.
-  const SelectChipLayout({
-    super.spacing = 12.0,
-    super.runSpacing = 12.0,
-  });
-}
-
 /// Counter (spin-box) layout for the children of a [SelectCategoryEntry].
 ///
 /// Rendered by [SelectCounter], which filters entries for [SelectTextEntry]

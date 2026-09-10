@@ -9,8 +9,8 @@ import 'widgets.dart';
 /// (`category.layout ?? fallbackLayout`) to the matching select widget.
 ///
 /// This is an internal building block shared by the two-level select bodies
-/// (tab-nav, side-nav, expandable and the deprecated compatibility paths) so
-/// the five layout flavors are mapped to widgets in exactly one place.
+/// (tab-nav, side-nav and expandable) so the five layout flavors are mapped
+/// to widgets in exactly one place.
 class SelectCategoryContentView extends StatelessWidget {
   /// Creates the content view for [category].
   const SelectCategoryContentView({

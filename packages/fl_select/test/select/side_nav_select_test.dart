@@ -2,13 +2,13 @@ import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Builds a [SelectView] backed by a [FlattenSelectDelegate] so we can assert
-/// how [FlattenSelect] consumes each [SelectCategoryEntry.layout].
-Widget _flattenHarness(Set<SelectEntry> entries) {
+/// Builds a [SelectView] backed by a [SideNavSelectDelegate] so we can assert
+/// how [SideNavSelect] consumes each [SelectCategoryEntry.layout].
+Widget _sideNavHarness(Set<SelectEntry> entries) {
   return MaterialApp(
     home: Scaffold(
       body: SelectView(
-        delegate: FlattenSelectDelegate(
+        delegate: SideNavSelectDelegate(
           entriesLoader: () async => entries,
         ),
         onChanged: (_) {},
@@ -20,7 +20,7 @@ Widget _flattenHarness(Set<SelectEntry> entries) {
 SelectCategoryEntry<dynamic> _category(
   String id,
   String name,
-  SelectLayout layout, {
+  SelectLayout? layout, {
   Set<SelectEntry> children = const {},
 }) {
   return SelectCategoryEntry<dynamic>(
@@ -32,71 +32,14 @@ SelectCategoryEntry<dynamic> _category(
 }
 
 void main() {
-  group('FlattenSelect flat structure', () {
-    Widget harness(Set<SelectEntry> entries) {
-      return MaterialApp(
-        home: Scaffold(
-          body: SelectView(
-            delegate: FlattenSelectDelegate(
-              entriesLoader: () async => entries,
-            ),
-            onChanged: (_) {},
-          ),
-        ),
-      );
-    }
-
-    testWidgets('renders a SelectWrapView without a sidebar', (tester) async {
+  group('SideNavSelect consumes category.layout', () {
+    testWidgets('defaults to a wrap when no layout is set', (tester) async {
       await tester.pumpWidget(
-        harness({
-          SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
-          SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
-        }),
-      );
-      await tester.pumpAndSettle();
-
-      expect(find.byType(SelectWrapView), findsOneWidget);
-      expect(find.byType(SelectSideBar), findsNothing);
-      expect(find.text('A 1'), findsOneWidget);
-      expect(find.text('A 2'), findsOneWidget);
-    });
-
-    testWidgets('tapping a flat chip reports a selection', (tester) async {
-      final applied = <Set<SelectEntry>>[];
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SelectView(
-              delegate: FlattenSelectDelegate(
-                selectionMode: SelectionMode.single,
-                entriesLoader: () async => {
-                  SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
-                  SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
-                },
-              ),
-              onChanged: applied.add,
-            ),
-          ),
-        ),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('A 2'));
-      await tester.pumpAndSettle();
-
-      expect(applied, hasLength(1));
-      expect(applied.single.map((e) => e.id), contains('a2'));
-    });
-  });
-
-  group('FlattenSelect consumes category.layout', () {
-    testWidgets('defaults to a grid when no layout is set', (tester) async {
-      await tester.pumpWidget(
-        _flattenHarness({
+        _sideNavHarness({
           _category(
             'c1',
             'C1',
-            const SelectGridLayout(crossAxisCount: 2),
+            null,
             children: {
               SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
               SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-2', name: 'Two'),
@@ -106,13 +49,13 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(SelectGridView), findsOneWidget);
+      expect(find.byType(SelectWrapView), findsOneWidget);
       expect(find.text('One'), findsOneWidget);
     });
 
     testWidgets('renders SelectListView for SelectListLayout', (tester) async {
       await tester.pumpWidget(
-        _flattenHarness({
+        _sideNavHarness({
           _category(
             'c1',
             'C1',
@@ -132,7 +75,7 @@ void main() {
 
     testWidgets('renders SelectGridView for SelectGridLayout', (tester) async {
       await tester.pumpWidget(
-        _flattenHarness({
+        _sideNavHarness({
           _category(
             'c1',
             'C1',
@@ -152,7 +95,7 @@ void main() {
 
     testWidgets('renders SelectWrapView for SelectWrapLayout', (tester) async {
       await tester.pumpWidget(
-        _flattenHarness({
+        _sideNavHarness({
           _category(
             'c1',
             'C1',
@@ -173,7 +116,7 @@ void main() {
     testWidgets('renders SelectRangeView for SelectRangeLayout',
         (tester) async {
       await tester.pumpWidget(
-        _flattenHarness({
+        _sideNavHarness({
           _category(
             'c1',
             'C1',
@@ -192,7 +135,7 @@ void main() {
     testWidgets('renders SelectCounter for SelectCounterLayout',
         (tester) async {
       await tester.pumpWidget(
-        _flattenHarness({
+        _sideNavHarness({
           _category(
             'c1',
             'C1',
@@ -211,7 +154,7 @@ void main() {
 
     testWidgets('renders each category with its own layout', (tester) async {
       await tester.pumpWidget(
-        _flattenHarness({
+        _sideNavHarness({
           _category(
             'c1',
             'C1',
@@ -238,7 +181,7 @@ void main() {
     });
   });
 
-  group('FlattenSelect category header/footer', () {
+  group('SideNavSelect category header/footer', () {
     SelectCategoryEntry<dynamic> categoryWithHeaderFooter() =>
         SelectCategoryEntry<dynamic>(
           id: 'c1',
@@ -272,7 +215,7 @@ void main() {
 
     testWidgets('renders header/footer chip bars around the category content',
         (tester) async {
-      await tester.pumpWidget(_flattenHarness({categoryWithHeaderFooter()}));
+      await tester.pumpWidget(_sideNavHarness({categoryWithHeaderFooter()}));
       await tester.pumpAndSettle();
 
       // Category content (list) plus header and footer chip bars
@@ -296,11 +239,11 @@ void main() {
 
     testWidgets('renders the category title once above the header chips',
         (tester) async {
-      await tester.pumpWidget(_flattenHarness({categoryWithHeaderFooter()}));
+      await tester.pumpWidget(_sideNavHarness({categoryWithHeaderFooter()}));
       await tester.pumpAndSettle();
 
       // 'C1' appears twice: once in the side bar and once as the category
-      // title rendered by the flatten view itself.
+      // title rendered by the side-nav body itself.
       expect(find.text('C1'), findsNWidgets(2));
 
       // The inner list view renders no title of its own (showTitle: false).
@@ -330,7 +273,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SelectView(
-              delegate: FlattenSelectDelegate(
+              delegate: SideNavSelectDelegate(
                 selectionMode: SelectionMode.multiple,
                 entriesLoader: () async => {categoryWithHeaderFooter()},
               ),

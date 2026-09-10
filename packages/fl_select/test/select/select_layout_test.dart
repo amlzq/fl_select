@@ -91,38 +91,6 @@ void main() {
     });
   });
 
-  group('SelectChipLayout (deprecated alias)', () {
-    test('is a SelectWrapLayout', () {
-      // ignore: deprecated_member_use_from_same_package
-      const layout = SelectChipLayout();
-      expect(layout, isA<SelectWrapLayout>());
-      expect(layout, isA<SelectLayout>());
-    });
-
-    test('is interchangeable with SelectWrapLayout', () {
-      // ignore: deprecated_member_use_from_same_package
-      const legacy = SelectChipLayout(spacing: 8, runSpacing: 8);
-      expect(legacy, equals(const SelectWrapLayout(spacing: 8, runSpacing: 8)));
-      expect(
-        legacy.hashCode,
-        equals(const SelectWrapLayout(spacing: 8, runSpacing: 8).hashCode),
-      );
-      expect(
-        const SelectWrapLayout(spacing: 8, runSpacing: 8),
-        equals(legacy),
-      );
-    });
-
-    test('defaults are applied', () {
-      // ignore: deprecated_member_use_from_same_package
-      const layout = SelectChipLayout();
-      // Deprecated alias keeps the historical default (12.0) for backward
-      // compatibility; SelectWrapLayout defaults to 0.0.
-      expect(layout.spacing, 12.0);
-      expect(layout.runSpacing, 12.0);
-    });
-  });
-
   group('SelectRangeLayout', () {
     test('== and hashCode: equal layouts are identical', () {
       const a = SelectRangeLayout();
