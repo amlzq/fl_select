@@ -1,6 +1,7 @@
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import 'controls_panel.dart';
 import 'entry_repository.dart';
@@ -51,6 +52,21 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
   // The demo data set is language independent; switching the playground
   // language only affects the select's built-in strings.
   final EntryRepository _repo = EntryRepository();
+
+  /// Version of the playground app itself, shown under the app bar title.
+  /// Null until the async platform lookup completes.
+  String? _packageVersion;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadPackageVersion();
+  }
+
+  Future<void> _loadPackageVersion() async {
+    final info = await PackageInfo.fromPlatform();
+    if (mounted) setState(() => _packageVersion = info.version);
+  }
 
   /// Cache of reusable delegates. See [buildDelegate] for why reusing the same
   /// instance across rebuilds is required (selection restoration).
@@ -196,7 +212,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.title),
+        title: _AppBarTitle(title: l10n.title, version: _packageVersion),
         actions: <Widget>[
           _ShareLinkButton(
             tooltip: l10n.shareTooltip,
@@ -262,6 +278,35 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           );
         },
       ),
+    );
+  }
+}
+
+/// App bar title with the app version as a small subtitle line. The
+/// subtitle stays hidden until the async version lookup completes.
+class _AppBarTitle extends StatelessWidget {
+  final String title;
+
+  final String? version;
+
+  const _AppBarTitle({required this.title, this.version});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text(title),
+        if (version != null)
+          Text(
+            'v$version',
+            style: theme.textTheme.labelSmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+      ],
     );
   }
 }

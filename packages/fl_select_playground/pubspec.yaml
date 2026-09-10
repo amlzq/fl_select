@@ -16,8 +16,9 @@ dependencies:
     sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  intl: any
-  fl_select: ^0.12.0
+  intl: ^0.20.2
+  fl_select: ^0.12.2
+  package_info_plus: ^8.3.1
 
 dev_dependencies:
   flutter_test:
@@ -29,4 +30,17 @@ flutter:
   generate: true
   assets:
     - assets/cascading.json
+
+  # Roboto is bundled locally so the web engine (CanvasKit) never falls back
+  # to fetching it from fonts.gstatic.com — which fails in offline or
+  # network-restricted environments. Files copied from the Flutter SDK cache
+  # (bin/cache/artifacts/material_fonts); see Roboto_LICENSE.txt.
+  fonts:
+    - family: Roboto
+      fonts:
+        - asset: assets/fonts/Roboto-Regular.ttf
+        - asset: assets/fonts/Roboto-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Roboto-Bold.ttf
+          weight: 700
 
