@@ -10,10 +10,10 @@ agent ──JSON payload──▶ Select (fl_select UI) ──selection──▶
 
 ## How it works
 
-1. You register [`FlSelectCatalogItems.asCatalog()`] (or `.all`) with your
+1. You register `FlSelectCatalogItems.asCatalog()` (or `.all`) with your
    GenUI `SurfaceController` alongside the basic catalog.
 2. Your agent's system prompt includes
-   [`FlSelectCatalogItems.systemPromptFragment`], which teaches it the
+   `FlSelectCatalogItems.systemPromptFragment`, which teaches it the
    `Select` vocabulary.
 3. When the user needs to pick values, the agent emits a
    `Select` payload — a `delegate` (list / grid / wrap / cascading /

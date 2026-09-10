@@ -16,11 +16,11 @@ environment:
 resolution: workspace
 
 dependencies:
-  fl_select: ^0.12.0
+  fl_select: ^0.12.2
   flutter:
     sdk: flutter
   genui: ^0.10.2
-  json_schema_builder: ^0.1.6
+  json_schema_builder: ^0.1.7
 
 dev_dependencies:
   flutter_test:

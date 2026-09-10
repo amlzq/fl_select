@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
 
 /// A payload exactly like one an AI agent would emit for `Select`
-/// (see [FlSelectCatalogItems.systemPromptFragment]).
+/// (see `FlSelectCatalogItems.systemPromptFragment`).
 const agentPayload = '''
 {
   "delegate": "sideNav",
