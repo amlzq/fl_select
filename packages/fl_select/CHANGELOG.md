@@ -1,4 +1,4 @@
-## Next
+## 0.12.1
 
 - **BUGFIX** the delegate-level `actionBarTheme` now styles the built-in action bar in every layout.
 

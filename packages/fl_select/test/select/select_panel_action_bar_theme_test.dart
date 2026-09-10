@@ -52,8 +52,7 @@ void main() {
   });
 
   group('SelectPanel actionBarTheme injection', () {
-    testWidgets(
-        'delegate actionBarTheme.backgroundColor styles the action bar',
+    testWidgets('delegate actionBarTheme.backgroundColor styles the action bar',
         (tester) async {
       await tester.pumpWidget(_panelHarness(
         delegateActionBarTheme:
@@ -75,8 +74,7 @@ void main() {
             const SelectActionBarTheme(backgroundColor: _amber),
         selectTheme: SelectThemeData(
           ThemeData.light(),
-          actionBarTheme:
-              const SelectActionBarTheme(padding: _ambientPadding),
+          actionBarTheme: const SelectActionBarTheme(padding: _ambientPadding),
         ),
       ));
       await tester.pumpAndSettle();
