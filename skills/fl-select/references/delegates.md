@@ -10,15 +10,15 @@ A `SelectDelegate` controls both data loading (`entries` directly or `entriesLoa
 | `GridSelectDelegate` | Grid body (`crossAxisCount` required). |
 | `WrapSelectDelegate` | Wrapable chip bar — the go-to for filter bars. |
 
-### Custom item widgets — `itemBuilder` (0.12.0)
+### Custom item widgets — `itemBuilder` (0.12.0; category delegates + `categoryId` + null fallback since 0.13.0)
 
-Each flat delegate accepts an `itemBuilder` (`SelectItemBuilder`) that fully replaces the default item widget — list tile, grid tile or chip:
+The flat delegates (`ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate`) and the three layout-based category delegates (`TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate`) accept an `itemBuilder` (`SelectItemBuilder`) that fully replaces the default item widget — list tile, grid tile or chip:
 
 ```dart
 GridSelectDelegate(
   crossAxisCount: 3,
   entriesLoader: _fetchPrice,
-  itemBuilder: (context, entry, {required selected, required onTap}) {
+  itemBuilder: (context, entry, {required selected, required onTap, categoryId}) {
     return InkWell(
       onTap: onTap, // keeps the library's normal selection flow
       child: Container(
@@ -34,7 +34,9 @@ GridSelectDelegate(
 );
 ```
 
-Rules: the builder renders its own selected-state visuals from `selected` and wires `onTap` (e.g. via `InkWell`) to its own gesture handler; custom range entries are not passed to the builder and keep rendering as the built-in min/max input field. Only used when rendering flat data; two-level delegates customize per-category rendering via `category.layout` instead. `SelectChip` is publicly exported so builders can reuse the exact default chip visuals.
+Rules: the builder renders its own selected-state visuals from `selected` and wires `onTap` (e.g. via `InkWell`) to its own gesture handler; custom range entries are not passed to the builder and keep rendering as the built-in min/max input field. `categoryId` carries the owning `SelectCategoryEntry.id` on category delegates and is null on flat delegates, so one builder can branch per category (e.g. render price tiles only for the price category and return null elsewhere). Returning **null** falls back to the default item widget — customize only some entries or categories while keeping the built-in visuals elsewhere.
+
+Scope on category delegates: applies to categories laid out as list, grid or wrap (via `category.layout`); the range-slider and counter layouts keep their built-in controls, and a category's header/footer chips are never passed to the builder. `CascadingSelectDelegate` ignores `itemBuilder` (its nodes render per level; a node builder may arrive later). `SelectChip` is publicly exported so builders can reuse the exact default chip visuals.
 
 Underlying chip widgets (0.12.0 split): `SelectChipBar` renders a single fixed-height row (`kSelectChipBarHeight`) with the title to its left; `SelectWrapView` renders the wrapping multi-row form — what `WrapSelectDelegate` and `SelectWrapLayout` render internally — and always stacks the title above the chips. `SelectChipBar.isWrapable` / `runSpacing` / `direction` are deprecated in favor of `SelectWrapView`; the skeleton split mirrors it (`SelectChipBarSkeleton` wrap form → `SelectWrapViewSkeleton`). `SelectChip`, `SelectChipBarStyle` and `resolveSelectChipBarStyle` are publicly exported so custom `itemBuilder`s can reuse the built-in chip and its three-level style resolution. Style a `WrapSelectDelegate`'s chips via its `chipBarTheme` (`SelectChipBarTheme`: `variant` (filled/outlined), `chipColor`, `selectedChipColor`, `labelStyle`, `selectedLabelStyle`, `backgroundColor`, `padding`). Widget tests on built-in delegate trees should assert `find.byType(SelectWrapView)`, not `SelectChipBar`.
 

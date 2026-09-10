@@ -252,6 +252,7 @@ class TabNavSelectState extends State<TabNavSelect> {
       delegate: delegate,
       radioBuilder: delegate.radioBuilder,
       checkboxBuilder: delegate.checkboxBuilder,
+      itemBuilder: delegate.itemBuilder,
       onTerminalItemTap: _onTerminalItemTap,
     );
   }

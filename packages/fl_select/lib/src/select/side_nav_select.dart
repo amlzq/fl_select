@@ -482,6 +482,7 @@ class SideNavSelectState extends State<SideNavSelect> {
           controller?.selectedEntriesForParent(category.id, level: 1) ?? {},
       fallbackLayout: delegate.defaultLayout ?? const SelectWrapLayout(),
       delegate: delegate,
+      itemBuilder: delegate.itemBuilder,
       onTerminalItemTap: _onTerminalItemTap,
     );
 

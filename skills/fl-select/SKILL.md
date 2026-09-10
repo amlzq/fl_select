@@ -16,7 +16,7 @@ A Flutter package for building filter bars, cascading menus, and pickers.
 2. **Delegates** decide *how* entries are laid out — seven single-purpose styles:
    flat data: `ListSelectDelegate` · `GridSelectDelegate` · `WrapSelectDelegate`; two-level (category) data: `CascadingSelectDelegate` · `TabNavSelectDelegate` · `SideNavSelectDelegate` · `ExpandableSelectDelegate`.
 
-Any delegate plugs into any entry point — there is exactly one delegate parameter, no per-entry-point variants. Custom layouts come from subclassing `SelectDelegate`, not from new entry points; custom item widgets come from `itemBuilder` on the flat delegates, not from subclassing.
+Any delegate plugs into any entry point — there is exactly one delegate parameter, no per-entry-point variants. Custom layouts come from subclassing `SelectDelegate`, not from new entry points; custom item widgets come from `itemBuilder` on the flat and layout-based category delegates (not `CascadingSelectDelegate`), not from subclassing.
 
 Data reaches the delegate either synchronously (`entries`, `selectedEntries`, `resetEntries` passed directly — static data renders on the first frame, no skeleton) or asynchronously via loaders (`entriesLoader`: `Future<SelectEntries> Function()`, where `SelectEntries` is `Set<SelectEntry>`). Pass exactly one of `entries` / `entriesLoader`; sync data is fixed for a delegate's lifetime — create a new delegate when the data changes.
 
@@ -60,7 +60,7 @@ final SelectEntries? selected = await showSelect(
 ## Common pitfalls
 
 - `GridSelectDelegate` requires `crossAxisCount`.
-- The flat delegates (`ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate`) accept an `itemBuilder` (0.12.0) that fully replaces each item widget — render your own selected state from `selected` and wire `onTap` so taps flow through the library's normal selection flow; custom range entries still render as the built-in min/max input.
+- The flat delegates (`ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate`) and the layout-based category delegates (`TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate`) accept an `itemBuilder` that fully replaces each item widget — render your own selected state from `selected`, wire `onTap` so taps flow through the library's normal selection flow, and branch per category on `categoryId` (the owning category's id; null on flat delegates). Returning null falls back to the default item widget; custom range entries still render as the built-in min/max input, the range-slider/counter category layouts keep their built-in controls, header/footer chips are not covered, and `CascadingSelectDelegate` ignores the builder.
 - `SelectChipBar.isWrapable` is deprecated (0.12.0): `SelectChipBar` is now single-row only; use `SelectWrapView` for the wrapping multi-row form (`WrapSelectDelegate` renders it internally).
 - `SelectController.badgedCategories` was renamed to `realSelectedCategories` (0.12.0); the old name is a deprecated alias. It returns the categories holding at least one non-"Any" selection and drives category badges and TabNavSelect's initial tab focus.
 - Every delegate is single-purpose: `ListSelectDelegate` / `GridSelectDelegate` accept flat data only and assert on two-level data (use `ExpandableSelectDelegate` / `TabNavSelectDelegate` for categories); `FlattenSelectDelegate` is removed (use `SideNavSelectDelegate` for two-level or `WrapSelectDelegate` for flat).

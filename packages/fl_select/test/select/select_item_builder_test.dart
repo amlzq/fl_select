@@ -28,11 +28,34 @@ class _CustomItem extends StatelessWidget {
 
 /// Builds a [_CustomItem] showing the entry's name.
 SelectItemBuilder get _itemBuilder =>
-    (context, entry, {required bool selected, required onTap}) => _CustomItem(
+    (context, entry, {required bool selected, required onTap, categoryId}) =>
+        _CustomItem(
           label: entry.name ?? '',
           selected: selected,
           onTap: onTap,
         );
+
+/// Builds a [_CustomItem] whose label carries the owning category id, so
+/// tests can assert the `categoryId` passed to the builder.
+SelectItemBuilder get _categoryIdItemBuilder =>
+    (context, entry, {required bool selected, required onTap, categoryId}) =>
+        _CustomItem(
+          label: '${entry.name ?? ''}@${categoryId ?? 'null'}',
+          selected: selected,
+          onTap: onTap,
+        );
+
+/// Returns null for entries owned by category `catA` so they fall back to
+/// the default item widget; every other category renders a [_CustomItem].
+SelectItemBuilder get _partialItemBuilder =>
+    (context, entry, {required bool selected, required onTap, categoryId}) =>
+        categoryId == 'catA'
+            ? null
+            : _CustomItem(
+                label: entry.name ?? '',
+                selected: selected,
+                onTap: onTap,
+              );
 
 /// Flat entries: three regular items plus a trailing custom range entry.
 ///
@@ -44,6 +67,46 @@ Set<SelectEntry> _flatEntries() => {
       SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
       SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
       SelectRangeEntry.custom(name: 'Custom'),
+    };
+
+/// Two-level entries: two list-layout categories, so category-based
+/// delegates have two switchable groups of children.
+Set<SelectEntry> _categoryEntries() => {
+      SelectCategoryEntry<dynamic>.children(
+        id: 'catA',
+        name: 'Tab A',
+        layout: const SelectListLayout(),
+        children: {
+          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+          SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+          SelectTextEntry<dynamic>.name(id: 'c', name: 'C'),
+        },
+      ),
+      SelectCategoryEntry<dynamic>.children(
+        id: 'catB',
+        name: 'Tab B',
+        layout: const SelectListLayout(),
+        children: {
+          SelectTextEntry<dynamic>.name(id: 'd', name: 'D'),
+          SelectTextEntry<dynamic>.name(id: 'e', name: 'E'),
+          SelectTextEntry<dynamic>.name(id: 'f', name: 'F'),
+        },
+      ),
+    };
+
+/// Two-level entries whose categories render as wrapped chips, exercising
+/// the chip-host path of the item builder.
+Set<SelectEntry> _wrapCategoryEntries() => {
+      SelectCategoryEntry<dynamic>.children(
+        id: 'catA',
+        name: 'Group A',
+        layout: const SelectWrapLayout(),
+        children: {
+          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+          SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+          SelectTextEntry<dynamic>.name(id: 'c', name: 'C'),
+        },
+      ),
     };
 
 Widget _harness(
@@ -300,6 +363,119 @@ void main() {
       expect(find.byType(_CustomItem), findsNothing);
       expect(find.text('A'), findsOneWidget);
       expect(find.text('B'), findsOneWidget);
+    });
+  });
+
+  group('TabNavSelectDelegate.itemBuilder', () {
+    testWidgets('replaces the default tiles and receives categoryId',
+        (tester) async {
+      await tester.pumpWidget(_harness(TabNavSelectDelegate(
+        itemBuilder: _categoryIdItemBuilder,
+        entriesLoader: () async => _categoryEntries(),
+      )));
+      await tester.pumpAndSettle();
+
+      // Only the focused category's children render through the builder,
+      // with the owning category's id passed as categoryId.
+      expect(find.byType(_CustomItem), findsNWidgets(3));
+      expect(find.text('A@catA'), findsOneWidget);
+      expect(find.text('B@catA'), findsOneWidget);
+      expect(find.byType(SelectRadioListTile), findsNothing);
+    });
+
+    testWidgets('categoryId follows the focused tab', (tester) async {
+      await tester.pumpWidget(_harness(TabNavSelectDelegate(
+        itemBuilder: _categoryIdItemBuilder,
+        entriesLoader: () async => _categoryEntries(),
+      )));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Tab B'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(_CustomItem), findsNWidgets(3));
+      expect(find.text('D@catB'), findsOneWidget);
+      expect(find.text('A@catA'), findsNothing);
+    });
+
+    testWidgets('taps flow through the normal selection flow',
+        (tester) async {
+      final applied = <Set<SelectEntry>>[];
+      await tester.pumpWidget(_harness(
+        TabNavSelectDelegate(
+          itemBuilder: _categoryIdItemBuilder,
+          entriesLoader: () async => _categoryEntries(),
+        ),
+        onChanged: applied.add,
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('B@catA'));
+      await tester.pumpAndSettle();
+
+      // Category delegates report the clipped selection tree, so the tapped
+      // child is nested inside its category.
+      final appliedCategory = applied.last.single as SelectCategoryEntry;
+      expect(appliedCategory.id, 'catA');
+      expect(appliedCategory.children!.map((e) => e.id), contains('b'));
+      expect(find.text('[B@catA]'), findsOneWidget);
+    });
+
+    testWidgets('null falls back to the default tiles per category',
+        (tester) async {
+      await tester.pumpWidget(_harness(TabNavSelectDelegate(
+        itemBuilder: _partialItemBuilder,
+        entriesLoader: () async => _categoryEntries(),
+      )));
+      await tester.pumpAndSettle();
+
+      // catA's builder returns null -> default tiles.
+      expect(find.byType(SelectRadioListTile), findsNWidgets(3));
+      expect(find.byType(_CustomItem), findsNothing);
+
+      await tester.tap(find.text('Tab B'));
+      await tester.pumpAndSettle();
+
+      // catB still renders custom items.
+      expect(find.byType(_CustomItem), findsNWidgets(3));
+      expect(find.byType(SelectRadioListTile), findsNothing);
+    });
+  });
+
+  group('ExpandableSelectDelegate.itemBuilder', () {
+    testWidgets('replaces the default chips and receives categoryId',
+        (tester) async {
+      await tester.pumpWidget(_harness(ExpandableSelectDelegate(
+        itemBuilder: _categoryIdItemBuilder,
+        entriesLoader: () async => _wrapCategoryEntries(),
+      )));
+      await tester.pumpAndSettle();
+
+      // Category tiles start expanded, so children render right away.
+      expect(find.byType(_CustomItem), findsNWidgets(3));
+      expect(find.text('A@catA'), findsOneWidget);
+      expect(find.text('B@catA'), findsOneWidget);
+    });
+
+    testWidgets('taps flow through the normal selection flow',
+        (tester) async {
+      final applied = <Set<SelectEntry>>[];
+      await tester.pumpWidget(_harness(
+        ExpandableSelectDelegate(
+          itemBuilder: _categoryIdItemBuilder,
+          entriesLoader: () async => _wrapCategoryEntries(),
+        ),
+        onChanged: applied.add,
+      ));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('C@catA'));
+      await tester.pumpAndSettle();
+
+      final appliedCategory = applied.last.single as SelectCategoryEntry;
+      expect(appliedCategory.id, 'catA');
+      expect(appliedCategory.children!.map((e) => e.id), contains('c'));
+      expect(find.text('[C@catA]'), findsOneWidget);
     });
   });
 }

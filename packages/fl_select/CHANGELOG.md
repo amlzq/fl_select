@@ -1,5 +1,9 @@
 ## Next
 
+- **FEATURE** `itemBuilder` now works on the category delegates too: `TabNavSelectDelegate`, `SideNavSelectDelegate` and `ExpandableSelectDelegate` forward it to categories laid out as a list, grid or wrap. The builder may return null to fall back to the default item widget — customize only some entries or categories while keeping the built-in visuals elsewhere. Range-slider and counter category layouts keep their built-in controls; a category's header/footer chips are not covered; `CascadingSelectDelegate` ignores the builder.
+
+- **BREAKING** `SelectItemBuilder` gains an optional `String? categoryId` parameter — the owning `SelectCategoryEntry.id` on category delegates, null on flat delegates. Existing builder closures must accept the new parameter (add `, String? categoryId` to the signature; unused parameters can be omitted with a bare `categoryId`). The return type is now `Widget?` (non-breaking for closures returning `Widget`).
+
 - **BREAKING** remove the dual-mode entry points deprecated since 0.11.0: `FlattenSelectDelegate` / `FlattenSelect` (use `SideNavSelectDelegate` for two-level data or `WrapSelectDelegate` for flat data), two-level data on `GridSelectDelegate` / `ListSelectDelegate` (they now assert on category data; use `TabNavSelectDelegate` / `ExpandableSelectDelegate` instead) and the `SelectChipLayout` alias (use `SelectWrapLayout`) ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0110)).
 
 ## 0.12.2

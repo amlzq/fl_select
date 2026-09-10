@@ -221,6 +221,7 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                     delegate: delegate,
                     radioBuilder: delegate.radioBuilder,
                     checkboxBuilder: delegate.checkboxBuilder,
+                    itemBuilder: delegate.itemBuilder,
                     onTerminalItemTap: _onTerminalItemTap,
                   );
 

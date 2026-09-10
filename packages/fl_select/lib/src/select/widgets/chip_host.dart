@@ -253,7 +253,7 @@ mixin SelectChipHost<T extends StatefulWidget> on CustomRangeHost<T> {
   /// the default [SelectChip]; the builder renders its own selected-state
   /// visuals from `selected` and wires `onTap` (e.g. via [InkWell]) to its
   /// own gesture handler so taps keep flowing through this host's normal
-  /// selection logic.
+  /// selection logic. Returning null falls back to the default [SelectChip].
   SelectItemBuilder? get chipItemBuilder;
 
   /// Reports that the chip at [index] was tapped.
@@ -284,12 +284,14 @@ mixin SelectChipHost<T extends StatefulWidget> on CustomRangeHost<T> {
             final selected = customRangeSelectedEntries.contains(item);
             final customBuilder = chipItemBuilder;
             if (customBuilder != null) {
-              return customBuilder(
+              final custom = customBuilder(
                 context,
                 item,
                 selected: selected,
                 onTap: () => handleChipTap(index, item),
+                categoryId: customRangeCategory?.id,
               );
+              if (custom != null) return custom;
             }
             return SelectChip(
               label: item.name ?? '',

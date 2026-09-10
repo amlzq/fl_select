@@ -23,6 +23,7 @@ class SelectCategoryContentView extends StatelessWidget {
     required this.onTerminalItemTap,
     this.radioBuilder,
     this.checkboxBuilder,
+    this.itemBuilder,
   });
 
   /// The category whose children are rendered.
@@ -48,6 +49,15 @@ class SelectCategoryContentView extends StatelessWidget {
   final ToggleWidgetBuilder? radioBuilder;
   final ToggleWidgetBuilder? checkboxBuilder;
 
+  /// Optional builder that fully replaces each child item's widget.
+  ///
+  /// Forwarded to the list, grid and wrap branches, where the builder
+  /// receives the owning [category]'s id via its `categoryId` parameter and
+  /// may return null to fall back to the default item widget. Not forwarded
+  /// to the range-slider and counter layouts, which keep their built-in
+  /// controls.
+  final SelectItemBuilder? itemBuilder;
+
   @override
   Widget build(BuildContext context) {
     final entries = category.children?.toList() ?? [];
@@ -69,6 +79,7 @@ class SelectCategoryContentView extends StatelessWidget {
               category.effectiveSelectionMode(delegate.selectionMode),
           radioBuilder: radioBuilder,
           checkboxBuilder: checkboxBuilder,
+          itemBuilder: itemBuilder,
         ),
       SelectGridLayout(
         :final crossAxisCount,
@@ -89,6 +100,7 @@ class SelectCategoryContentView extends StatelessWidget {
           selectedEntries: selectedEntries,
           onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
           toText: toText,
+          itemBuilder: itemBuilder,
         ),
       SelectWrapLayout(
         :final spacing,
@@ -103,6 +115,7 @@ class SelectCategoryContentView extends StatelessWidget {
           spacing: spacing,
           runSpacing: runSpacing,
           onChanged: (_, item) => onTerminalItemTap(item as SelectChildEntry),
+          itemBuilder: itemBuilder,
         ),
       SelectRangeLayout(:final toText) => SelectRangeView(
           key: ValueKey('category_$index'),

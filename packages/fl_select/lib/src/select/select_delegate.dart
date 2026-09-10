@@ -34,13 +34,27 @@ typedef SelectActionBarBuilder = Widget Function(
 /// (e.g. [InkWell.onTap]) so the entry toggles through the library's normal
 /// selection flow.
 ///
-/// Only regular entries are passed to the builder; custom range entries keep
-/// rendering as the built-in min/max input field.
-typedef SelectItemBuilder = Widget Function(
+/// Return null to fall back to the default item widget for that entry —
+/// handy for customizing only some entries (or some categories) while
+/// keeping the built-in visuals everywhere else.
+///
+/// [categoryId] is the id of the [SelectCategoryEntry] that owns [entry] in
+/// the category-based delegates ([TabNavSelectDelegate],
+/// [SideNavSelectDelegate] and [ExpandableSelectDelegate]); it is null for
+/// flat (parentless) delegates, so one builder can serve both flat and
+/// category-based selects.
+///
+/// Scope: applies to the list, grid and wrap/chip layouts only. Custom range
+/// entries keep rendering as the built-in min/max input field; the
+/// range-slider ([SelectRangeLayout]) and counter ([SelectCounterLayout])
+/// category layouts keep their built-in controls. It does not apply to a
+/// category's header/footer chips or to [CascadingSelectDelegate]'s nodes.
+typedef SelectItemBuilder = Widget? Function(
   BuildContext context,
   SelectEntry entry, {
   required bool selected,
   required VoidCallback onTap,
+  String? categoryId,
 });
 
 /// Base configuration for a select.
@@ -374,10 +388,12 @@ class ListSelectDelegate extends SelectDelegate {
   /// When non-null, regular entries render as the returned widget instead of
   /// the default radio/checkbox list tile; the builder renders its own
   /// selected-state visuals from `selected` and wires `onTap` (e.g. via
-  /// [InkWell]) to trigger the selection. Custom range entries still render
-  /// as the built-in min/max input field.
+  /// [InkWell]) to trigger the selection. Returning null falls back to the
+  /// default list tile. Custom range entries still render as the built-in
+  /// min/max input field.
   ///
-  /// Only used when rendering flat (parentless) data.
+  /// Only used when rendering flat (parentless) data; the builder's
+  /// `categoryId` parameter is always null here.
   final SelectItemBuilder? itemBuilder;
 
   @override
@@ -489,10 +505,12 @@ class GridSelectDelegate extends SelectDelegate {
   /// When non-null, regular entries render as the returned widget instead of
   /// the default grid tile; the builder renders its own selected-state
   /// visuals from `selected` and wires `onTap` (e.g. via [InkWell]) to
-  /// trigger the selection. Custom range entries still render as the built-in
-  /// min/max input field.
+  /// trigger the selection. Returning null falls back to the default grid
+  /// tile. Custom range entries still render as the built-in min/max input
+  /// field.
   ///
-  /// Only used when rendering flat (parentless) data.
+  /// Only used when rendering flat (parentless) data; the builder's
+  /// `categoryId` parameter is always null here.
   final SelectItemBuilder? itemBuilder;
 
   @override
@@ -598,8 +616,11 @@ class WrapSelectDelegate extends SelectDelegate {
   /// When non-null, regular entries render as the returned widget instead of
   /// the default chip; the builder renders its own selected-state visuals
   /// from `selected` and wires `onTap` (e.g. via [InkWell]) to trigger the
-  /// selection. Custom range entries still render as the built-in min/max
-  /// input field.
+  /// selection. Returning null falls back to the default chip. Custom range
+  /// entries still render as the built-in min/max input field.
+  ///
+  /// Only used when rendering flat (parentless) data; the builder's
+  /// `categoryId` parameter is always null here.
   final SelectItemBuilder? itemBuilder;
 
   @override
@@ -740,6 +761,7 @@ class TabNavSelectDelegate extends SelectDelegate {
     this.defaultLayout,
     this.checkboxBuilder,
     this.radioBuilder,
+    this.itemBuilder,
     this.isScrollable = false,
     super.selectionMode,
     super.entries,
@@ -795,6 +817,18 @@ class TabNavSelectDelegate extends SelectDelegate {
   /// Optional custom checkbox widget builder.
   final ToggleWidgetBuilder? checkboxBuilder;
 
+  /// Optional builder that fully replaces each child item's widget.
+  ///
+  /// Applies to categories laid out as a list, grid or wrapped chips; the
+  /// range-slider and counter layouts keep their built-in controls. The
+  /// builder receives the owning category's id through its `categoryId`
+  /// parameter and may return null to fall back to the default item widget.
+  /// Custom range entries still render as the built-in min/max input field.
+  ///
+  /// Does not apply to the category tab bar or a category's header/footer
+  /// chips.
+  final SelectItemBuilder? itemBuilder;
+
   /// Whether the category tab bar can be scrolled horizontally.
   ///
   /// If true, the tabs are laid out at their natural width inside a
@@ -849,6 +883,7 @@ class TabNavSelectDelegate extends SelectDelegate {
 class SideNavSelectDelegate extends SelectDelegate {
   SideNavSelectDelegate({
     this.defaultLayout,
+    this.itemBuilder,
     this.isScrollable = true,
     super.selectionMode,
     super.entries,
@@ -893,6 +928,18 @@ class SideNavSelectDelegate extends SelectDelegate {
         );
 
   final SelectLayout? defaultLayout;
+
+  /// Optional builder that fully replaces each child item's widget.
+  ///
+  /// Applies to categories laid out as a list, grid or wrapped chips; the
+  /// range-slider and counter layouts keep their built-in controls. The
+  /// builder receives the owning category's id through its `categoryId`
+  /// parameter and may return null to fall back to the default item widget.
+  /// Custom range entries still render as the built-in min/max input field.
+  ///
+  /// Does not apply to the left category sidebar or a category's
+  /// header/footer chips.
+  final SelectItemBuilder? itemBuilder;
 
   /// Whether the left category sidebar can be scrolled vertically.
   ///
@@ -953,6 +1000,7 @@ class ExpandableSelectDelegate extends SelectDelegate {
     this.defaultLayout,
     this.radioBuilder,
     this.checkboxBuilder,
+    this.itemBuilder,
     super.selectionMode,
     super.entries,
     super.entriesLoader,
@@ -1005,6 +1053,18 @@ class ExpandableSelectDelegate extends SelectDelegate {
 
   /// Optional custom checkbox widget builder.
   final ToggleWidgetBuilder? checkboxBuilder;
+
+  /// Optional builder that fully replaces each child item's widget.
+  ///
+  /// Applies to categories laid out as a list, grid or wrapped chips; the
+  /// range-slider and counter layouts keep their built-in controls. The
+  /// builder receives the owning category's id through its `categoryId`
+  /// parameter and may return null to fall back to the default item widget.
+  /// Custom range entries still render as the built-in min/max input field.
+  ///
+  /// Does not apply to the expansion tiles' headers or a category's
+  /// header/footer chips.
+  final SelectItemBuilder? itemBuilder;
 
   @override
   Widget buildBody(

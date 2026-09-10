@@ -93,8 +93,8 @@ class SelectWrapView extends StatefulWidget {
   /// the default chip; the builder renders its own selected-state visuals
   /// from `selected` and wires `onTap` (e.g. via [InkWell]) to its own
   /// gesture handler so taps keep flowing through this view's normal
-  /// selection logic. Custom range entries still render as the built-in
-  /// min/max input field.
+  /// selection logic. Returning null falls back to the default chip. Custom
+  /// range entries still render as the built-in min/max input field.
   final SelectItemBuilder? itemBuilder;
 
   /// The color of an unselected chip.

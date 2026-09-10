@@ -85,8 +85,8 @@ class SelectListView extends StatefulWidget {
   /// the radio/checkbox list tile; the builder renders its own selected-state
   /// visuals from `selected` and wires `onTap` (e.g. via [InkWell]) to its own
   /// gesture handler so taps keep flowing through this view's normal selection
-  /// logic. Custom range entries still render as the built-in min/max input
-  /// field.
+  /// logic. Returning null falls back to the default list tile. Custom range
+  /// entries still render as the built-in min/max input field.
   final SelectItemBuilder? itemBuilder;
 
   /// Whether to show the [category] name as a header above the list.
@@ -198,12 +198,14 @@ class SelectListViewState extends State<SelectListView>
             final selected = widget.selectedEntries?.contains(entry) ?? false;
             final customBuilder = widget.itemBuilder;
             if (customBuilder != null) {
-              return customBuilder(
+              final custom = customBuilder(
                 context,
                 entry,
                 selected: selected,
                 onTap: () => _onItemTap(index, entry),
+                categoryId: widget.category?.id,
               );
+              if (custom != null) return custom;
             }
             if (SelectionMode.single == widget.selectionMode) {
               return SelectRadioListTile(

@@ -101,8 +101,8 @@ class SelectGridView extends StatefulWidget {
   /// the default grid tile; the builder renders its own selected-state
   /// visuals from `selected` and wires `onTap` (e.g. via [InkWell]) to its own
   /// gesture handler so taps keep flowing through this view's normal selection
-  /// logic. Custom range entries still render as the built-in min/max input
-  /// field.
+  /// logic. Returning null falls back to the default grid tile. Custom range
+  /// entries still render as the built-in min/max input field.
   final SelectItemBuilder? itemBuilder;
 
   /// Whether to show the [category] name as a header above the grid.
@@ -216,12 +216,14 @@ class SelectGridViewState extends State<SelectGridView>
             final selected = _selectedEntries.contains(entry);
             final customBuilder = widget.itemBuilder;
             if (customBuilder != null) {
-              return customBuilder(
+              final custom = customBuilder(
                 context,
                 entry,
                 selected: selected,
                 onTap: () => _onItemTap(index, entry),
+                categoryId: widget.category?.id,
               );
+              if (custom != null) return custom;
             }
             return SelectGridTile(
               onTap: () => _onItemTap.call(index, entry),

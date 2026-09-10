@@ -51,7 +51,7 @@ class SelectViewExamplePage extends StatelessWidget {
                   delegate: ListSelectDelegate(
                     entries: listData,
                     itemBuilder: (context, entry,
-                        {required selected, required onTap}) {
+                        {required selected, required onTap, categoryId}) {
                       return MyListItem(
                           entry: entry, selected: selected, onTap: onTap);
                     },
@@ -108,7 +108,7 @@ class SelectViewExamplePage extends StatelessWidget {
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
                     itemBuilder: (context, entry,
-                        {required onTap, required selected}) {
+                        {required onTap, required selected, categoryId}) {
                       return MyGridItem(
                           entry: entry, selected: selected, onTap: onTap);
                     },
@@ -160,7 +160,7 @@ class SelectViewExamplePage extends StatelessWidget {
                     spacing: 12.0,
                     runSpacing: 12.0,
                     itemBuilder: (context, entry,
-                        {required onTap, required selected}) {
+                        {required onTap, required selected, categoryId}) {
                       return MyWrapItem(
                           entry: entry, selected: selected, onTap: onTap);
                     },
