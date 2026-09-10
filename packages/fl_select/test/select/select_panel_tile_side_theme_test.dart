@@ -59,7 +59,8 @@ void main() {
 
   group('SelectFieldTileTheme.merge', () {
     test('returns this when other is null', () {
-      const base = SelectFieldTileTheme(variant: SelectFieldTileVariant.outlined);
+      const base =
+          SelectFieldTileTheme(variant: SelectFieldTileVariant.outlined);
       expect(base.merge(null), same(base));
     });
 

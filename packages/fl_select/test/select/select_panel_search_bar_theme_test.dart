@@ -74,8 +74,7 @@ void main() {
             const SelectSearchBarTheme(filled: true, fillColor: _amber),
         selectTheme: SelectThemeData(
           ThemeData.light(),
-          searchBarTheme:
-              const SelectSearchBarTheme(padding: _ambientPadding),
+          searchBarTheme: const SelectSearchBarTheme(padding: _ambientPadding),
         ),
       ));
       await tester.pumpAndSettle();

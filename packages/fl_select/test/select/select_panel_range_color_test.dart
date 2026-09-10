@@ -76,8 +76,7 @@ void main() {
   });
 
   group('SelectPanel loose color injection', () {
-    testWidgets('delegate selectedColor overrides ambient',
-        (tester) async {
+    testWidgets('delegate selectedColor overrides ambient', (tester) async {
       final theme = await _effectiveTheme(
         tester,
         selectTheme: SelectThemeData(ThemeData.light(), selectedColor: _teal),

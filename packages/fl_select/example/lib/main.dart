@@ -85,6 +85,17 @@ class _MyAppState extends State<MyApp> {
                       // ),
                     ),
                   ),
+                  PopupSelectButtonTheme(
+                    overlayStyle: SelectOverlayStyle(
+                      barrierColor: Colors.amber[100],
+                    ),
+                    selectTheme: SelectThemeData(
+                      baseTheme,
+                      actionBarTheme: SelectActionBarTheme(
+                        backgroundColor: Colors.red,
+                      ),
+                    ),
+                  )
                 ],
               );
               return Theme(

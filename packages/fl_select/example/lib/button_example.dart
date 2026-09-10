@@ -14,6 +14,10 @@ class PopupSelectButtonExample extends StatefulWidget {
 class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
   @override
   Widget build(BuildContext context) {
+    final PopupSelectButtonTheme popupSelectButtonTheme =
+        PopupSelectButtonTheme.maybeOf(
+      context,
+    )!;
     return Scaffold(
       appBar: AppBar(title: const Text('PopupSelectButton')),
       body: SafeArea(
@@ -74,50 +78,73 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                   },
                 ),
                 SizedBox(height: 24),
-                PopupSelectButton(
-                  label: 'TabNavSelect',
-                  selectDelegate: TabNavSelectDelegate(
-                    defaultLayout: SelectGridLayout(
-                      crossAxisCount: 3,
-                      childAspectRatio: 3.2,
-                      mainAxisSpacing: 10,
-                      crossAxisSpacing: 10,
-                    ),
-                    entries: multiCategoryData,
-                    selectionMode: SelectionMode.multiple,
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    extensions: <ThemeExtension<dynamic>>[
+                      popupSelectButtonTheme.copyWith(
+                        selectTheme: SelectThemeData(
+                          Theme.of(context),
+                          actionBarTheme: SelectActionBarTheme(
+                            backgroundColor: Colors.green,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  onApplied: (selected) {
-                    largePrint('onApplied: $selected');
-                  },
-                ),
-                SizedBox(height: 24),
-                PopupSelectButton(
-                  label: 'SideNavSelect',
-                  selectDelegate: SideNavSelectDelegate(
-                    defaultLayout: SelectWrapLayout(
-                      spacing: 12,
-                      runSpacing: 12,
-                    ),
-                    entries: multiCategoryData,
-                    selectionMode: SelectionMode.multiple,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      PopupSelectButton(
+                        label: 'TabNavSelect',
+                        selectDelegate: TabNavSelectDelegate(
+                          defaultLayout: SelectGridLayout(
+                            crossAxisCount: 3,
+                            childAspectRatio: 3.2,
+                            mainAxisSpacing: 10,
+                            crossAxisSpacing: 10,
+                          ),
+                          entries: multiCategoryData,
+                          selectionMode: SelectionMode.multiple,
+                        ),
+                        onApplied: (selected) {
+                          largePrint('onApplied: $selected');
+                        },
+                      ),
+                      SizedBox(height: 24),
+                      PopupSelectButton(
+                        label: 'SideNavSelect',
+                        selectDelegate: SideNavSelectDelegate(
+                          defaultLayout: SelectWrapLayout(
+                            spacing: 12,
+                            runSpacing: 12,
+                          ),
+                          entries: multiCategoryData,
+                          selectionMode: SelectionMode.multiple,
+                          actionBarTheme: SelectActionBarTheme(
+                            backgroundColor: Colors.blue,
+                          ),
+                        ),
+                        onApplied: (selected) {
+                          largePrint('onApplied: $selected');
+                        },
+                      ),
+                      SizedBox(height: 24),
+                      PopupSelectButton(
+                        direction: PopupSelectDirection.above,
+                        label: 'ExpandableSelect',
+                        labelLoader: (selected) =>
+                            '${selected.length} selected',
+                        selectDelegate: ExpandableSelectDelegate(
+                          defaultLayout: SelectListLayout(),
+                          entries: multiCategoryData,
+                          selectionMode: SelectionMode.multiple,
+                        ),
+                        onApplied: (selected) {
+                          largePrint('onApplied: $selected');
+                        },
+                      ),
+                    ],
                   ),
-                  onApplied: (selected) {
-                    largePrint('onApplied: $selected');
-                  },
-                ),
-                SizedBox(height: 24),
-                PopupSelectButton(
-                  direction: PopupSelectDirection.above,
-                  label: 'ExpandableSelect',
-                  labelLoader: (selected) => '${selected.length} selected',
-                  selectDelegate: ExpandableSelectDelegate(
-                    defaultLayout: SelectListLayout(),
-                    entries: multiCategoryData,
-                    selectionMode: SelectionMode.multiple,
-                  ),
-                  onApplied: (selected) {
-                    largePrint('onApplied: $selected');
-                  },
                 ),
               ],
             ),

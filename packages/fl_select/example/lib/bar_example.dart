@@ -119,7 +119,7 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                     selectTheme: SelectThemeData(
                       Theme.of(context),
                       actionBarTheme: SelectActionBarTheme(
-                        backgroundColor: Colors.blue,
+                        backgroundColor: Colors.green,
                       ),
                     ),
                   ),
@@ -174,7 +174,7 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                       return entry.name?.contains(query) == true;
                     },
                     actionBarTheme: SelectActionBarTheme(
-                      backgroundColor: Colors.green,
+                      backgroundColor: Colors.blue,
                     ),
                   ),
                 ],

@@ -63,7 +63,8 @@ void main() {
 
     test('overrides only the fields set on other', () {
       const base = SelectTabBarTheme(padding: _ambientPadding);
-      final merged = base.merge(const SelectTabBarTheme(backgroundColor: _amber));
+      final merged =
+          base.merge(const SelectTabBarTheme(backgroundColor: _amber));
       expect(merged.backgroundColor, _amber);
       expect(merged.padding, _ambientPadding);
       expect(merged.indicatorColor, isNull);
@@ -78,7 +79,8 @@ void main() {
 
     test('overrides only the fields set on other', () {
       const base = SelectListTileTheme(textColor: _amber);
-      final merged = base.merge(const SelectListTileTheme(selectedColor: _amber));
+      final merged =
+          base.merge(const SelectListTileTheme(selectedColor: _amber));
       expect(merged.selectedColor, _amber);
       expect(merged.textColor, _amber);
       expect(merged.labelStyle, isNull);
@@ -93,7 +95,8 @@ void main() {
 
     test('overrides only the fields set on other', () {
       const base = SelectExpansionTileTheme(titlePadding: _ambientPadding);
-      final merged = base.merge(const SelectExpansionTileTheme(selectedColor: _amber));
+      final merged =
+          base.merge(const SelectExpansionTileTheme(selectedColor: _amber));
       expect(merged.selectedColor, _amber);
       expect(merged.titlePadding, _ambientPadding);
       expect(merged.animationDuration, isNull);
