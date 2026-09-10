@@ -71,6 +71,23 @@ class SelectFieldTileTheme with Diagnosticable {
     return SelectTheme.of(context).fieldTileTheme;
   }
 
+  /// Returns a new theme where non-null fields from [other] override the
+  /// corresponding fields of this theme.
+  SelectFieldTileTheme merge(SelectFieldTileTheme? other) {
+    if (other == null) {
+      return this;
+    }
+    return SelectFieldTileTheme(
+      selectedColor: other.selectedColor ?? selectedColor,
+      textColor: other.textColor ?? textColor,
+      labelStyle: other.labelStyle ?? labelStyle,
+      sublabelStyle: other.sublabelStyle ?? sublabelStyle,
+      variant: other.variant ?? variant,
+      tileColor: other.tileColor ?? tileColor,
+      selectedTileColor: other.selectedTileColor ?? selectedTileColor,
+    );
+  }
+
   /// Linearly interpolates between two field tile themes.
   static SelectFieldTileTheme lerp(
       SelectFieldTileTheme? a, SelectFieldTileTheme? b, double t) {

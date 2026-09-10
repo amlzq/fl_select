@@ -90,6 +90,28 @@ class SelectSearchBarTheme with Diagnosticable {
     );
   }
 
+  /// Returns a new theme where non-null fields from [other] override the
+  /// corresponding fields of this theme.
+  SelectSearchBarTheme merge(SelectSearchBarTheme? other) {
+    if (other == null) {
+      return this;
+    }
+    return SelectSearchBarTheme(
+      padding: other.padding ?? padding,
+      contentPadding: other.contentPadding ?? contentPadding,
+      borderRadius: other.borderRadius ?? borderRadius,
+      filled: other.filled ?? filled,
+      fillColor: other.fillColor ?? fillColor,
+      enabledBorderColor: other.enabledBorderColor ?? enabledBorderColor,
+      focusedBorderColor: other.focusedBorderColor ?? focusedBorderColor,
+      borderWidth: other.borderWidth ?? borderWidth,
+      hintStyle: other.hintStyle ?? hintStyle,
+      textStyle: other.textStyle ?? textStyle,
+      iconColor: other.iconColor ?? iconColor,
+      iconSize: other.iconSize ?? iconSize,
+    );
+  }
+
   static SelectSearchBarTheme of(BuildContext context) {
     return SelectTheme.of(context).searchBarTheme;
   }

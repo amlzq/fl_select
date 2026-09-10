@@ -78,6 +78,21 @@ class SelectPanelTheme with Diagnosticable {
     );
   }
 
+  /// Returns a new theme where non-null fields from [other] override the
+  /// corresponding fields of this theme.
+  SelectPanelTheme merge(SelectPanelTheme? other) {
+    if (other == null) {
+      return this;
+    }
+    return SelectPanelTheme(
+      elevation: other.elevation ?? elevation,
+      shadowColor: other.shadowColor ?? shadowColor,
+      surfaceTintColor: other.surfaceTintColor ?? surfaceTintColor,
+      shape: other.shape ?? shape,
+      clipBehavior: other.clipBehavior ?? clipBehavior,
+    );
+  }
+
   /// Linearly interpolates between two panel themes.
   static SelectPanelTheme lerp(
       SelectPanelTheme? a, SelectPanelTheme? b, double t) {

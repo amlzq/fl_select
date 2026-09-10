@@ -56,6 +56,23 @@ class SelectExpansionTileTheme with Diagnosticable {
     );
   }
 
+  /// Returns a new theme where non-null fields from [other] override the
+  /// corresponding fields of this theme.
+  SelectExpansionTileTheme merge(SelectExpansionTileTheme? other) {
+    if (other == null) {
+      return this;
+    }
+    return SelectExpansionTileTheme(
+      titleStyle: other.titleStyle ?? titleStyle,
+      titlePadding: other.titlePadding ?? titlePadding,
+      selectedColor: other.selectedColor ?? selectedColor,
+      childPadding: other.childPadding ?? childPadding,
+      animationDuration: other.animationDuration ?? animationDuration,
+      expansionCurve: other.expansionCurve ?? expansionCurve,
+      collapseCurve: other.collapseCurve ?? collapseCurve,
+    );
+  }
+
   static SelectExpansionTileTheme of(BuildContext context) {
     return SelectTheme.of(context).expansionTileTheme;
   }

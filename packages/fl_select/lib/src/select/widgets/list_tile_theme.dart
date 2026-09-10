@@ -65,6 +65,24 @@ class SelectListTileTheme with Diagnosticable {
     );
   }
 
+  /// Returns a new theme where non-null fields from [other] override the
+  /// corresponding fields of this theme.
+  SelectListTileTheme merge(SelectListTileTheme? other) {
+    if (other == null) {
+      return this;
+    }
+    return SelectListTileTheme(
+      selectedColor: other.selectedColor ?? selectedColor,
+      textColor: other.textColor ?? textColor,
+      tileColor: other.tileColor ?? tileColor,
+      selectedTileColor: other.selectedTileColor ?? selectedTileColor,
+      labelStyle: other.labelStyle ?? labelStyle,
+      sublabelStyle: other.sublabelStyle ?? sublabelStyle,
+      radioBuilder: other.radioBuilder ?? radioBuilder,
+      checkboxBuilder: other.checkboxBuilder ?? checkboxBuilder,
+    );
+  }
+
   static SelectListTileTheme of(BuildContext context) {
     return SelectTheme.of(context).listTileTheme;
   }

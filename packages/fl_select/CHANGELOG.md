@@ -1,3 +1,7 @@
+## Next
+
+- **BUGFIX** delegate-level theme fields now merge field-wise into the ambient `SelectThemeData` instead of replacing it wholesale.
+
 ## 0.12.1
 
 - **BUGFIX** the delegate-level `actionBarTheme` now styles the built-in action bar in every layout.

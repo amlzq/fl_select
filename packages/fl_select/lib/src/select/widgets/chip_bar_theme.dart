@@ -65,6 +65,23 @@ class SelectChipBarTheme with Diagnosticable {
     );
   }
 
+  /// Returns a new theme where non-null fields from [other] override the
+  /// corresponding fields of this theme.
+  SelectChipBarTheme merge(SelectChipBarTheme? other) {
+    if (other == null) {
+      return this;
+    }
+    return SelectChipBarTheme(
+      backgroundColor: other.backgroundColor ?? backgroundColor,
+      padding: other.padding ?? padding,
+      variant: other.variant ?? variant,
+      chipColor: other.chipColor ?? chipColor,
+      selectedChipColor: other.selectedChipColor ?? selectedChipColor,
+      labelStyle: other.labelStyle ?? labelStyle,
+      selectedLabelStyle: other.selectedLabelStyle ?? selectedLabelStyle,
+    );
+  }
+
   static SelectChipBarTheme of(BuildContext context) {
     return SelectTheme.of(context).chipBarThemeData;
   }

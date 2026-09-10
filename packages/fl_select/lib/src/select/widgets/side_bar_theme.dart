@@ -93,6 +93,28 @@ class SelectSideBarTheme with Diagnosticable {
     return SelectTheme.of(context).sideBarTheme;
   }
 
+  /// Returns a new theme where non-null fields from [other] override the
+  /// corresponding fields of this theme.
+  SelectSideBarTheme merge(SelectSideBarTheme? other) {
+    if (other == null) {
+      return this;
+    }
+    return SelectSideBarTheme(
+      backgroundColor: other.backgroundColor ?? backgroundColor,
+      width: other.width ?? width,
+      padding: other.padding ?? padding,
+      selectedColor: other.selectedColor ?? selectedColor,
+      labelStyle: other.labelStyle ?? labelStyle,
+      selectedLabelStyle: other.selectedLabelStyle ?? selectedLabelStyle,
+      selectedTileColor: other.selectedTileColor ?? selectedTileColor,
+      indicatorColor: other.indicatorColor ?? indicatorColor,
+      indicatorHeight: other.indicatorHeight ?? indicatorHeight,
+      indicatorPadding: other.indicatorPadding ?? indicatorPadding,
+      indicatorAnimationDuration:
+          other.indicatorAnimationDuration ?? indicatorAnimationDuration,
+    );
+  }
+
   /// Linearly interpolates between two category bar themes.
   static SelectSideBarTheme lerp(
       SelectSideBarTheme? a, SelectSideBarTheme? b, double t) {

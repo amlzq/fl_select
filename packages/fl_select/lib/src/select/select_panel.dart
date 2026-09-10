@@ -71,8 +71,8 @@ class SelectPanel extends StatefulWidget {
   /// Theme overrides applied to the select widgets rendered by the panel.
   ///
   /// When null, a [SelectThemeData] derived from the ambient Material
-  /// [ThemeData] is used. The delegate-level [SelectDelegate.panelTheme]
-  /// (when provided) is merged on top of this theme.
+  /// [ThemeData] is used. The delegate-level theme fields (when provided)
+  /// are merged field-wise on top of this theme.
   final SelectThemeData? selectTheme;
 
   @override
@@ -180,11 +180,56 @@ class _SelectPanelState extends State<SelectPanel> {
     final baseTheme =
         widget.selectTheme ?? SelectThemeData.fallback(Theme.of(context));
     final delegateActionBarTheme = widget.delegate.actionBarTheme;
+    final delegateSearchBarTheme = widget.delegate.searchBarTheme;
+    final delegateTabBarTheme = widget.delegate.tabBarTheme;
+    final delegateListTileTheme = widget.delegate.listTileTheme;
+    final delegateExpansionTileTheme = widget.delegate.expansionTileTheme;
+    final delegateChipBarTheme = widget.delegate.chipBarTheme;
+    final delegateGridTileTheme = widget.delegate.gridTileTheme;
+    final delegateFieldTileTheme = widget.delegate.fieldTileTheme;
+    final delegateSideBarTheme = widget.delegate.sideBarTheme;
+    final delegateRangeSliderTheme = widget.delegate.rangeSliderTheme;
     final effectiveTheme = baseTheme.copyWith(
-      panelTheme: widget.delegate.panelTheme,
+      selectedColor: widget.delegate.selectedColor,
+      onSelectedColor: widget.delegate.onSelectedColor,
+      backgroundColor: widget.delegate.backgroundColor,
+      onBackgroundColor: widget.delegate.onBackgroundColor,
+      backgroundColorHigh: widget.delegate.backgroundColorHigh,
+      backgroundColorHighest: widget.delegate.backgroundColorHighest,
+      onBackgroundColorHighest: widget.delegate.onBackgroundColorHighest,
+      panelTheme: widget.delegate.panelTheme == null
+          ? null
+          : baseTheme.panelTheme.merge(widget.delegate.panelTheme),
       actionBarTheme: delegateActionBarTheme == null
           ? null
           : baseTheme.actionBarTheme.merge(delegateActionBarTheme),
+      searchBarTheme: delegateSearchBarTheme == null
+          ? null
+          : baseTheme.searchBarTheme.merge(delegateSearchBarTheme),
+      tabBarTheme: delegateTabBarTheme == null
+          ? null
+          : baseTheme.tabBarTheme.merge(delegateTabBarTheme),
+      listTileTheme: delegateListTileTheme == null
+          ? null
+          : baseTheme.listTileTheme.merge(delegateListTileTheme),
+      expansionTileTheme: delegateExpansionTileTheme == null
+          ? null
+          : baseTheme.expansionTileTheme.merge(delegateExpansionTileTheme),
+      chipBarThemeData: delegateChipBarTheme == null
+          ? null
+          : baseTheme.chipBarThemeData.merge(delegateChipBarTheme),
+      gridTileTheme: delegateGridTileTheme == null
+          ? null
+          : baseTheme.gridTileTheme.merge(delegateGridTileTheme),
+      fieldTileTheme: delegateFieldTileTheme == null
+          ? null
+          : baseTheme.fieldTileTheme.merge(delegateFieldTileTheme),
+      sideBarTheme: delegateSideBarTheme == null
+          ? null
+          : baseTheme.sideBarTheme.merge(delegateSideBarTheme),
+      rangeSliderTheme: delegateRangeSliderTheme == null
+          ? null
+          : baseTheme.rangeSliderTheme.merge(delegateRangeSliderTheme),
     );
     return SelectTheme(
       data: effectiveTheme,
@@ -272,7 +317,6 @@ class _SelectPanelState extends State<SelectPanel> {
               focusNode: _searchFocusNode,
               hintText: widget.delegate.searchHintText,
               onChanged: _onSearchChanged,
-              theme: widget.delegate.searchBarTheme,
             ),
           Flexible(
             fit: FlexFit.loose,

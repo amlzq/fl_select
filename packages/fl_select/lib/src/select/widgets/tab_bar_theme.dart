@@ -82,6 +82,27 @@ class SelectTabBarTheme with Diagnosticable {
     );
   }
 
+  /// Returns a new theme where non-null fields from [other] override the
+  /// corresponding fields of this theme.
+  SelectTabBarTheme merge(SelectTabBarTheme? other) {
+    if (other == null) {
+      return this;
+    }
+    return SelectTabBarTheme(
+      backgroundColor: other.backgroundColor ?? backgroundColor,
+      padding: other.padding ?? padding,
+      selectedColor: other.selectedColor ?? selectedColor,
+      labelStyle: other.labelStyle ?? labelStyle,
+      selectedLabelStyle: other.selectedLabelStyle ?? selectedLabelStyle,
+      indicatorColor: other.indicatorColor ?? indicatorColor,
+      indicatorHeight: other.indicatorHeight ?? indicatorHeight,
+      indicatorPadding: other.indicatorPadding ?? indicatorPadding,
+      indicatorSize: other.indicatorSize ?? indicatorSize,
+      indicatorAnimationDuration:
+          other.indicatorAnimationDuration ?? indicatorAnimationDuration,
+    );
+  }
+
   static SelectTabBarTheme of(BuildContext context) {
     return SelectTheme.of(context).tabBarTheme;
   }

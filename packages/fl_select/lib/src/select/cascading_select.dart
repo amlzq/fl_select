@@ -772,8 +772,7 @@ class CascadingSelectState extends State<CascadingSelect> {
         ? _backgroundColors[0 + 1]
         : _backgroundColors.last;
 
-    final effectiveSelectedColor =
-        delegate.selectedColor ?? theme.selectedColor;
+    final effectiveSelectedColor = theme.selectedColor;
 
     final focusedCategoryIndex = _effectiveEntries.indexOf(focusedCategory);
 
@@ -793,7 +792,6 @@ class CascadingSelectState extends State<CascadingSelect> {
               // Category list (left)
               SelectSideBar(
                 isScrollable: true,
-                width: delegate.sideBarTheme?.width,
                 backgroundColor: categoryBackgroundColor,
                 selectedColor: effectiveSelectedColor,
                 selectedTileColor: selectedTileColor,

@@ -573,8 +573,7 @@ class SideNavSelectState extends State<SideNavSelect> {
     final categoryBackgroundColor = theme.backgroundColor;
     final terminalBackgroundColor = theme.backgroundColorHigh;
 
-    final effectiveSelectedColor =
-        delegate.selectedColor ?? theme.selectedColor;
+    final effectiveSelectedColor = theme.selectedColor;
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -586,7 +585,6 @@ class SideNavSelectState extends State<SideNavSelect> {
               // Left category list
               SelectSideBar(
                 isScrollable: delegate.isScrollable,
-                width: delegate.sideBarTheme?.width,
                 backgroundColor: categoryBackgroundColor,
                 selectedColor: effectiveSelectedColor,
                 selectedTileColor: terminalBackgroundColor,

@@ -143,6 +143,10 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                   ListSelectDelegate(
                     entries: listDataWithAny,
                     searchEnabled: true,
+                    searchBarTheme: const SelectSearchBarTheme(
+                      filled: true,
+                      fillColor: Color(0x332196F3),
+                    ),
                     searchPredicate: (entry, query) {
                       return entry.name?.contains(query) == true;
                     },

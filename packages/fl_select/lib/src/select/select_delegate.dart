@@ -86,6 +86,7 @@ abstract class SelectDelegate {
     this.fieldTileTheme,
     this.expansionTileTheme,
     this.chipBarTheme,
+    this.rangeSliderTheme,
     this.panelTheme,
     this.skeletonBuilder,
     this.errorBuilder,
@@ -254,6 +255,9 @@ abstract class SelectDelegate {
   /// Theme overrides for the selected chips bar.
   final SelectChipBarTheme? chipBarTheme;
 
+  /// Theme overrides for range sliders in range fields.
+  final SelectRangeSliderTheme? rangeSliderTheme;
+
   /// Theme overrides for the panel's elevation, shadow and shape decoration.
   ///
   /// When provided, this is merged into the ambient [SelectThemeData] used by
@@ -351,6 +355,7 @@ class ListSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
     super.errorBuilder,
@@ -422,6 +427,7 @@ class ListSelectDelegate extends SelectDelegate {
           fieldTileTheme: fieldTileTheme,
           expansionTileTheme: expansionTileTheme,
           chipBarTheme: chipBarTheme,
+          rangeSliderTheme: rangeSliderTheme,
           panelTheme: panelTheme,
           skeletonBuilder: skeletonBuilder,
           errorBuilder: errorBuilder,
@@ -504,6 +510,7 @@ class GridSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
     super.errorBuilder,
@@ -593,6 +600,7 @@ class GridSelectDelegate extends SelectDelegate {
           fieldTileTheme: fieldTileTheme,
           expansionTileTheme: expansionTileTheme,
           chipBarTheme: chipBarTheme,
+          rangeSliderTheme: rangeSliderTheme,
           panelTheme: panelTheme,
           skeletonBuilder: skeletonBuilder,
           errorBuilder: errorBuilder,
@@ -672,6 +680,7 @@ class WrapSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
     super.errorBuilder,
@@ -776,6 +785,7 @@ class CascadingSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
     super.errorBuilder,
@@ -870,6 +880,7 @@ class TabNavSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
     super.errorBuilder,
@@ -971,6 +982,7 @@ class FlattenSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
     super.errorBuilder,
@@ -1008,6 +1020,7 @@ class FlattenSelectDelegate extends SelectDelegate {
         fieldTileTheme: fieldTileTheme,
         expansionTileTheme: expansionTileTheme,
         chipBarTheme: chipBarTheme,
+        rangeSliderTheme: rangeSliderTheme,
         panelTheme: panelTheme,
       );
 
@@ -1048,6 +1061,7 @@ class FlattenSelectDelegate extends SelectDelegate {
         fieldTileTheme: fieldTileTheme,
         expansionTileTheme: expansionTileTheme,
         chipBarTheme: chipBarTheme,
+        rangeSliderTheme: rangeSliderTheme,
         panelTheme: panelTheme,
       );
 
@@ -1124,6 +1138,7 @@ class SideNavSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
     super.errorBuilder,
@@ -1226,6 +1241,7 @@ class ExpandableSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
     super.errorBuilder,

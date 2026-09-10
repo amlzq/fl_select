@@ -68,6 +68,24 @@ class SelectRangeSliderTheme with Diagnosticable {
     return SelectTheme.of(context).rangeSliderTheme;
   }
 
+  /// Returns a new theme where non-null fields from [other] override the
+  /// corresponding fields of this theme.
+  SelectRangeSliderTheme merge(SelectRangeSliderTheme? other) {
+    if (other == null) {
+      return this;
+    }
+    return SelectRangeSliderTheme(
+      endLabelStyle: other.endLabelStyle ?? endLabelStyle,
+      activeTrackColor: other.activeTrackColor ?? activeTrackColor,
+      inactiveTrackColor: other.inactiveTrackColor ?? inactiveTrackColor,
+      thumbColor: other.thumbColor ?? thumbColor,
+      thumbFillColor: other.thumbFillColor ?? thumbFillColor,
+      selectedColor: other.selectedColor ?? selectedColor,
+      trackHeight: other.trackHeight ?? trackHeight,
+      thumbRadius: other.thumbRadius ?? thumbRadius,
+    );
+  }
+
   static SelectRangeSliderTheme lerp(
     SelectRangeSliderTheme? a,
     SelectRangeSliderTheme? b,

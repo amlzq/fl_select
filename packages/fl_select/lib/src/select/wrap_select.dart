@@ -153,13 +153,6 @@ class WrapSelectState extends State<WrapSelect> {
                   selectedEntries: controller?.selectedEntriesAtLevel(0) ?? {},
                   spacing: delegate.spacing,
                   runSpacing: delegate.runSpacing,
-                  backgroundColor: delegate.chipBarTheme?.backgroundColor,
-                  padding: delegate.chipBarTheme?.padding,
-                  variant: delegate.chipBarTheme?.variant,
-                  chipColor: delegate.chipBarTheme?.chipColor,
-                  selectedChipColor: delegate.chipBarTheme?.selectedChipColor,
-                  labelStyle: delegate.chipBarTheme?.labelStyle,
-                  selectedLabelStyle: delegate.chipBarTheme?.selectedLabelStyle,
                   itemBuilder: delegate.itemBuilder,
                   onChanged: (_, entry) =>
                       _onTerminalItemTap(entry as SelectChildEntry),
