@@ -1,4 +1,4 @@
-## Next
+## 0.2.1
 
 - **FEATURE** flat (non-category) panels: add the required payload-level `flatKey` under which the selection is written back.
 
