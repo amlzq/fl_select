@@ -210,6 +210,17 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
       ),
     );
 
+    // Scale the native 390x844 phone down (or up) to fit the available area
+    // while preserving aspect ratio. The padding keeps the shell from touching
+    // the viewport edges (and gives its drop shadow room to render).
+    final phonePreview = Padding(
+      padding: const EdgeInsets.all(24),
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: PhoneFrame(screen: phoneScreen, brightness: effectiveBrightness),
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: _AppBarTitle(title: l10n.title, version: _packageVersion),
@@ -244,17 +255,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                     onChanged: widget.onParamsChanged,
                   ),
                 ),
-                Expanded(
-                  // Scale the native 390x844 phone down (or up) to fit the
-                  // available area while preserving aspect ratio.
-                  child: FittedBox(
-                    fit: BoxFit.contain,
-                    child: PhoneFrame(
-                      screen: phoneScreen,
-                      brightness: effectiveBrightness,
-                    ),
-                  ),
-                ),
+                Expanded(child: phonePreview),
               ],
             );
           }
@@ -266,13 +267,7 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
                   l10n: l10n,
                   onChanged: widget.onParamsChanged,
                 ),
-                FittedBox(
-                  fit: BoxFit.contain,
-                  child: PhoneFrame(
-                    screen: phoneScreen,
-                    brightness: effectiveBrightness,
-                  ),
-                ),
+                phonePreview,
               ],
             ),
           );
