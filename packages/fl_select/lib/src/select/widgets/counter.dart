@@ -106,7 +106,7 @@ class _SelectCounterState extends State<SelectCounter> {
     final children = widget.entries.whereType<SelectTextEntry>().toList();
     final any = children.where((e) => e.isAny).firstOrNull;
     final others = children.where((e) => !e.isAny).toList();
-    _items = [if (any != null) any, ...others];
+    _items = [?any, ...others];
     _index = _resolveIndex();
   }
 

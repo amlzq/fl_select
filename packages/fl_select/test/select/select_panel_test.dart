@@ -44,7 +44,7 @@ void main() {
             body: SelectPanel(
               delegate: _TestDelegate(
                 entriesLoader: () => completer.future,
-                bodyBuilder: (_, __, ___) => const Text('body'),
+                bodyBuilder: (_, _, _) => const Text('body'),
               ),
             ),
           ),
@@ -88,7 +88,7 @@ void main() {
             body: SelectPanel(
               delegate: _TestDelegate(
                 entriesLoader: () async => throw Exception('boom'),
-                bodyBuilder: (_, __, ___) => const Text('body'),
+                bodyBuilder: (_, _, _) => const Text('body'),
               ),
             ),
           ),
@@ -117,7 +117,7 @@ void main() {
                       },
                     ),
                   },
-                  bodyBuilder: (_, __, ___) => const Text('body'),
+                  bodyBuilder: (_, _, _) => const Text('body'),
                 ),
               ),
             ),
@@ -150,7 +150,7 @@ void main() {
                       },
                     ),
                   },
-                  bodyBuilder: (_, __, ___) => const Text('body'),
+                  bodyBuilder: (_, _, _) => const Text('body'),
                   errorBuilder: (error, _) => Text('custom: $error'),
                 ),
               ),
@@ -172,7 +172,7 @@ void main() {
             body: SelectPanel(
               delegate: _TestDelegate(
                 entriesLoader: () async => throw Exception('boom'),
-                bodyBuilder: (_, __, ___) => const Text('body'),
+                bodyBuilder: (_, _, _) => const Text('body'),
                 errorBuilder: (error, _) => Text('custom: $error'),
               ),
             ),
@@ -199,7 +199,7 @@ void main() {
             body: SelectPanel(
               delegate: _TestDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{},
-                bodyBuilder: (_, __, ___) => const SizedBox(),
+                bodyBuilder: (_, _, _) => const SizedBox(),
               ),
               controller: controller,
               onChangeTap: (_) => changed = true,
@@ -232,7 +232,7 @@ void main() {
             body: SelectPanel(
               delegate: _TestDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{},
-                bodyBuilder: (context, _, __) {
+                bodyBuilder: (context, _, _) {
                   captured = SelectController.of(context);
                   return const SizedBox();
                 },
@@ -259,7 +259,7 @@ void main() {
             body: SelectPanel(
               delegate: _TestDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{},
-                bodyBuilder: (_, __, ___) => const SizedBox(),
+                bodyBuilder: (_, _, _) => const SizedBox(),
               ),
               controller: controller,
             ),
@@ -279,7 +279,7 @@ void main() {
             body: SelectPanel(
               delegate: _TestDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{},
-                bodyBuilder: (context, _, __) {
+                bodyBuilder: (context, _, _) {
                   captured = SelectController.of(context);
                   return const SizedBox();
                 },
@@ -309,7 +309,7 @@ void main() {
             body: SelectPanel(
               delegate: _TestDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{},
-                bodyBuilder: (_, __, ___) => const SizedBox(),
+                bodyBuilder: (_, _, _) => const SizedBox(),
               ),
               controller: first,
               onApplyTap: (_) => appliedOnFirst = true,
@@ -326,7 +326,7 @@ void main() {
             body: SelectPanel(
               delegate: _TestDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{},
-                bodyBuilder: (_, __, ___) => const SizedBox(),
+                bodyBuilder: (_, _, _) => const SizedBox(),
               ),
               controller: second,
               onApplyTap: (_) => appliedOnSecond = true,
@@ -358,7 +358,7 @@ void main() {
               delegate: _TestDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{},
                 selectedEntriesLoader: () => previous,
-                bodyBuilder: (context, _, __) {
+                bodyBuilder: (context, _, _) {
                   captured = SelectController.of(context);
                   return const SizedBox();
                 },
@@ -386,7 +386,7 @@ void main() {
                 child: SelectPanel(
                   delegate: _TestDelegate(
                     entriesLoader: () async => <SelectEntry<dynamic>>{},
-                    bodyBuilder: (_, __, ___) => SizedBox(height: bodyHeight),
+                    bodyBuilder: (_, _, _) => SizedBox(height: bodyHeight),
                   ),
                 ),
               ),

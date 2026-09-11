@@ -62,7 +62,7 @@ void main() {
             body: SelectView(
               delegate: _TestDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{},
-                bodyBuilder: (context, _, __) {
+                bodyBuilder: (context, _, _) {
                   captured = SelectController.of(context);
                   return const SizedBox();
                 },
@@ -90,7 +90,7 @@ void main() {
             body: SelectView(
               delegate: _TestDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{},
-                bodyBuilder: (context, _, __) {
+                bodyBuilder: (context, _, _) {
                   captured = SelectController.of(context);
                   return const SizedBox();
                 },
@@ -117,7 +117,7 @@ void main() {
             body: SelectView(
               delegate: _TestDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{},
-                bodyBuilder: (_, __, ___) => const SizedBox(),
+                bodyBuilder: (_, _, _) => const SizedBox(),
               ),
               controller: controller,
               onChanged: (_) {},
@@ -144,7 +144,7 @@ void main() {
                 delegate: _TestDelegate(
                   entriesLoader: () async => <SelectEntry<dynamic>>{},
                   // A tall, unconstrained body to verify the cap is applied.
-                  bodyBuilder: (_, __, ___) => Container(height: 5000.0),
+                  bodyBuilder: (_, _, _) => Container(height: 5000.0),
                 ),
                 onChanged: (_) {},
               ),

@@ -142,9 +142,9 @@ class SelectListTile extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (leading != null) leading!,
+            ?leading,
             Expanded(child: content),
-            if (trailing != null) trailing!,
+            ?trailing,
           ],
         ),
       ),

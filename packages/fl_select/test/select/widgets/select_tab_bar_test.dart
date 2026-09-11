@@ -26,7 +26,7 @@ Widget _harness({
         selectedCategories: <SelectEntry>{},
         focusedIndex: focusedIndex,
         isScrollable: isScrollable,
-        onChanged: onChanged ?? (_, __) {},
+        onChanged: onChanged ?? (_, _) {},
       ),
     ),
   );
@@ -99,7 +99,7 @@ void main() {
             selectedCategories: {_categories[2]},
             focusedIndex: 0,
             isScrollable: true,
-            onChanged: (_, __) {},
+            onChanged: (_, _) {},
           ),
         ),
       ),

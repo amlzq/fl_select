@@ -513,7 +513,7 @@ class SideNavSelectState extends State<SideNavSelect> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (categoryTitle != null) categoryTitle,
+                  ?categoryTitle,
                   if (hasHeader)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
@@ -650,7 +650,7 @@ class SideNavSelectState extends State<SideNavSelect> {
             ],
           ),
         ),
-        if (actionBar != null) actionBar,
+        ?actionBar,
       ],
     );
   }

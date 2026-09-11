@@ -51,7 +51,7 @@ void main() {
               category: cat,
               entries: entries ?? cat.children!.toList(),
               selectedEntries: selectedEntries,
-              onChanged: onChanged ?? (_, __) {},
+              onChanged: onChanged ?? (_, _) {},
               showTitle: showTitle,
             ),
           ),
@@ -79,7 +79,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SelectCounter(entries: entries, onChanged: (_, __) {}),
+            body: SelectCounter(entries: entries, onChanged: (_, _) {}),
           ),
         ),
       );
@@ -218,7 +218,7 @@ void main() {
         category: cat,
         entries: cat.children!.toList(),
         selectedEntries: const <SelectEntry>{},
-        onChanged: (_, __) {},
+        onChanged: (_, _) {},
       );
       await tester.pumpWidget(MaterialApp(home: Scaffold(body: base)));
       expect(find.text('Any'), findsOneWidget);
@@ -228,7 +228,7 @@ void main() {
         category: cat,
         entries: cat.children!.toList(),
         selectedEntries: {onePlus},
-        onChanged: (_, __) {},
+        onChanged: (_, _) {},
       );
       await tester.pumpWidget(MaterialApp(home: Scaffold(body: rebuilt)));
       expect(find.text('1+'), findsOneWidget);

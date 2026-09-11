@@ -20,7 +20,7 @@ Widget _harness(
           ),
           entries: entries,
           selectedEntries: selectedEntries,
-          onChanged: onChanged ?? (_, __) {},
+          onChanged: onChanged ?? (_, _) {},
         ),
       ),
     ),

@@ -21,7 +21,7 @@ void main() {
             appBar: PopupSelectBar(
               tabs: tabs,
               selectDelegates: delegates,
-              onApplied: (_, __) {},
+              onApplied: (_, _) {},
               controller: controller,
             ),
             body: const SizedBox.expand(),

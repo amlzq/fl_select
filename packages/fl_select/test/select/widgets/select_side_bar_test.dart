@@ -26,7 +26,7 @@ Widget _harness({
         selectedCategories: {_categories[focusedIndex]},
         focusedIndex: focusedIndex,
         isScrollable: isScrollable,
-        onChanged: onChanged ?? (_, __) {},
+        onChanged: onChanged ?? (_, _) {},
       ),
     ),
   );
