@@ -1,5 +1,5 @@
 ---
-name: fl-select
+name: fl_select-code-generation
 description: A Flutter package (fl_select) for building selection UIs (e.g. filter bar) on a composable architecture of entry points, delegates, and layouts — 5 entry points (`SelectView`, `PopupSelectButton`, `PopupSelectBar`, `showSelect`, `showModalBottomSelect`), 7 delegates (list, grid, wrap, cascading, tab-nav, side-nav, expandable), 5 category layouts (list, grid, wrap, range slider, counter), plus `SelectDelegate` and `SelectEntry` types. A2UI-ready, with single & multiple selection, sync/async loading, search filtering, theming, and i18n built in; includes a JSON entry-tree codec (`SelectEntryCodec`) and a GenUI bridge package (`fl_select_genui`). This skill should be used when building filter UIs, dropdown menus with categories, cascading/grid/list/chip selects, range pickers, or whenever working with fl_select APIs or `fl_select_genui`.
 ---
 
@@ -74,7 +74,7 @@ final SelectEntries? selected = await showSelect(
 
 - The repo is a melos + pub-workspace monorepo: core package at `packages/fl_select`, GenUI bridge at `packages/fl_select_genui`.
 - `SelectEntryCodec.fromJson(list)` / `toJson(entries)` convert entry trees to/from declarative JSON (`type`: category / text / range / any / custom; `layout.kind`: list / grid / chip / counter / range). Prefer the codec over hand-building `SelectEntry` objects from dynamic data; it throws `FormatException` / `UnsupportedError` on bad payloads instead of silently dropping data.
-- `fl_select_genui` wraps the codec as a GenUI (A2UI) `CatalogItem` (`FlSelectCatalogItems.selectFilter`) so AI agents can emit the JSON and get a live fl_select panel; selections are written back as a `Map<String, List<String>>` at `<id>.value`.
+- For GenUI (A2UI) integration — rendering agent-emitted JSON as a live fl_select panel via the `fl_select_genui` package — install the `fl_select_genui-code-generation` skill shipped with that package.
 
 ## Reference index
 

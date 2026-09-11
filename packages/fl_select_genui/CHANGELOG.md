@@ -1,3 +1,7 @@
+## Next
+
+- **FEATURE** Ship a Dart Skills CLI (0.3.1) agent skill at `skills/fl_select_genui-code-generation` inside the package: projects depending on `fl_select_genui` auto-discover and install it via `skills get`. It covers catalog registration (`FlSelectCatalogItems`), authoring `Select` payloads (delegate + `entries` in `SelectEntryCodec` format), selection write-back, `systemPromptFragment` and `SelectEntrySchema`.
+
 ## 0.2.1
 
 - **FEATURE** flat (non-category) panels: add the required payload-level `flatKey` under which the selection is written back.

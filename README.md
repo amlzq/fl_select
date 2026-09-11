@@ -23,7 +23,6 @@ fl_select/
 │   ├── fl_select_genui/      # GenUI bridge
 │   └── fl_select_playground/ # Interactive playground
 ├── screenshots/            # GIFs and images used by docs
-├── skills/                 # Agent skills for AI coding assistants
 └── pubspec.yaml            # Pub workspace root (managed with melos)
 ```
 
