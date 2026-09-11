@@ -103,8 +103,9 @@ class SelectUtils {
   }
 
   static SelectEntries removeAnyEntries(Iterable<SelectEntry> entries) {
-    final SelectEntries result =
-        entries is Set<SelectEntry> ? entries : entries.toSet();
+    final SelectEntries result = entries is Set<SelectEntry>
+        ? entries
+        : entries.toSet();
 
     void removeAnyInChildren(SelectEntry entry) {
       final children = entry.children;
@@ -138,18 +139,17 @@ class SelectUtils {
   }) {
     return entries
         .where(
-            (entry) => !skipAny || !(entry is SelectChildEntry && entry.isAny))
+          (entry) => !skipAny || !(entry is SelectChildEntry && entry.isAny),
+        )
         .map((entry) => _cloneEntry(entry, skipAny: skipAny))
         .toSet();
   }
 
-  static SelectEntry _cloneEntry(
-    SelectEntry entry, {
-    bool skipAny = false,
-  }) {
+  static SelectEntry _cloneEntry(SelectEntry entry, {bool skipAny = false}) {
     final clonedChildren = entry.children
         ?.where(
-            (child) => !skipAny || !(child is SelectChildEntry && child.isAny))
+          (child) => !skipAny || !(child is SelectChildEntry && child.isAny),
+        )
         .map((child) => _cloneEntry(child, skipAny: skipAny))
         .toSet();
 
@@ -347,8 +347,9 @@ class SelectUtils {
 
     Set<SelectEntry>? clonedChildren;
     if (entry.children != null) {
-      final selectedOrdered =
-          originalChildren.where((child) => selectedIds.contains(child.id));
+      final selectedOrdered = originalChildren.where(
+        (child) => selectedIds.contains(child.id),
+      );
       clonedChildren = deepCloneSelectedSubtree
           ? deepCloneEntries(selectedOrdered)
           : selectedOrdered.map(_cloneEntryWithoutChildren).toSet();
@@ -379,8 +380,9 @@ class SelectUtils {
     if (entries == null || entries.isEmpty || selectedItemsPerLevel.isEmpty) {
       return;
     }
-    SelectEntries? selectedEntries =
-        selectedItemsPerLevel.elementAtOrNull(level);
+    SelectEntries? selectedEntries = selectedItemsPerLevel.elementAtOrNull(
+      level,
+    );
     if (selectedEntries == null || selectedEntries.isEmpty) {
       return;
     }
@@ -400,11 +402,14 @@ class SelectUtils {
             return false;
           }
           final ownChildren = nextLevelSelection
-              .where((e) =>
-                  e is SelectCategoryEntry ||
-                  (e is SelectChildEntry && e.parentId == entry.id))
+              .where(
+                (e) =>
+                    e is SelectCategoryEntry ||
+                    (e is SelectChildEntry && e.parentId == entry.id),
+              )
               .toSet();
-          final onlyAnyChildren = ownChildren.isNotEmpty &&
+          final onlyAnyChildren =
+              ownChildren.isNotEmpty &&
               ownChildren.every((e) => e is SelectChildEntry && e.isAny);
           final hasHeaderSelection =
               selectedHeaderEntries?[entry.id]?.isNotEmpty ?? false;
@@ -431,7 +436,8 @@ class SelectUtils {
               category.header = null;
             } else {
               header.children?.removeWhere(
-                  (e) => !headerSelected.any((s) => s.id == e.id));
+                (e) => !headerSelected.any((s) => s.id == e.id),
+              );
             }
           }
         }
@@ -446,7 +452,8 @@ class SelectUtils {
               category.footer = null;
             } else {
               footer.children?.removeWhere(
-                  (e) => !footerSelected.any((s) => s.id == e.id));
+                (e) => !footerSelected.any((s) => s.id == e.id),
+              );
             }
           }
         }
@@ -462,9 +469,11 @@ class SelectUtils {
       final nextLevel = level + 1;
       if (nextLevel < filteredPerLevel.length) {
         filteredPerLevel[nextLevel] = filteredPerLevel[nextLevel]
-            .where((e) =>
-                e is SelectCategoryEntry ||
-                (e is SelectChildEntry && e.parentId == item.id))
+            .where(
+              (e) =>
+                  e is SelectCategoryEntry ||
+                  (e is SelectChildEntry && e.parentId == item.id),
+            )
             .toSet();
       }
       clippingTree(
@@ -496,9 +505,11 @@ class SelectUtils {
       final all = selectedItemsPerLevel.elementAtOrNull(level);
       if (all == null || all.isEmpty) return {};
       return all
-          .where((e) =>
-              e is SelectCategoryEntry ||
-              (e is SelectChildEntry && e.parentId == parent.id))
+          .where(
+            (e) =>
+                e is SelectCategoryEntry ||
+                (e is SelectChildEntry && e.parentId == parent.id),
+          )
           .toSet();
     }
 
@@ -511,13 +522,15 @@ class SelectUtils {
         final hasNextLevelSelection = nextLevel < selectedItemsPerLevel.length;
 
         if (!hasNextLevelSelection) {
-          clonedChildren =
-              deepCloneSelectedSubtree ? deepCloneEntries(children) : null;
+          clonedChildren = deepCloneSelectedSubtree
+              ? deepCloneEntries(children)
+              : null;
         } else {
           final selectedNext = selectedForParent(entry, nextLevel);
           if (selectedNext.isEmpty) {
-            clonedChildren =
-                deepCloneSelectedSubtree ? deepCloneEntries(children) : null;
+            clonedChildren = deepCloneSelectedSubtree
+                ? deepCloneEntries(children)
+                : null;
           } else {
             // Keep the entries already present in `children` (matched by
             // identity) so existing behaviour and ordering are preserved, and
@@ -545,21 +558,21 @@ class SelectUtils {
         final clonedHeader = entry.header == null
             ? null
             : selectedHeaderEntries == null
-                ? deepCloneEntries({entry.header!}).firstOrNull
-                : _cloneHeaderFooterEntry(
-                    entry.header!,
-                    selectedHeaderEntries[entry.id],
-                    deepCloneSelectedSubtree: deepCloneSelectedSubtree,
-                  );
+            ? deepCloneEntries({entry.header!}).firstOrNull
+            : _cloneHeaderFooterEntry(
+                entry.header!,
+                selectedHeaderEntries[entry.id],
+                deepCloneSelectedSubtree: deepCloneSelectedSubtree,
+              );
         final clonedFooter = entry.footer == null
             ? null
             : selectedFooterEntries == null
-                ? deepCloneEntries({entry.footer!}).firstOrNull
-                : _cloneHeaderFooterEntry(
-                    entry.footer!,
-                    selectedFooterEntries[entry.id],
-                    deepCloneSelectedSubtree: deepCloneSelectedSubtree,
-                  );
+            ? deepCloneEntries({entry.footer!}).firstOrNull
+            : _cloneHeaderFooterEntry(
+                entry.footer!,
+                selectedFooterEntries[entry.id],
+                deepCloneSelectedSubtree: deepCloneSelectedSubtree,
+              );
         return _cloneEntryWithChildren(
           entry,
           clonedChildren,
@@ -589,7 +602,8 @@ class SelectUtils {
       if (entry is SelectChildEntry && entry.isAny) continue;
       if (entry is SelectCategoryEntry) {
         final selectedChildren = selectedForParent(entry, 1);
-        final onlyAnyChildren = selectedChildren.isNotEmpty &&
+        final onlyAnyChildren =
+            selectedChildren.isNotEmpty &&
             selectedChildren.every((e) => e is SelectChildEntry && e.isAny);
         final hasHeaderSelection =
             selectedHeaderEntries?[entry.id]?.isNotEmpty ?? false;
@@ -620,10 +634,7 @@ class SelectUtils {
     //   parent is the root (category) node, ignore it.
     String? firstLabel;
 
-    bool collectCandidateLabels(
-      SelectEntry entry, {
-      SelectEntry? parent,
-    }) {
+    bool collectCandidateLabels(SelectEntry entry, {SelectEntry? parent}) {
       final children = entry.children;
       final isLeaf = children == null || children.isEmpty;
       if (isLeaf) {
@@ -660,7 +671,9 @@ class SelectUtils {
   /// Returns selected entries per level. For custom range entries, previously
   /// entered values are restored into the matched entries.
   static List<SelectEntries> restorePreviousSelected(
-      List<SelectEntry>? items, Set<SelectEntry>? selectedEntries) {
+    List<SelectEntry>? items,
+    Set<SelectEntry>? selectedEntries,
+  ) {
     final result = <SelectEntries>[];
     _initializeSelectedEntriesPerLevel(items, selectedEntries, 0, result);
     // Drop any stale min/max on custom range entries that were not part of the
@@ -677,10 +690,11 @@ class SelectUtils {
   }
 
   static void _initializeSelectedEntriesPerLevel(
-      List<SelectEntry>? items,
-      Set<SelectEntry>? selectedEntries,
-      int level,
-      List<SelectEntries> result) {
+    List<SelectEntry>? items,
+    Set<SelectEntry>? selectedEntries,
+    int level,
+    List<SelectEntries> result,
+  ) {
     if (items == null ||
         items.isEmpty ||
         selectedEntries == null ||
@@ -708,7 +722,11 @@ class SelectUtils {
       }
       if (selectedItem.children?.isNotEmpty == true) {
         _initializeSelectedEntriesPerLevel(
-            item?.children?.toList(), selectedItem.children, level + 1, result);
+          item?.children?.toList(),
+          selectedItem.children,
+          level + 1,
+          result,
+        );
       }
     }
   }

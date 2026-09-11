@@ -7,44 +7,42 @@ import 'package:flutter_test/flutter_test.dart';
 /// and [ExpandableSelectDelegate]. Every delegate accepts exactly one data
 /// shape and asserts on the other.
 Set<SelectEntry> get _flatEntries => {
-      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-      SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-    };
+  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+};
 
 Set<SelectEntry> get _categoryEntries => {
-      SelectCategoryEntry<dynamic>.children(
-        id: 'cate1',
-        name: 'Cate 1',
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
-          SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
-        },
-      ),
-      SelectCategoryEntry<dynamic>.children(
-        id: 'cate2',
-        name: 'Cate 2',
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1'),
-        },
-      ),
-    };
+  SelectCategoryEntry<dynamic>.children(
+    id: 'cate1',
+    name: 'Cate 1',
+    children: {
+      SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
+      SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
+    },
+  ),
+  SelectCategoryEntry<dynamic>.children(
+    id: 'cate2',
+    name: 'Cate 2',
+    children: {SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1')},
+  ),
+};
 
-Widget _harness(SelectDelegate delegate,
-    {void Function(Set<SelectEntry>)? onChanged}) {
+Widget _harness(
+  SelectDelegate delegate, {
+  void Function(Set<SelectEntry>)? onChanged,
+}) {
   return MaterialApp(
     home: Scaffold(
-      body: SelectView(
-        delegate: delegate,
-        onChanged: onChanged ?? (_) {},
-      ),
+      body: SelectView(delegate: delegate, onChanged: onChanged ?? (_) {}),
     ),
   );
 }
 
 void main() {
   group('TabNavSelectDelegate', () {
-    testWidgets('renders category tabs and applies a selection',
-        (tester) async {
+    testWidgets('renders category tabs and applies a selection', (
+      tester,
+    ) async {
       final applied = <Set<SelectEntry>>[];
       await tester.pumpWidget(
         _harness(
@@ -138,8 +136,7 @@ void main() {
   });
 
   group('ExpandableSelectDelegate', () {
-    testWidgets(
-        'renders one expandable tile per category and applies a '
+    testWidgets('renders one expandable tile per category and applies a '
         'selection', (tester) async {
       final applied = <Set<SelectEntry>>[];
       await tester.pumpWidget(

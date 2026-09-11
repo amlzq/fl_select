@@ -10,9 +10,7 @@ final List<SelectEntry> _categories = [
     SelectCategoryEntry<dynamic>.children(
       id: 'cate$i',
       name: 'Category $i',
-      children: {
-        SelectTextEntry<dynamic>.name(id: 'a$i', name: 'A $i'),
-      },
+      children: {SelectTextEntry<dynamic>.name(id: 'a$i', name: 'A $i')},
     ),
 ];
 
@@ -35,12 +33,13 @@ Widget _harness({
 }
 
 void main() {
-  testWidgets('tapping a tile scrolls it to the center when isScrollable',
-      (tester) async {
+  testWidgets('tapping a tile scrolls it to the center when isScrollable', (
+    tester,
+  ) async {
     var tappedIndex = -1;
-    await tester.pumpWidget(_harness(
-      onChanged: (index, _) => tappedIndex = index,
-    ));
+    await tester.pumpWidget(
+      _harness(onChanged: (index, _) => tappedIndex = index),
+    );
 
     expect(find.byType(SingleChildScrollView), findsOneWidget);
 
@@ -59,8 +58,9 @@ void main() {
     expect(rectAfter.center.dy, closeTo(300, 30));
   });
 
-  testWidgets('a focusedIndex change from outside scrolls to the center',
-      (tester) async {
+  testWidgets('a focusedIndex change from outside scrolls to the center', (
+    tester,
+  ) async {
     await tester.pumpWidget(_harness(focusedIndex: 0));
     final rectBefore = tester.getRect(find.text('Category 9'));
 
@@ -74,12 +74,10 @@ void main() {
     expect(rectAfter.center.dy, closeTo(300, 30));
   });
 
-  testWidgets('isScrollable=false renders an expanded non-scrollable column',
-      (tester) async {
-    await tester.pumpWidget(_harness(
-      isScrollable: false,
-      focusedIndex: 9,
-    ));
+  testWidgets('isScrollable=false renders an expanded non-scrollable column', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_harness(isScrollable: false, focusedIndex: 9));
     await tester.pumpAndSettle();
 
     expect(find.byType(SingleChildScrollView), findsNothing);

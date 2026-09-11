@@ -148,7 +148,8 @@ class _SelectSearchBarState extends State<SelectSearchBar> {
     final effectivePadding =
         widget.padding ?? theme.padding ?? defaults.padding!;
 
-    final effectiveContentPadding = widget.contentPadding ??
+    final effectiveContentPadding =
+        widget.contentPadding ??
         theme.contentPadding ??
         defaults.contentPadding!;
 
@@ -158,11 +159,13 @@ class _SelectSearchBarState extends State<SelectSearchBar> {
     final effectiveBorderWidth =
         widget.borderWidth ?? theme.borderWidth ?? defaults.borderWidth!;
 
-    final effectiveEnabledBorderColor = widget.enabledBorderColor ??
+    final effectiveEnabledBorderColor =
+        widget.enabledBorderColor ??
         theme.enabledBorderColor ??
         defaults.enabledBorderColor!;
 
-    final effectiveFocusedBorderColor = widget.focusedBorderColor ??
+    final effectiveFocusedBorderColor =
+        widget.focusedBorderColor ??
         theme.focusedBorderColor ??
         defaults.focusedBorderColor!;
 
@@ -185,12 +188,16 @@ class _SelectSearchBarState extends State<SelectSearchBar> {
     final border = OutlineInputBorder(
       borderRadius: BorderRadius.circular(effectiveBorderRadius),
       borderSide: BorderSide(
-          color: effectiveEnabledBorderColor, width: effectiveBorderWidth),
+        color: effectiveEnabledBorderColor,
+        width: effectiveBorderWidth,
+      ),
     );
     final focusedBorder = OutlineInputBorder(
       borderRadius: BorderRadius.circular(effectiveBorderRadius),
       borderSide: BorderSide(
-          color: effectiveFocusedBorderColor, width: effectiveBorderWidth),
+        color: effectiveFocusedBorderColor,
+        width: effectiveBorderWidth,
+      ),
     );
 
     return Padding(
@@ -204,9 +211,11 @@ class _SelectSearchBarState extends State<SelectSearchBar> {
             focusNode: _focusNode,
             onChanged: widget.onChanged,
             style: effectiveTextStyle,
-            decoration: widget.decoration ??
+            decoration:
+                widget.decoration ??
                 InputDecoration(
-                  hintText: widget.hintText ??
+                  hintText:
+                      widget.hintText ??
                       SelectLocalizations.of(context)?.search ??
                       'Search',
                   hintStyle: effectiveHintStyle,
@@ -214,10 +223,12 @@ class _SelectSearchBarState extends State<SelectSearchBar> {
                   prefixIconColor: effectiveIconColor,
                   suffixIcon: hasText
                       ? IconButton(
-                          icon: Icon(Icons.close,
-                              size: effectiveIconSize > 0
-                                  ? effectiveIconSize - 2
-                                  : effectiveIconSize),
+                          icon: Icon(
+                            Icons.close,
+                            size: effectiveIconSize > 0
+                                ? effectiveIconSize - 2
+                                : effectiveIconSize,
+                          ),
                           onPressed: () {
                             widget.controller.clear();
                             widget.onChanged?.call('');
@@ -273,8 +284,9 @@ class _SelectSearchBarDefaults extends SelectSearchBarTheme {
   double? get iconSize => 20.0;
 
   @override
-  TextStyle? get hintStyle => _theme.textTheme.bodyMedium
-      ?.copyWith(color: _theme.colorScheme.onSurfaceVariant);
+  TextStyle? get hintStyle => _theme.textTheme.bodyMedium?.copyWith(
+    color: _theme.colorScheme.onSurfaceVariant,
+  );
 
   @override
   TextStyle? get textStyle => _theme.textTheme.bodyMedium;

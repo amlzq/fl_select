@@ -7,19 +7,15 @@ import 'select_theme_data.dart';
 /// This works similarly to Material's theme widgets and supports merging via
 /// [SelectTheme.merge].
 class SelectTheme extends InheritedTheme {
-  const SelectTheme({
-    super.key,
-    required this.data,
-    required super.child,
-  });
+  const SelectTheme({super.key, required this.data, required super.child});
 
   final SelectThemeData data;
 
   /// Returns the nearest [SelectThemeData] or a fallback derived from the
   /// current Material [ThemeData].
   static SelectThemeData of(BuildContext context) {
-    final SelectTheme? inheritedTheme =
-        context.dependOnInheritedWidgetOfExactType<SelectTheme>();
+    final SelectTheme? inheritedTheme = context
+        .dependOnInheritedWidgetOfExactType<SelectTheme>();
     return inheritedTheme?.data ?? SelectThemeData.fallback(Theme.of(context));
   }
 

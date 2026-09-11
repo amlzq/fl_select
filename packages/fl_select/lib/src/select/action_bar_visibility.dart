@@ -26,8 +26,8 @@ class SelectActionBarVisibility extends InheritedWidget {
   /// found above [context], so modal hosts that do not wrap their panel keep
   /// showing the action bar.
   static bool isHidden(BuildContext context) {
-    final scope =
-        context.dependOnInheritedWidgetOfExactType<SelectActionBarVisibility>();
+    final scope = context
+        .dependOnInheritedWidgetOfExactType<SelectActionBarVisibility>();
     return scope?.hidden ?? false;
   }
 

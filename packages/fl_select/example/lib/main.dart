@@ -95,7 +95,7 @@ class _MyAppState extends State<MyApp> {
                         backgroundColor: Colors.red,
                       ),
                     ),
-                  )
+                  ),
                 ],
               );
               return Theme(
@@ -131,7 +131,8 @@ class MyHomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const SelectViewExamplePage()),
+                    builder: (context) => const SelectViewExamplePage(),
+                  ),
                 );
               },
               child: Text(l10n.selectViewExample),
@@ -141,7 +142,8 @@ class MyHomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const PopupSelectButtonExample()),
+                    builder: (context) => const PopupSelectButtonExample(),
+                  ),
                 );
               },
               child: Text(l10n.popupSelectButtonExample),
@@ -151,7 +153,8 @@ class MyHomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const PopupSelectBarExample()),
+                    builder: (context) => const PopupSelectBarExample(),
+                  ),
                 );
               },
               child: Text(l10n.popupSelectBarExample),
@@ -161,7 +164,8 @@ class MyHomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const DialogExample()),
+                    builder: (context) => const DialogExample(),
+                  ),
                 );
               },
               child: Text(l10n.showSelectExample),
@@ -171,7 +175,8 @@ class MyHomePage extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => const BottomSheetExample()),
+                    builder: (context) => const BottomSheetExample(),
+                  ),
                 );
               },
               child: Text(l10n.showModalBottomSelectExample),

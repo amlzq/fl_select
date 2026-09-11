@@ -53,58 +53,61 @@ Widget _harness() {
 }
 
 void main() {
-  testWidgets('committing cate1 custom range does not pollute other categories',
-      (tester) async {
-    await tester.pumpWidget(_harness());
-    await tester.pumpAndSettle();
+  testWidgets(
+    'committing cate1 custom range does not pollute other categories',
+    (tester) async {
+      await tester.pumpWidget(_harness());
+      await tester.pumpAndSettle();
 
-    // All three categories are rendered as expanded tiles in ExpandableSelect.
-    expect(find.text('Cate 1'), findsOneWidget);
-    expect(find.text('Cate 3'), findsOneWidget);
-    expect(find.text('Cate 4'), findsOneWidget);
-    // Three custom input fields (one per category).
-    expect(find.byType(SelectFieldTile), findsNWidgets(3));
+      // All three categories are rendered as expanded tiles in ExpandableSelect.
+      expect(find.text('Cate 1'), findsOneWidget);
+      expect(find.text('Cate 3'), findsOneWidget);
+      expect(find.text('Cate 4'), findsOneWidget);
+      // Three custom input fields (one per category).
+      expect(find.byType(SelectFieldTile), findsNWidgets(3));
 
-    // cate1's custom is at the header, so its tile is the first
-    // [SelectFieldTile]. Commit a value into cate1's fields.
-    final cate1Tile = find.byType(SelectFieldTile).first;
-    await tester.enterText(
-      find.descendant(of: cate1Tile, matching: find.byType(TextField)).first,
-      '100',
-    );
-    await tester.enterText(
-      find.descendant(of: cate1Tile, matching: find.byType(TextField)).at(1),
-      '200',
-    );
-    // Unfocus so _onFocusChanged commits.
-    FocusManager.instance.primaryFocus?.unfocus();
-    await tester.pumpAndSettle();
+      // cate1's custom is at the header, so its tile is the first
+      // [SelectFieldTile]. Commit a value into cate1's fields.
+      final cate1Tile = find.byType(SelectFieldTile).first;
+      await tester.enterText(
+        find.descendant(of: cate1Tile, matching: find.byType(TextField)).first,
+        '100',
+      );
+      await tester.enterText(
+        find.descendant(of: cate1Tile, matching: find.byType(TextField)).at(1),
+        '200',
+      );
+      // Unfocus so _onFocusChanged commits.
+      FocusManager.instance.primaryFocus?.unfocus();
+      await tester.pumpAndSettle();
 
-    // cate1's own min value must be preserved after committing both fields
-    // (typing min first then max must not clear the min field).
-    final cate1Fields = tester
-        .widgetList<TextField>(
-          find.descendant(of: cate1Tile, matching: find.byType(TextField)),
-        )
-        .map((t) => t.controller?.text)
-        .toList();
-    expect(cate1Fields[0], '100');
-    expect(cate1Fields[1], '200');
+      // cate1's own min value must be preserved after committing both fields
+      // (typing min first then max must not clear the min field).
+      final cate1Fields = tester
+          .widgetList<TextField>(
+            find.descendant(of: cate1Tile, matching: find.byType(TextField)),
+          )
+          .map((t) => t.controller?.text)
+          .toList();
+      expect(cate1Fields[0], '100');
+      expect(cate1Fields[1], '200');
 
-    // cate3 and cate4's fields (the other tiles) must NOT be polluted with
-    // cate1's committed values.
-    final otherFields = tester
-        .widgetList<TextField>(find.byType(TextField))
-        .map((t) => t.controller?.text)
-        .toList();
-    expect(otherFields[2], isEmpty);
-    expect(otherFields[3], isEmpty);
-    expect(otherFields[4], isEmpty);
-    expect(otherFields[5], isEmpty);
-  });
+      // cate3 and cate4's fields (the other tiles) must NOT be polluted with
+      // cate1's committed values.
+      final otherFields = tester
+          .widgetList<TextField>(find.byType(TextField))
+          .map((t) => t.controller?.text)
+          .toList();
+      expect(otherFields[2], isEmpty);
+      expect(otherFields[3], isEmpty);
+      expect(otherFields[4], isEmpty);
+      expect(otherFields[5], isEmpty);
+    },
+  );
 
-  testWidgets('typing max does not swap during editing; swap only on commit',
-      (tester) async {
+  testWidgets('typing max does not swap during editing; swap only on commit', (
+    tester,
+  ) async {
     await tester.pumpWidget(_harness());
     await tester.pumpAndSettle();
 

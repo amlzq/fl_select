@@ -24,9 +24,7 @@ class _DialogExampleState extends State<DialogExample> {
                   onPressed: () async {
                     final result = await showSelect(
                       context: context,
-                      delegate: ListSelectDelegate(
-                        entries: listData,
-                      ),
+                      delegate: ListSelectDelegate(entries: listData),
                       leading: Icon(Icons.list),
                       title: Text('ListSelect'),
                     );

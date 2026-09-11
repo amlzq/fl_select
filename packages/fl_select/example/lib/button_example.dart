@@ -15,9 +15,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
   @override
   Widget build(BuildContext context) {
     final PopupSelectButtonTheme popupSelectButtonTheme =
-        PopupSelectButtonTheme.maybeOf(
-      context,
-    )!;
+        PopupSelectButtonTheme.maybeOf(context)!;
     return Scaffold(
       appBar: AppBar(title: const Text('PopupSelectButton')),
       body: SafeArea(
@@ -28,9 +26,7 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                 PopupSelectButton(
                   label: 'PopupSelectButton',
                   labelLoader: (selected) => '${selected.length} selected',
-                  selectDelegate: ListSelectDelegate(
-                    entries: listDataWithAny,
-                  ),
+                  selectDelegate: ListSelectDelegate(entries: listDataWithAny),
                   onApplied: (selected) {
                     largePrint('onApplied: $selected');
                     largePrint('toIdList: ${selected.toIdList()}');

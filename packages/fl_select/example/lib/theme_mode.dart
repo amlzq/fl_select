@@ -37,14 +37,8 @@ class ThemeModeButton extends StatelessWidget {
           value: ThemeMode.system,
           child: Text(l10n.themeModeSystem),
         ),
-        PopupMenuItem(
-          value: ThemeMode.light,
-          child: Text(l10n.themeModeLight),
-        ),
-        PopupMenuItem(
-          value: ThemeMode.dark,
-          child: Text(l10n.themeModeDark),
-        ),
+        PopupMenuItem(value: ThemeMode.light, child: Text(l10n.themeModeLight)),
+        PopupMenuItem(value: ThemeMode.dark, child: Text(l10n.themeModeDark)),
       ],
       icon: const Icon(Icons.brightness_6_outlined),
       tooltip: l10n.theme,

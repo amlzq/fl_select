@@ -6,9 +6,9 @@ const _amber = Color(0xFFECC104);
 const _ambientPadding = EdgeInsets.fromLTRB(1, 2, 3, 4);
 
 Set<SelectEntry> get _flatEntries => {
-      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-      SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-    };
+  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+};
 
 /// Pumps a panel whose delegate supplies the given theme overrides and
 /// returns the [SelectThemeData] [SelectPanel] injected into the tree.
@@ -19,20 +19,22 @@ Future<SelectThemeData> _effectiveTheme(
   SelectFieldTileTheme? fieldTileTheme,
   SelectSideBarTheme? sideBarTheme,
 }) async {
-  await tester.pumpWidget(MaterialApp(
-    home: Scaffold(
-      body: SelectPanel(
-        delegate: WrapSelectDelegate(
-          selectionMode: SelectionMode.multiple,
-          entries: _flatEntries,
-          gridTileTheme: gridTileTheme,
-          fieldTileTheme: fieldTileTheme,
-          sideBarTheme: sideBarTheme,
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: SelectPanel(
+          delegate: WrapSelectDelegate(
+            selectionMode: SelectionMode.multiple,
+            entries: _flatEntries,
+            gridTileTheme: gridTileTheme,
+            fieldTileTheme: fieldTileTheme,
+            sideBarTheme: sideBarTheme,
+          ),
+          selectTheme: selectTheme,
         ),
-        selectTheme: selectTheme,
       ),
     ),
-  ));
+  );
   await tester.pumpAndSettle();
   return tester.widget<SelectTheme>(find.byType(SelectTheme)).data;
 }
@@ -49,8 +51,9 @@ void main() {
         variant: SelectGridTileVariant.filled,
         tileColor: Colors.blue,
       );
-      final merged =
-          base.merge(const SelectGridTileTheme(selectedTileColor: _amber));
+      final merged = base.merge(
+        const SelectGridTileTheme(selectedTileColor: _amber),
+      );
       expect(merged.selectedTileColor, _amber);
       expect(merged.variant, SelectGridTileVariant.filled);
       expect(merged.tileColor, Colors.blue);
@@ -59,8 +62,9 @@ void main() {
 
   group('SelectFieldTileTheme.merge', () {
     test('returns this when other is null', () {
-      const base =
-          SelectFieldTileTheme(variant: SelectFieldTileVariant.outlined);
+      const base = SelectFieldTileTheme(
+        variant: SelectFieldTileVariant.outlined,
+      );
       expect(base.merge(null), same(base));
     });
 
@@ -69,8 +73,9 @@ void main() {
         variant: SelectFieldTileVariant.outlined,
         textColor: Colors.blue,
       );
-      final merged =
-          base.merge(const SelectFieldTileTheme(selectedColor: _amber));
+      final merged = base.merge(
+        const SelectFieldTileTheme(selectedColor: _amber),
+      );
       expect(merged.selectedColor, _amber);
       expect(merged.variant, SelectFieldTileVariant.outlined);
       expect(merged.textColor, Colors.blue);
@@ -84,10 +89,7 @@ void main() {
     });
 
     test('overrides only the fields set on other', () {
-      const base = SelectSideBarTheme(
-        width: 120,
-        backgroundColor: Colors.blue,
-      );
+      const base = SelectSideBarTheme(width: 120, backgroundColor: Colors.blue);
       final merged = base.merge(const SelectSideBarTheme(width: 88));
       expect(merged.width, 88);
       expect(merged.backgroundColor, Colors.blue);

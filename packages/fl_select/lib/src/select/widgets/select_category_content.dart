@@ -65,22 +65,21 @@ class SelectCategoryContentView extends StatelessWidget {
 
     return switch (layout) {
       SelectListLayout(:final toText) => SelectListView(
-          key: ValueKey('category_$index'),
-          category: category,
-          showTitle: false,
-          entries: entries,
-          selectedEntries: selectedEntries,
-          onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
-          toText: toText,
-          // Mirror [SelectionRules.toggleFlatLeaf]: a category without an
-          // explicit selectionMode inherits the delegate-level mode, while
-          // counter/range layouts stay pinned to single.
-          selectionMode:
-              category.effectiveSelectionMode(delegate.selectionMode),
-          radioBuilder: radioBuilder,
-          checkboxBuilder: checkboxBuilder,
-          itemBuilder: itemBuilder,
-        ),
+        key: ValueKey('category_$index'),
+        category: category,
+        showTitle: false,
+        entries: entries,
+        selectedEntries: selectedEntries,
+        onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
+        toText: toText,
+        // Mirror [SelectionRules.toggleFlatLeaf]: a category without an
+        // explicit selectionMode inherits the delegate-level mode, while
+        // counter/range layouts stay pinned to single.
+        selectionMode: category.effectiveSelectionMode(delegate.selectionMode),
+        radioBuilder: radioBuilder,
+        checkboxBuilder: checkboxBuilder,
+        itemBuilder: itemBuilder,
+      ),
       SelectGridLayout(
         :final crossAxisCount,
         :final mainAxisSpacing,
@@ -102,38 +101,34 @@ class SelectCategoryContentView extends StatelessWidget {
           toText: toText,
           itemBuilder: itemBuilder,
         ),
-      SelectWrapLayout(
-        :final spacing,
-        :final runSpacing,
-      ) =>
-        SelectWrapView(
-          key: ValueKey('category_$index'),
-          category: category,
-          entries: entries,
-          selectedEntries: selectedEntries,
-          showTitle: false,
-          spacing: spacing,
-          runSpacing: runSpacing,
-          onChanged: (_, item) => onTerminalItemTap(item as SelectChildEntry),
-          itemBuilder: itemBuilder,
-        ),
+      SelectWrapLayout(:final spacing, :final runSpacing) => SelectWrapView(
+        key: ValueKey('category_$index'),
+        category: category,
+        entries: entries,
+        selectedEntries: selectedEntries,
+        showTitle: false,
+        spacing: spacing,
+        runSpacing: runSpacing,
+        onChanged: (_, item) => onTerminalItemTap(item as SelectChildEntry),
+        itemBuilder: itemBuilder,
+      ),
       SelectRangeLayout(:final toText) => SelectRangeView(
-          key: ValueKey('category_$index'),
-          category: category,
-          showTitle: false,
-          toText: toText,
-          entries: entries,
-          selectedEntries: selectedEntries,
-          onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
-        ),
+        key: ValueKey('category_$index'),
+        category: category,
+        showTitle: false,
+        toText: toText,
+        entries: entries,
+        selectedEntries: selectedEntries,
+        onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
+      ),
       SelectCounterLayout() => SelectCounter(
-          key: ValueKey('category_$index'),
-          category: category,
-          showTitle: false,
-          entries: entries,
-          selectedEntries: selectedEntries,
-          onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
-        ),
+        key: ValueKey('category_$index'),
+        category: category,
+        showTitle: false,
+        entries: entries,
+        selectedEntries: selectedEntries,
+        onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
+      ),
     };
   }
 }

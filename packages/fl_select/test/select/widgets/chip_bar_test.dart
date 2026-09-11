@@ -14,7 +14,10 @@ Widget _harness(
       body: SingleChildScrollView(
         child: SelectChipBar(
           category: SelectTextEntry<dynamic>(
-              parentId: '', id: 'cate1', name: 'Cate 1'),
+            parentId: '',
+            id: 'cate1',
+            name: 'Cate 1',
+          ),
           entries: entries,
           selectedEntries: selectedEntries,
           onChanged: onChanged ?? (_, __) {},
@@ -32,13 +35,16 @@ List<String?> fieldTexts(WidgetTester tester, Finder tile) => tester
     .toList();
 
 void main() {
-  testWidgets('header custom renders as a field tile above the chips',
-      (tester) async {
-    await tester.pumpWidget(_harness([
-      SelectRangeEntry<int, dynamic>.custom(parentId: 'cate1'),
-      SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A'),
-      SelectTextEntry<dynamic>(parentId: 'cate1', id: 'b', name: 'B'),
-    ]));
+  testWidgets('header custom renders as a field tile above the chips', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _harness([
+        SelectRangeEntry<int, dynamic>.custom(parentId: 'cate1'),
+        SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A'),
+        SelectTextEntry<dynamic>(parentId: 'cate1', id: 'b', name: 'B'),
+      ]),
+    );
     await tester.pumpAndSettle();
 
     expect(find.byType(SelectFieldTile), findsOneWidget);
@@ -53,13 +59,16 @@ void main() {
     );
   });
 
-  testWidgets('footer custom renders as a field tile below the chips',
-      (tester) async {
-    await tester.pumpWidget(_harness([
-      SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A'),
-      SelectTextEntry<dynamic>(parentId: 'cate1', id: 'b', name: 'B'),
-      SelectRangeEntry<int, dynamic>.custom(parentId: 'cate1'),
-    ]));
+  testWidgets('footer custom renders as a field tile below the chips', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _harness([
+        SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A'),
+        SelectTextEntry<dynamic>(parentId: 'cate1', id: 'b', name: 'B'),
+        SelectRangeEntry<int, dynamic>.custom(parentId: 'cate1'),
+      ]),
+    );
     await tester.pumpAndSettle();
 
     expect(find.byType(SelectFieldTile), findsOneWidget);
@@ -69,21 +78,25 @@ void main() {
     );
   });
 
-  testWidgets('committing the inputs on focus loss reports the custom entry',
-      (tester) async {
+  testWidgets('committing the inputs on focus loss reports the custom entry', (
+    tester,
+  ) async {
     final custom = SelectRangeEntry<int, dynamic>.custom(parentId: 'cate1');
     final results = <(int, SelectEntry)>[];
-    await tester.pumpWidget(_harness([
-      SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A'),
-      custom,
-    ], onChanged: (i, e) => results.add((i, e))));
+    await tester.pumpWidget(
+      _harness([
+        SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A'),
+        custom,
+      ], onChanged: (i, e) => results.add((i, e))),
+    );
     await tester.pumpAndSettle();
 
     await tester.enterText(
       find
           .descendant(
-              of: find.byType(SelectFieldTile),
-              matching: find.byType(TextField))
+            of: find.byType(SelectFieldTile),
+            matching: find.byType(TextField),
+          )
           .first,
       '100',
     );
@@ -103,10 +116,12 @@ void main() {
   });
 
   testWidgets('an inverted range is normalized on commit', (tester) async {
-    await tester.pumpWidget(_harness([
-      SelectRangeEntry<int, dynamic>.custom(parentId: 'cate1'),
-      SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A'),
-    ]));
+    await tester.pumpWidget(
+      _harness([
+        SelectRangeEntry<int, dynamic>.custom(parentId: 'cate1'),
+        SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A'),
+      ]),
+    );
     await tester.pumpAndSettle();
 
     final tile = find.byType(SelectFieldTile);
@@ -126,8 +141,9 @@ void main() {
     expect(texts[1], '222');
   });
 
-  testWidgets('a committed custom selection restores the input texts',
-      (tester) async {
+  testWidgets('a committed custom selection restores the input texts', (
+    tester,
+  ) async {
     // A foreign category's custom entry must not leak into this bar's inputs.
     final foreign = SelectRangeEntry<int, dynamic>.custom(
       parentId: 'other',
@@ -140,13 +156,12 @@ void main() {
       max: 200,
     );
 
-    await tester.pumpWidget(_harness([
-      own,
-      SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A'),
-    ], selectedEntries: {
-      foreign,
-      own
-    }));
+    await tester.pumpWidget(
+      _harness(
+        [own, SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A')],
+        selectedEntries: {foreign, own},
+      ),
+    );
     await tester.pumpAndSettle();
 
     final texts = fieldTexts(tester, find.byType(SelectFieldTile));
@@ -155,21 +170,25 @@ void main() {
     expect(texts[1], '200');
   });
 
-  testWidgets('tapping a chip clears the custom inputs and unfocuses them',
-      (tester) async {
+  testWidgets('tapping a chip clears the custom inputs and unfocuses them', (
+    tester,
+  ) async {
     final results = <(int, SelectEntry)>[];
     final a = SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A');
-    await tester.pumpWidget(_harness([
-      SelectRangeEntry<int, dynamic>.custom(parentId: 'cate1'),
-      a,
-    ], onChanged: (i, e) => results.add((i, e))));
+    await tester.pumpWidget(
+      _harness([
+        SelectRangeEntry<int, dynamic>.custom(parentId: 'cate1'),
+        a,
+      ], onChanged: (i, e) => results.add((i, e))),
+    );
     await tester.pumpAndSettle();
 
     await tester.enterText(
       find
           .descendant(
-              of: find.byType(SelectFieldTile),
-              matching: find.byType(TextField))
+            of: find.byType(SelectFieldTile),
+            matching: find.byType(TextField),
+          )
           .first,
       '100',
     );

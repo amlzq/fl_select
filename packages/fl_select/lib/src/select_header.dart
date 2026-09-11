@@ -70,13 +70,11 @@ class SelectHeader extends StatelessWidget {
     final textStyle = theme.textTheme.titleLarge ?? theme.textTheme.titleMedium;
     final titleWidget = (title == null || textStyle == null)
         ? null
-        : DefaultTextStyle(
-            style: textStyle,
-            child: title!,
-          );
+        : DefaultTextStyle(style: textStyle, child: title!);
     // Without a title there is nothing to center; only [leading] and/or
     // [trailing] are shown, laid out from the edges inward.
-    final isCentered = titleWidget != null &&
+    final isCentered =
+        titleWidget != null &&
         _getEffectiveCenterTitle(theme, theme.appBarTheme);
 
     // Horizontal gap between [leading]/[trailing] and the [title].
@@ -101,10 +99,7 @@ class SelectHeader extends StatelessWidget {
           ],
           if (titleWidget != null)
             Expanded(
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: titleWidget,
-              ),
+              child: Align(alignment: Alignment.centerLeft, child: titleWidget),
             )
           else
             const Spacer(),
@@ -129,20 +124,10 @@ class SelectHeader extends StatelessWidget {
           // relative to the whole header, not to the gap between [leading]
           // and [trailing].
           Row(
-            children: [
-              Expanded(child: Center(child: titleWidget)),
-            ],
+            children: [Expanded(child: Center(child: titleWidget))],
           ),
-          if (leading != null)
-            Positioned(
-              left: 0,
-              child: leading!,
-            ),
-          if (trailing != null)
-            Positioned(
-              right: 0,
-              child: trailing!,
-            ),
+          if (leading != null) Positioned(left: 0, child: leading!),
+          if (trailing != null) Positioned(right: 0, child: trailing!),
         ],
       );
     }

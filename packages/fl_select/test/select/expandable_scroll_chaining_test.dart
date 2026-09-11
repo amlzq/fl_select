@@ -72,7 +72,10 @@ Finder _bodyScrollableFinder() => find
 /// lets the caller continue the gesture (the returned gesture is still
 /// down). Small steps keep the drag recognizer fed with move events.
 Future<TestGesture> _dragToBottom(
-    WidgetTester tester, Offset position, ScrollPosition inner) async {
+  WidgetTester tester,
+  Offset position,
+  ScrollPosition inner,
+) async {
   final gesture = await tester.startGesture(position);
   await gesture.moveBy(const Offset(0, -30));
   await tester.pump();
@@ -85,18 +88,23 @@ Future<TestGesture> _dragToBottom(
 }
 
 void main() {
-  testWidgets('touch drag past the body bottom edge chains to the outer view',
-      (tester) async {
+  testWidgets('touch drag past the body bottom edge chains to the outer view', (
+    tester,
+  ) async {
     final outer = ScrollController();
     addTearDown(outer.dispose);
     await tester.pumpWidget(_harness(outer, _longCategories));
     await tester.pumpAndSettle();
 
-    final inner =
-        tester.state<ScrollableState>(_bodyScrollableFinder()).position;
+    final inner = tester
+        .state<ScrollableState>(_bodyScrollableFinder())
+        .position;
     final gesture = await _dragToBottom(tester, const Offset(400, 300), inner);
-    expect(inner.pixels, inner.maxScrollExtent,
-        reason: 'precondition: the drag reached the body bottom edge');
+    expect(
+      inner.pixels,
+      inner.maxScrollExtent,
+      reason: 'precondition: the drag reached the body bottom edge',
+    );
 
     // The reported defect: once the body rests at its edge, further
     // dragging must keep scrolling the page-level view instead of sticking.
@@ -104,31 +112,43 @@ void main() {
     await gesture.moveBy(const Offset(0, -150));
     await tester.pump();
 
-    expect(inner.pixels, inner.maxScrollExtent,
-        reason: 'the body must stay pinned at its bottom edge');
-    expect(outer.offset, greaterThan(before),
-        reason: 'the leftover drag must keep scrolling the outer view');
+    expect(
+      inner.pixels,
+      inner.maxScrollExtent,
+      reason: 'the body must stay pinned at its bottom edge',
+    );
+    expect(
+      outer.offset,
+      greaterThan(before),
+      reason: 'the leftover drag must keep scrolling the outer view',
+    );
     await gesture.up();
     await tester.pumpAndSettle();
   });
 
-  testWidgets('dragging back scrolls the body first (inner-first chaining)',
-      (tester) async {
+  testWidgets('dragging back scrolls the body first (inner-first chaining)', (
+    tester,
+  ) async {
     final outer = ScrollController();
     addTearDown(outer.dispose);
     await tester.pumpWidget(_harness(outer, _longCategories));
     await tester.pumpAndSettle();
 
-    final inner =
-        tester.state<ScrollableState>(_bodyScrollableFinder()).position;
+    final inner = tester
+        .state<ScrollableState>(_bodyScrollableFinder())
+        .position;
     final gesture = await _dragToBottom(tester, const Offset(400, 300), inner);
     // Chain a bit more so the outer view carries a chained offset.
     await gesture.moveBy(const Offset(0, -200));
     await tester.pump();
     final chained = outer.offset;
-    expect(chained, greaterThan(60.0),
-        reason: 'precondition: the drag chained a usable offset to the '
-            'outer view');
+    expect(
+      chained,
+      greaterThan(60.0),
+      reason:
+          'precondition: the drag chained a usable offset to the '
+          'outer view',
+    );
 
     // Drag back down by 60px: the body consumes the drag itself first —
     // inner-first, like NestedScrollView and browsers — while the outer
@@ -136,61 +156,86 @@ void main() {
     await gesture.moveBy(const Offset(0, 60));
     await tester.pump();
 
-    expect(outer.offset, chained,
-        reason: 'the reverse drag must not move the outer view while the '
-            'body still has room to scroll');
-    expect(inner.pixels, closeTo(inner.maxScrollExtent - 60, 2.0),
-        reason: 'the body scrolls itself first when dragging back');
+    expect(
+      outer.offset,
+      chained,
+      reason:
+          'the reverse drag must not move the outer view while the '
+          'body still has room to scroll',
+    );
+    expect(
+      inner.pixels,
+      closeTo(inner.maxScrollExtent - 60, 2.0),
+      reason: 'the body scrolls itself first when dragging back',
+    );
     await gesture.up();
     await tester.pumpAndSettle();
   });
 
   testWidgets(
-      'a fling released at the body bottom edge hands its momentum to the '
-      'outer view', (tester) async {
-    final outer = ScrollController();
-    addTearDown(outer.dispose);
-    await tester.pumpWidget(_harness(outer, _longCategories));
-    await tester.pumpAndSettle();
+    'a fling released at the body bottom edge hands its momentum to the '
+    'outer view',
+    (tester) async {
+      final outer = ScrollController();
+      addTearDown(outer.dispose);
+      await tester.pumpWidget(_harness(outer, _longCategories));
+      await tester.pumpAndSettle();
 
-    final inner =
-        tester.state<ScrollableState>(_bodyScrollableFinder()).position;
-    final warmup = await _dragToBottom(tester, const Offset(400, 300), inner);
-    await warmup.up();
-    await tester.pumpAndSettle();
-    final chained = outer.offset;
-    expect(chained, greaterThan(0.0),
-        reason: 'precondition: the drag chained an offset to the outer view');
-    expect(inner.pixels, inner.maxScrollExtent,
-        reason: 'precondition: the body rests at its bottom edge');
+      final inner = tester
+          .state<ScrollableState>(_bodyScrollableFinder())
+          .position;
+      final warmup = await _dragToBottom(tester, const Offset(400, 300), inner);
+      await warmup.up();
+      await tester.pumpAndSettle();
+      final chained = outer.offset;
+      expect(
+        chained,
+        greaterThan(0.0),
+        reason: 'precondition: the drag chained an offset to the outer view',
+      );
+      expect(
+        inner.pixels,
+        inner.maxScrollExtent,
+        reason: 'precondition: the body rests at its bottom edge',
+      );
 
-    // A fast, short fling on the pinned body: the stroke itself chains to
-    // the outer view, and the released momentum must keep scrolling it.
-    await tester.fling(_bodyScrollableFinder(), const Offset(0, -50), 1000.0);
-    await tester.pumpAndSettle();
+      // A fast, short fling on the pinned body: the stroke itself chains to
+      // the outer view, and the released momentum must keep scrolling it.
+      await tester.fling(_bodyScrollableFinder(), const Offset(0, -50), 1000.0);
+      await tester.pumpAndSettle();
 
-    expect(outer.offset, greaterThan(chained),
-        reason: 'the fling momentum must transfer to the outer view');
-  });
+      expect(
+        outer.offset,
+        greaterThan(chained),
+        reason: 'the fling momentum must transfer to the outer view',
+      );
+    },
+  );
 
-  testWidgets('touch drag on a body that cannot scroll scrolls the outer view',
-      (tester) async {
-    final outer = ScrollController();
-    addTearDown(outer.dispose);
-    await tester.pumpWidget(_harness(outer, _shortCategories));
-    await tester.pumpAndSettle();
+  testWidgets(
+    'touch drag on a body that cannot scroll scrolls the outer view',
+    (tester) async {
+      final outer = ScrollController();
+      addTearDown(outer.dispose);
+      await tester.pumpWidget(_harness(outer, _shortCategories));
+      await tester.pumpAndSettle();
 
-    final inner =
-        tester.state<ScrollableState>(_bodyScrollableFinder()).position;
-    final gesture = await tester.startGesture(const Offset(400, 300));
-    await gesture.moveBy(const Offset(0, -30));
-    await gesture.moveBy(const Offset(0, -200));
-    await tester.pump();
+      final inner = tester
+          .state<ScrollableState>(_bodyScrollableFinder())
+          .position;
+      final gesture = await tester.startGesture(const Offset(400, 300));
+      await gesture.moveBy(const Offset(0, -30));
+      await gesture.moveBy(const Offset(0, -200));
+      await tester.pump();
 
-    expect(inner.pixels, 0.0, reason: 'the body has nothing to scroll');
-    expect(outer.offset, greaterThan(0.0),
-        reason: 'the outer view must scroll directly');
-    await gesture.up();
-    await tester.pumpAndSettle();
-  });
+      expect(inner.pixels, 0.0, reason: 'the body has nothing to scroll');
+      expect(
+        outer.offset,
+        greaterThan(0.0),
+        reason: 'the outer view must scroll directly',
+      );
+      await gesture.up();
+      await tester.pumpAndSettle();
+    },
+  );
 }

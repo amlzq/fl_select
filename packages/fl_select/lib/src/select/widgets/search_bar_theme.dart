@@ -118,21 +118,33 @@ class SelectSearchBarTheme with Diagnosticable {
 
   /// Linearly interpolates between two search bar themes.
   static SelectSearchBarTheme lerp(
-      SelectSearchBarTheme? a, SelectSearchBarTheme? b, double t) {
+    SelectSearchBarTheme? a,
+    SelectSearchBarTheme? b,
+    double t,
+  ) {
     if (identical(a, b) && a != null) {
       return a;
     }
     return SelectSearchBarTheme(
       padding: EdgeInsetsGeometry.lerp(a?.padding, b?.padding, t),
-      contentPadding:
-          EdgeInsetsGeometry.lerp(a?.contentPadding, b?.contentPadding, t),
+      contentPadding: EdgeInsetsGeometry.lerp(
+        a?.contentPadding,
+        b?.contentPadding,
+        t,
+      ),
       borderRadius: lerpDouble(a?.borderRadius, b?.borderRadius, t),
       filled: t < 0.5 ? a?.filled : b?.filled,
       fillColor: Color.lerp(a?.fillColor, b?.fillColor, t),
-      enabledBorderColor:
-          Color.lerp(a?.enabledBorderColor, b?.enabledBorderColor, t),
-      focusedBorderColor:
-          Color.lerp(a?.focusedBorderColor, b?.focusedBorderColor, t),
+      enabledBorderColor: Color.lerp(
+        a?.enabledBorderColor,
+        b?.enabledBorderColor,
+        t,
+      ),
+      focusedBorderColor: Color.lerp(
+        a?.focusedBorderColor,
+        b?.focusedBorderColor,
+        t,
+      ),
       borderWidth: lerpDouble(a?.borderWidth, b?.borderWidth, t),
       hintStyle: TextStyle.lerp(a?.hintStyle, b?.hintStyle, t),
       textStyle: TextStyle.lerp(a?.textStyle, b?.textStyle, t),
@@ -143,19 +155,19 @@ class SelectSearchBarTheme with Diagnosticable {
 
   @override
   int get hashCode => Object.hash(
-        padding,
-        contentPadding,
-        borderRadius,
-        filled,
-        fillColor,
-        enabledBorderColor,
-        focusedBorderColor,
-        borderWidth,
-        hintStyle,
-        textStyle,
-        iconColor,
-        iconSize,
-      );
+    padding,
+    contentPadding,
+    borderRadius,
+    filled,
+    fillColor,
+    enabledBorderColor,
+    focusedBorderColor,
+    borderWidth,
+    hintStyle,
+    textStyle,
+    iconColor,
+    iconSize,
+  );
 
   @override
   bool operator ==(Object other) {

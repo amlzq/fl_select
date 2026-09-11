@@ -73,8 +73,11 @@ class TabNavSelectState extends State<TabNavSelect> {
   bool get _isSearching => widget.searchQuery.isNotEmpty;
 
   List<SelectEntry> get _displayEntries => _isSearching
-      ? filterEntriesForSearch(widget.entries, widget.searchQuery,
-          predicate: widget.searchPredicate)
+      ? filterEntriesForSearch(
+          widget.entries,
+          widget.searchQuery,
+          predicate: widget.searchPredicate,
+        )
       : widget.entries;
 
   /// Returns the focused category when it still exists in [_displayEntries],
@@ -268,7 +271,8 @@ class TabNavSelectState extends State<TabNavSelect> {
           Flexible(
             child: Center(
               child: Text(
-                  SelectLocalizations.of(context)?.noResults ?? 'No results'),
+                SelectLocalizations.of(context)?.noResults ?? 'No results',
+              ),
             ),
           ),
           if (controller?.hasMultipleMode == true &&

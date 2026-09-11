@@ -119,22 +119,26 @@ void main() {
       expect(controller.select('missing'), isFalse);
     });
 
-    test('select in single mode replaces previous selection in same category',
-        () {
-      final controller = SelectController(selectionMode: SelectionMode.single);
-      final a = _text('c', 'a', 'A');
-      final b = _text('c', 'b', 'B');
-      final c = _category('c', 'C', children: {a, b});
-      controller.bindState([c], initializeAnyIfEmpty: false);
+    test(
+      'select in single mode replaces previous selection in same category',
+      () {
+        final controller = SelectController(
+          selectionMode: SelectionMode.single,
+        );
+        final a = _text('c', 'a', 'A');
+        final b = _text('c', 'b', 'B');
+        final c = _category('c', 'C', children: {a, b});
+        controller.bindState([c], initializeAnyIfEmpty: false);
 
-      expect(controller.select('a', parentId: 'c'), isTrue);
-      expect(controller.select('b', parentId: 'c'), isTrue);
-      expect(
-        controller.selectedEntriesForParent('c', level: 1).contains(b),
-        isTrue,
-      );
-      // In single mode, a should be replaced
-    });
+        expect(controller.select('a', parentId: 'c'), isTrue);
+        expect(controller.select('b', parentId: 'c'), isTrue);
+        expect(
+          controller.selectedEntriesForParent('c', level: 1).contains(b),
+          isTrue,
+        );
+        // In single mode, a should be replaced
+      },
+    );
 
     test('select custom range entry works', () {
       final controller = SelectController(selectionMode: SelectionMode.single);
@@ -214,24 +218,31 @@ void main() {
       expect(controller.selectedEntriesAtLevel(0).contains(a), isFalse);
     });
 
-    test('select with applyIfImmediate calls apply listeners in single mode',
-        () {
-      final controller = SelectController(selectionMode: SelectionMode.single);
-      var applyCalled = false;
-      controller.addApplyListener((_) => applyCalled = true);
+    test(
+      'select with applyIfImmediate calls apply listeners in single mode',
+      () {
+        final controller = SelectController(
+          selectionMode: SelectionMode.single,
+        );
+        var applyCalled = false;
+        controller.addApplyListener((_) => applyCalled = true);
 
-      final a = _text('c', 'a', 'A');
-      final c = _category('c', 'C', children: {a});
-      controller.bindState([c], initializeAnyIfEmpty: false);
+        final a = _text('c', 'a', 'A');
+        final c = _category('c', 'C', children: {a});
+        controller.bindState([c], initializeAnyIfEmpty: false);
 
-      expect(controller.select('a', parentId: 'c', applyIfImmediate: true),
-          isTrue);
-      expect(applyCalled, isTrue);
-    });
+        expect(
+          controller.select('a', parentId: 'c', applyIfImmediate: true),
+          isTrue,
+        );
+        expect(applyCalled, isTrue);
+      },
+    );
 
     test('select with applyIfImmediate on immediate entry calls apply', () {
-      final controller =
-          SelectController(selectionMode: SelectionMode.multiple);
+      final controller = SelectController(
+        selectionMode: SelectionMode.multiple,
+      );
       var applyCalled = false;
       controller.addApplyListener((_) => applyCalled = true);
 
@@ -244,8 +255,10 @@ void main() {
       final c = _category('c', 'C', children: {a});
       controller.bindState([c], initializeAnyIfEmpty: false);
 
-      expect(controller.select('a', parentId: 'c', applyIfImmediate: true),
-          isTrue);
+      expect(
+        controller.select('a', parentId: 'c', applyIfImmediate: true),
+        isTrue,
+      );
       expect(applyCalled, isTrue);
     });
 
@@ -303,8 +316,9 @@ void main() {
     });
 
     test('unselect in multiple mode for flat tree (no category)', () {
-      final controller =
-          SelectController(selectionMode: SelectionMode.multiple);
+      final controller = SelectController(
+        selectionMode: SelectionMode.multiple,
+      );
       final a = _text('', 'a', 'A');
       final b = _text('', 'b', 'B');
       controller.bindState([a, b], initializeAnyIfEmpty: false);
@@ -314,19 +328,22 @@ void main() {
       expect(controller.selectedEntriesAtLevel(0).contains(a), isFalse);
     });
 
-    test('unselect last item in multiple mode for flat tree falls back to Any',
-        () {
-      final controller =
-          SelectController(selectionMode: SelectionMode.multiple);
-      final any = SelectTextEntry<dynamic>.any(parentId: '', name: 'Any');
-      final a = _text('', 'a', 'A');
-      controller.bindState([any, a], initializeAnyIfEmpty: false);
+    test(
+      'unselect last item in multiple mode for flat tree falls back to Any',
+      () {
+        final controller = SelectController(
+          selectionMode: SelectionMode.multiple,
+        );
+        final any = SelectTextEntry<dynamic>.any(parentId: '', name: 'Any');
+        final a = _text('', 'a', 'A');
+        controller.bindState([any, a], initializeAnyIfEmpty: false);
 
-      controller.select('a');
-      controller.unselect('a');
-      expect(controller.selectedEntriesAtLevel(0).contains(a), isFalse);
-      expect(controller.selectedEntriesAtLevel(0).contains(any), isTrue);
-    });
+        controller.select('a');
+        controller.unselect('a');
+        expect(controller.selectedEntriesAtLevel(0).contains(a), isFalse);
+        expect(controller.selectedEntriesAtLevel(0).contains(any), isTrue);
+      },
+    );
 
     test('unselect returns false for non-existent entry', () {
       final controller = SelectController(selectionMode: SelectionMode.single);
@@ -693,8 +710,9 @@ void main() {
 
   group('SelectController - _effectiveSelectorSelectionMode', () {
     test('returns multiple when controller selectionMode is multiple', () {
-      final controller =
-          SelectController(selectionMode: SelectionMode.multiple);
+      final controller = SelectController(
+        selectionMode: SelectionMode.multiple,
+      );
       final a = _text('c', 'a', 'A');
       final c = _category('c', 'C', children: {a});
       controller.bindState([c], initializeAnyIfEmpty: false);
@@ -708,8 +726,12 @@ void main() {
       final controller = SelectController(selectionMode: SelectionMode.single);
       final a = _text('c', 'a', 'A');
       final b = _text('c', 'b', 'B');
-      final c = _category('c', 'C',
-          children: {a, b}, selectionMode: SelectionMode.multiple);
+      final c = _category(
+        'c',
+        'C',
+        children: {a, b},
+        selectionMode: SelectionMode.multiple,
+      );
       controller.bindState([c], initializeAnyIfEmpty: false);
 
       // Because effective mode is multiple, select should toggle

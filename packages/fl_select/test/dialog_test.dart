@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// can be exercised without relying on a concrete selector's data handling.
 class _DialogTestDelegate extends SelectDelegate {
   _DialogTestDelegate()
-      : super(entriesLoader: () async => <SelectEntry<dynamic>>{});
+    : super(entriesLoader: () async => <SelectEntry<dynamic>>{});
 
   @override
   Widget buildBody(
@@ -14,8 +14,7 @@ class _DialogTestDelegate extends SelectDelegate {
     List<SelectEntry> entries,
     Set<SelectEntry>? previousSelected, {
     String searchQuery = '',
-  }) =>
-      const Text('body');
+  }) => const Text('body');
 
   @override
   Widget buildSkeleton(BuildContext context) => const Text('skeleton');
@@ -23,8 +22,9 @@ class _DialogTestDelegate extends SelectDelegate {
 
 void main() {
   group('showSelect', () {
-    testWidgets('shows a dialog and returns null when dismissed',
-        (WidgetTester tester) async {
+    testWidgets('shows a dialog and returns null when dismissed', (
+      WidgetTester tester,
+    ) async {
       final navigatorKey = GlobalKey<NavigatorState>();
       await tester.pumpWidget(
         MaterialApp(
@@ -67,8 +67,10 @@ void main() {
       await tester.pumpAndSettle();
 
       final selection = <SelectEntry>{};
-      Navigator.of(navigatorKey.currentContext!, rootNavigator: true)
-          .pop(selection);
+      Navigator.of(
+        navigatorKey.currentContext!,
+        rootNavigator: true,
+      ).pop(selection);
 
       final SelectEntries? result = await future;
       expect(result, selection);

@@ -6,9 +6,9 @@ const _amber = Color(0xFFECC104);
 const _teal = Color(0xFF00796B);
 
 Set<SelectEntry> get _flatEntries => {
-      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-      SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-    };
+  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+};
 
 /// Pumps a panel whose delegate supplies the given overrides and returns the
 /// [SelectThemeData] [SelectPanel] injected into the tree.
@@ -19,20 +19,22 @@ Future<SelectThemeData> _effectiveTheme(
   Color? backgroundColorHigh,
   SelectRangeSliderTheme? rangeSliderTheme,
 }) async {
-  await tester.pumpWidget(MaterialApp(
-    home: Scaffold(
-      body: SelectPanel(
-        delegate: WrapSelectDelegate(
-          selectionMode: SelectionMode.multiple,
-          entries: _flatEntries,
-          selectedColor: selectedColor,
-          backgroundColorHigh: backgroundColorHigh,
-          rangeSliderTheme: rangeSliderTheme,
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: SelectPanel(
+          delegate: WrapSelectDelegate(
+            selectionMode: SelectionMode.multiple,
+            entries: _flatEntries,
+            selectedColor: selectedColor,
+            backgroundColorHigh: backgroundColorHigh,
+            rangeSliderTheme: rangeSliderTheme,
+          ),
+          selectTheme: selectTheme,
         ),
-        selectTheme: selectTheme,
       ),
     ),
-  ));
+  );
   await tester.pumpAndSettle();
   return tester.widget<SelectTheme>(find.byType(SelectTheme)).data;
 }
@@ -45,10 +47,7 @@ void main() {
     });
 
     test('overrides only the fields set on other', () {
-      const base = SelectRangeSliderTheme(
-        trackHeight: 4,
-        thumbRadius: 10,
-      );
+      const base = SelectRangeSliderTheme(trackHeight: 4, thumbRadius: 10);
       final merged = base.merge(
         const SelectRangeSliderTheme(activeTrackColor: _amber),
       );
@@ -60,8 +59,9 @@ void main() {
   });
 
   group('SelectPanel rangeSliderTheme injection', () {
-    testWidgets('delegate rangeSliderTheme merges over ambient',
-        (tester) async {
+    testWidgets('delegate rangeSliderTheme merges over ambient', (
+      tester,
+    ) async {
       final theme = await _effectiveTheme(
         tester,
         selectTheme: SelectThemeData(
@@ -85,18 +85,22 @@ void main() {
       expect(theme.selectedColor, _amber);
     });
 
-    testWidgets('ambient color applies when delegate supplies none',
-        (tester) async {
+    testWidgets('ambient color applies when delegate supplies none', (
+      tester,
+    ) async {
       final theme = await _effectiveTheme(
         tester,
-        selectTheme:
-            SelectThemeData(ThemeData.light(), backgroundColorHigh: _teal),
+        selectTheme: SelectThemeData(
+          ThemeData.light(),
+          backgroundColorHigh: _teal,
+        ),
       );
       expect(theme.backgroundColorHigh, _teal);
     });
 
-    testWidgets('Material fallback applies when neither supplies one',
-        (tester) async {
+    testWidgets('Material fallback applies when neither supplies one', (
+      tester,
+    ) async {
       final theme = await _effectiveTheme(tester);
       expect(theme.selectedColor, isNotNull);
     });

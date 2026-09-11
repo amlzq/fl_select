@@ -105,20 +105,20 @@ class PopupSelectButtonTheme extends ThemeExtension<PopupSelectButtonTheme> {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        foregroundColor,
-        overlayColor,
-        shadowColor,
-        surfaceTintColor,
-        side,
-        shape,
-        textStyle,
-        iconColor,
-        padding,
-        elevation,
-        overlayStyle,
-        selectTheme,
-      );
+    backgroundColor,
+    foregroundColor,
+    overlayColor,
+    shadowColor,
+    surfaceTintColor,
+    side,
+    shape,
+    textStyle,
+    iconColor,
+    padding,
+    elevation,
+    overlayStyle,
+    selectTheme,
+  );
 
   @override
   bool operator ==(Object other) {
@@ -146,7 +146,9 @@ class PopupSelectButtonTheme extends ThemeExtension<PopupSelectButtonTheme> {
 
   @override
   ThemeExtension<PopupSelectButtonTheme> lerp(
-      covariant ThemeExtension<PopupSelectButtonTheme>? other, double t) {
+    covariant ThemeExtension<PopupSelectButtonTheme>? other,
+    double t,
+  ) {
     if (other is! PopupSelectButtonTheme) {
       return this;
     }
@@ -159,8 +161,8 @@ class PopupSelectButtonTheme extends ThemeExtension<PopupSelectButtonTheme> {
       side: side != null && other.side != null
           ? BorderSide.lerp(side!, other.side!, t)
           : t < 0.5
-              ? side
-              : other.side,
+          ? side
+          : other.side,
       shape: ShapeBorder.lerp(shape, other.shape, t) as OutlinedBorder?,
       textStyle: TextStyle.lerp(textStyle, other.textStyle, t),
       iconColor: Color.lerp(iconColor, other.iconColor, t),
@@ -168,8 +170,8 @@ class PopupSelectButtonTheme extends ThemeExtension<PopupSelectButtonTheme> {
       elevation: elevation != null && other.elevation != null
           ? elevation! + (other.elevation! - elevation!) * t
           : t < 0.5
-              ? elevation
-              : other.elevation,
+          ? elevation
+          : other.elevation,
       overlayStyle: overlayStyle,
       selectTheme: SelectThemeData.lerp(selectTheme, other.selectTheme, t),
     );

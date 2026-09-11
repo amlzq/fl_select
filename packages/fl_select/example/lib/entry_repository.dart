@@ -11,9 +11,7 @@ Future<String> loadJsonData(String fileName) async {
 Future<SelectEntries> fetchCascadingData() async {
   // simulate network delay
   await Future.delayed(const Duration(milliseconds: 350));
-  final cascading = cascadingFromJson(
-    await loadJsonData('cascading.json'),
-  );
+  final cascading = cascadingFromJson(await loadJsonData('cascading.json'));
   debugPrint('cascading length: ${cascading.length}');
   SelectEntries entries = cascading
       .map(
@@ -49,11 +47,7 @@ Future<SelectEntries> fetchCascadingData() async {
   for (SelectEntry category in entries) {
     category.children?.insert(
       0,
-      SelectTextEntry.any(
-        parentId: category.id,
-        name: 'Any',
-        immediate: true,
-      ),
+      SelectTextEntry.any(parentId: category.id, name: 'Any', immediate: true),
     );
   }
 
@@ -62,8 +56,8 @@ Future<SelectEntries> fetchCascadingData() async {
 }
 
 List<CascadingData> cascadingFromJson(String str) => List<CascadingData>.from(
-      json.decode(str).map((x) => CascadingData.fromJson(x)),
-    );
+  json.decode(str).map((x) => CascadingData.fromJson(x)),
+);
 
 String cascadingToJson(List<CascadingData> data) =>
     json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
@@ -142,42 +136,12 @@ SelectEntries get listDataWithAny {
 SelectEntries get gridData {
   return {
     SelectIntEntry.custom(),
-    SelectIntEntry(
-      id: 'a',
-      name: '\$0-\$25',
-      min: 0,
-      max: 25,
-    ),
-    SelectIntEntry(
-      id: 'b',
-      name: '\$25-\$50',
-      min: 25,
-      max: 50,
-    ),
-    SelectIntEntry(
-      id: 'c',
-      name: '\$50-\$100',
-      min: 50,
-      max: 100,
-    ),
-    SelectIntEntry(
-      id: 'd',
-      name: '\$100-\$250',
-      min: 100,
-      max: 250,
-    ),
-    SelectIntEntry(
-      id: 'e',
-      name: '\$250-\$500',
-      min: 250,
-      max: 500,
-    ),
-    SelectIntEntry(
-      id: 'f',
-      name: '\$500-\$1000',
-      min: 500,
-      max: 1000,
-    ),
+    SelectIntEntry(id: 'a', name: '\$0-\$25', min: 0, max: 25),
+    SelectIntEntry(id: 'b', name: '\$25-\$50', min: 25, max: 50),
+    SelectIntEntry(id: 'c', name: '\$50-\$100', min: 50, max: 100),
+    SelectIntEntry(id: 'd', name: '\$100-\$250', min: 100, max: 250),
+    SelectIntEntry(id: 'e', name: '\$250-\$500', min: 250, max: 500),
+    SelectIntEntry(id: 'f', name: '\$500-\$1000', min: 500, max: 1000),
     // SelectIntEntry(
     //   id: 'g',
     //   name: '\$1000-\$2500',
@@ -305,42 +269,12 @@ SelectEntries get gridDataWithAny {
   return {
     SelectIntEntry.custom(),
     SelectIntEntry.any(parentId: '', name: 'Any'),
-    SelectIntEntry(
-      id: 'a',
-      name: '\$0-\$25',
-      min: 0,
-      max: 25,
-    ),
-    SelectIntEntry(
-      id: 'b',
-      name: '\$25-\$50',
-      min: 25,
-      max: 50,
-    ),
-    SelectIntEntry(
-      id: 'c',
-      name: '\$50-\$100',
-      min: 50,
-      max: 100,
-    ),
-    SelectIntEntry(
-      id: 'd',
-      name: '\$100-\$250',
-      min: 100,
-      max: 250,
-    ),
-    SelectIntEntry(
-      id: 'e',
-      name: '\$250-\$500',
-      min: 250,
-      max: 500,
-    ),
-    SelectIntEntry(
-      id: 'f',
-      name: '\$500-\$1000',
-      min: 500,
-      max: 1000,
-    ),
+    SelectIntEntry(id: 'a', name: '\$0-\$25', min: 0, max: 25),
+    SelectIntEntry(id: 'b', name: '\$25-\$50', min: 25, max: 50),
+    SelectIntEntry(id: 'c', name: '\$50-\$100', min: 50, max: 100),
+    SelectIntEntry(id: 'd', name: '\$100-\$250', min: 100, max: 250),
+    SelectIntEntry(id: 'e', name: '\$250-\$500', min: 250, max: 500),
+    SelectIntEntry(id: 'f', name: '\$500-\$1000', min: 500, max: 1000),
   };
 }
 
@@ -530,12 +464,7 @@ SelectEntries get multiCategoryData {
         SelectRangeEntry(id: '64-128', name: '64-128', min: 64, max: 128),
         SelectRangeEntry(id: '128-256', name: '128-256', min: 128, max: 256),
         SelectRangeEntry(id: '256-512', name: '256-512', min: 256, max: 512),
-        SelectRangeEntry(
-          id: '512-1024',
-          name: '512-1024',
-          min: 512,
-          max: 1024,
-        ),
+        SelectRangeEntry(id: '512-1024', name: '512-1024', min: 512, max: 1024),
         SelectRangeEntry(
           id: '1024-2048',
           name: '1024-2048',

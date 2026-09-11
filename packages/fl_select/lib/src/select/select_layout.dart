@@ -25,9 +25,7 @@ sealed class SelectLayout {
 /// [SelectTextEntry] and non-custom [SelectRangeEntry] as selectable tiles,
 /// plus a custom [SelectRangeEntry] as an input field.
 class SelectListLayout extends SelectLayout {
-  const SelectListLayout({
-    this.toText = '-',
-  });
+  const SelectListLayout({this.toText = '-'});
 
   /// Text rendered between the two text fields (default: `'-'`).
   final String toText;
@@ -81,8 +79,13 @@ class SelectGridLayout extends SelectLayout {
           toText == other.toText;
 
   @override
-  int get hashCode => Object.hash(crossAxisCount, mainAxisSpacing,
-      crossAxisSpacing, childAspectRatio, toText);
+  int get hashCode => Object.hash(
+    crossAxisCount,
+    mainAxisSpacing,
+    crossAxisSpacing,
+    childAspectRatio,
+    toText,
+  );
 }
 
 /// Wrap of chips layout for the children of a [SelectCategoryEntry].
@@ -90,10 +93,7 @@ class SelectGridLayout extends SelectLayout {
 /// Rendered by [SelectChipBar], which handles all [SelectEntry] subtypes
 /// using their [SelectEntry.name] as the chip label.
 class SelectWrapLayout extends SelectLayout {
-  const SelectWrapLayout({
-    this.spacing = 0.0,
-    this.runSpacing = 0.0,
-  });
+  const SelectWrapLayout({this.spacing = 0.0, this.runSpacing = 0.0});
 
   /// Horizontal spacing between chips in the wrap.
   final double spacing;
@@ -139,9 +139,7 @@ class SelectCounterLayout extends SelectLayout {
 /// ([SelectCategoryEntryExtension.firstCustomOrNull]); if none is found, the
 /// view falls back to a degenerate 0..1 range.
 class SelectRangeLayout extends SelectLayout {
-  const SelectRangeLayout({
-    this.toText = '-',
-  });
+  const SelectRangeLayout({this.toText = '-'});
 
   /// Text rendered between the two text fields (default: `'to'`).
   final String toText;

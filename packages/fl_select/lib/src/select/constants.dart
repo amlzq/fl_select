@@ -6,11 +6,7 @@ import 'select_entry.dart';
 typedef SelectCallback = void Function(SelectEntries selected);
 
 /// Badge rendering style.
-enum BadgeStyle {
-  number,
-
-  dot,
-}
+enum BadgeStyle { number, dot }
 
 /// Selection mode for a category or select.
 enum SelectionMode {

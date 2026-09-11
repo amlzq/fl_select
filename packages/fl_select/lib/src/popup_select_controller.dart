@@ -35,8 +35,8 @@ class PopupTabData extends SelectLabelState {
 ///
 /// Suitable for [PopupSelectButton], which has no tab concept, as well as
 /// multi-tab [PopupSelectBar].
-typedef PopupSelectLabelChangeCallback = void Function(
-    SelectLabelState labelState, SelectEntries selected);
+typedef PopupSelectLabelChangeCallback =
+    void Function(SelectLabelState labelState, SelectEntries selected);
 
 /// Controller for [PopupSelectBar] and its select overlay.
 ///
@@ -45,8 +45,9 @@ typedef PopupSelectLabelChangeCallback = void Function(
 /// registered via [addChangeListener], [addApplyListener], and
 /// [addResetListener].
 class PopupSelectController extends ChangeNotifier {
-  static const Duration _kOverlayAnimationDuration =
-      Duration(milliseconds: 240);
+  static const Duration _kOverlayAnimationDuration = Duration(
+    milliseconds: 240,
+  );
 
   final List<PopupSelectLabelChangeCallback> _changeListeners = [];
   final List<PopupSelectLabelChangeCallback> _applyListeners = [];
@@ -418,7 +419,8 @@ class PopupSelectController extends ChangeNotifier {
     );
     controller.addChangeListener(handleChange);
     controller.addApplyListener(
-        (selected) => handleApply(selected, applyMultipleText ?? 'Multiple'));
+      (selected) => handleApply(selected, applyMultipleText ?? 'Multiple'),
+    );
     controller.addResetListener(handleReset);
     _selectController = controller;
   }
@@ -530,8 +532,9 @@ class PopupSelectController extends ChangeNotifier {
     }
     // Mirror handleApply: skip the custom loader for an empty applied
     // selection so the label falls back to the original.
-    final customLabel =
-        selected.isEmpty ? null : tabData.resolvedLabelLoader?.call(selected);
+    final customLabel = selected.isEmpty
+        ? null
+        : tabData.resolvedLabelLoader?.call(selected);
     tabData.resultLabel =
         customLabel ?? SelectUtils.getResultLabel(selected, multipleText);
     notifyListeners();
@@ -612,12 +615,14 @@ class PopupSelectController extends ChangeNotifier {
         }
       }
 
-      final header =
-          entry.header == null ? null : _cropEntry(entry.header!, ctx);
+      final header = entry.header == null
+          ? null
+          : _cropEntry(entry.header!, ctx);
       if (ctx.invalidCategoryHit || ctx.invalidCustomHit) return null;
 
-      final footer =
-          entry.footer == null ? null : _cropEntry(entry.footer!, ctx);
+      final footer = entry.footer == null
+          ? null
+          : _cropEntry(entry.footer!, ctx);
       if (ctx.invalidCategoryHit || ctx.invalidCustomHit) return null;
 
       if (croppedChildren.isEmpty && header == null && footer == null) {
@@ -660,8 +665,10 @@ class PopupSelectController extends ChangeNotifier {
 
     if (!isHit && croppedChildren.isEmpty) return null;
 
-    return _cloneEntry(entry,
-        children: croppedChildren.isEmpty ? null : croppedChildren);
+    return _cloneEntry(
+      entry,
+      children: croppedChildren.isEmpty ? null : croppedChildren,
+    );
   }
 
   static SelectEntry _cloneEntry(
@@ -709,7 +716,8 @@ class PopupSelectController extends ChangeNotifier {
     }
 
     throw UnsupportedError(
-        'Unsupported SelectEntry type: ${entry.runtimeType}');
+      'Unsupported SelectEntry type: ${entry.runtimeType}',
+    );
   }
 
   /// Dispatches a reset event.
@@ -733,10 +741,7 @@ class _PopupSelectApplyContext {
 class _PopupSelectControllerScope extends InheritedWidget {
   final PopupSelectController? controller;
 
-  const _PopupSelectControllerScope({
-    this.controller,
-    required super.child,
-  });
+  const _PopupSelectControllerScope({this.controller, required super.child});
 
   @override
   bool updateShouldNotify(covariant _PopupSelectControllerScope oldWidget) {

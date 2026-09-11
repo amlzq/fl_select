@@ -95,8 +95,11 @@ class SelectRangeSliderTheme with Diagnosticable {
     return SelectRangeSliderTheme(
       endLabelStyle: TextStyle.lerp(a?.endLabelStyle, b?.endLabelStyle, t),
       activeTrackColor: Color.lerp(a?.activeTrackColor, b?.activeTrackColor, t),
-      inactiveTrackColor:
-          Color.lerp(a?.inactiveTrackColor, b?.inactiveTrackColor, t),
+      inactiveTrackColor: Color.lerp(
+        a?.inactiveTrackColor,
+        b?.inactiveTrackColor,
+        t,
+      ),
       thumbColor: Color.lerp(a?.thumbColor, b?.thumbColor, t),
       thumbFillColor: Color.lerp(a?.thumbFillColor, b?.thumbFillColor, t),
       selectedColor: Color.lerp(a?.selectedColor, b?.selectedColor, t),
@@ -111,15 +114,15 @@ class SelectRangeSliderTheme with Diagnosticable {
 
   @override
   int get hashCode => Object.hash(
-        endLabelStyle,
-        activeTrackColor,
-        inactiveTrackColor,
-        thumbColor,
-        thumbFillColor,
-        selectedColor,
-        trackHeight,
-        thumbRadius,
-      );
+    endLabelStyle,
+    activeTrackColor,
+    inactiveTrackColor,
+    thumbColor,
+    thumbFillColor,
+    selectedColor,
+    trackHeight,
+    thumbRadius,
+  );
 
   @override
   bool operator ==(Object other) {

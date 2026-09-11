@@ -11,5 +11,5 @@ import '../select_entry.dart';
 typedef OnChanged<T extends SelectEntry> = Function(int index, T entry);
 
 /// Builds a custom toggle widget (radio/checkbox).
-typedef ToggleWidgetBuilder = Widget Function(
-    BuildContext context, bool selected);
+typedef ToggleWidgetBuilder =
+    Widget Function(BuildContext context, bool selected);

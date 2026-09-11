@@ -4,13 +4,14 @@ import 'package:flutter_test/flutter_test.dart';
 
 const _amber = Color(0xFFECC104);
 const _ambientPadding = EdgeInsets.fromLTRB(1, 2, 3, 4);
-final _ambientShape =
-    RoundedRectangleBorder(borderRadius: BorderRadius.circular(12));
+final _ambientShape = RoundedRectangleBorder(
+  borderRadius: BorderRadius.circular(12),
+);
 
 Set<SelectEntry> get _flatEntries => {
-      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-      SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-    };
+  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+};
 
 Widget _panelHarness({SelectThemeData? selectTheme}) {
   return MaterialApp(
@@ -28,13 +29,18 @@ Widget _panelHarness({SelectThemeData? selectTheme}) {
 
 /// Pumps the harness and returns the [SelectThemeData] that [SelectPanel]
 /// injected into the tree (i.e. after merging delegate-level themes).
-Future<SelectThemeData> _effectiveTheme(WidgetTester tester,
-    {SelectThemeData? selectTheme, required SelectDelegate delegate}) async {
-  await tester.pumpWidget(MaterialApp(
-    home: Scaffold(
-      body: SelectPanel(delegate: delegate, selectTheme: selectTheme),
+Future<SelectThemeData> _effectiveTheme(
+  WidgetTester tester, {
+  SelectThemeData? selectTheme,
+  required SelectDelegate delegate,
+}) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      home: Scaffold(
+        body: SelectPanel(delegate: delegate, selectTheme: selectTheme),
+      ),
     ),
-  ));
+  );
   await tester.pumpAndSettle();
   return tester.widget<SelectTheme>(find.byType(SelectTheme)).data;
 }
@@ -63,8 +69,9 @@ void main() {
 
     test('overrides only the fields set on other', () {
       const base = SelectTabBarTheme(padding: _ambientPadding);
-      final merged =
-          base.merge(const SelectTabBarTheme(backgroundColor: _amber));
+      final merged = base.merge(
+        const SelectTabBarTheme(backgroundColor: _amber),
+      );
       expect(merged.backgroundColor, _amber);
       expect(merged.padding, _ambientPadding);
       expect(merged.indicatorColor, isNull);
@@ -79,8 +86,9 @@ void main() {
 
     test('overrides only the fields set on other', () {
       const base = SelectListTileTheme(textColor: _amber);
-      final merged =
-          base.merge(const SelectListTileTheme(selectedColor: _amber));
+      final merged = base.merge(
+        const SelectListTileTheme(selectedColor: _amber),
+      );
       expect(merged.selectedColor, _amber);
       expect(merged.textColor, _amber);
       expect(merged.labelStyle, isNull);
@@ -95,8 +103,9 @@ void main() {
 
     test('overrides only the fields set on other', () {
       const base = SelectExpansionTileTheme(titlePadding: _ambientPadding);
-      final merged =
-          base.merge(const SelectExpansionTileTheme(selectedColor: _amber));
+      final merged = base.merge(
+        const SelectExpansionTileTheme(selectedColor: _amber),
+      );
       expect(merged.selectedColor, _amber);
       expect(merged.titlePadding, _ambientPadding);
       expect(merged.animationDuration, isNull);
@@ -160,37 +169,42 @@ void main() {
         tester,
         selectTheme: SelectThemeData(
           ThemeData.light(),
-          expansionTileTheme:
-              const SelectExpansionTileTheme(titlePadding: _ambientPadding),
+          expansionTileTheme: const SelectExpansionTileTheme(
+            titlePadding: _ambientPadding,
+          ),
         ),
         delegate: WrapSelectDelegate(
           selectionMode: SelectionMode.multiple,
           entries: _flatEntries,
-          expansionTileTheme:
-              const SelectExpansionTileTheme(selectedColor: _amber),
+          expansionTileTheme: const SelectExpansionTileTheme(
+            selectedColor: _amber,
+          ),
         ),
       );
       expect(theme.expansionTileTheme.selectedColor, _amber);
       expect(theme.expansionTileTheme.titlePadding, _ambientPadding);
     });
 
-    testWidgets('delegate panelTheme renders an elevated Material',
-        (tester) async {
+    testWidgets('delegate panelTheme renders an elevated Material', (
+      tester,
+    ) async {
       await tester.pumpWidget(_panelHarness());
       await tester.pumpAndSettle();
       // Sanity check on top of the capture-based tests above: the merged
       // panelTheme must actually reach the rendered panel decoration.
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: SelectPanel(
-            delegate: WrapSelectDelegate(
-              selectionMode: SelectionMode.multiple,
-              entries: _flatEntries,
-              panelTheme: const SelectPanelTheme(elevation: 6),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SelectPanel(
+              delegate: WrapSelectDelegate(
+                selectionMode: SelectionMode.multiple,
+                entries: _flatEntries,
+                panelTheme: const SelectPanelTheme(elevation: 6),
+              ),
             ),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
       expect(
         find.byWidgetPredicate((w) => w is Material && w.elevation == 6),

@@ -3,64 +3,60 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Set<SelectEntry<dynamic>> get _categoryEntries => {
-      SelectCategoryEntry<dynamic>.children(
-        id: 'cate1',
-        name: 'Cate 1',
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
-          SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
-        },
-      ),
-      SelectCategoryEntry<dynamic>.children(
-        id: 'cate2',
-        name: 'Cate 2',
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1'),
-        },
-      ),
-    };
+  SelectCategoryEntry<dynamic>.children(
+    id: 'cate1',
+    name: 'Cate 1',
+    children: {
+      SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
+      SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
+    },
+  ),
+  SelectCategoryEntry<dynamic>.children(
+    id: 'cate2',
+    name: 'Cate 2',
+    children: {SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1')},
+  ),
+};
 
 /// Same as [_categoryEntries], but the first category starts with an "Any"
 /// placeholder child, which must never badge its tile on its own.
 Set<SelectEntry<dynamic>> get _categoryEntriesWithAny => {
-      SelectCategoryEntry<dynamic>.children(
-        id: 'cate1',
-        name: 'Cate 1',
-        children: {
-          SelectTextEntry<dynamic>.any(parentId: 'cate1', name: 'Any'),
-          SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
-        },
-      ),
-      SelectCategoryEntry<dynamic>.children(
-        id: 'cate2',
-        name: 'Cate 2',
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1'),
-        },
-      ),
-    };
+  SelectCategoryEntry<dynamic>.children(
+    id: 'cate1',
+    name: 'Cate 1',
+    children: {
+      SelectTextEntry<dynamic>.any(parentId: 'cate1', name: 'Any'),
+      SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
+    },
+  ),
+  SelectCategoryEntry<dynamic>.children(
+    id: 'cate2',
+    name: 'Cate 2',
+    children: {SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1')},
+  ),
+};
 
 Widget _harness(
   SelectController controller, {
   Set<SelectEntry<dynamic>>? entries,
-}) =>
-    MaterialApp(
-      home: Scaffold(
-        // SelectPanel without a SelectActionBarVisibility scope keeps the
-        // action bar visible (SelectView hides it for inline usage).
-        body: SelectPanel(
-          delegate: ExpandableSelectDelegate(
-            selectionMode: SelectionMode.multiple,
-            entries: entries ?? _categoryEntries,
-          ),
-          controller: controller,
-        ),
+}) => MaterialApp(
+  home: Scaffold(
+    // SelectPanel without a SelectActionBarVisibility scope keeps the
+    // action bar visible (SelectView hides it for inline usage).
+    body: SelectPanel(
+      delegate: ExpandableSelectDelegate(
+        selectionMode: SelectionMode.multiple,
+        entries: entries ?? _categoryEntries,
       ),
-    );
+      controller: controller,
+    ),
+  ),
+);
 
 void main() {
-  testWidgets('a tile is badged while its category holds a real selection',
-      (tester) async {
+  testWidgets('a tile is badged while its category holds a real selection', (
+    tester,
+  ) async {
     final controller = SelectController(selectionMode: SelectionMode.multiple);
     await tester.pumpWidget(_harness(controller));
     await tester.pumpAndSettle();
@@ -100,11 +96,13 @@ void main() {
     expect(find.byType(SelectBadge), findsOneWidget);
   });
 
-  testWidgets('selecting only the "Any" entry does not badge its tile',
-      (tester) async {
+  testWidgets('selecting only the "Any" entry does not badge its tile', (
+    tester,
+  ) async {
     final controller = SelectController(selectionMode: SelectionMode.multiple);
-    await tester
-        .pumpWidget(_harness(controller, entries: _categoryEntriesWithAny));
+    await tester.pumpWidget(
+      _harness(controller, entries: _categoryEntriesWithAny),
+    );
     await tester.pumpAndSettle();
 
     // "Any" is selected by default (initializeAnyIfEmpty)...

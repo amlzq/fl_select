@@ -198,11 +198,13 @@ class _TextField extends StatelessWidget {
     final effectiveTileColor =
         tileColor ?? theme.tileColor ?? defaults.tileColor!;
 
-    final effectiveSelectedTileColor = selectedTileColor ??
+    final effectiveSelectedTileColor =
+        selectedTileColor ??
         theme.selectedTileColor ??
         defaults.selectedTileColor!;
 
-    final selected = (focusNode?.hasFocus ?? false) ||
+    final selected =
+        (focusNode?.hasFocus ?? false) ||
         (controller?.text.isNotEmpty ?? false);
 
     final isFilled = effectiveVariant == SelectFieldTileVariant.filled;
@@ -214,11 +216,13 @@ class _TextField extends StatelessWidget {
         ? (selected ? effectiveSelectedTileColor : effectiveTileColor)
         : null;
 
-    final borderColor =
-        selected ? effectiveSelectedTileColor : effectiveTileColor;
+    final borderColor = selected
+        ? effectiveSelectedTileColor
+        : effectiveTileColor;
 
-    final effectiveBorder =
-        isFilled ? null : Border.all(color: borderColor, width: 1.2);
+    final effectiveBorder = isFilled
+        ? null
+        : Border.all(color: borderColor, width: 1.2);
 
     // Text colour, mirroring [SelectGridTile]: when a filled tile is
     // selected its background becomes [selectedTileColor], so the text is
@@ -231,9 +235,9 @@ class _TextField extends StatelessWidget {
     final selectedTextColor = isFilled
         // `tileBackgroundColor` is non-null exactly when `isFilled` is true.
         ? (ThemeData.estimateBrightnessForColor(tileBackgroundColor!) ==
-                Brightness.dark
-            ? Colors.white
-            : effectiveSelectedColor)
+                  Brightness.dark
+              ? Colors.white
+              : effectiveSelectedColor)
         : effectiveSelectedColor;
     final effectiveColor = selected ? selectedTextColor : effectiveTextColor;
 
@@ -251,8 +255,9 @@ class _TextField extends StatelessWidget {
         keyboardType: allowDecimal
             ? const TextInputType.numberWithOptions(decimal: true)
             : TextInputType.number,
-        inputFormatters:
-            allowDecimal ? null : [FilteringTextInputFormatter.digitsOnly],
+        inputFormatters: allowDecimal
+            ? null
+            : [FilteringTextInputFormatter.digitsOnly],
         textAlign: TextAlign.center,
         style: TextStyle(fontSize: 13, color: effectiveColor),
         onChanged: onChanged,
@@ -315,10 +320,8 @@ class _TextField extends StatelessWidget {
 }
 
 class _SelectFieldTileDefaults extends SelectFieldTileTheme {
-  _SelectFieldTileDefaults(
-    this.context, [
-    SelectFieldTileVariant? variant,
-  ]) : super(variant: variant);
+  _SelectFieldTileDefaults(this.context, [SelectFieldTileVariant? variant])
+    : super(variant: variant);
 
   final BuildContext context;
 
@@ -346,10 +349,14 @@ class _SelectFieldTileDefaults extends SelectFieldTileTheme {
   Color? get tileColor {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     if (isDark) {
-      final blendAmount =
-          variant == SelectFieldTileVariant.outlined ? 0.2 : 0.35;
+      final blendAmount = variant == SelectFieldTileVariant.outlined
+          ? 0.2
+          : 0.35;
       return Color.lerp(
-          _theme.backgroundColor, _theme.backgroundColorHighest, blendAmount);
+        _theme.backgroundColor,
+        _theme.backgroundColorHighest,
+        blendAmount,
+      );
     }
     if (variant == SelectFieldTileVariant.outlined) {
       return Color.lerp(_theme.onBackgroundColorHighest, Colors.white, 0.55);

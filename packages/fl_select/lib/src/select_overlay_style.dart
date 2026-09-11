@@ -57,12 +57,12 @@ class SelectOverlayStyle {
 
   @override
   int get hashCode => Object.hash(
-        maxHeightFactor,
-        minWidth,
-        maxWidth,
-        barrierColor,
-        barrierIntercept,
-      );
+    maxHeightFactor,
+    minWidth,
+    maxWidth,
+    barrierColor,
+    barrierIntercept,
+  );
 
   @override
   bool operator ==(Object other) {

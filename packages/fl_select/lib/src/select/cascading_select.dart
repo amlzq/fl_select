@@ -86,8 +86,11 @@ class CascadingSelectState extends State<CascadingSelect> {
   bool get _isSearching => widget.searchQuery.isNotEmpty;
 
   List<SelectEntry> get _displayEntries => _isSearching
-      ? filterEntriesForSearch(widget.entries, widget.searchQuery,
-          predicate: widget.searchPredicate)
+      ? filterEntriesForSearch(
+          widget.entries,
+          widget.searchQuery,
+          predicate: widget.searchPredicate,
+        )
       : widget.entries;
 
   /// Entries used to drive the cascading state: filtered when searching,
@@ -127,11 +130,14 @@ class CascadingSelectState extends State<CascadingSelect> {
     // While that rebuild is usually correct, it is unnecessary work and can
     // cause the UI to jump to a different category under certain timing
     // conditions. Guarding the call avoids the extra rebuild.
-    final sameEntries = const ListEquality<SelectEntry>()
-        .equals(widget.entries, oldWidget.entries);
+    final sameEntries = const ListEquality<SelectEntry>().equals(
+      widget.entries,
+      oldWidget.entries,
+    );
     final samePrevious = const SetEquality<SelectEntry>().equals(
-        widget.selectedEntries ?? const {},
-        oldWidget.selectedEntries ?? const {});
+      widget.selectedEntries ?? const {},
+      oldWidget.selectedEntries ?? const {},
+    );
     final sameSearchQuery = widget.searchQuery == oldWidget.searchQuery;
     if (!sameEntries || !samePrevious) {
       _updateSelectController(context);
@@ -160,7 +166,10 @@ class CascadingSelectState extends State<CascadingSelect> {
     // two steps even for depth-1 trees (categories without children).
     final maxDepth = max(2, _calculateMaxDepth(widget.entries.toSet(), 1));
     _backgroundColors = _calculateGradientColors(
-        maxDepth, categoryBackgroundColor, terminalBackgroundColor);
+      maxDepth,
+      categoryBackgroundColor,
+      terminalBackgroundColor,
+    );
 
     controller?.bindState(
       widget.entries,
@@ -253,9 +262,11 @@ class CascadingSelectState extends State<CascadingSelect> {
       return true;
     }
 
-    for (int columnIndex = 0;
-        columnIndex < _scrollControllers.length;
-        columnIndex++) {
+    for (
+      int columnIndex = 0;
+      columnIndex < _scrollControllers.length;
+      columnIndex++
+    ) {
       if (columnIndex >= _cascadingList.length) continue;
       final scrollController = _scrollControllers[columnIndex];
       if (!scrollController.hasClients) continue;
@@ -268,13 +279,14 @@ class CascadingSelectState extends State<CascadingSelect> {
       final selectedAtLevel =
           controller?.selectedEntriesAtLevel(selectionLevel) ?? {};
 
-      SelectEntry? target =
-          _focusedEntryPerLevel.elementAtOrNull(columnIndex + 1);
+      SelectEntry? target = _focusedEntryPerLevel.elementAtOrNull(
+        columnIndex + 1,
+      );
 
       if (target == null && parent != null) {
-        target = selectedAtLevel
-            .whereType<SelectChildEntry>()
-            .firstWhereOrNull((e) => e.parentId == parent.id);
+        target = selectedAtLevel.whereType<SelectChildEntry>().firstWhereOrNull(
+          (e) => e.parentId == parent.id,
+        );
       }
 
       target ??= selectedAtLevel.firstOrNull;
@@ -346,7 +358,8 @@ class CascadingSelectState extends State<CascadingSelect> {
 
     final maxLabelWidth = _measureMaxLabelWidth(context, entries, textStyle);
     final hasTrailing = entries.any((e) => !e.hasChildren && e.enabled);
-    final width = maxLabelWidth +
+    final width =
+        maxLabelWidth +
         horizontalPadding +
         badgeWidth +
         (hasTrailing ? trailingWidth : 0);
@@ -375,9 +388,9 @@ class CascadingSelectState extends State<CascadingSelect> {
       candidates = selectedEntries.whereType<SelectCategoryEntry>();
     } else {
       if (parent == null) return null;
-      candidates = selectedEntries
-          .whereType<SelectChildEntry>()
-          .where((entry) => entry.parentId == parent.id);
+      candidates = selectedEntries.whereType<SelectChildEntry>().where(
+        (entry) => entry.parentId == parent.id,
+      );
     }
 
     if (candidates.isEmpty) return null;
@@ -385,11 +398,12 @@ class CascadingSelectState extends State<CascadingSelect> {
     int score(SelectEntry entry, int currentLevel) {
       final nextSelected =
           controller?.selectedEntriesAtLevel(currentLevel + 1) ?? {};
-      final nextChildren = nextSelected
-          .whereType<SelectChildEntry>()
-          .where((child) => child.parentId == entry.id);
-      final descendantScore =
-          nextChildren.map((child) => score(child, currentLevel + 1)).maxOrNull;
+      final nextChildren = nextSelected.whereType<SelectChildEntry>().where(
+        (child) => child.parentId == entry.id,
+      );
+      final descendantScore = nextChildren
+          .map((child) => score(child, currentLevel + 1))
+          .maxOrNull;
       final selfScore = entry is SelectChildEntry && entry.isAny ? 0 : 1;
       if (descendantScore == null) return selfScore;
       return 10 + descendantScore + selfScore;
@@ -451,7 +465,10 @@ class CascadingSelectState extends State<CascadingSelect> {
 
   /// Calculate gradient colors for cascade levels
   List<Color> _calculateGradientColors(
-      int depth, Color beginColor, Color endColor) {
+    int depth,
+    Color beginColor,
+    Color endColor,
+  ) {
     if (depth <= 1) {
       return [beginColor];
     }
@@ -468,8 +485,10 @@ class CascadingSelectState extends State<CascadingSelect> {
     int maxDepth = currentDepth;
     for (SelectEntry entry in entries ?? []) {
       if (entry.hasChildren) {
-        final childDepth =
-            _calculateMaxDepth(entry.children!, currentDepth + 1);
+        final childDepth = _calculateMaxDepth(
+          entry.children!,
+          currentDepth + 1,
+        );
         if (childDepth > maxDepth) {
           maxDepth = childDepth;
         }
@@ -643,8 +662,11 @@ class CascadingSelectState extends State<CascadingSelect> {
     final previousFocusedCategoryId = focusedCategory.id;
     controller?.resetState(initializeAnyIfEmpty: false);
     _rebuildSelectionState();
-    final newCategory = _effectiveEntries.firstWhereOrNull(
-        (e) => e.id == previousFocusedCategoryId) as SelectCategoryEntry?;
+    final newCategory =
+        _effectiveEntries.firstWhereOrNull(
+              (e) => e.id == previousFocusedCategoryId,
+            )
+            as SelectCategoryEntry?;
     if (newCategory != null) {
       _onCategoryItemTap(newCategory);
     }
@@ -697,10 +719,12 @@ class CascadingSelectState extends State<CascadingSelect> {
             }
           } else {
             final selected = _focusedEntryPerLevel.contains(entry);
-            final selectedCount = controller
+            final selectedCount =
+                controller
                     ?.selectedEntriesAtLevel(level + 1)
                     .where(
-                        (e) => e is SelectChildEntry && e.parentId == entry.id)
+                      (e) => e is SelectChildEntry && e.parentId == entry.id,
+                    )
                     .length ??
                 0;
             return SelectListTile(
@@ -735,7 +759,8 @@ class CascadingSelectState extends State<CascadingSelect> {
           Expanded(
             child: Center(
               child: Text(
-                  SelectLocalizations.of(context)?.noResults ?? 'No results'),
+                SelectLocalizations.of(context)?.noResults ?? 'No results',
+              ),
             ),
           ),
           if (controller?.hasMultipleMode == true &&
@@ -837,8 +862,9 @@ class CascadingSelectState extends State<CascadingSelect> {
                                   ),
                                 );
                                 return ScrollConfiguration(
-                                  behavior: ScrollConfiguration.of(context)
-                                      .copyWith(overscroll: false),
+                                  behavior: ScrollConfiguration.of(
+                                    context,
+                                  ).copyWith(overscroll: false),
                                   child: SingleChildScrollView(
                                     controller: _cascadeHorizontalController,
                                     scrollDirection: Axis.horizontal,

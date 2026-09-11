@@ -9,8 +9,11 @@ class MyRadio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (value) {
-      return Icon(Icons.check,
-          size: 14, color: Theme.of(context).colorScheme.primary);
+      return Icon(
+        Icons.check,
+        size: 14,
+        color: Theme.of(context).colorScheme.primary,
+      );
     } else {
       return const SizedBox.shrink();
     }
@@ -37,8 +40,9 @@ class MyCheckbox extends StatelessWidget {
         borderRadius: BorderRadius.circular(3),
         color: value ? effectiveCheckColor : Colors.transparent,
       ),
-      child:
-          value ? const Icon(Icons.check, size: 14, color: Colors.white) : null,
+      child: value
+          ? const Icon(Icons.check, size: 14, color: Colors.white)
+          : null,
     );
   }
 }
@@ -102,11 +106,7 @@ class MyGridItem extends StatelessWidget {
             child: Text(entry.name ?? ''),
           ),
           if (selected)
-            Positioned(
-              right: 0,
-              bottom: 0,
-              child: const Icon(Icons.check),
-            )
+            Positioned(right: 0, bottom: 0, child: const Icon(Icons.check)),
         ],
       ),
     );
@@ -133,8 +133,9 @@ class MyWrapItem extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(24.0),
-          color:
-              selected ? Theme.of(context).colorScheme.primaryContainer : null,
+          color: selected
+              ? Theme.of(context).colorScheme.primaryContainer
+              : null,
         ),
         child: Text(entry.name ?? ''),
       ),

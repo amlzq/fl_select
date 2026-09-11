@@ -8,10 +8,7 @@ import 'constants.dart';
 import 'skeleton_view.dart';
 import 'tab_bar_theme.dart';
 
-enum SelectTabBarIndicatorSize {
-  tab,
-  label,
-}
+enum SelectTabBarIndicatorSize { tab, label }
 
 /// The fixed height of [SelectTabBar], matching [TabBar]'s text-only tab
 /// height (`_kTabHeight`).
@@ -211,8 +208,8 @@ class _SelectTabBarState extends State<SelectTabBar> {
       });
       return;
     }
-    final RenderObject? object =
-        _tabKeys[index]?.currentContext?.findRenderObject();
+    final RenderObject? object = _tabKeys[index]?.currentContext
+        ?.findRenderObject();
     if (object == null) return;
     await _scrollController.position.ensureVisible(
       object,
@@ -223,7 +220,10 @@ class _SelectTabBarState extends State<SelectTabBar> {
   }
 
   double _measureLabelWidth(
-      BuildContext context, String label, TextStyle style) {
+    BuildContext context,
+    String label,
+    TextStyle style,
+  ) {
     final painter = TextPainter(
       text: TextSpan(text: label, style: style),
       textDirection: Directionality.of(context),
@@ -240,10 +240,12 @@ class _SelectTabBarState extends State<SelectTabBar> {
 
     final effectivePadding =
         widget.padding ?? theme.padding ?? defaults.padding!;
-    final containerPadding =
-        widget.isScrollable ? EdgeInsets.zero : effectivePadding;
+    final containerPadding = widget.isScrollable
+        ? EdgeInsets.zero
+        : effectivePadding;
 
-    final effectiveBackgroundColor = widget.backgroundColor ??
+    final effectiveBackgroundColor =
+        widget.backgroundColor ??
         theme.backgroundColor ??
         defaults.backgroundColor!;
 
@@ -253,19 +255,23 @@ class _SelectTabBarState extends State<SelectTabBar> {
     final effectiveLabelStyle =
         widget.labelStyle ?? theme.labelStyle ?? defaults.labelStyle!;
 
-    final effectiveSelectedLabelStyle = widget.selectedLabelStyle ??
+    final effectiveSelectedLabelStyle =
+        widget.selectedLabelStyle ??
         theme.selectedLabelStyle ??
         defaults.selectedLabelStyle!;
 
-    final effectiveIndicatorColor = widget.indicatorColor ??
+    final effectiveIndicatorColor =
+        widget.indicatorColor ??
         theme.indicatorColor ??
         defaults.indicatorColor!;
 
-    final effectiveIndicatorHeight = widget.indicatorHeight ??
+    final effectiveIndicatorHeight =
+        widget.indicatorHeight ??
         theme.indicatorHeight ??
         defaults.indicatorHeight!;
 
-    final effectiveIndicatorPadding = widget.indicatorPadding ??
+    final effectiveIndicatorPadding =
+        widget.indicatorPadding ??
         theme.indicatorPadding ??
         defaults.indicatorPadding!;
 
@@ -274,8 +280,8 @@ class _SelectTabBarState extends State<SelectTabBar> {
 
     final effectiveIndicatorAnimationDuration =
         widget.indicatorAnimationDuration ??
-            theme.indicatorAnimationDuration ??
-            defaults.indicatorAnimationDuration!;
+        theme.indicatorAnimationDuration ??
+        defaults.indicatorAnimationDuration!;
 
     final tabs = List<Widget>.generate(widget.entries.length, (int index) {
       final entry = widget.entries[index] as SelectCategoryEntry;
@@ -293,8 +299,9 @@ class _SelectTabBarState extends State<SelectTabBar> {
         badgeColor: effectiveSelectedColor,
         padding: effectivePadding,
         selectedColor: effectiveSelectedColor,
-        labelStyle:
-            selected ? effectiveSelectedLabelStyle : effectiveLabelStyle,
+        labelStyle: selected
+            ? effectiveSelectedLabelStyle
+            : effectiveLabelStyle,
         indicatorColor: effectiveIndicatorColor,
         indicatorHeight: effectiveIndicatorHeight,
         indicatorPadding: effectiveIndicatorPadding,
@@ -304,8 +311,11 @@ class _SelectTabBarState extends State<SelectTabBar> {
       );
 
       if (widget.isScrollable) {
-        final double labelWidth =
-            _measureLabelWidth(context, label, effectiveLabelStyle);
+        final double labelWidth = _measureLabelWidth(
+          context,
+          label,
+          effectiveLabelStyle,
+        );
         tab = SizedBox(
           width: labelWidth + _kTabHorizontalPadding * 2,
           child: tab,
@@ -334,8 +344,9 @@ class _SelectTabBarState extends State<SelectTabBar> {
       color: effectiveBackgroundColor,
       child: widget.isScrollable
           ? ScrollConfiguration(
-              behavior:
-                  ScrollConfiguration.of(context).copyWith(overscroll: false),
+              behavior: ScrollConfiguration.of(
+                context,
+              ).copyWith(overscroll: false),
               child: SingleChildScrollView(
                 controller: _scrollController,
                 scrollDirection: Axis.horizontal,
@@ -403,7 +414,10 @@ class _Tab extends StatelessWidget {
   final GestureTapCallback onTap;
 
   double _measureLabelWidth(
-      BuildContext context, String label, TextStyle style) {
+    BuildContext context,
+    String label,
+    TextStyle style,
+  ) {
     final painter = TextPainter(
       text: TextSpan(text: label, style: style),
       textDirection: Directionality.of(context),
@@ -420,8 +434,9 @@ class _Tab extends StatelessWidget {
       onTap: onTap,
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final resolvedIndicatorPadding =
-              indicatorPadding.resolve(Directionality.of(context));
+          final resolvedIndicatorPadding = indicatorPadding.resolve(
+            Directionality.of(context),
+          );
 
           final double maxIndicatorWidth =
               (constraints.maxWidth - resolvedIndicatorPadding.horizontal)
@@ -436,8 +451,8 @@ class _Tab extends StatelessWidget {
 
           final double indicatorWidth =
               indicatorSize == SelectTabBarIndicatorSize.label
-                  ? labelIndicatorWidth
-                  : maxIndicatorWidth;
+              ? labelIndicatorWidth
+              : maxIndicatorWidth;
 
           // Right edge of the (possibly ellipsized) label, relative to this
           // tab's own box: the label is centered inside the horizontal
@@ -463,7 +478,8 @@ class _Tab extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: _kTabHorizontalPadding),
+                  horizontal: _kTabHorizontalPadding,
+                ),
                 // Like [TabBar]'s underline indicator: the label centers in
                 // the space above the indicator, and the indicator sits at the
                 // bottom edge of the (fixed-height) tab.
@@ -495,8 +511,9 @@ class _Tab extends StatelessWidget {
                           width: selected ? indicatorWidth : 0,
                           decoration: BoxDecoration(
                             color: indicatorColor,
-                            borderRadius:
-                                BorderRadius.circular(indicatorHeight / 2),
+                            borderRadius: BorderRadius.circular(
+                              indicatorHeight / 2,
+                            ),
                           ),
                         ),
                       ),
@@ -526,11 +543,7 @@ class _Tab extends StatelessWidget {
 
 /// Loading skeleton for [SelectTabBar].
 class SelectTabBarSkeleton extends StatelessWidget {
-  const SelectTabBarSkeleton({
-    super.key,
-    this.padding,
-    this.backgroundColor,
-  });
+  const SelectTabBarSkeleton({super.key, this.padding, this.backgroundColor});
 
   /// The padding around the skeleton.
   ///

@@ -73,8 +73,10 @@ Future<SelectEntries?> showSelect({
     builder: builder,
   );
 
-  return Navigator.of(context, rootNavigator: useRootNavigator)
-      .push<SelectEntries?>(route);
+  return Navigator.of(
+    context,
+    rootNavigator: useRootNavigator,
+  ).push<SelectEntries?>(route);
 }
 
 /// Modal route used by [showSelect].
@@ -91,30 +93,27 @@ class _SelectDialogRoute<T> extends RawDialogRoute<T> {
     super.anchorPoint,
     TransitionBuilder? builder,
   }) : super(
-          pageBuilder: (context, animation, secondaryAnimation) {
-            final Widget page = pageBuilder(context);
-            return builder == null ? page : builder(context, page);
-          },
-          barrierColor: barrierColor,
-          transitionDuration: const Duration(milliseconds: 200),
-          transitionBuilder: (context, animation, secondaryAnimation, child) {
-            return FadeTransition(
-              opacity: CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeOutCubic,
-              ),
-              child: ScaleTransition(
-                scale: Tween<double>(begin: 0.92, end: 1.0).animate(
-                  CurvedAnimation(
-                    parent: animation,
-                    curve: Curves.easeOutCubic,
-                  ),
-                ),
-                child: child,
-              ),
-            );
-          },
-        );
+         pageBuilder: (context, animation, secondaryAnimation) {
+           final Widget page = pageBuilder(context);
+           return builder == null ? page : builder(context, page);
+         },
+         barrierColor: barrierColor,
+         transitionDuration: const Duration(milliseconds: 200),
+         transitionBuilder: (context, animation, secondaryAnimation, child) {
+           return FadeTransition(
+             opacity: CurvedAnimation(
+               parent: animation,
+               curve: Curves.easeOutCubic,
+             ),
+             child: ScaleTransition(
+               scale: Tween<double>(begin: 0.92, end: 1.0).animate(
+                 CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+               ),
+               child: child,
+             ),
+           );
+         },
+       );
 }
 
 /// The dialog body rendered by [_SelectDialogRoute].
@@ -177,7 +176,8 @@ class _SelectDialogState extends State<_SelectDialog> {
       // the framework's default (horizontal 40 / vertical 24). Mirrors how
       // AlertDialog resolves its padding, and stays compilable on older
       // Flutter versions where Dialog.insetPadding is non-nullable.
-      insetPadding: widget.insetPadding ??
+      insetPadding:
+          widget.insetPadding ??
           Theme.of(context).dialogTheme.insetPadding ??
           const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
       child: ConstrainedBox(
@@ -204,10 +204,7 @@ class _SelectDialogState extends State<_SelectDialog> {
             // content is small, but never exceed the free space (0.7 screen
             // height minus the header) when content is large, so the select
             // scrolls internally and its action bar stays pinned to the bottom.
-            Flexible(
-              fit: FlexFit.loose,
-              child: panel,
-            ),
+            Flexible(fit: FlexFit.loose, child: panel),
           ],
         ),
       ),

@@ -10,9 +10,7 @@ final List<SelectEntry> _categories = [
     SelectCategoryEntry<dynamic>.children(
       id: 'cate$i',
       name: 'Category $i',
-      children: {
-        SelectTextEntry<dynamic>.name(id: 'a$i', name: 'A $i'),
-      },
+      children: {SelectTextEntry<dynamic>.name(id: 'a$i', name: 'A $i')},
     ),
 ];
 
@@ -35,12 +33,13 @@ Widget _harness({
 }
 
 void main() {
-  testWidgets('tapping a tab scrolls it to the center when isScrollable',
-      (tester) async {
+  testWidgets('tapping a tab scrolls it to the center when isScrollable', (
+    tester,
+  ) async {
     var tappedIndex = -1;
-    await tester.pumpWidget(_harness(
-      onChanged: (index, _) => tappedIndex = index,
-    ));
+    await tester.pumpWidget(
+      _harness(onChanged: (index, _) => tappedIndex = index),
+    );
 
     expect(find.byType(SingleChildScrollView), findsOneWidget);
 
@@ -59,8 +58,9 @@ void main() {
     expect(rectAfter.center.dx, closeTo(400, 30));
   });
 
-  testWidgets('a focusedIndex change from outside scrolls to the center',
-      (tester) async {
+  testWidgets('a focusedIndex change from outside scrolls to the center', (
+    tester,
+  ) async {
     await tester.pumpWidget(_harness(focusedIndex: 0));
     final rectBefore = tester.getRect(find.text('Category 4'));
 
@@ -74,12 +74,10 @@ void main() {
     expect(rectAfter.center.dx, closeTo(400, 30));
   });
 
-  testWidgets('isScrollable=false renders an expanded non-scrollable row',
-      (tester) async {
-    await tester.pumpWidget(_harness(
-      isScrollable: false,
-      focusedIndex: 4,
-    ));
+  testWidgets('isScrollable=false renders an expanded non-scrollable row', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_harness(isScrollable: false, focusedIndex: 4));
     await tester.pumpAndSettle();
 
     expect(find.byType(SingleChildScrollView), findsNothing);
@@ -89,20 +87,23 @@ void main() {
     expect(rect.width, closeTo(800 / 16 - 9, 1));
   });
 
-  testWidgets('selectedCategories badges that tab at its top-right corner',
-      (tester) async {
-    await tester.pumpWidget(MaterialApp(
-      home: Scaffold(
-        body: SelectTabBar(
-          entries: _categories,
-          // Category 2 is badged while Category 0 stays the active tab.
-          selectedCategories: {_categories[2]},
-          focusedIndex: 0,
-          isScrollable: true,
-          onChanged: (_, __) {},
+  testWidgets('selectedCategories badges that tab at its top-right corner', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SelectTabBar(
+            entries: _categories,
+            // Category 2 is badged while Category 0 stays the active tab.
+            selectedCategories: {_categories[2]},
+            focusedIndex: 0,
+            isScrollable: true,
+            onChanged: (_, __) {},
+          ),
         ),
       ),
-    ));
+    );
     await tester.pumpAndSettle();
 
     // Only the badged category renders a badge...

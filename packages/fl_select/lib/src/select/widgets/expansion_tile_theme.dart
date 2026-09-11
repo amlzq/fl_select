@@ -78,26 +78,21 @@ class SelectExpansionTileTheme with Diagnosticable {
   }
 
   static SelectExpansionTileTheme lerp(
-      SelectExpansionTileTheme? a, SelectExpansionTileTheme? b, double t) {
+    SelectExpansionTileTheme? a,
+    SelectExpansionTileTheme? b,
+    double t,
+  ) {
     if (identical(a, b) && a != null) {
       return a;
     }
     return SelectExpansionTileTheme(
-      titleStyle: TextStyle.lerp(
-        a?.titleStyle,
-        b?.titleStyle,
-        t,
-      ),
+      titleStyle: TextStyle.lerp(a?.titleStyle, b?.titleStyle, t),
       titlePadding: EdgeInsetsGeometry.lerp(
         a?.titlePadding,
         b?.titlePadding,
         t,
       ),
-      selectedColor: Color.lerp(
-        a?.selectedColor,
-        b?.selectedColor,
-        t,
-      ),
+      selectedColor: Color.lerp(a?.selectedColor, b?.selectedColor, t),
       childPadding: EdgeInsetsGeometry.lerp(
         a?.childPadding,
         b?.childPadding,
@@ -111,14 +106,14 @@ class SelectExpansionTileTheme with Diagnosticable {
 
   @override
   int get hashCode => Object.hash(
-        titleStyle,
-        titlePadding,
-        selectedColor,
-        childPadding,
-        animationDuration,
-        expansionCurve,
-        collapseCurve,
-      );
+    titleStyle,
+    titlePadding,
+    selectedColor,
+    childPadding,
+    animationDuration,
+    expansionCurve,
+    collapseCurve,
+  );
 
   @override
   bool operator ==(Object other) {

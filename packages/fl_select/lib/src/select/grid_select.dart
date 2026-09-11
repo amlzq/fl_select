@@ -55,8 +55,11 @@ class GridSelectState extends State<GridSelect> {
   bool get _isSearching => widget.searchQuery.isNotEmpty;
 
   List<SelectEntry> get _displayEntries => _isSearching
-      ? filterEntriesForSearch(widget.entries, widget.searchQuery,
-          predicate: widget.searchPredicate)
+      ? filterEntriesForSearch(
+          widget.entries,
+          widget.searchQuery,
+          predicate: widget.searchPredicate,
+        )
       : widget.entries;
 
   @override

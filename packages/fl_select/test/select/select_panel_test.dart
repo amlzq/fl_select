@@ -18,7 +18,8 @@ class _TestDelegate extends SelectDelegate {
     BuildContext context,
     List<SelectEntry> entries,
     Set<SelectEntry>? previousSelected,
-  ) bodyBuilder;
+  )
+  bodyBuilder;
 
   @override
   Widget buildBody(
@@ -26,8 +27,7 @@ class _TestDelegate extends SelectDelegate {
     List<SelectEntry> entries,
     Set<SelectEntry>? previousSelected, {
     String searchQuery = '',
-  }) =>
-      bodyBuilder(context, entries, previousSelected);
+  }) => bodyBuilder(context, entries, previousSelected);
 
   @override
   Widget buildSkeleton(BuildContext context) =>
@@ -101,67 +101,69 @@ void main() {
     });
 
     testWidgets(
-        'shows an error when a two-level structure has a mismatched parentId instead of hanging',
-        (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SelectPanel(
-              delegate: _TestDelegate(
-                entriesLoader: () async => <SelectEntry<dynamic>>{
-                  SelectCategoryEntry<dynamic>(
-                    id: 'c1',
-                    name: 'Cate 1',
-                    children: {
-                      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-                    },
-                  ),
-                },
-                bodyBuilder: (_, __, ___) => const Text('body'),
+      'shows an error when a two-level structure has a mismatched parentId instead of hanging',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SelectPanel(
+                delegate: _TestDelegate(
+                  entriesLoader: () async => <SelectEntry<dynamic>>{
+                    SelectCategoryEntry<dynamic>(
+                      id: 'c1',
+                      name: 'Cate 1',
+                      children: {
+                        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                      },
+                    ),
+                  },
+                  bodyBuilder: (_, __, ___) => const Text('body'),
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      await tester.pumpAndSettle();
-      // The build-phase ArgumentError is routed through the error UI.
-      expect(find.text('body'), findsNothing);
-      expect(find.textContaining('Error:'), findsOneWidget);
-      // And it is reported to the console; consume it so the test passes.
-      expect(tester.takeException(), isNotNull);
-    });
+        await tester.pumpAndSettle();
+        // The build-phase ArgumentError is routed through the error UI.
+        expect(find.text('body'), findsNothing);
+        expect(find.textContaining('Error:'), findsOneWidget);
+        // And it is reported to the console; consume it so the test passes.
+        expect(tester.takeException(), isNotNull);
+      },
+    );
 
     testWidgets(
-        'uses errorBuilder for a two-level structure with a mismatched parentId',
-        (tester) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SelectPanel(
-              delegate: _TestDelegate(
-                entriesLoader: () async => <SelectEntry<dynamic>>{
-                  SelectCategoryEntry<dynamic>(
-                    id: 'c1',
-                    name: 'Cate 1',
-                    children: {
-                      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-                    },
-                  ),
-                },
-                bodyBuilder: (_, __, ___) => const Text('body'),
-                errorBuilder: (error, _) => Text('custom: $error'),
+      'uses errorBuilder for a two-level structure with a mismatched parentId',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SelectPanel(
+                delegate: _TestDelegate(
+                  entriesLoader: () async => <SelectEntry<dynamic>>{
+                    SelectCategoryEntry<dynamic>(
+                      id: 'c1',
+                      name: 'Cate 1',
+                      children: {
+                        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                      },
+                    ),
+                  },
+                  bodyBuilder: (_, __, ___) => const Text('body'),
+                  errorBuilder: (error, _) => Text('custom: $error'),
+                ),
               ),
             ),
           ),
-        ),
-      );
+        );
 
-      await tester.pumpAndSettle();
-      expect(find.text('body'), findsNothing);
-      expect(find.textContaining('custom:'), findsOneWidget);
-      expect(tester.takeException(), isNotNull);
-    });
+        await tester.pumpAndSettle();
+        expect(find.text('body'), findsNothing);
+        expect(find.textContaining('custom:'), findsOneWidget);
+        expect(tester.takeException(), isNotNull);
+      },
+    );
 
     testWidgets('uses errorBuilder when data fails', (tester) async {
       await tester.pumpWidget(
@@ -183,8 +185,9 @@ void main() {
       expect(find.text('custom: Exception: boom'), findsOneWidget);
     });
 
-    testWidgets('forwards callbacks with an external controller',
-        (tester) async {
+    testWidgets('forwards callbacks with an external controller', (
+      tester,
+    ) async {
       final controller = SelectController(selectionMode: SelectionMode.single);
       var changed = false;
       var applied = false;
@@ -217,8 +220,9 @@ void main() {
       expect(reset, isTrue);
     });
 
-    testWidgets('forwards callbacks with an internal controller',
-        (tester) async {
+    testWidgets('forwards callbacks with an internal controller', (
+      tester,
+    ) async {
       SelectController? captured;
       var changed = false;
 
@@ -245,8 +249,9 @@ void main() {
       expect(changed, isTrue);
     });
 
-    testWidgets('does not dispose an externally-provided controller',
-        (tester) async {
+    testWidgets('does not dispose an externally-provided controller', (
+      tester,
+    ) async {
       final controller = SelectController(selectionMode: SelectionMode.single);
       await tester.pumpWidget(
         MaterialApp(
@@ -290,8 +295,9 @@ void main() {
       expect(captured!.isDisposed, isTrue);
     });
 
-    testWidgets('re-registers forwarding listeners when controller changes',
-        (tester) async {
+    testWidgets('re-registers forwarding listeners when controller changes', (
+      tester,
+    ) async {
       final first = SelectController(selectionMode: SelectionMode.single);
       final second = SelectController(selectionMode: SelectionMode.single);
       var appliedOnFirst = false;
@@ -338,8 +344,9 @@ void main() {
       expect(appliedOnFirst, isFalse);
     });
 
-    testWidgets('initializes the internal controller from delegate state',
-        (tester) async {
+    testWidgets('initializes the internal controller from delegate state', (
+      tester,
+    ) async {
       SelectController? captured;
       final previous = <SelectEntry<dynamic>>{
         SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
@@ -387,8 +394,7 @@ void main() {
           ),
         );
 
-    testWidgets(
-        'shrinks to its content height within a loose bounded '
+    testWidgets('shrinks to its content height within a loose bounded '
         'constraint instead of stretching to the cap', (tester) async {
       await tester.pumpWidget(host(bodyHeight: 100));
       await tester.pumpAndSettle();
@@ -399,8 +405,9 @@ void main() {
       expect(height, closeTo(100, 0.1));
     });
 
-    testWidgets('caps at the incoming maxHeight when content is taller',
-        (tester) async {
+    testWidgets('caps at the incoming maxHeight when content is taller', (
+      tester,
+    ) async {
       await tester.pumpWidget(host(bodyHeight: 5000));
       await tester.pumpAndSettle();
 

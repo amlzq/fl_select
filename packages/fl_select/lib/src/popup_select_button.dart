@@ -249,12 +249,14 @@ class _PopupSelectButtonState extends State<PopupSelectButton>
   void _handleControllerTick() => setState(() {});
 
   void _handleWidgetChange(
-          SelectLabelState labelState, SelectEntries selected) =>
-      widget.onChanged?.call(selected);
+    SelectLabelState labelState,
+    SelectEntries selected,
+  ) => widget.onChanged?.call(selected);
 
   void _handleWidgetApply(
-          SelectLabelState labelState, SelectEntries selected) =>
-      widget.onApplied(selected);
+    SelectLabelState labelState,
+    SelectEntries selected,
+  ) => widget.onApplied(selected);
 
   void _handleWidgetReset() => widget.onReset?.call();
 
@@ -275,10 +277,13 @@ class _PopupSelectButtonState extends State<PopupSelectButton>
 
   @override
   Widget build(BuildContext context) {
-    final PopupSelectButtonTheme defaults =
-        _PopupSelectButtonDefaults(context, widget.variant);
-    final PopupSelectButtonTheme? theme =
-        PopupSelectButtonTheme.maybeOf(context);
+    final PopupSelectButtonTheme defaults = _PopupSelectButtonDefaults(
+      context,
+      widget.variant,
+    );
+    final PopupSelectButtonTheme? theme = PopupSelectButtonTheme.maybeOf(
+      context,
+    );
 
     final resolved = defaults.copyWith(
       backgroundColor: theme?.backgroundColor,
@@ -319,7 +324,8 @@ class _PopupSelectButtonState extends State<PopupSelectButton>
     final foregroundColor = resolved.foregroundColor!;
     final elevation = resolved.elevation!;
     final side = resolved.side!;
-    final baseShape = resolved.shape ??
+    final baseShape =
+        resolved.shape ??
         const RoundedRectangleBorder(
           borderRadius: BorderRadius.all(Radius.circular(8.0)),
         );
@@ -329,7 +335,8 @@ class _PopupSelectButtonState extends State<PopupSelectButton>
         : BorderRadius.circular(8.0);
     final textStyle = resolved.textStyle ?? textTheme.labelLarge!;
     final iconColor = resolved.iconColor ?? foregroundColor;
-    final padding = resolved.padding ??
+    final padding =
+        resolved.padding ??
         const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0);
     final splash =
         resolved.overlayColor ?? foregroundColor.withValues(alpha: 0.12);
@@ -338,7 +345,8 @@ class _PopupSelectButtonState extends State<PopupSelectButton>
 
     final labelText = _labelState.label ?? widget.label ?? '';
 
-    final content = widget.child ??
+    final content =
+        widget.child ??
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -371,7 +379,8 @@ class _PopupSelectButtonState extends State<PopupSelectButton>
       shadowColor: resolved.shadowColor,
       surfaceTintColor: resolved.surfaceTintColor,
       shape: shape,
-      type: widget.variant == PopupSelectButtonVariant.outlined ||
+      type:
+          widget.variant == PopupSelectButtonVariant.outlined ||
               widget.variant == PopupSelectButtonVariant.text
           ? MaterialType.transparency
           : MaterialType.button,
@@ -397,9 +406,9 @@ class _PopupSelectButtonState extends State<PopupSelectButton>
 
 class _PopupSelectButtonDefaults extends PopupSelectButtonTheme {
   _PopupSelectButtonDefaults(this.context, this.variant)
-      : super(
-          elevation: variant == PopupSelectButtonVariant.elevated ? 1.0 : 0.0,
-        );
+    : super(
+        elevation: variant == PopupSelectButtonVariant.elevated ? 1.0 : 0.0,
+      );
 
   final BuildContext context;
   final PopupSelectButtonVariant variant;
@@ -450,8 +459,8 @@ class _PopupSelectButtonDefaults extends PopupSelectButtonTheme {
 
   @override
   OutlinedBorder? get shape => const RoundedRectangleBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8.0)),
-      );
+    borderRadius: BorderRadius.all(Radius.circular(8.0)),
+  );
 
   @override
   TextStyle? get textStyle => _textTheme.labelLarge;

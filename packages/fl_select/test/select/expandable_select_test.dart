@@ -35,9 +35,17 @@ void main() {
             name: 'Header',
             children: {
               SelectTextEntry<dynamic>(
-                  parentId: 'header', id: 'h1', name: 'H1', immediate: true),
+                parentId: 'header',
+                id: 'h1',
+                name: 'H1',
+                immediate: true,
+              ),
               SelectTextEntry<dynamic>(
-                  parentId: 'header', id: 'h2', name: 'H2', immediate: true),
+                parentId: 'header',
+                id: 'h2',
+                name: 'H2',
+                immediate: true,
+              ),
             },
           ),
           children: {
@@ -50,13 +58,18 @@ void main() {
             name: 'Footer',
             children: {
               SelectTextEntry<dynamic>(
-                  parentId: 'footer', id: 'f1', name: 'F1', immediate: true),
+                parentId: 'footer',
+                id: 'f1',
+                name: 'F1',
+                immediate: true,
+              ),
             },
           ),
         );
 
-    testWidgets('renders header/footer chip bars inside the expanded tile',
-        (tester) async {
+    testWidgets('renders header/footer chip bars inside the expanded tile', (
+      tester,
+    ) async {
       await tester.pumpWidget(_expandableHarness({categoryWithHeaderFooter()}));
       await tester.pumpAndSettle();
 
@@ -84,14 +97,14 @@ void main() {
       );
     });
 
-    testWidgets('tapping header/footer children applies their selections',
-        (tester) async {
+    testWidgets('tapping header/footer children applies their selections', (
+      tester,
+    ) async {
       final applied = <Set<SelectEntry>>[];
       await tester.pumpWidget(
-        _expandableHarness(
-          {categoryWithHeaderFooter()},
-          onChanged: applied.add,
-        ),
+        _expandableHarness({
+          categoryWithHeaderFooter(),
+        }, onChanged: applied.add),
       );
       await tester.pumpAndSettle();
 

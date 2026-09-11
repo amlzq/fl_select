@@ -13,9 +13,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             appBar: PopupSelectBar(
-              tabs: const [
-                PopupTab(label: 'Filter'),
-              ],
+              tabs: const [PopupTab(label: 'Filter')],
               selectDelegates: [
                 ListSelectDelegate(
                   entriesLoader: () async => <SelectEntry<dynamic>>{
@@ -79,9 +77,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             appBar: PopupSelectBar(
-              tabs: const [
-                PopupTab(label: 'Sort'),
-              ],
+              tabs: const [PopupTab(label: 'Sort')],
               selectDelegates: [
                 ListSelectDelegate(
                   entriesLoader: () async => <SelectEntry<dynamic>>{
@@ -125,10 +121,7 @@ void main() {
           home: Scaffold(
             appBar: PopupSelectBar(
               tabs: [
-                PopupTab(
-                  label: 'Price',
-                  labelLoader: (selected) => 'Custom',
-                ),
+                PopupTab(label: 'Price', labelLoader: (selected) => 'Custom'),
               ],
               selectDelegates: [
                 ListSelectDelegate(
@@ -160,8 +153,9 @@ void main() {
       expect(applied, isNotNull);
     });
 
-    testWidgets('fires onChanged and onReset in multiple selection',
-        (tester) async {
+    testWidgets('fires onChanged and onReset in multiple selection', (
+      tester,
+    ) async {
       ({PopupTabData tabData, SelectEntries selected})? changed;
       var resetCalled = false;
       final controller = PopupSelectController();
@@ -170,9 +164,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             appBar: PopupSelectBar(
-              tabs: const [
-                PopupTab(label: 'Multi'),
-              ],
+              tabs: const [PopupTab(label: 'Multi')],
               selectDelegates: [
                 ListSelectDelegate(
                   selectionMode: SelectionMode.multiple,
@@ -218,33 +210,34 @@ void main() {
       final controller = PopupSelectController();
 
       Widget buildBar() => MaterialApp(
-            home: Scaffold(
-              appBar: PopupSelectBar(
-                isScrollable: true,
-                tabs: [
-                  for (var i = 0; i < 12; i++) PopupTab(label: 'Filter $i')
-                ],
-                selectDelegates: [
-                  for (var i = 0; i < 12; i++)
-                    ListSelectDelegate(
-                      entriesLoader: () async => <SelectEntry<dynamic>>{
-                        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-                      },
-                    ),
-                ],
-                onApplied: (_, __) {},
-                controller: controller,
-              ),
-              body: const SizedBox.expand(),
-            ),
-          );
+        home: Scaffold(
+          appBar: PopupSelectBar(
+            isScrollable: true,
+            tabs: [for (var i = 0; i < 12; i++) PopupTab(label: 'Filter $i')],
+            selectDelegates: [
+              for (var i = 0; i < 12; i++)
+                ListSelectDelegate(
+                  entriesLoader: () async => <SelectEntry<dynamic>>{
+                    SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                  },
+                ),
+            ],
+            onApplied: (_, __) {},
+            controller: controller,
+          ),
+          body: const SizedBox.expand(),
+        ),
+      );
 
       await tester.pumpWidget(buildBar());
 
       double offset() => tester
-          .widget<SingleChildScrollView>(find.descendant(
+          .widget<SingleChildScrollView>(
+            find.descendant(
               of: find.byType(PopupSelectBar),
-              matching: find.byType(SingleChildScrollView)))
+              matching: find.byType(SingleChildScrollView),
+            ),
+          )
           .controller!
           .offset;
 
@@ -277,31 +270,30 @@ void main() {
       expect(tester.getRect(find.text('Filter 4')).center.dx, centeredDx);
     });
 
-    testWidgets('apply() centers the tab only when centerTab is true',
-        (tester) async {
+    testWidgets('apply() centers the tab only when centerTab is true', (
+      tester,
+    ) async {
       final controller = PopupSelectController();
 
       Widget buildBar() => MaterialApp(
-            home: Scaffold(
-              appBar: PopupSelectBar(
-                isScrollable: true,
-                tabs: [
-                  for (var i = 0; i < 12; i++) PopupTab(label: 'Filter $i')
-                ],
-                selectDelegates: [
-                  for (var i = 0; i < 12; i++)
-                    ListSelectDelegate(
-                      entriesLoader: () async => <SelectEntry<dynamic>>{
-                        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-                      },
-                    ),
-                ],
-                onApplied: (_, __) {},
-                controller: controller,
-              ),
-              body: const SizedBox.expand(),
-            ),
-          );
+        home: Scaffold(
+          appBar: PopupSelectBar(
+            isScrollable: true,
+            tabs: [for (var i = 0; i < 12; i++) PopupTab(label: 'Filter $i')],
+            selectDelegates: [
+              for (var i = 0; i < 12; i++)
+                ListSelectDelegate(
+                  entriesLoader: () async => <SelectEntry<dynamic>>{
+                    SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                  },
+                ),
+            ],
+            onApplied: (_, __) {},
+            controller: controller,
+          ),
+          body: const SizedBox.expand(),
+        ),
+      );
 
       await tester.pumpWidget(buildBar());
 
@@ -321,23 +313,25 @@ void main() {
 
       // centerTab: true scrolls the applied tab to the center.
       ok = await controller.apply(
-          tabIndex: 8, selectedEntryIds: {'a'}, centerTab: true);
+        tabIndex: 8,
+        selectedEntryIds: {'a'},
+        centerTab: true,
+      );
       expect(ok, isTrue);
       await tester.pumpAndSettle();
       expect(offset(), greaterThan(0.0));
     });
 
-    testWidgets('isScrollable=false renders a non-scrollable row',
-        (tester) async {
+    testWidgets('isScrollable=false renders a non-scrollable row', (
+      tester,
+    ) async {
       final controller = PopupSelectController();
 
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
             appBar: PopupSelectBar(
-              tabs: const [
-                PopupTab(label: 'Filter'),
-              ],
+              tabs: const [PopupTab(label: 'Filter')],
               selectDelegates: [
                 ListSelectDelegate(
                   entriesLoader: () async => <SelectEntry<dynamic>>{
@@ -361,74 +355,75 @@ void main() {
     });
 
     testWidgets(
-        'switching tabs does not leak the search query into the other select',
-        (tester) async {
-      final controller = PopupSelectController();
+      'switching tabs does not leak the search query into the other select',
+      (tester) async {
+        final controller = PopupSelectController();
 
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            appBar: PopupSelectBar(
-              tabs: const [
-                PopupTab(label: 'Fruits'),
-                PopupTab(label: 'Colors'),
-              ],
-              selectDelegates: [
-                ListSelectDelegate(
-                  searchEnabled: true,
-                  entriesLoader: () async => <SelectEntry<dynamic>>{
-                    SelectTextEntry<dynamic>.name(id: 'a', name: 'Apple'),
-                    SelectTextEntry<dynamic>.name(id: 'b', name: 'Banana'),
-                  },
-                ),
-                ListSelectDelegate(
-                  searchEnabled: true,
-                  entriesLoader: () async => <SelectEntry<dynamic>>{
-                    SelectTextEntry<dynamic>.name(id: 'c', name: 'Cherry'),
-                  },
-                ),
-              ],
-              onApplied: (_, __) {},
-              controller: controller,
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              appBar: PopupSelectBar(
+                tabs: const [
+                  PopupTab(label: 'Fruits'),
+                  PopupTab(label: 'Colors'),
+                ],
+                selectDelegates: [
+                  ListSelectDelegate(
+                    searchEnabled: true,
+                    entriesLoader: () async => <SelectEntry<dynamic>>{
+                      SelectTextEntry<dynamic>.name(id: 'a', name: 'Apple'),
+                      SelectTextEntry<dynamic>.name(id: 'b', name: 'Banana'),
+                    },
+                  ),
+                  ListSelectDelegate(
+                    searchEnabled: true,
+                    entriesLoader: () async => <SelectEntry<dynamic>>{
+                      SelectTextEntry<dynamic>.name(id: 'c', name: 'Cherry'),
+                    },
+                  ),
+                ],
+                onApplied: (_, __) {},
+                controller: controller,
+              ),
+              body: const SizedBox.expand(),
             ),
-            body: const SizedBox.expand(),
           ),
-        ),
-      );
+        );
 
-      await tester.tap(find.text('Fruits'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Fruits'));
+        await tester.pumpAndSettle();
 
-      await tester.enterText(find.byType(TextField), 'App');
-      // Wait out the search debounce (300 ms by default).
-      await tester.pump(const Duration(milliseconds: 350));
-      await tester.pumpAndSettle();
+        await tester.enterText(find.byType(TextField), 'App');
+        // Wait out the search debounce (300 ms by default).
+        await tester.pump(const Duration(milliseconds: 350));
+        await tester.pumpAndSettle();
 
-      expect(find.text('Apple'), findsOneWidget);
-      expect(find.text('Banana'), findsNothing);
+        expect(find.text('Apple'), findsOneWidget);
+        expect(find.text('Banana'), findsNothing);
 
-      // Switch to the other tab's select while the overlay is open.
-      await tester.tap(find.text('Colors'));
-      await tester.pumpAndSettle();
+        // Switch to the other tab's select while the overlay is open.
+        await tester.tap(find.text('Colors'));
+        await tester.pumpAndSettle();
 
-      // The new select starts with an empty query: its entries are not
-      // filtered by "App" and the search field is cleared.
-      expect(
-        tester.widget<TextField>(find.byType(TextField)).controller!.text,
-        isEmpty,
-      );
-      expect(find.text('Cherry'), findsOneWidget);
+        // The new select starts with an empty query: its entries are not
+        // filtered by "App" and the search field is cleared.
+        expect(
+          tester.widget<TextField>(find.byType(TextField)).controller!.text,
+          isEmpty,
+        );
+        expect(find.text('Cherry'), findsOneWidget);
 
-      // Switching back to the first select also starts with an empty query.
-      await tester.tap(find.text('Fruits'));
-      await tester.pumpAndSettle();
+        // Switching back to the first select also starts with an empty query.
+        await tester.tap(find.text('Fruits'));
+        await tester.pumpAndSettle();
 
-      expect(
-        tester.widget<TextField>(find.byType(TextField)).controller!.text,
-        isEmpty,
-      );
-      expect(find.text('Apple'), findsOneWidget);
-      expect(find.text('Banana'), findsOneWidget);
-    });
+        expect(
+          tester.widget<TextField>(find.byType(TextField)).controller!.text,
+          isEmpty,
+        );
+        expect(find.text('Apple'), findsOneWidget);
+        expect(find.text('Banana'), findsOneWidget);
+      },
+    );
   });
 }

@@ -117,7 +117,10 @@ class SelectSideBarTheme with Diagnosticable {
 
   /// Linearly interpolates between two category bar themes.
   static SelectSideBarTheme lerp(
-      SelectSideBarTheme? a, SelectSideBarTheme? b, double t) {
+    SelectSideBarTheme? a,
+    SelectSideBarTheme? b,
+    double t,
+  ) {
     if (identical(a, b) && a != null) {
       return a;
     }
@@ -149,18 +152,18 @@ class SelectSideBarTheme with Diagnosticable {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        width,
-        padding,
-        selectedColor,
-        labelStyle,
-        selectedLabelStyle,
-        selectedTileColor,
-        indicatorColor,
-        indicatorHeight,
-        indicatorPadding,
-        indicatorAnimationDuration,
-      );
+    backgroundColor,
+    width,
+    padding,
+    selectedColor,
+    labelStyle,
+    selectedLabelStyle,
+    selectedTileColor,
+    indicatorColor,
+    indicatorHeight,
+    indicatorPadding,
+    indicatorAnimationDuration,
+  );
 
   @override
   bool operator ==(Object other) {

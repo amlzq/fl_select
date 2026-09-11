@@ -15,39 +15,38 @@ Widget _harness(SelectDelegate delegate, {SelectCallback? onApplyTap}) =>
       home: Scaffold(
         // SelectPanel without a SelectActionBarVisibility scope keeps the
         // action bar visible (SelectView hides it for inline usage).
-        body: SelectPanel(
-          delegate: delegate,
-          onApplyTap: onApplyTap,
-        ),
+        body: SelectPanel(delegate: delegate, onApplyTap: onApplyTap),
       ),
     );
 
 void main() {
   testWidgets(
-      'a category opting into multiple shows the action bar even when the '
-      'delegate mode is single', (tester) async {
-    await tester.pumpWidget(
-      _harness(
-        ExpandableSelectDelegate(
-          selectionMode: SelectionMode.single,
-          entries: {
-            SelectCategoryEntry<dynamic>.children(
-              id: 'cat',
-              name: 'Category',
-              selectionMode: SelectionMode.multiple,
-              children: {
-                SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
-                SelectTextEntry<dynamic>.name(id: 'b', name: 'Item B'),
-              },
-            ),
-          },
+    'a category opting into multiple shows the action bar even when the '
+    'delegate mode is single',
+    (tester) async {
+      await tester.pumpWidget(
+        _harness(
+          ExpandableSelectDelegate(
+            selectionMode: SelectionMode.single,
+            entries: {
+              SelectCategoryEntry<dynamic>.children(
+                id: 'cat',
+                name: 'Category',
+                selectionMode: SelectionMode.multiple,
+                children: {
+                  SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
+                  SelectTextEntry<dynamic>.name(id: 'b', name: 'Item B'),
+                },
+              ),
+            },
+          ),
         ),
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    expect(find.byType(SelectActionBar), findsOneWidget);
-  });
+      expect(find.byType(SelectActionBar), findsOneWidget);
+    },
+  );
 
   testWidgets('pure single selection hides the action bar', (tester) async {
     await tester.pumpWidget(
@@ -72,35 +71,37 @@ void main() {
   });
 
   testWidgets(
-      'mixed mode defers applying to the action bar instead of applying on '
-      'tap', (tester) async {
-    var applied = 0;
-    await tester.pumpWidget(
-      _harness(
-        ExpandableSelectDelegate(
-          selectionMode: SelectionMode.single,
-          entries: {
-            SelectCategoryEntry<dynamic>.children(
-              id: 'cat',
-              name: 'Category',
-              selectionMode: SelectionMode.multiple,
-              children: {
-                SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
-              },
-            ),
-          },
+    'mixed mode defers applying to the action bar instead of applying on '
+    'tap',
+    (tester) async {
+      var applied = 0;
+      await tester.pumpWidget(
+        _harness(
+          ExpandableSelectDelegate(
+            selectionMode: SelectionMode.single,
+            entries: {
+              SelectCategoryEntry<dynamic>.children(
+                id: 'cat',
+                name: 'Category',
+                selectionMode: SelectionMode.multiple,
+                children: {
+                  SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
+                },
+              ),
+            },
+          ),
+          onApplyTap: (_) => applied++,
         ),
-        onApplyTap: (_) => applied++,
-      ),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Item A'));
-    await tester.pumpAndSettle();
-    expect(applied, 0);
+      await tester.tap(find.text('Item A'));
+      await tester.pumpAndSettle();
+      expect(applied, 0);
 
-    await tester.tap(find.text('Apply'));
-    await tester.pumpAndSettle();
-    expect(applied, 1);
-  });
+      await tester.tap(find.text('Apply'));
+      await tester.pumpAndSettle();
+      expect(applied, 1);
+    },
+  );
 }

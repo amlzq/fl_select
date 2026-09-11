@@ -69,32 +69,16 @@ void main() {
 
   group('SelectChildEntry', () {
     test('== and hashCode: equal entries with same id, parentId, name', () {
-      final a = SelectChildEntry<dynamic>(
-        parentId: 'p',
-        id: 'e',
-        name: 'E',
-      );
-      final b = SelectChildEntry<dynamic>(
-        parentId: 'p',
-        id: 'e',
-        name: 'E',
-      );
+      final a = SelectChildEntry<dynamic>(parentId: 'p', id: 'e', name: 'E');
+      final b = SelectChildEntry<dynamic>(parentId: 'p', id: 'e', name: 'E');
 
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
     });
 
     test('== and hashCode: different parentId makes entries unequal', () {
-      final a = SelectChildEntry<dynamic>(
-        parentId: 'p1',
-        id: 'e',
-        name: 'E',
-      );
-      final b = SelectChildEntry<dynamic>(
-        parentId: 'p2',
-        id: 'e',
-        name: 'E',
-      );
+      final a = SelectChildEntry<dynamic>(parentId: 'p1', id: 'e', name: 'E');
+      final b = SelectChildEntry<dynamic>(parentId: 'p2', id: 'e', name: 'E');
 
       expect(a, isNot(equals(b)));
       expect(a.hashCode, isNot(equals(b.hashCode)));
@@ -105,16 +89,8 @@ void main() {
       // rewrites it on every commit), so it must not be part of equality —
       // otherwise an entry mutated while sitting in a Set can no longer be
       // found by contains/remove.
-      final a = SelectChildEntry<dynamic>(
-        parentId: 'p',
-        id: 'e',
-        name: 'A',
-      );
-      final b = SelectChildEntry<dynamic>(
-        parentId: 'p',
-        id: 'e',
-        name: 'B',
-      );
+      final a = SelectChildEntry<dynamic>(parentId: 'p', id: 'e', name: 'A');
+      final b = SelectChildEntry<dynamic>(parentId: 'p', id: 'e', name: 'B');
 
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
@@ -127,16 +103,8 @@ void main() {
     });
 
     test('== and hashCode: different id makes entries unequal', () {
-      final a = SelectChildEntry<dynamic>(
-        parentId: 'p',
-        id: 'e1',
-        name: 'E',
-      );
-      final b = SelectChildEntry<dynamic>(
-        parentId: 'p',
-        id: 'e2',
-        name: 'E',
-      );
+      final a = SelectChildEntry<dynamic>(parentId: 'p', id: 'e1', name: 'E');
+      final b = SelectChildEntry<dynamic>(parentId: 'p', id: 'e2', name: 'E');
 
       expect(a, isNot(equals(b)));
     });
@@ -147,11 +115,7 @@ void main() {
         id: 'e',
         name: 'E',
       );
-      final text = SelectTextEntry<dynamic>(
-        parentId: 'p',
-        id: 'e',
-        name: 'E',
-      );
+      final text = SelectTextEntry<dynamic>(parentId: 'p', id: 'e', name: 'E');
 
       // Different runtimeType (SelectChildEntry vs SelectTextEntry)
       expect(child, isNot(equals(text)));
@@ -194,10 +158,7 @@ void main() {
     });
 
     test('any constructor sets id to kAnyEntryId', () {
-      final any = SelectChildEntry<dynamic>.any(
-        parentId: 'p',
-        name: 'Any',
-      );
+      final any = SelectChildEntry<dynamic>.any(parentId: 'p', name: 'Any');
 
       expect(any.id, kAnyEntryId);
       expect(any.parentId, 'p');
@@ -233,50 +194,47 @@ void main() {
       }
     });
 
-    test('children constructor injects parentId recursively into descendants',
-        () {
-      final parent = SelectChildEntry<dynamic>.children(
-        id: 'p',
-        name: 'Parent',
-        children: {
-          SelectTextEntry<dynamic>.name(
-            id: 'a',
-            name: 'A',
-          ).copyWith(
-            children: {
-              SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1'),
-            },
-          ),
-        },
-      );
+    test(
+      'children constructor injects parentId recursively into descendants',
+      () {
+        final parent = SelectChildEntry<dynamic>.children(
+          id: 'p',
+          name: 'Parent',
+          children: {
+            SelectTextEntry<dynamic>.name(id: 'a', name: 'A').copyWith(
+              children: {SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1')},
+            ),
+          },
+        );
 
-      final child = parent.children!.single as SelectChildEntry;
-      expect(child.parentId, 'p');
-      final grandchild = child.children!.single as SelectChildEntry;
-      // Each node's parentId matches its direct parent: the grandchild's direct
-      // parent is the child (id 'a'), not the root (id 'p').
-      expect(grandchild.parentId, 'a');
-    });
+        final child = parent.children!.single as SelectChildEntry;
+        expect(child.parentId, 'p');
+        final grandchild = child.children!.single as SelectChildEntry;
+        // Each node's parentId matches its direct parent: the grandchild's direct
+        // parent is the child (id 'a'), not the root (id 'p').
+        expect(grandchild.parentId, 'a');
+      },
+    );
 
-    test('children constructor leaves own parentId empty, preserves fields',
-        () {
-      final parent = SelectChildEntry<dynamic>.children(
-        id: 'p',
-        name: 'Parent',
-        enabled: false,
-        immediate: true,
-        extra: 42,
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-        },
-      );
+    test(
+      'children constructor leaves own parentId empty, preserves fields',
+      () {
+        final parent = SelectChildEntry<dynamic>.children(
+          id: 'p',
+          name: 'Parent',
+          enabled: false,
+          immediate: true,
+          extra: 42,
+          children: {SelectTextEntry<dynamic>.name(id: 'a', name: 'A')},
+        );
 
-      expect(parent.parentId, '');
-      expect(parent.id, 'p');
-      expect(parent.enabled, false);
-      expect(parent.immediate, true);
-      expect(parent.extra, 42);
-    });
+        expect(parent.parentId, '');
+        expect(parent.id, 'p');
+        expect(parent.enabled, false);
+        expect(parent.immediate, true);
+        expect(parent.extra, 42);
+      },
+    );
 
     test('children constructor supports nested SelectChildEntry.children', () {
       final root = SelectChildEntry<dynamic>.children(
@@ -286,9 +244,7 @@ void main() {
           SelectChildEntry<dynamic>.children(
             id: 'g',
             name: 'Grandparent',
-            children: {
-              SelectTextEntry<dynamic>.name(id: 'gg', name: 'GG'),
-            },
+            children: {SelectTextEntry<dynamic>.name(id: 'gg', name: 'GG')},
           ),
         },
       );
@@ -302,50 +258,50 @@ void main() {
       expect(grandchild.parentId, 'g');
     });
 
-    test('multi-level category tree passes SelectController.validateEntries',
-        () {
-      final category = SelectCategoryEntry<dynamic>.children(
-        id: 'c1',
-        name: 'Cate 1',
-        children: {
-          SelectTextEntry<dynamic>.children(
-            id: 'a',
-            name: 'A',
-            children: {
-              SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1'),
-              SelectTextEntry<dynamic>.name(id: 'a2', name: 'A2'),
-            },
-          ),
-          SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-          SelectTextEntry<dynamic>.name(id: 'c', name: 'C'),
-        },
-      );
+    test(
+      'multi-level category tree passes SelectController.validateEntries',
+      () {
+        final category = SelectCategoryEntry<dynamic>.children(
+          id: 'c1',
+          name: 'Cate 1',
+          children: {
+            SelectTextEntry<dynamic>.children(
+              id: 'a',
+              name: 'A',
+              children: {
+                SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1'),
+                SelectTextEntry<dynamic>.name(id: 'a2', name: 'A2'),
+              },
+            ),
+            SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+            SelectTextEntry<dynamic>.name(id: 'c', name: 'C'),
+          },
+        );
 
-      // Direct children of the category carry the category's id.
-      for (final child in category.children!) {
-        expect((child as SelectChildEntry).parentId, 'c1');
-      }
-      // The 'a' branch's own children carry 'a' as their parentId.
-      final branchA =
-          category.children!.firstWhere((e) => e.id == 'a') as SelectChildEntry;
-      for (final grandchild in branchA.children!) {
-        expect((grandchild as SelectChildEntry).parentId, 'a');
-      }
+        // Direct children of the category carry the category's id.
+        for (final child in category.children!) {
+          expect((child as SelectChildEntry).parentId, 'c1');
+        }
+        // The 'a' branch's own children carry 'a' as their parentId.
+        final branchA =
+            category.children!.firstWhere((e) => e.id == 'a')
+                as SelectChildEntry;
+        for (final grandchild in branchA.children!) {
+          expect((grandchild as SelectChildEntry).parentId, 'a');
+        }
 
-      // A multi-level tree must not fail parentId validation.
-      expect(
-        () => SelectController.validateEntries([category]),
-        returnsNormally,
-      );
-    });
+        // A multi-level tree must not fail parentId validation.
+        expect(
+          () => SelectController.validateEntries([category]),
+          returnsNormally,
+        );
+      },
+    );
   });
 
   group('SelectChildEntryExt', () {
     test('isAny returns true for kAnyEntryId', () {
-      final any = SelectChildEntry<dynamic>.any(
-        parentId: 'p',
-        name: 'Any',
-      );
+      final any = SelectChildEntry<dynamic>.any(parentId: 'p', name: 'Any');
       expect(any.isAny, isTrue);
     });
 
@@ -377,10 +333,7 @@ void main() {
 
   group('SelectTextEntry', () {
     test('any constructor sets id to kAnyEntryId', () {
-      final any = SelectTextEntry<dynamic>.any(
-        parentId: 'p',
-        name: 'Any',
-      );
+      final any = SelectTextEntry<dynamic>.any(parentId: 'p', name: 'Any');
 
       expect(any.id, kAnyEntryId);
       expect(any.isAny, isTrue);
@@ -410,57 +363,49 @@ void main() {
     });
 
     test('inherits SelectChildEntry == (runtimeType, id, parentId, name)', () {
-      final a = SelectTextEntry<dynamic>(
-        parentId: 'p',
-        id: 'e',
-        name: 'E',
-      );
-      final b = SelectTextEntry<dynamic>(
-        parentId: 'p',
-        id: 'e',
-        name: 'E',
-      );
+      final a = SelectTextEntry<dynamic>(parentId: 'p', id: 'e', name: 'E');
+      final b = SelectTextEntry<dynamic>(parentId: 'p', id: 'e', name: 'E');
 
       expect(a, equals(b));
     });
 
-    test('children constructor returns a SelectTextEntry and injects parentId',
-        () {
-      final entry = SelectTextEntry<dynamic>.children(
-        id: 'p',
-        name: 'Parent',
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-        },
-      );
+    test(
+      'children constructor returns a SelectTextEntry and injects parentId',
+      () {
+        final entry = SelectTextEntry<dynamic>.children(
+          id: 'p',
+          name: 'Parent',
+          children: {SelectTextEntry<dynamic>.name(id: 'a', name: 'A')},
+        );
 
-      expect(entry, isA<SelectTextEntry<dynamic>>());
-      expect(entry.id, 'p');
-      expect(entry.parentId, '');
-      expect(entry.name, 'Parent');
-      final child = entry.children!.single as SelectChildEntry;
-      expect(child.parentId, 'p');
-    });
+        expect(entry, isA<SelectTextEntry<dynamic>>());
+        expect(entry.id, 'p');
+        expect(entry.parentId, '');
+        expect(entry.name, 'Parent');
+        final child = entry.children!.single as SelectChildEntry;
+        expect(child.parentId, 'p');
+      },
+    );
 
-    test('children constructor leaves own parentId empty, preserves fields',
-        () {
-      final entry = SelectTextEntry<dynamic>.children(
-        id: 'p',
-        name: 'Parent',
-        enabled: false,
-        immediate: true,
-        extra: 'x',
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-        },
-      );
+    test(
+      'children constructor leaves own parentId empty, preserves fields',
+      () {
+        final entry = SelectTextEntry<dynamic>.children(
+          id: 'p',
+          name: 'Parent',
+          enabled: false,
+          immediate: true,
+          extra: 'x',
+          children: {SelectTextEntry<dynamic>.name(id: 'a', name: 'A')},
+        );
 
-      expect(entry.parentId, '');
-      expect(entry.id, 'p');
-      expect(entry.enabled, false);
-      expect(entry.immediate, true);
-      expect(entry.extra, 'x');
-    });
+        expect(entry.parentId, '');
+        expect(entry.id, 'p');
+        expect(entry.enabled, false);
+        expect(entry.immediate, true);
+        expect(entry.extra, 'x');
+      },
+    );
   });
 
   group('SelectRangeEntry', () {
@@ -602,32 +547,49 @@ void main() {
 
   group('SelectCategoryEntry', () {
     test(
-        '== and hashCode: equal categories with same id, name, selectionMode, layout',
-        () {
-      final a = _category('c', 'C', children: {_text('c', 'a', 'A')});
-      final b = _category('c', 'C', children: {_text('c', 'a', 'A')});
+      '== and hashCode: equal categories with same id, name, selectionMode, layout',
+      () {
+        final a = _category('c', 'C', children: {_text('c', 'a', 'A')});
+        final b = _category('c', 'C', children: {_text('c', 'a', 'A')});
 
-      expect(a, equals(b));
-      expect(a.hashCode, equals(b.hashCode));
-    });
+        expect(a, equals(b));
+        expect(a.hashCode, equals(b.hashCode));
+      },
+    );
 
-    test('== and hashCode: different selectionMode makes categories unequal',
-        () {
-      final a = _category('c', 'C',
+    test(
+      '== and hashCode: different selectionMode makes categories unequal',
+      () {
+        final a = _category(
+          'c',
+          'C',
           children: {_text('c', 'a', 'A')},
-          selectionMode: SelectionMode.single);
-      final b = _category('c', 'C',
+          selectionMode: SelectionMode.single,
+        );
+        final b = _category(
+          'c',
+          'C',
           children: {_text('c', 'a', 'A')},
-          selectionMode: SelectionMode.multiple);
+          selectionMode: SelectionMode.multiple,
+        );
 
-      expect(a, isNot(equals(b)));
-    });
+        expect(a, isNot(equals(b)));
+      },
+    );
 
     test('== and hashCode: different layout makes categories unequal', () {
-      final a = _category('c', 'C',
-          children: {_text('c', 'a', 'A')}, layout: const SelectListLayout());
-      final b = _category('c', 'C',
-          children: {_text('c', 'a', 'A')}, layout: const SelectWrapLayout());
+      final a = _category(
+        'c',
+        'C',
+        children: {_text('c', 'a', 'A')},
+        layout: const SelectListLayout(),
+      );
+      final b = _category(
+        'c',
+        'C',
+        children: {_text('c', 'a', 'A')},
+        layout: const SelectWrapLayout(),
+      );
 
       expect(a, isNot(equals(b)));
     });
@@ -659,12 +621,18 @@ void main() {
         name: 'C1',
         children: {_text('c1', 'a', 'A')},
       );
-      expect(inherited.effectiveSelectionMode(SelectionMode.multiple),
-          SelectionMode.multiple);
-      expect(inherited.effectiveHeaderSelectionMode(SelectionMode.multiple),
-          SelectionMode.multiple);
-      expect(inherited.effectiveFooterSelectionMode(SelectionMode.multiple),
-          SelectionMode.multiple);
+      expect(
+        inherited.effectiveSelectionMode(SelectionMode.multiple),
+        SelectionMode.multiple,
+      );
+      expect(
+        inherited.effectiveHeaderSelectionMode(SelectionMode.multiple),
+        SelectionMode.multiple,
+      );
+      expect(
+        inherited.effectiveFooterSelectionMode(SelectionMode.multiple),
+        SelectionMode.multiple,
+      );
 
       // selectionMode set, header/footer null: header/footer follow the
       // category's effective mode.
@@ -674,12 +642,18 @@ void main() {
         children: {_text('c2', 'a', 'A')},
         selectionMode: SelectionMode.single,
       );
-      expect(mixed.effectiveSelectionMode(SelectionMode.multiple),
-          SelectionMode.single);
-      expect(mixed.effectiveHeaderSelectionMode(SelectionMode.multiple),
-          SelectionMode.single);
-      expect(mixed.effectiveFooterSelectionMode(SelectionMode.multiple),
-          SelectionMode.single);
+      expect(
+        mixed.effectiveSelectionMode(SelectionMode.multiple),
+        SelectionMode.single,
+      );
+      expect(
+        mixed.effectiveHeaderSelectionMode(SelectionMode.multiple),
+        SelectionMode.single,
+      );
+      expect(
+        mixed.effectiveFooterSelectionMode(SelectionMode.multiple),
+        SelectionMode.single,
+      );
 
       // Explicit header/footer modes override the inheritance chain.
       final explicit = SelectCategoryEntry<dynamic>(
@@ -689,10 +663,14 @@ void main() {
         headerSelectionMode: SelectionMode.single,
         footerSelectionMode: SelectionMode.multiple,
       );
-      expect(explicit.effectiveHeaderSelectionMode(SelectionMode.multiple),
-          SelectionMode.single);
-      expect(explicit.effectiveFooterSelectionMode(SelectionMode.single),
-          SelectionMode.multiple);
+      expect(
+        explicit.effectiveHeaderSelectionMode(SelectionMode.multiple),
+        SelectionMode.single,
+      );
+      expect(
+        explicit.effectiveFooterSelectionMode(SelectionMode.single),
+        SelectionMode.multiple,
+      );
     });
 
     test('copyWith creates copy with modified selectionMode', () {
@@ -773,19 +751,17 @@ void main() {
         parentId: 'c',
         name: 'Custom',
       );
-      final c = _category('c', 'C', children: {
-        custom,
-        _text('c', 'a', 'A'),
-      });
+      final c = _category('c', 'C', children: {custom, _text('c', 'a', 'A')});
 
       expect(c.firstCustomOrNull, equals(custom));
     });
 
     test('firstCustomOrNull returns null when no custom entry', () {
-      final c = _category('c', 'C', children: {
-        _text('c', 'a', 'A'),
-        _text('c', 'b', 'B'),
-      });
+      final c = _category(
+        'c',
+        'C',
+        children: {_text('c', 'a', 'A'), _text('c', 'b', 'B')},
+      );
 
       expect(c.firstCustomOrNull, isNull);
     });
@@ -795,18 +771,13 @@ void main() {
         parentId: 'c',
         name: 'Custom',
       );
-      final c = _category('c', 'C', children: {
-        _text('c', 'a', 'A'),
-        custom,
-      });
+      final c = _category('c', 'C', children: {_text('c', 'a', 'A'), custom});
 
       expect(c.lastCustomOrNull, equals(custom));
     });
 
     test('lastCustomOrNull returns null when no custom entry', () {
-      final c = _category('c', 'C', children: {
-        _text('c', 'a', 'A'),
-      });
+      final c = _category('c', 'C', children: {_text('c', 'a', 'A')});
 
       expect(c.lastCustomOrNull, isNull);
     });
@@ -889,10 +860,11 @@ void main() {
     });
 
     test('maxLevel for category with flat children', () {
-      final c = _category('c', 'C', children: {
-        _text('c', 'a', 'A'),
-        _text('c', 'b', 'B'),
-      });
+      final c = _category(
+        'c',
+        'C',
+        children: {_text('c', 'a', 'A'), _text('c', 'b', 'B')},
+      );
 
       expect(c.maxLevel, 2);
     });

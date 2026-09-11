@@ -110,8 +110,10 @@ class ChainingClampingScrollPhysics extends ClampingScrollPhysics {
   /// Moves [outer] by [delta], clamped to its scroll range.
   void _moveOuterBy(ScrollPosition outer, double delta) {
     if (delta == 0.0) return;
-    final target = (outer.pixels + delta)
-        .clamp(outer.minScrollExtent, outer.maxScrollExtent);
+    final target = (outer.pixels + delta).clamp(
+      outer.minScrollExtent,
+      outer.maxScrollExtent,
+    );
     if (target != outer.pixels) {
       // jumpTo also stops any ancestor ballistic activity, which is the
       // correct grab behavior while the user's finger is down on the panel.
@@ -121,7 +123,9 @@ class ChainingClampingScrollPhysics extends ClampingScrollPhysics {
 
   @override
   Simulation? createBallisticSimulation(
-      ScrollMetrics position, double velocity) {
+    ScrollMetrics position,
+    double velocity,
+  ) {
     final simulation = super.createBallisticSimulation(position, velocity);
     if (simulation != null) return simulation;
 

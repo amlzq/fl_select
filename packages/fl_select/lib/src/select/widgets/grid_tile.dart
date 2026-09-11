@@ -79,13 +79,18 @@ class SelectGridTile extends StatelessWidget {
     final effectiveVariant =
         variant ?? theme.variant ?? SelectGridTileVariant.filled;
 
-    final defaults =
-        _SelectGridTileDefaults(context, enabled, selected, effectiveVariant);
+    final defaults = _SelectGridTileDefaults(
+      context,
+      enabled,
+      selected,
+      effectiveVariant,
+    );
 
     final effectiveTileColor =
         tileColor ?? theme.tileColor ?? defaults.tileColor!;
 
-    final effectiveSelectedTileColor = selectedTileColor ??
+    final effectiveSelectedTileColor =
+        selectedTileColor ??
         theme.selectedTileColor ??
         defaults.selectedTileColor!;
 
@@ -95,15 +100,15 @@ class SelectGridTile extends StatelessWidget {
 
     final selectedTextColor = effectiveVariant == SelectGridTileVariant.filled
         ? (ThemeData.estimateBrightnessForColor(tileBackgroundColor) ==
-                Brightness.dark
-            ? Colors.white
-            : effectiveSelectedColor)
+                  Brightness.dark
+              ? Colors.white
+              : effectiveSelectedColor)
         : effectiveSelectedColor;
 
     final effectiveTextColor = enabled
         ? selected
-            ? selectedTextColor
-            : textColor ?? theme.textColor ?? defaults.textColor!
+              ? selectedTextColor
+              : textColor ?? theme.textColor ?? defaults.textColor!
         : Colors.grey[500]!;
 
     // For the outlined variant the border reuses the tile colors: the normal
@@ -113,7 +118,8 @@ class SelectGridTile extends StatelessWidget {
         ? null
         : Border.all(
             color: selected ? effectiveSelectedTileColor : effectiveTileColor,
-            width: 1.2);
+            width: 1.2,
+          );
 
     return InkWell(
       onTap: onTap,
@@ -171,10 +177,14 @@ class _SelectGridTileDefaults extends SelectGridTileTheme {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     if (isDark) {
       // In dark theme, use a subtle surface elevation for better harmony
-      final blendAmount =
-          variant == SelectGridTileVariant.outlined ? 0.2 : 0.35;
+      final blendAmount = variant == SelectGridTileVariant.outlined
+          ? 0.2
+          : 0.35;
       return Color.lerp(
-          _theme.backgroundColor, _theme.backgroundColorHighest, blendAmount);
+        _theme.backgroundColor,
+        _theme.backgroundColorHighest,
+        blendAmount,
+      );
     }
     if (variant == SelectGridTileVariant.outlined) {
       return Color.lerp(_theme.onBackgroundColorHighest, Colors.white, 0.55);

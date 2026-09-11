@@ -318,10 +318,8 @@ class _PlaygroundPageState extends State<PlaygroundPage> {
           // bottom sheets clamp correctly), while inheriting the body-local
           // keyboard and safe-area insets.
           : LayoutBuilder(
-              builder: (context, constraints) => buildScopedNavigator(
-                context,
-                size: constraints.biggest,
-              ),
+              builder: (context, constraints) =>
+                  buildScopedNavigator(context, size: constraints.biggest),
             ),
     );
   }

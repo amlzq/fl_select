@@ -60,8 +60,7 @@ Widget _harness(List<SelectEntries> changes) {
 }
 
 void main() {
-  testWidgets(
-      'selecting in another category resets a committed custom range '
+  testWidgets('selecting in another category resets a committed custom range '
       '(delegate single mode)', (tester) async {
     final changes = <SelectEntries>[];
     await tester.pumpWidget(_harness(changes));
@@ -85,8 +84,9 @@ void main() {
     await tester.pumpAndSettle();
 
     // The custom entry is now selected and the slider reflects the commit.
-    final slider =
-        tester.widget<SelectRangeSlider>(find.byType(SelectRangeSlider));
+    final slider = tester.widget<SelectRangeSlider>(
+      find.byType(SelectRangeSlider),
+    );
     expect(slider.values, const RangeValues(500000, 1000000));
 
     // Tap a chip in cate2 (a multiple category) — cross-category clearing.
@@ -95,8 +95,9 @@ void main() {
 
     // The custom range is deselected: the slider is back to the full bounds
     // and the input fields are cleared.
-    final sliderAfter =
-        tester.widget<SelectRangeSlider>(find.byType(SelectRangeSlider));
+    final sliderAfter = tester.widget<SelectRangeSlider>(
+      find.byType(SelectRangeSlider),
+    );
     expect(sliderAfter.values, const RangeValues(0, 2000000));
     final fields = tester
         .widgetList<TextField>(
@@ -109,9 +110,9 @@ void main() {
 
     // The emitted selection no longer carries cate5's custom entry.
     final last = changes.last;
-    final emittedCustom = last
-        .whereType<SelectRangeEntry>()
-        .where((e) => e.isCustom && e.min != null);
+    final emittedCustom = last.whereType<SelectRangeEntry>().where(
+      (e) => e.isCustom && e.min != null,
+    );
     expect(emittedCustom, isEmpty);
   });
 }

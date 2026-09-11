@@ -109,8 +109,11 @@ class SelectOverlay extends StatelessWidget {
 
     final screenSize = MediaQuery.sizeOf(context);
     final bool growUp = _resolveGrowUp(targetRect, screenSize, direction);
-    final double availableHeight =
-        _resolveAvailableHeight(targetRect, screenSize, growUp);
+    final double availableHeight = _resolveAvailableHeight(
+      targetRect,
+      screenSize,
+      growUp,
+    );
 
     final maxHeight = availableHeight * maxHeightFactor.clamp(0.0, 1.0);
 
@@ -138,14 +141,18 @@ class SelectOverlay extends StatelessWidget {
         final t = effectiveAnimation.value;
         final barrierColor =
             Color.lerp(Colors.transparent, effectiveBarrierColor, t) ??
-                effectiveBarrierColor;
+            effectiveBarrierColor;
 
         // Screen rect in Stack-local coordinates.
         // Stack origin = screen's top-left (from CompositedTransformFollower
         // with offset: Offset(-targetRect.left, -targetRect.top)), so the
         // screen's top-left corner is at (0, 0) in Stack space.
-        final screenRect =
-            Rect.fromLTWH(0, 0, screenSize.width, screenSize.height);
+        final screenRect = Rect.fromLTWH(
+          0,
+          0,
+          screenSize.width,
+          screenSize.height,
+        );
 
         return Stack(
           clipBehavior:
@@ -213,8 +220,9 @@ class SelectOverlay extends StatelessWidget {
   }) {
     return GestureDetector(
       onTap: intercept ? onOverlayTap : null,
-      behavior:
-          intercept ? HitTestBehavior.opaque : HitTestBehavior.translucent,
+      behavior: intercept
+          ? HitTestBehavior.opaque
+          : HitTestBehavior.translucent,
       child: ColoredBox(color: barrierColor),
     );
   }
@@ -250,10 +258,7 @@ class _SelectOverlayPositionDelegate extends SingleChildLayoutDelegate {
     } else {
       maxH = (growUp ? rect.top : screenSize.height - rect.bottom) - margin;
     }
-    return BoxConstraints(
-      maxWidth: maxW,
-      maxHeight: math.max(0.0, maxH),
-    );
+    return BoxConstraints(maxWidth: maxW, maxHeight: math.max(0.0, maxH));
   }
 
   @override
@@ -289,7 +294,7 @@ class _SelectOverlayPositionDelegate extends SingleChildLayoutDelegate {
 
 class _SelectOverlayDefaults extends SelectOverlayStyle {
   const _SelectOverlayDefaults(this.context)
-      : super(maxHeightFactor: kSelectOverlayMaxHeightFactor);
+    : super(maxHeightFactor: kSelectOverlayMaxHeightFactor);
 
   final BuildContext context;
 

@@ -148,7 +148,8 @@ class _SelectExpansionTileState extends State<SelectExpansionTile>
     );
     _iconTurns = _heightFactor.drive(Tween<double>(begin: 0.0, end: 0.5));
 
-    _isExpanded = PageStorage.maybeOf(context)?.readState(context) as bool? ??
+    _isExpanded =
+        PageStorage.maybeOf(context)?.readState(context) as bool? ??
         widget.initiallyExpanded;
     if (_isExpanded) {
       _animationController.value = 1.0;
@@ -168,7 +169,8 @@ class _SelectExpansionTileState extends State<SelectExpansionTile>
 
     final theme = SelectExpansionTileTheme.of(context);
 
-    final effectiveDuration = widget.animationDuration ??
+    final effectiveDuration =
+        widget.animationDuration ??
         theme.animationDuration ??
         kSelectExpansionTileAnimationDuration;
 
@@ -233,8 +235,9 @@ class _SelectExpansionTileState extends State<SelectExpansionTile>
   }
 
   Widget _buildChildren(BuildContext context, Widget? child) {
-    final _SelectExpansionTileDefaults defaults =
-        _SelectExpansionTileDefaults(context);
+    final _SelectExpansionTileDefaults defaults = _SelectExpansionTileDefaults(
+      context,
+    );
 
     final SelectExpansionTileTheme theme = SelectExpansionTileTheme.of(context);
 
@@ -244,7 +247,8 @@ class _SelectExpansionTileState extends State<SelectExpansionTile>
     // final effectiveSelectedColor =
     //     widget.selectedColor ?? theme.selectedColor ?? defaults.selectedColor!;
 
-    final effectiveBadgeColor = widget.badgeColor ??
+    final effectiveBadgeColor =
+        widget.badgeColor ??
         widget.selectedColor ??
         theme.selectedColor ??
         defaults.selectedColor!;

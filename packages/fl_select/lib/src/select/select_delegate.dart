@@ -19,11 +19,12 @@ import 'wrap_select.dart';
 ///
 /// Implementations should trigger [onResetTap] and [onApplyTap] from UI controls
 /// (e.g. buttons).
-typedef SelectActionBarBuilder = Widget Function(
-  BuildContext context, {
-  required VoidCallback onResetTap,
-  required VoidCallback onApplyTap,
-});
+typedef SelectActionBarBuilder =
+    Widget Function(
+      BuildContext context, {
+      required VoidCallback onResetTap,
+      required VoidCallback onApplyTap,
+    });
 
 /// Builds a fully custom item widget for one select entry.
 ///
@@ -49,13 +50,14 @@ typedef SelectActionBarBuilder = Widget Function(
 /// range-slider ([SelectRangeLayout]) and counter ([SelectCounterLayout])
 /// category layouts keep their built-in controls. It does not apply to a
 /// category's header/footer chips or to [CascadingSelectDelegate]'s nodes.
-typedef SelectItemBuilder = Widget? Function(
-  BuildContext context,
-  SelectEntry entry, {
-  required bool selected,
-  required VoidCallback onTap,
-  String? categoryId,
-});
+typedef SelectItemBuilder =
+    Widget? Function(
+      BuildContext context,
+      SelectEntry entry, {
+      required bool selected,
+      required VoidCallback onTap,
+      String? categoryId,
+    });
 
 /// Base configuration for a select.
 ///
@@ -103,21 +105,21 @@ abstract class SelectDelegate {
     this.panelTheme,
     this.skeletonBuilder,
     this.errorBuilder,
-  })  : _entries = entries,
-        _selectedEntries = selectedEntries,
-        _resetEntries = resetEntries,
-        assert(
-          (entries != null) != (entriesLoader != null),
-          'Provide exactly one of entries or entriesLoader.',
-        ),
-        assert(
-          selectedEntries == null || selectedEntriesLoader == null,
-          'Provide at most one of selectedEntries or selectedEntriesLoader.',
-        ),
-        assert(
-          resetEntries == null || resetEntriesLoader == null,
-          'Provide at most one of resetEntries or resetEntriesLoader.',
-        );
+  }) : _entries = entries,
+       _selectedEntries = selectedEntries,
+       _resetEntries = resetEntries,
+       assert(
+         (entries != null) != (entriesLoader != null),
+         'Provide exactly one of entries or entriesLoader.',
+       ),
+       assert(
+         selectedEntries == null || selectedEntriesLoader == null,
+         'Provide at most one of selectedEntries or selectedEntriesLoader.',
+       ),
+       assert(
+         resetEntries == null || resetEntriesLoader == null,
+         'Provide at most one of resetEntries or resetEntriesLoader.',
+       );
 
   /// The panel-wide selection mode.
   ///
@@ -155,8 +157,9 @@ abstract class SelectDelegate {
 
   /// The selectable entries future, lazily initialized on first access from
   /// [entries] (wrapped in [Future.value]) or [entriesLoader].
-  Future<SelectEntries>? get asyncEntries => _asyncEntries ??=
-      _entries != null ? Future.value(_entries) : entriesLoader?.call();
+  Future<SelectEntries>? get asyncEntries => _asyncEntries ??= _entries != null
+      ? Future.value(_entries)
+      : entriesLoader?.call();
 
   /// Returns the previously selected entries to restore.
   ///
@@ -370,12 +373,12 @@ class ListSelectDelegate extends SelectDelegate {
     super.skeletonBuilder,
     super.errorBuilder,
   }) : assert(
-          entries == null ||
-              entries.isEmpty ||
-              entries.first is! SelectCategoryEntry,
-          'ListSelectDelegate only supports flat (parentless) data. '
-          'Use ExpandableSelectDelegate for two-level (category) data.',
-        );
+         entries == null ||
+             entries.isEmpty ||
+             entries.first is! SelectCategoryEntry,
+         'ListSelectDelegate only supports flat (parentless) data. '
+         'Use ExpandableSelectDelegate for two-level (category) data.',
+       );
 
   /// Optional custom radio widget builder.
   final ToggleWidgetBuilder? radioBuilder;
@@ -475,12 +478,12 @@ class GridSelectDelegate extends SelectDelegate {
     super.skeletonBuilder,
     super.errorBuilder,
   }) : assert(
-          entries == null ||
-              entries.isEmpty ||
-              entries.first is! SelectCategoryEntry,
-          'GridSelectDelegate only supports flat (parentless) data. '
-          'Use TabNavSelectDelegate for two-level (category) data.',
-        );
+         entries == null ||
+             entries.isEmpty ||
+             entries.first is! SelectCategoryEntry,
+         'GridSelectDelegate only supports flat (parentless) data. '
+         'Use TabNavSelectDelegate for two-level (category) data.',
+       );
 
   /// Number of columns in the grid.
   final int crossAxisCount;
@@ -594,12 +597,12 @@ class WrapSelectDelegate extends SelectDelegate {
     super.skeletonBuilder,
     super.errorBuilder,
   }) : assert(
-          entries == null ||
-              entries.isEmpty ||
-              entries.first is! SelectCategoryEntry,
-          'WrapSelectDelegate only supports flat (parentless) data. '
-          'Use SideNavSelectDelegate for two-level (category) data.',
-        );
+         entries == null ||
+             entries.isEmpty ||
+             entries.first is! SelectCategoryEntry,
+         'WrapSelectDelegate only supports flat (parentless) data. '
+         'Use SideNavSelectDelegate for two-level (category) data.',
+       );
 
   /// Horizontal spacing between chips in a wrapped row.
   ///
@@ -798,13 +801,13 @@ class TabNavSelectDelegate extends SelectDelegate {
     super.skeletonBuilder,
     super.errorBuilder,
   }) : assert(
-          entries == null ||
-              entries.isEmpty ||
-              entries.first is SelectCategoryEntry,
-          'TabNavSelectDelegate only supports two-level (category) data. '
-          'Use ListSelectDelegate, GridSelectDelegate or '
-          'WrapSelectDelegate for flat data.',
-        );
+         entries == null ||
+             entries.isEmpty ||
+             entries.first is SelectCategoryEntry,
+         'TabNavSelectDelegate only supports two-level (category) data. '
+         'Use ListSelectDelegate, GridSelectDelegate or '
+         'WrapSelectDelegate for flat data.',
+       );
 
   /// The layout used by categories that leave their `layout` null,
   /// defaulting to a 3-column grid (`SelectGridLayout(crossAxisCount: 3)`)
@@ -860,10 +863,7 @@ class TabNavSelectDelegate extends SelectDelegate {
   @override
   Widget buildSkeleton(BuildContext context) {
     return skeletonBuilder?.call(context) ??
-        TabNavSelectSkeleton(
-          itemCount: 15,
-          crossAxisCount: 3,
-        );
+        TabNavSelectSkeleton(itemCount: 15, crossAxisCount: 3);
   }
 }
 
@@ -920,12 +920,12 @@ class SideNavSelectDelegate extends SelectDelegate {
     super.skeletonBuilder,
     super.errorBuilder,
   }) : assert(
-          entries == null ||
-              entries.isEmpty ||
-              entries.first is SelectCategoryEntry,
-          'SideNavSelectDelegate only supports two-level (category) data. '
-          'Use WrapSelectDelegate for flat data.',
-        );
+         entries == null ||
+             entries.isEmpty ||
+             entries.first is SelectCategoryEntry,
+         'SideNavSelectDelegate only supports two-level (category) data. '
+         'Use WrapSelectDelegate for flat data.',
+       );
 
   final SelectLayout? defaultLayout;
 
@@ -976,9 +976,7 @@ class SideNavSelectDelegate extends SelectDelegate {
   @override
   Widget buildSkeleton(BuildContext context) {
     return skeletonBuilder?.call(context) ??
-        SideNavSelectSkeleton(
-          sideBarWidth: sideBarTheme?.width,
-        );
+        SideNavSelectSkeleton(sideBarWidth: sideBarTheme?.width);
   }
 }
 
@@ -1036,12 +1034,12 @@ class ExpandableSelectDelegate extends SelectDelegate {
     super.skeletonBuilder,
     super.errorBuilder,
   }) : assert(
-          entries == null ||
-              entries.isEmpty ||
-              entries.first is SelectCategoryEntry,
-          'ExpandableSelectDelegate only supports two-level (category) '
-          'data. Use ListSelectDelegate for flat data.',
-        );
+         entries == null ||
+             entries.isEmpty ||
+             entries.first is SelectCategoryEntry,
+         'ExpandableSelectDelegate only supports two-level (category) '
+         'data. Use ListSelectDelegate for flat data.',
+       );
 
   /// Layout used when a category does not specify its own `layout`.
   ///
@@ -1090,8 +1088,6 @@ class ExpandableSelectDelegate extends SelectDelegate {
   @override
   Widget buildSkeleton(BuildContext context) {
     return skeletonBuilder?.call(context) ??
-        ExpandableSelectSkeleton(
-          selectionMode: selectionMode,
-        );
+        ExpandableSelectSkeleton(selectionMode: selectionMode);
   }
 }

@@ -3,64 +3,60 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Set<SelectEntry<dynamic>> get _categoryEntries => {
-      SelectCategoryEntry<dynamic>.children(
-        id: 'cate1',
-        name: 'Cate 1',
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
-          SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
-        },
-      ),
-      SelectCategoryEntry<dynamic>.children(
-        id: 'cate2',
-        name: 'Cate 2',
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1'),
-        },
-      ),
-    };
+  SelectCategoryEntry<dynamic>.children(
+    id: 'cate1',
+    name: 'Cate 1',
+    children: {
+      SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
+      SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
+    },
+  ),
+  SelectCategoryEntry<dynamic>.children(
+    id: 'cate2',
+    name: 'Cate 2',
+    children: {SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1')},
+  ),
+};
 
 /// Same as [_categoryEntries], but the first category starts with an "Any"
 /// placeholder child, which must never badge its tab on its own.
 Set<SelectEntry<dynamic>> get _categoryEntriesWithAny => {
-      SelectCategoryEntry<dynamic>.children(
-        id: 'cate1',
-        name: 'Cate 1',
-        children: {
-          SelectTextEntry<dynamic>.any(parentId: 'cate1', name: 'Any'),
-          SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
-        },
-      ),
-      SelectCategoryEntry<dynamic>.children(
-        id: 'cate2',
-        name: 'Cate 2',
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1'),
-        },
-      ),
-    };
+  SelectCategoryEntry<dynamic>.children(
+    id: 'cate1',
+    name: 'Cate 1',
+    children: {
+      SelectTextEntry<dynamic>.any(parentId: 'cate1', name: 'Any'),
+      SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
+    },
+  ),
+  SelectCategoryEntry<dynamic>.children(
+    id: 'cate2',
+    name: 'Cate 2',
+    children: {SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1')},
+  ),
+};
 
 Widget _harness(
   SelectController controller, {
   Set<SelectEntry<dynamic>>? entries,
-}) =>
-    MaterialApp(
-      home: Scaffold(
-        // SelectPanel without a SelectActionBarVisibility scope keeps the
-        // action bar visible (SelectView hides it for inline usage).
-        body: SelectPanel(
-          delegate: TabNavSelectDelegate(
-            selectionMode: SelectionMode.multiple,
-            entries: entries ?? _categoryEntries,
-          ),
-          controller: controller,
-        ),
+}) => MaterialApp(
+  home: Scaffold(
+    // SelectPanel without a SelectActionBarVisibility scope keeps the
+    // action bar visible (SelectView hides it for inline usage).
+    body: SelectPanel(
+      delegate: TabNavSelectDelegate(
+        selectionMode: SelectionMode.multiple,
+        entries: entries ?? _categoryEntries,
       ),
-    );
+      controller: controller,
+    ),
+  ),
+);
 
 void main() {
-  testWidgets('Reset clears only the focused tab and keeps the others',
-      (tester) async {
+  testWidgets('Reset clears only the focused tab and keeps the others', (
+    tester,
+  ) async {
     final controller = SelectController(selectionMode: SelectionMode.multiple);
     await tester.pumpWidget(_harness(controller));
     await tester.pumpAndSettle();
@@ -102,8 +98,9 @@ void main() {
     expect(find.text('A 1'), findsOneWidget);
   });
 
-  testWidgets('a tab is badged while its category holds a real selection',
-      (tester) async {
+  testWidgets('a tab is badged while its category holds a real selection', (
+    tester,
+  ) async {
     final controller = SelectController(selectionMode: SelectionMode.multiple);
     await tester.pumpWidget(_harness(controller));
     await tester.pumpAndSettle();
@@ -132,8 +129,9 @@ void main() {
     expect(find.byType(SelectBadge), findsOneWidget);
   });
 
-  testWidgets('selecting only the "Any" entry does not badge its tab',
-      (tester) async {
+  testWidgets('selecting only the "Any" entry does not badge its tab', (
+    tester,
+  ) async {
     final controller = SelectController(selectionMode: SelectionMode.multiple);
     await tester.pumpWidget(
       _harness(controller, entries: _categoryEntriesWithAny),
@@ -152,47 +150,50 @@ void main() {
   });
 
   testWidgets(
-      'a later category owning "Any" does not steal the initial tab focus',
-      (tester) async {
-    final controller = SelectController(selectionMode: SelectionMode.multiple);
-    await tester.pumpWidget(
-      _harness(controller, entries: {
-        SelectCategoryEntry<dynamic>.children(
-          id: 'cate1',
-          name: 'Cate 1',
-          children: {
-            SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
+    'a later category owning "Any" does not steal the initial tab focus',
+    (tester) async {
+      final controller = SelectController(
+        selectionMode: SelectionMode.multiple,
+      );
+      await tester.pumpWidget(
+        _harness(
+          controller,
+          entries: {
+            SelectCategoryEntry<dynamic>.children(
+              id: 'cate1',
+              name: 'Cate 1',
+              children: {SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1')},
+            ),
+            SelectCategoryEntry<dynamic>.children(
+              id: 'cate2',
+              name: 'Cate 2',
+              children: {
+                SelectTextEntry<dynamic>.any(parentId: 'cate2', name: 'Any'),
+              },
+            ),
           },
         ),
-        SelectCategoryEntry<dynamic>.children(
-          id: 'cate2',
-          name: 'Cate 2',
-          children: {
-            SelectTextEntry<dynamic>.any(parentId: 'cate2', name: 'Any'),
-          },
-        ),
-      }),
-    );
-    await tester.pumpAndSettle();
+      );
+      await tester.pumpAndSettle();
 
-    // initializeAnyIfEmpty auto-selects Cate 2's "Any" placeholder, but that
-    // is not a real selection: the first tab must stay focused and show its
-    // children.
-    expect(find.text('A 1'), findsOneWidget);
-    expect(find.text('Any'), findsNothing);
-  });
+      // initializeAnyIfEmpty auto-selects Cate 2's "Any" placeholder, but that
+      // is not a real selection: the first tab must stay focused and show its
+      // children.
+      expect(find.text('A 1'), findsOneWidget);
+      expect(find.text('Any'), findsNothing);
+    },
+  );
 
-  testWidgets('a restored real selection drives the initial tab focus',
-      (tester) async {
+  testWidgets('a restored real selection drives the initial tab focus', (
+    tester,
+  ) async {
     final controller = SelectController(
       selectionMode: SelectionMode.multiple,
       selectedEntries: {
         SelectCategoryEntry<dynamic>.children(
           id: 'cate2',
           name: 'Cate 2',
-          children: {
-            SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1'),
-          },
+          children: {SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1')},
         ),
       },
     );
@@ -225,8 +226,9 @@ void main() {
       );
     }
 
-    testWidgets('renders category tabs and the focused category grid',
-        (tester) async {
+    testWidgets('renders category tabs and the focused category grid', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         gridHarness({
           SelectCategoryEntry<dynamic>(
@@ -242,7 +244,10 @@ void main() {
             name: 'C2',
             children: {
               SelectTextEntry<dynamic>(
-                  parentId: 'c2', id: 'c2-1', name: 'Three'),
+                parentId: 'c2',
+                id: 'c2-1',
+                name: 'Three',
+              ),
             },
           ),
         }),
@@ -257,8 +262,9 @@ void main() {
       expect(find.text('Three'), findsNothing);
     });
 
-    testWidgets('tapping a tab switches the focused category grid',
-        (tester) async {
+    testWidgets('tapping a tab switches the focused category grid', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         gridHarness({
           SelectCategoryEntry<dynamic>(
@@ -273,7 +279,10 @@ void main() {
             name: 'C2',
             children: {
               SelectTextEntry<dynamic>(
-                  parentId: 'c2', id: 'c2-1', name: 'Three'),
+                parentId: 'c2',
+                id: 'c2-1',
+                name: 'Three',
+              ),
             },
           ),
         }),
@@ -300,9 +309,17 @@ void main() {
             name: 'Header',
             children: {
               SelectTextEntry<dynamic>(
-                  parentId: 'header', id: 'h1', name: 'H1', immediate: true),
+                parentId: 'header',
+                id: 'h1',
+                name: 'H1',
+                immediate: true,
+              ),
               SelectTextEntry<dynamic>(
-                  parentId: 'header', id: 'h2', name: 'H2', immediate: true),
+                parentId: 'header',
+                id: 'h2',
+                name: 'H2',
+                immediate: true,
+              ),
             },
           ),
           children: {
@@ -315,13 +332,18 @@ void main() {
             name: 'Footer',
             children: {
               SelectTextEntry<dynamic>(
-                  parentId: 'footer', id: 'f1', name: 'F1', immediate: true),
+                parentId: 'footer',
+                id: 'f1',
+                name: 'F1',
+                immediate: true,
+              ),
             },
           ),
         );
 
-    testWidgets('renders header/footer chip bars around the category grid',
-        (tester) async {
+    testWidgets('renders header/footer chip bars around the category grid', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -354,8 +376,9 @@ void main() {
       );
     });
 
-    testWidgets('tapping header/footer children applies their selections',
-        (tester) async {
+    testWidgets('tapping header/footer children applies their selections', (
+      tester,
+    ) async {
       final applied = <Set<SelectEntry>>[];
       await tester.pumpWidget(
         MaterialApp(

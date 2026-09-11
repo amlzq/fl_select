@@ -86,8 +86,8 @@ class SelectListTile extends StatelessWidget {
 
     final effectiveTextColor = enabled
         ? selected
-            ? effectiveSelectedColor
-            : textColor ?? theme.textColor ?? defaults.textColor
+              ? effectiveSelectedColor
+              : textColor ?? theme.textColor ?? defaults.textColor
         : Colors.grey[500];
 
     Widget content = Text(
@@ -173,27 +173,24 @@ class _SelectListTileDefaults extends SelectListTileTheme {
 
   @override
   ToggleWidgetBuilder? get radioBuilder => (context, selected) {
-        const value = 1;
-        var groupValue = 2;
-        if (selected) groupValue = value;
-        return IgnorePointer(
-          child: RadioGroup<int>(
-            groupValue: groupValue,
-            onChanged: (int? value) {},
-            child: const Radio<int>(value: value),
-          ),
-        );
-      };
+    const value = 1;
+    var groupValue = 2;
+    if (selected) groupValue = value;
+    return IgnorePointer(
+      child: RadioGroup<int>(
+        groupValue: groupValue,
+        onChanged: (int? value) {},
+        child: const Radio<int>(value: value),
+      ),
+    );
+  };
 
   @override
   ToggleWidgetBuilder? get checkboxBuilder => (context, checked) {
-        return IgnorePointer(
-          child: Checkbox(
-            value: checked,
-            onChanged: (bool? newValue) {},
-          ),
-        );
-      };
+    return IgnorePointer(
+      child: Checkbox(value: checked, onChanged: (bool? newValue) {}),
+    );
+  };
 }
 
 /// A select list tile with a checkbox trailing widget.
@@ -229,7 +226,8 @@ class SelectCheckboxListTile extends StatelessWidget {
     final SelectListTileTheme defaults = _SelectListTileDefaults(context);
     final theme = SelectListTileTheme.of(context);
 
-    final effectiveCheckbox = checkboxBuilder?.call(context, checked) ??
+    final effectiveCheckbox =
+        checkboxBuilder?.call(context, checked) ??
         theme.checkboxBuilder?.call(context, checked) ??
         defaults.checkboxBuilder!(context, checked);
 
@@ -273,7 +271,8 @@ class SelectRadioListTile extends StatelessWidget {
     final SelectListTileTheme defaults = _SelectListTileDefaults(context);
     final theme = SelectListTileTheme.of(context);
 
-    final effectiveRadio = radioBuilder?.call(context, selected) ??
+    final effectiveRadio =
+        radioBuilder?.call(context, selected) ??
         theme.radioBuilder?.call(context, selected) ??
         defaults.radioBuilder!(context, selected);
 

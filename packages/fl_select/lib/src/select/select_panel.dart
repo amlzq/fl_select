@@ -114,15 +114,21 @@ class _SelectPanelState extends State<SelectPanel> {
   /// the internal one or a caller-provided one. Listeners are re-registered
   /// whenever the effective controller instance changes.
   void _registerForwardingListeners() {
-    _unregister.add(_controller.addChangeListener((selected) {
-      widget.onChangeTap?.call(selected);
-    }));
-    _unregister.add(_controller.addApplyListener((selected) {
-      widget.onApplyTap?.call(selected);
-    }));
-    _unregister.add(_controller.addResetListener(() {
-      widget.onResetTap?.call();
-    }));
+    _unregister.add(
+      _controller.addChangeListener((selected) {
+        widget.onChangeTap?.call(selected);
+      }),
+    );
+    _unregister.add(
+      _controller.addApplyListener((selected) {
+        widget.onApplyTap?.call(selected);
+      }),
+    );
+    _unregister.add(
+      _controller.addResetListener(() {
+        widget.onResetTap?.call();
+      }),
+    );
   }
 
   void _unregisterForwardingListeners() {
@@ -184,15 +190,12 @@ class _SelectPanelState extends State<SelectPanel> {
 
   void _onSearchChanged(String value) {
     _debounceTimer?.cancel();
-    _debounceTimer = Timer(
-      widget.delegate.searchDebounceDuration,
-      () {
-        if (!mounted) return;
-        setState(() {
-          _searchQuery = value.trim();
-        });
-      },
-    );
+    _debounceTimer = Timer(widget.delegate.searchDebounceDuration, () {
+      if (!mounted) return;
+      setState(() {
+        _searchQuery = value.trim();
+      });
+    });
   }
 
   @override
@@ -373,10 +376,7 @@ class _PanelDecoratedBox extends StatelessWidget {
     final panel = theme.panelTheme;
     final hasDecoration = panel.elevation != null || panel.shape != null;
     if (!hasDecoration) {
-      return ColoredBox(
-        color: theme.backgroundColor,
-        child: child,
-      );
+      return ColoredBox(color: theme.backgroundColor, child: child);
     }
     return Material(
       color: theme.backgroundColor,

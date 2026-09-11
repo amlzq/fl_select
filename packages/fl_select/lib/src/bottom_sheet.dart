@@ -69,10 +69,9 @@ Future<SelectEntries?> showModalBottomSelect({
   // the select body is shrink-wrapped and has no outer scroll. Without a max
   // height tall content would overflow off-screen and hide the action bar, so
   // apply a sensible default unless the caller overrides [constraints].
-  final effectiveConstraints = constraints ??
-      BoxConstraints(
-        maxHeight: MediaQuery.of(context).size.height * 0.9,
-      );
+  final effectiveConstraints =
+      constraints ??
+      BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.9);
   return showModalBottomSheet<SelectEntries?>(
     context: context,
     isScrollControlled: isScrollControlled,
@@ -170,10 +169,7 @@ class _ModalBottomSheetContentState extends State<_ModalBottomSheetContent> {
               trailing: widget.trailing,
               centerTitle: widget.centerTitle,
             ),
-          Flexible(
-            fit: FlexFit.loose,
-            child: panel,
-          ),
+          Flexible(fit: FlexFit.loose, child: panel),
         ],
       ),
     );

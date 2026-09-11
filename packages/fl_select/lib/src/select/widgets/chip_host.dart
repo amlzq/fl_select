@@ -54,8 +54,8 @@ class SelectChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final effectiveColor = enabled
         ? selected
-            ? selectedColor
-            : color
+              ? selectedColor
+              : color
         : Colors.grey[500]!;
     return InkWell(
       onTap: onTap,
@@ -84,10 +84,8 @@ class SelectChip extends StatelessWidget {
 /// Not part of the package's public API surface; visible only because the
 /// two chip views live in separate libraries.
 class SelectChipBarDefaults extends SelectChipBarTheme {
-  SelectChipBarDefaults(
-    this.context, [
-    SelectChipVariant? variant,
-  ]) : super(variant: variant);
+  SelectChipBarDefaults(this.context, [SelectChipVariant? variant])
+    : super(variant: variant);
 
   final BuildContext context;
 
@@ -112,7 +110,10 @@ class SelectChipBarDefaults extends SelectChipBarTheme {
     if (isDark) {
       final blendAmount = variant == SelectChipVariant.outlined ? 0.2 : 0.35;
       return Color.lerp(
-          _theme.backgroundColor, _theme.backgroundColorHighest, blendAmount);
+        _theme.backgroundColor,
+        _theme.backgroundColorHighest,
+        blendAmount,
+      );
     }
     if (variant == SelectChipVariant.outlined) {
       return Color.lerp(_theme.onBackgroundColorHighest, Colors.white, 0.55);
@@ -134,14 +135,12 @@ class SelectChipBarDefaults extends SelectChipBarTheme {
   }
 
   @override
-  TextStyle? get labelStyle => _textTheme.labelLarge?.copyWith(
-        color: _theme.onBackgroundColorHighest,
-      );
+  TextStyle? get labelStyle =>
+      _textTheme.labelLarge?.copyWith(color: _theme.onBackgroundColorHighest);
 
   @override
-  TextStyle? get selectedLabelStyle => _textTheme.labelLarge?.copyWith(
-        color: _theme.onSelectedColor,
-      );
+  TextStyle? get selectedLabelStyle =>
+      _textTheme.labelLarge?.copyWith(color: _theme.onSelectedColor);
 }
 
 /// The fully-resolved visual configuration of a chip view, produced by
@@ -202,25 +201,28 @@ SelectChipBarStyle resolveSelectChipBarStyle(
   final effectiveChipColor =
       chipColor ?? theme.chipColor ?? defaults.chipColor!;
 
-  final effectiveSelectedChipColor = selectedChipColor ??
+  final effectiveSelectedChipColor =
+      selectedChipColor ??
       theme.selectedChipColor ??
       defaults.selectedChipColor!;
 
   final selectedTextColor = effectiveVariant == SelectChipVariant.filled
       ? (ThemeData.estimateBrightnessForColor(effectiveSelectedChipColor) ==
-              Brightness.dark
-          ? Colors.white
-          : Colors.black)
+                Brightness.dark
+            ? Colors.white
+            : Colors.black)
       : effectiveSelectedChipColor;
 
   final effectiveLabelStyle =
-      (labelStyle ?? theme.labelStyle ?? defaults.labelStyle!)
-          .copyWith(inherit: true);
+      (labelStyle ?? theme.labelStyle ?? defaults.labelStyle!).copyWith(
+        inherit: true,
+      );
 
-  final effectiveSelectedLabelStyle = (selectedLabelStyle ??
-          theme.selectedLabelStyle ??
-          defaults.selectedLabelStyle!)
-      .copyWith(inherit: true, color: selectedTextColor);
+  final effectiveSelectedLabelStyle =
+      (selectedLabelStyle ??
+              theme.selectedLabelStyle ??
+              defaults.selectedLabelStyle!)
+          .copyWith(inherit: true, color: selectedTextColor);
 
   return SelectChipBarStyle(
     variant: effectiveVariant,

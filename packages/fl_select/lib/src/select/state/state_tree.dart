@@ -31,13 +31,16 @@ class StateTree {
   int get levelCount => _selectedEntriesPerLevel.length;
 
   StateSnapshot get snapshot => StateSnapshot(
-        selectedEntriesPerLevel:
-            _selectedEntriesPerLevel.map((e) => {...e}).toList(),
-        selectedHeaderEntries:
-            _selectedHeaderEntries.map((k, v) => MapEntry(k, {...v})),
-        selectedFooterEntries:
-            _selectedFooterEntries.map((k, v) => MapEntry(k, {...v})),
-      );
+    selectedEntriesPerLevel: _selectedEntriesPerLevel
+        .map((e) => {...e})
+        .toList(),
+    selectedHeaderEntries: _selectedHeaderEntries.map(
+      (k, v) => MapEntry(k, {...v}),
+    ),
+    selectedFooterEntries: _selectedFooterEntries.map(
+      (k, v) => MapEntry(k, {...v}),
+    ),
+  );
 
   bool bind(
     List<SelectEntry> entries, {
@@ -46,10 +49,14 @@ class StateTree {
     required bool initializeAnyIfEmpty,
   }) {
     final isSameEntries = _entryListEquality.equals(_entries, entries);
-    final isSamePrevious =
-        _entrySetEquality.equals(_selectedEntries ?? {}, selectedEntries ?? {});
-    final isSameReset =
-        _entrySetEquality.equals(_resetEntries ?? {}, resetEntries ?? {});
+    final isSamePrevious = _entrySetEquality.equals(
+      _selectedEntries ?? {},
+      selectedEntries ?? {},
+    );
+    final isSameReset = _entrySetEquality.equals(
+      _resetEntries ?? {},
+      resetEntries ?? {},
+    );
     if (isSameEntries && isSamePrevious && isSameReset) {
       return false;
     }
@@ -58,14 +65,18 @@ class StateTree {
     _rebuildIdIndex();
     _selectedEntries = selectedEntries;
     _resetEntries = resetEntries;
-    _restoreSelections(selectedEntries,
-        initializeAnyIfEmpty: initializeAnyIfEmpty);
+    _restoreSelections(
+      selectedEntries,
+      initializeAnyIfEmpty: initializeAnyIfEmpty,
+    );
     return true;
   }
 
   void reset({required bool initializeAnyIfEmpty}) {
-    _restoreSelections(_resetEntries,
-        initializeAnyIfEmpty: initializeAnyIfEmpty);
+    _restoreSelections(
+      _resetEntries,
+      initializeAnyIfEmpty: initializeAnyIfEmpty,
+    );
   }
 
   /// Resets the selection of a single [category] without touching the other
@@ -126,8 +137,10 @@ class StateTree {
     return {...(_selectedEntriesPerLevel.elementAtOrNull(level) ?? const {})};
   }
 
-  SelectEntries selectedEntriesForParent(String parentId,
-      {required int level}) {
+  SelectEntries selectedEntriesForParent(
+    String parentId, {
+    required int level,
+  }) {
     return selectedEntriesAtLevel(level)
         .whereType<SelectChildEntry>()
         .where((entry) => entry.parentId == parentId)
@@ -174,12 +187,16 @@ class StateTree {
 
   SelectEntries mutableHeaderEntriesFor(String categoryId) {
     return _selectedHeaderEntries.putIfAbsent(
-        categoryId, () => <SelectEntry>{});
+      categoryId,
+      () => <SelectEntry>{},
+    );
   }
 
   SelectEntries mutableFooterEntriesFor(String categoryId) {
     return _selectedFooterEntries.putIfAbsent(
-        categoryId, () => <SelectEntry>{});
+      categoryId,
+      () => <SelectEntry>{},
+    );
   }
 
   SelectEntries buildChangedEntries() {
@@ -330,8 +347,9 @@ class StateTree {
     final categories = entries.whereType<SelectCategoryEntry>().toList();
     for (final selectedEntry in selected) {
       if (selectedEntry is! SelectCategoryEntry) continue;
-      final category =
-          categories.singleWhereOrNull((e) => e.id == selectedEntry.id);
+      final category = categories.singleWhereOrNull(
+        (e) => e.id == selectedEntry.id,
+      );
       if (category == null) continue;
 
       final selectedHeaderChildren = selectedEntry.header?.children ?? {};
@@ -339,8 +357,9 @@ class StateTree {
         final restoredHeader = mutableHeaderEntriesFor(category.id);
         restoredHeader.clear();
         for (final selectedChild in selectedHeaderChildren) {
-          final match = category.header?.children
-              ?.singleWhereOrNull((e) => e.id == selectedChild.id);
+          final match = category.header?.children?.singleWhereOrNull(
+            (e) => e.id == selectedChild.id,
+          );
           if (match != null) restoredHeader.add(match);
         }
       }
@@ -350,8 +369,9 @@ class StateTree {
         final restoredFooter = mutableFooterEntriesFor(category.id);
         restoredFooter.clear();
         for (final selectedChild in selectedFooterChildren) {
-          final match = category.footer?.children
-              ?.singleWhereOrNull((e) => e.id == selectedChild.id);
+          final match = category.footer?.children?.singleWhereOrNull(
+            (e) => e.id == selectedChild.id,
+          );
           if (match != null) restoredFooter.add(match);
         }
       }

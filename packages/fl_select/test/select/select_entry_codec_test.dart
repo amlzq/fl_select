@@ -20,12 +20,7 @@ void main() {
               'min': 0,
               'max': 100,
             },
-            {
-              'type': 'custom',
-              'name': 'Custom',
-              'min': 0,
-              'max': 1000,
-            },
+            {'type': 'custom', 'name': 'Custom', 'min': 0, 'max': 1000},
           ],
         },
         {
@@ -33,11 +28,7 @@ void main() {
           'id': 'more',
           'name': 'More',
           'children': [
-            {
-              'type': 'text',
-              'id': 'near_subway',
-              'name': 'Near Subway',
-            },
+            {'type': 'text', 'id': 'near_subway', 'name': 'Near Subway'},
             {
               'type': 'text',
               'id': 'layout',
@@ -45,12 +36,7 @@ void main() {
               'children': [
                 {'type': 'text', 'id': '1br', 'name': '1BR'},
                 {'type': 'text', 'id': '2br', 'name': '2BR', 'immediate': true},
-                {
-                  'type': 'text',
-                  'id': '3br',
-                  'name': '3BR',
-                  'enabled': false,
-                },
+                {'type': 'text', 'id': '3br', 'name': '3BR', 'enabled': false},
               ],
             },
           ],
@@ -87,14 +73,18 @@ void main() {
       final layout = more.children!.elementAt(1);
       expect(layout.children!.length, 3);
       expect(
-          layout.children!.firstWhere((e) => e.id == '2br').immediate, isTrue);
+        layout.children!.firstWhere((e) => e.id == '2br').immediate,
+        isTrue,
+      );
       expect(
-          layout.children!.firstWhere((e) => e.id == '3br').enabled, isFalse);
+        layout.children!.firstWhere((e) => e.id == '3br').enabled,
+        isFalse,
+      );
       expect(
-          (layout.children!.firstWhere((e) => e.id == '1br')
-                  as SelectChildEntry)
-              .parentId,
-          'layout');
+        (layout.children!.firstWhere((e) => e.id == '1br') as SelectChildEntry)
+            .parentId,
+        'layout',
+      );
     });
 
     test('any with bounds decodes to a range any entry', () {
@@ -109,8 +99,9 @@ void main() {
         },
       ]);
 
-      final any = (entries.first as SelectCategoryEntry).children!.single
-          as SelectRangeEntry;
+      final any =
+          (entries.first as SelectCategoryEntry).children!.single
+              as SelectRangeEntry;
       expect(any.isAny, isTrue);
       expect(any.min, 0);
       expect(any.max, 5000);
@@ -161,19 +152,14 @@ void main() {
           'id': 'c',
           'name': 'C',
           'children': [
-            {
-              'type': 'range',
-              'id': 'r',
-              'name': 'R',
-              'min': 0.5,
-              'max': 1.5,
-            },
+            {'type': 'range', 'id': 'r', 'name': 'R', 'min': 0.5, 'max': 1.5},
           ],
         },
       ]);
 
-      final range = (entries.first as SelectCategoryEntry).children!.single
-          as SelectRangeEntry;
+      final range =
+          (entries.first as SelectCategoryEntry).children!.single
+              as SelectRangeEntry;
       expect(range.min, isA<double>());
     });
 
@@ -229,12 +215,7 @@ void main() {
 
       expect(
         () => SelectEntryCodec.fromJson([
-          {
-            'type': 'category',
-            'id': 'c',
-            'name': 'C',
-            'children': <dynamic>[],
-          },
+          {'type': 'category', 'id': 'c', 'name': 'C', 'children': <dynamic>[]},
         ]),
         throwsFormatException, // empty children
       );
@@ -254,11 +235,7 @@ void main() {
 
       expect(
         () => SelectEntryCodec.fromJson([
-          {
-            'type': 'text',
-            'id': 'a',
-            'children': <dynamic>[],
-          },
+          {'type': 'text', 'id': 'a', 'children': <dynamic>[]},
         ]),
         throwsFormatException, // missing name
       );
@@ -317,34 +294,23 @@ void main() {
 
   group('SelectEntryCodec.toJson', () {
     Set<SelectEntry> buildTree() => {
-          SelectCategoryEntry.children(
-            id: 'price',
-            name: 'price',
-            selectionMode: SelectionMode.multiple,
-            layout: const SelectGridLayout(crossAxisCount: 4),
-            children: {
-              SelectTextEntry.any(parentId: 'price', name: 'any'),
-              SelectRangeEntry(
-                id: '0-100',
-                name: '0-100',
-                min: 0,
-                max: 100,
-              ),
-              SelectRangeEntry.custom(
-                name: 'custom',
-                min: 0,
-                max: 1000,
-              ),
-            },
-          ),
-        };
+      SelectCategoryEntry.children(
+        id: 'price',
+        name: 'price',
+        selectionMode: SelectionMode.multiple,
+        layout: const SelectGridLayout(crossAxisCount: 4),
+        children: {
+          SelectTextEntry.any(parentId: 'price', name: 'any'),
+          SelectRangeEntry(id: '0-100', name: '0-100', min: 0, max: 100),
+          SelectRangeEntry.custom(name: 'custom', min: 0, max: 1000),
+        },
+      ),
+    };
 
     test('round-trips a hand-built tree', () {
       final original = buildTree();
       final json = SelectEntryCodec.toJson(original);
-      final decoded = SelectEntryCodec.fromJson(
-        json.map((e) => e).toList(),
-      );
+      final decoded = SelectEntryCodec.fromJson(json.map((e) => e).toList());
 
       final price = decoded.first as SelectCategoryEntry;
       expect(price.id, 'price');
@@ -354,13 +320,15 @@ void main() {
       final ids = price.children!.map((e) => e.id).toList();
       expect(ids, containsAll(['any', '0-100', 'custom']));
 
-      final range = price.children!.firstWhere((e) => e.id == '0-100')
-          as SelectRangeEntry;
+      final range =
+          price.children!.firstWhere((e) => e.id == '0-100')
+              as SelectRangeEntry;
       expect(range.min, 0);
       expect(range.max, 100);
 
-      final custom = price.children!.firstWhere((e) => e.id == 'custom')
-          as SelectRangeEntry;
+      final custom =
+          price.children!.firstWhere((e) => e.id == 'custom')
+              as SelectRangeEntry;
       expect(custom.min, 0);
       expect(custom.max, 1000);
     });
@@ -403,16 +371,8 @@ void main() {
           id: 'c',
           name: 'C',
           children: {
-            SelectTextEntry.name(
-              id: 'a',
-              name: 'A',
-              immediate: true,
-            ),
-            SelectTextEntry.name(
-              id: 'b',
-              name: 'B',
-              enabled: false,
-            ),
+            SelectTextEntry.name(id: 'a', name: 'A', immediate: true),
+            SelectTextEntry.name(id: 'b', name: 'B', enabled: false),
           },
         ),
       };
@@ -433,20 +393,14 @@ void main() {
           header: SelectTextEntry.children(
             id: 'h',
             name: 'Header',
-            children: {
-              SelectTextEntry.name(id: 'h-a', name: 'A'),
-            },
+            children: {SelectTextEntry.name(id: 'h-a', name: 'A')},
           ),
           footer: SelectTextEntry.children(
             id: 'f',
             name: 'Footer',
-            children: {
-              SelectTextEntry.name(id: 'f-a', name: 'A'),
-            },
+            children: {SelectTextEntry.name(id: 'f-a', name: 'A')},
           ),
-          children: {
-            SelectTextEntry.name(id: 'a', name: 'A'),
-          },
+          children: {SelectTextEntry.name(id: 'a', name: 'A')},
         ),
       };
 
@@ -457,10 +411,7 @@ void main() {
 
     test('throws UnsupportedError on custom subclasses', () {
       final rogue = _RogueEntry();
-      expect(
-        () => SelectEntryCodec.toJson({rogue}),
-        throwsUnsupportedError,
-      );
+      expect(() => SelectEntryCodec.toJson({rogue}), throwsUnsupportedError);
     });
   });
 
@@ -478,7 +429,7 @@ void main() {
               'id': '0-100',
               'name': '0-100',
               'min': 0,
-              'max': 100
+              'max': 100,
             },
           ],
         },

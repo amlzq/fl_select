@@ -208,9 +208,10 @@ class SelectController extends ChangeNotifier {
   SelectEntries selectedEntriesAtLevel(int level) =>
       tree.selectedEntriesAtLevel(level);
 
-  SelectEntries selectedEntriesForParent(String parentId,
-          {required int level}) =>
-      tree.selectedEntriesForParent(parentId, level: level);
+  SelectEntries selectedEntriesForParent(
+    String parentId, {
+    required int level,
+  }) => tree.selectedEntriesForParent(parentId, level: level);
 
   SelectEntries selectedHeaderEntriesFor(String categoryId) =>
       tree.selectedHeaderEntriesFor(categoryId);
@@ -251,11 +252,7 @@ class SelectController extends ChangeNotifier {
     SelectCategoryEntry category, {
     required SelectionMode selectionMode,
   }) {
-    _rules.focusCategory(
-      tree,
-      category,
-      selectionMode: selectionMode,
-    );
+    _rules.focusCategory(tree, category, selectionMode: selectionMode);
     _notifyListenersIfAlive();
   }
 
@@ -415,8 +412,9 @@ class SelectController extends ChangeNotifier {
       final leaf = path.last;
       if (leaf is! SelectChildEntry) return false;
 
-      final alreadySelected =
-          tree.selectedEntriesForParent(root.id, level: 1).contains(leaf);
+      final alreadySelected = tree
+          .selectedEntriesForParent(root.id, level: 1)
+          .contains(leaf);
       if (!alreadySelected) {
         toggleFlatEntry(
           leaf,
@@ -461,11 +459,7 @@ class SelectController extends ChangeNotifier {
     return true;
   }
 
-  bool unselect(
-    String id, {
-    String? parentId,
-    bool emitChange = true,
-  }) {
+  bool unselect(String id, {String? parentId, bool emitChange = true}) {
     final entry = tree.findEntry(id, parentId: parentId);
     if (entry == null || entry is! SelectChildEntry) return false;
 
@@ -513,8 +507,9 @@ class SelectController extends ChangeNotifier {
 
       if (root.effectiveSelectionMode(selectionMode) == SelectionMode.single) {
         final any = root.children?.singleWhereOrNull(testAnyElement);
-        selectedChildren
-            .removeWhere((e) => e is SelectChildEntry && e.parentId == root.id);
+        selectedChildren.removeWhere(
+          (e) => e is SelectChildEntry && e.parentId == root.id,
+        );
         if (any != null) {
           selectedChildren.add(any);
           tree.mutableSelectedEntriesAtLevel(0).add(root);
@@ -610,7 +605,8 @@ class SelectController extends ChangeNotifier {
     toggleHeaderOrFooterEntry(
       categoryId: categoryId,
       entry: child,
-      selectionMode: category?.effectiveHeaderSelectionMode(selectionMode) ??
+      selectionMode:
+          category?.effectiveHeaderSelectionMode(selectionMode) ??
           selectionMode,
       isHeader: true,
     );
@@ -633,7 +629,8 @@ class SelectController extends ChangeNotifier {
     toggleHeaderOrFooterEntry(
       categoryId: categoryId,
       entry: child,
-      selectionMode: category?.effectiveFooterSelectionMode(selectionMode) ??
+      selectionMode:
+          category?.effectiveFooterSelectionMode(selectionMode) ??
           selectionMode,
       isHeader: false,
     );
@@ -705,8 +702,10 @@ class SelectController extends ChangeNotifier {
 class _InheritedSelectControllerScope extends InheritedWidget {
   final SelectController controller;
 
-  const _InheritedSelectControllerScope(
-      {required super.child, required this.controller});
+  const _InheritedSelectControllerScope({
+    required super.child,
+    required this.controller,
+  });
 
   @override
   bool updateShouldNotify(covariant _InheritedSelectControllerScope oldWidget) {

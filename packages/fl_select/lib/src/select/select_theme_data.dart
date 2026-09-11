@@ -209,7 +209,10 @@ class SelectThemeData with Diagnosticable {
 
   /// Linearly interpolates between two theme data objects.
   static SelectThemeData? lerp(
-      SelectThemeData? a, SelectThemeData? b, double t) {
+    SelectThemeData? a,
+    SelectThemeData? b,
+    double t,
+  ) {
     if (identical(a, b)) {
       return a;
     }
@@ -217,63 +220,105 @@ class SelectThemeData with Diagnosticable {
       selectedColor: Color.lerp(a?.selectedColor, b?.selectedColor, t)!,
       onSelectedColor: Color.lerp(a?.onSelectedColor, b?.onSelectedColor, t)!,
       backgroundColor: Color.lerp(a?.backgroundColor, b?.backgroundColor, t)!,
-      onBackgroundColor:
-          Color.lerp(a?.onBackgroundColor, b?.onBackgroundColor, t)!,
-      backgroundColorHigh:
-          Color.lerp(a?.backgroundColorHigh, b?.backgroundColorHigh, t)!,
-      backgroundColorHighest:
-          Color.lerp(a?.backgroundColorHighest, b?.backgroundColorHighest, t)!,
+      onBackgroundColor: Color.lerp(
+        a?.onBackgroundColor,
+        b?.onBackgroundColor,
+        t,
+      )!,
+      backgroundColorHigh: Color.lerp(
+        a?.backgroundColorHigh,
+        b?.backgroundColorHigh,
+        t,
+      )!,
+      backgroundColorHighest: Color.lerp(
+        a?.backgroundColorHighest,
+        b?.backgroundColorHighest,
+        t,
+      )!,
       onBackgroundColorHighest: Color.lerp(
-          a?.onBackgroundColorHighest, b?.onBackgroundColorHighest, t)!,
-      actionBarTheme:
-          SelectActionBarTheme.lerp(a?.actionBarTheme, b?.actionBarTheme, t),
+        a?.onBackgroundColorHighest,
+        b?.onBackgroundColorHighest,
+        t,
+      )!,
+      actionBarTheme: SelectActionBarTheme.lerp(
+        a?.actionBarTheme,
+        b?.actionBarTheme,
+        t,
+      ),
       tabBarTheme: SelectTabBarTheme.lerp(a?.tabBarTheme, b?.tabBarTheme, t),
-      sideBarTheme:
-          SelectSideBarTheme.lerp(a?.sideBarTheme, b?.sideBarTheme, t),
-      gridTileTheme:
-          SelectGridTileTheme.lerp(a?.gridTileTheme, b?.gridTileTheme, t),
-      listTileTheme:
-          SelectListTileTheme.lerp(a?.listTileTheme, b?.listTileTheme, t),
-      fieldTileTheme:
-          SelectFieldTileTheme.lerp(a?.fieldTileTheme, b?.fieldTileTheme, t),
+      sideBarTheme: SelectSideBarTheme.lerp(
+        a?.sideBarTheme,
+        b?.sideBarTheme,
+        t,
+      ),
+      gridTileTheme: SelectGridTileTheme.lerp(
+        a?.gridTileTheme,
+        b?.gridTileTheme,
+        t,
+      ),
+      listTileTheme: SelectListTileTheme.lerp(
+        a?.listTileTheme,
+        b?.listTileTheme,
+        t,
+      ),
+      fieldTileTheme: SelectFieldTileTheme.lerp(
+        a?.fieldTileTheme,
+        b?.fieldTileTheme,
+        t,
+      ),
       expansionTileTheme: SelectExpansionTileTheme.lerp(
-          a?.expansionTileTheme, b?.expansionTileTheme, t),
+        a?.expansionTileTheme,
+        b?.expansionTileTheme,
+        t,
+      ),
       rangeSliderTheme: SelectRangeSliderTheme.lerp(
-          a?.rangeSliderTheme, b?.rangeSliderTheme, t),
+        a?.rangeSliderTheme,
+        b?.rangeSliderTheme,
+        t,
+      ),
       radioTheme: RadioThemeData.lerp(a?.radioTheme, b?.radioTheme, t),
-      checkboxTheme:
-          CheckboxThemeData.lerp(a?.checkboxTheme, b?.checkboxTheme, t),
-      chipBarThemeData:
-          SelectChipBarTheme.lerp(a?.chipBarThemeData, b?.chipBarThemeData, t),
+      checkboxTheme: CheckboxThemeData.lerp(
+        a?.checkboxTheme,
+        b?.checkboxTheme,
+        t,
+      ),
+      chipBarThemeData: SelectChipBarTheme.lerp(
+        a?.chipBarThemeData,
+        b?.chipBarThemeData,
+        t,
+      ),
       panelTheme: SelectPanelTheme.lerp(a?.panelTheme, b?.panelTheme, t),
-      searchBarTheme:
-          SelectSearchBarTheme.lerp(a?.searchBarTheme, b?.searchBarTheme, t),
+      searchBarTheme: SelectSearchBarTheme.lerp(
+        a?.searchBarTheme,
+        b?.searchBarTheme,
+        t,
+      ),
     );
   }
 
   @override
   int get hashCode => Object.hash(
-        selectedColor,
-        onSelectedColor,
-        backgroundColor,
-        onBackgroundColor,
-        backgroundColorHigh,
-        backgroundColorHighest,
-        onBackgroundColorHighest,
-        actionBarTheme,
-        tabBarTheme,
-        sideBarTheme,
-        gridTileTheme,
-        listTileTheme,
-        fieldTileTheme,
-        expansionTileTheme,
-        rangeSliderTheme,
-        radioTheme,
-        checkboxTheme,
-        chipBarThemeData,
-        panelTheme,
-        searchBarTheme,
-      );
+    selectedColor,
+    onSelectedColor,
+    backgroundColor,
+    onBackgroundColor,
+    backgroundColorHigh,
+    backgroundColorHighest,
+    onBackgroundColorHighest,
+    actionBarTheme,
+    tabBarTheme,
+    sideBarTheme,
+    gridTileTheme,
+    listTileTheme,
+    fieldTileTheme,
+    expansionTileTheme,
+    rangeSliderTheme,
+    radioTheme,
+    checkboxTheme,
+    chipBarThemeData,
+    panelTheme,
+    searchBarTheme,
+  );
 
   @override
   bool operator ==(Object other) {

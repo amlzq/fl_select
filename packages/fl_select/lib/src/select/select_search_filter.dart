@@ -6,10 +6,7 @@ import 'select_entry.dart';
 /// The default implementation matches [SelectEntry.name] (case-insensitive
 /// substring). Provide a custom predicate to match against [SelectEntry.extra],
 /// [SelectEntry.id], or any other field.
-typedef SelectSearchPredicate = bool Function(
-  SelectEntry entry,
-  String query,
-);
+typedef SelectSearchPredicate = bool Function(SelectEntry entry, String query);
 
 /// The default search predicate: case-insensitive substring match on
 /// [SelectEntry.name]. Returns `true` when the name contains [query].

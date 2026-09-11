@@ -62,8 +62,9 @@ void main() {
     IconButton buttonWith(WidgetTester tester, IconData icon) =>
         tester.widget<IconButton>(find.widgetWithIcon(IconButton, icon));
 
-    testWidgets('renders the category name as a title when showTitle is true',
-        (tester) async {
+    testWidgets('renders the category name as a title when showTitle is true', (
+      tester,
+    ) async {
       await pumpCounter(tester);
       expect(find.text('Bedrooms'), findsOneWidget);
     });
@@ -78,18 +79,16 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SelectCounter(
-              entries: entries,
-              onChanged: (_, __) {},
-            ),
+            body: SelectCounter(entries: entries, onChanged: (_, __) {}),
           ),
         ),
       );
       expect(find.text('Bedrooms'), findsNothing);
     });
 
-    testWidgets('shows the "Any" value and disables "-" at the left extreme',
-        (tester) async {
+    testWidgets('shows the "Any" value and disables "-" at the left extreme', (
+      tester,
+    ) async {
       await pumpCounter(tester);
       // The Any entry is pinned to the left-most position.
       expect(find.text('Any'), findsOneWidget);
@@ -99,14 +98,18 @@ void main() {
       expect(buttonWith(tester, Icons.add).onPressed, isNotNull);
     });
 
-    testWidgets('increments and calls onChanged with the next entry',
-        (tester) async {
+    testWidgets('increments and calls onChanged with the next entry', (
+      tester,
+    ) async {
       final indices = <int>[];
       final entries = <SelectTextEntry>[];
-      await pumpCounter(tester, onChanged: (i, e) {
-        indices.add(i);
-        entries.add(e);
-      });
+      await pumpCounter(
+        tester,
+        onChanged: (i, e) {
+          indices.add(i);
+          entries.add(e);
+        },
+      );
 
       await tester.tap(find.byIcon(Icons.add));
       await tester.pump();
@@ -118,8 +121,9 @@ void main() {
       expect(buttonWith(tester, Icons.remove).onPressed, isNotNull);
     });
 
-    testWidgets('decrements and calls onChanged with the previous entry',
-        (tester) async {
+    testWidgets('decrements and calls onChanged with the previous entry', (
+      tester,
+    ) async {
       final indices = <int>[];
       final entries = <SelectTextEntry>[];
       // Start from a selected "2" so the "-" button is active.
@@ -161,8 +165,9 @@ void main() {
       expect(buttonWith(tester, Icons.remove).onPressed, isNotNull);
     });
 
-    testWidgets('restores the position from selectedEntries on first build',
-        (tester) async {
+    testWidgets('restores the position from selectedEntries on first build', (
+      tester,
+    ) async {
       final twoPlus = SelectTextEntry<dynamic>(
         parentId: 'bedrooms',
         id: 'b2p',
@@ -172,8 +177,9 @@ void main() {
       expect(find.text('2+'), findsOneWidget);
     });
 
-    testWidgets('pins the "Any" entry to the left regardless of list order',
-        (tester) async {
+    testWidgets('pins the "Any" entry to the left regardless of list order', (
+      tester,
+    ) async {
       // The Any entry appears last in the passed list but must be rendered
       // at the left-most (zero) position.
       final cat = buildCategory();
@@ -186,11 +192,7 @@ void main() {
         id: 'b1',
         name: '1',
       );
-      await pumpCounter(
-        tester,
-        category: cat,
-        entries: [first, any],
-      );
+      await pumpCounter(tester, category: cat, entries: [first, any]);
       // The Any entry is shown as the current value and "-" is disabled.
       expect(find.text('Any'), findsOneWidget);
       expect(buttonWith(tester, Icons.remove).onPressed, isNull);
@@ -203,8 +205,9 @@ void main() {
       expect(find.text('Any'), findsNothing);
     });
 
-    testWidgets('reflects a new selection after a parent rebuild',
-        (tester) async {
+    testWidgets('reflects a new selection after a parent rebuild', (
+      tester,
+    ) async {
       final cat = buildCategory();
       final onePlus = SelectTextEntry<dynamic>(
         parentId: 'bedrooms',

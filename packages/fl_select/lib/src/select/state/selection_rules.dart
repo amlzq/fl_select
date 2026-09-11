@@ -91,12 +91,14 @@ class SelectionRules {
     final selectedEntries = tree.mutableSelectedEntriesAtLevel(1);
 
     if (item.isAny) {
-      selectedEntries
-          .removeWhere((e) => testSameParentElement(e, item.parentId));
+      selectedEntries.removeWhere(
+        (e) => testSameParentElement(e, item.parentId),
+      );
       selectedEntries.add(item);
     } else if (item is SelectRangeEntry && item.isCustom) {
-      selectedEntries
-          .removeWhere((e) => testSameParentElement(e, item.parentId));
+      selectedEntries.removeWhere(
+        (e) => testSameParentElement(e, item.parentId),
+      );
       selectedEntries.add(item);
     } else {
       selectedEntries.removeWhere(
@@ -109,8 +111,9 @@ class SelectionRules {
       if (SelectionMode.single ==
           category.effectiveSelectionMode(selectionMode)) {
         if (selectedEntries.contains(item)) return;
-        selectedEntries
-            .removeWhere((e) => testSameParentElement(e, item.parentId));
+        selectedEntries.removeWhere(
+          (e) => testSameParentElement(e, item.parentId),
+        );
         selectedEntries.add(item);
       } else {
         if (selectedEntries.contains(item)) {
@@ -122,8 +125,9 @@ class SelectionRules {
     }
 
     final rootSelected = tree.mutableSelectedEntriesAtLevel(0);
-    final hasSelectionInCategory =
-        selectedEntries.any((e) => testSameParentElement(e, category.id));
+    final hasSelectionInCategory = selectedEntries.any(
+      (e) => testSameParentElement(e, category.id),
+    );
     if (hasSelectionInCategory) {
       rootSelected.add(category);
       // Delegate-level single selection: selecting a leaf deselects every
@@ -159,10 +163,7 @@ class SelectionRules {
   /// at [category] are removed: a child entry's [SelectChildEntry.parentId]
   /// always points at a node inside the category subtree (the category
   /// itself or one of its non-leaf descendants).
-  void _removeCategorySelections(
-    StateTree tree,
-    SelectCategoryEntry category,
-  ) {
+  void _removeCategorySelections(StateTree tree, SelectCategoryEntry category) {
     // Ids of nodes that can act as a parent: the category itself plus its
     // non-leaf descendants. Leaf ids are skipped because no child entry can
     // reference them as parentId, which also reduces cross-category id
@@ -186,7 +187,9 @@ class SelectionRules {
     if (footer != null) collect(footer);
 
     for (var i = 1; i < tree.levelCount; i++) {
-      tree.mutableSelectedEntriesAtLevel(i).removeWhere(
+      tree
+          .mutableSelectedEntriesAtLevel(i)
+          .removeWhere(
             (e) =>
                 e is SelectChildEntry && subtreeParentIds.contains(e.parentId),
           );
@@ -223,7 +226,8 @@ class SelectionRules {
           selectedEntries.remove(entry);
         } else {
           selectedEntries.removeWhere(
-              (e) => (e as SelectChildEntry).parentId == entry.parentId);
+            (e) => (e as SelectChildEntry).parentId == entry.parentId,
+          );
           selectedEntries.add(entry);
         }
       }
@@ -234,14 +238,21 @@ class SelectionRules {
       if (selectedEntries.contains(entry)) {
         for (var i = level - 2; i >= 0; i--) {
           final ancestor = focusedPath[i];
-          tree.mutableSelectedEntriesAtLevel(i + 1).removeWhere((e) =>
-              e is SelectChildEntry && e.parentId == ancestor.id && e.isAny);
+          tree
+              .mutableSelectedEntriesAtLevel(i + 1)
+              .removeWhere(
+                (e) =>
+                    e is SelectChildEntry &&
+                    e.parentId == ancestor.id &&
+                    e.isAny,
+              );
         }
       }
     } else {
       // Remove "Any" entries from the current level (same parent).
-      selectedEntries.removeWhere((e) =>
-          e is SelectChildEntry && e.parentId == entry.parentId && e.isAny);
+      selectedEntries.removeWhere(
+        (e) => e is SelectChildEntry && e.parentId == entry.parentId && e.isAny,
+      );
 
       // Remove "Any" entries from all ancestor levels.
       // focusedPath[i] is the node at level i.
@@ -251,8 +262,12 @@ class SelectionRules {
       // clearing each one's "Any" placeholder.
       for (var i = level - 1; i >= 0; i--) {
         final ancestor = focusedPath[i];
-        tree.mutableSelectedEntriesAtLevel(i + 1).removeWhere((e) =>
-            e is SelectChildEntry && e.parentId == ancestor.id && e.isAny);
+        tree
+            .mutableSelectedEntriesAtLevel(i + 1)
+            .removeWhere(
+              (e) =>
+                  e is SelectChildEntry && e.parentId == ancestor.id && e.isAny,
+            );
       }
 
       if (SelectionMode.single == childrenSelectionMode) {

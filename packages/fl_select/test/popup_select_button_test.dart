@@ -50,8 +50,9 @@ void main() {
       expect(rotationClosed.turns.value, closeTo(0.0, 0.001));
     });
 
-    testWidgets('applies selection and updates the trigger label',
-        (tester) async {
+    testWidgets('applies selection and updates the trigger label', (
+      tester,
+    ) async {
       SelectEntries? applied;
 
       await tester.pumpWidget(
@@ -86,8 +87,9 @@ void main() {
       expect(applied!.any((e) => e.id == 'a'), isTrue);
     });
 
-    testWidgets('labelLoader overrides the trigger label after apply',
-        (tester) async {
+    testWidgets('labelLoader overrides the trigger label after apply', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -116,8 +118,7 @@ void main() {
       expect(find.text('1 selected'), findsOneWidget);
     });
 
-    testWidgets(
-        'reset + apply empty selection restores the original label '
+    testWidgets('reset + apply empty selection restores the original label '
         'when a labelLoader is set', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
@@ -164,8 +165,9 @@ void main() {
       expect(find.text('ExpandableSelect'), findsOneWidget);
     });
 
-    testWidgets('renders filled, outlined and elevated variants',
-        (tester) async {
+    testWidgets('renders filled, outlined and elevated variants', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

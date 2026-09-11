@@ -118,7 +118,8 @@ class _SelectOverlayHostState extends State<SelectOverlayHost> {
     // rather than shrinking it.
     final resolvedStyle = widget.minWidthFromTrigger
         ? (widget.style ?? const SelectOverlayStyle()).copyWith(
-            minWidth: widget.style?.minWidth ??
+            minWidth:
+                widget.style?.minWidth ??
                 (_targetSize.width > 0 ? _targetSize.width : null),
           )
         : widget.style;

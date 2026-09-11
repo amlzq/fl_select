@@ -95,7 +95,10 @@ class SelectPanelTheme with Diagnosticable {
 
   /// Linearly interpolates between two panel themes.
   static SelectPanelTheme lerp(
-      SelectPanelTheme? a, SelectPanelTheme? b, double t) {
+    SelectPanelTheme? a,
+    SelectPanelTheme? b,
+    double t,
+  ) {
     if (identical(a, b) && a != null) {
       return a;
     }
@@ -110,12 +113,12 @@ class SelectPanelTheme with Diagnosticable {
 
   @override
   int get hashCode => Object.hash(
-        elevation,
-        shadowColor,
-        surfaceTintColor,
-        shape,
-        clipBehavior,
-      );
+    elevation,
+    shadowColor,
+    surfaceTintColor,
+    shape,
+    clipBehavior,
+  );
 
   @override
   bool operator ==(Object other) {

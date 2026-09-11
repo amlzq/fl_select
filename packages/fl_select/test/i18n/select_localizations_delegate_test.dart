@@ -35,11 +35,13 @@ void main() {
       expect(SelectLocalizationsDelegate.supportedLocales, isNotEmpty);
       expect(
         SelectLocalizationsDelegate.supportedLocales,
-        contains(const Locale.fromSubtags(
-          languageCode: 'zh',
-          scriptCode: 'Hant',
-          countryCode: 'TW',
-        )),
+        contains(
+          const Locale.fromSubtags(
+            languageCode: 'zh',
+            scriptCode: 'Hant',
+            countryCode: 'TW',
+          ),
+        ),
       );
     });
   });

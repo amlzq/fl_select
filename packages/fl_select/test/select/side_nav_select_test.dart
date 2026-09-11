@@ -8,9 +8,7 @@ Widget _sideNavHarness(Set<SelectEntry> entries) {
   return MaterialApp(
     home: Scaffold(
       body: SelectView(
-        delegate: SideNavSelectDelegate(
-          entriesLoader: () async => entries,
-        ),
+        delegate: SideNavSelectDelegate(entriesLoader: () async => entries),
         onChanged: (_) {},
       ),
     ),
@@ -113,8 +111,9 @@ void main() {
       expect(find.text('One'), findsOneWidget);
     });
 
-    testWidgets('renders SelectRangeView for SelectRangeLayout',
-        (tester) async {
+    testWidgets('renders SelectRangeView for SelectRangeLayout', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _sideNavHarness({
           _category(
@@ -132,8 +131,9 @@ void main() {
       expect(find.byType(SelectRangeView), findsOneWidget);
     });
 
-    testWidgets('renders SelectCounter for SelectCounterLayout',
-        (tester) async {
+    testWidgets('renders SelectCounter for SelectCounterLayout', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _sideNavHarness({
           _category(
@@ -169,7 +169,10 @@ void main() {
             const SelectWrapLayout(),
             children: {
               SelectTextEntry<dynamic>(
-                  parentId: 'c2', id: 'c2-1', name: 'ChipA'),
+                parentId: 'c2',
+                id: 'c2-1',
+                name: 'ChipA',
+              ),
             },
           ),
         }),
@@ -193,9 +196,17 @@ void main() {
             name: 'Header',
             children: {
               SelectTextEntry<dynamic>(
-                  parentId: 'header', id: 'h1', name: 'H1', immediate: true),
+                parentId: 'header',
+                id: 'h1',
+                name: 'H1',
+                immediate: true,
+              ),
               SelectTextEntry<dynamic>(
-                  parentId: 'header', id: 'h2', name: 'H2', immediate: true),
+                parentId: 'header',
+                id: 'h2',
+                name: 'H2',
+                immediate: true,
+              ),
             },
           ),
           children: {
@@ -208,13 +219,18 @@ void main() {
             name: 'Footer',
             children: {
               SelectTextEntry<dynamic>(
-                  parentId: 'footer', id: 'f1', name: 'F1', immediate: true),
+                parentId: 'footer',
+                id: 'f1',
+                name: 'F1',
+                immediate: true,
+              ),
             },
           ),
         );
 
-    testWidgets('renders header/footer chip bars around the category content',
-        (tester) async {
+    testWidgets('renders header/footer chip bars around the category content', (
+      tester,
+    ) async {
       await tester.pumpWidget(_sideNavHarness({categoryWithHeaderFooter()}));
       await tester.pumpAndSettle();
 
@@ -237,8 +253,9 @@ void main() {
       );
     });
 
-    testWidgets('renders the category title once above the header chips',
-        (tester) async {
+    testWidgets('renders the category title once above the header chips', (
+      tester,
+    ) async {
       await tester.pumpWidget(_sideNavHarness({categoryWithHeaderFooter()}));
       await tester.pumpAndSettle();
 
@@ -266,8 +283,9 @@ void main() {
       );
     });
 
-    testWidgets('tapping header/footer children applies their selections',
-        (tester) async {
+    testWidgets('tapping header/footer children applies their selections', (
+      tester,
+    ) async {
       final applied = <Set<SelectEntry>>[];
       await tester.pumpWidget(
         MaterialApp(

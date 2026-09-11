@@ -19,21 +19,14 @@ class _CustomItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      child: Text(selected ? '[$label]' : label),
-    );
+    return InkWell(onTap: onTap, child: Text(selected ? '[$label]' : label));
   }
 }
 
 /// Builds a [_CustomItem] showing the entry's name.
 SelectItemBuilder get _itemBuilder =>
     (context, entry, {required bool selected, required onTap, categoryId}) =>
-        _CustomItem(
-          label: entry.name ?? '',
-          selected: selected,
-          onTap: onTap,
-        );
+        _CustomItem(label: entry.name ?? '', selected: selected, onTap: onTap);
 
 /// Builds a [_CustomItem] whose label carries the owning category id, so
 /// tests can assert the `categoryId` passed to the builder.
@@ -50,12 +43,12 @@ SelectItemBuilder get _categoryIdItemBuilder =>
 SelectItemBuilder get _partialItemBuilder =>
     (context, entry, {required bool selected, required onTap, categoryId}) =>
         categoryId == 'catA'
-            ? null
-            : _CustomItem(
-                label: entry.name ?? '',
-                selected: selected,
-                onTap: onTap,
-              );
+        ? null
+        : _CustomItem(
+            label: entry.name ?? '',
+            selected: selected,
+            onTap: onTap,
+          );
 
 /// Flat entries: three regular items plus a trailing custom range entry.
 ///
@@ -63,51 +56,51 @@ SelectItemBuilder get _partialItemBuilder =>
 /// auto-selected when the selection starts empty, which would make the
 /// initial `selected` assertions non-deterministic.
 Set<SelectEntry> _flatEntries() => {
-      SelectTextEntry<dynamic>.name(id: 'all', name: 'All'),
-      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-      SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-      SelectRangeEntry.custom(name: 'Custom'),
-    };
+  SelectTextEntry<dynamic>.name(id: 'all', name: 'All'),
+  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+  SelectRangeEntry.custom(name: 'Custom'),
+};
 
 /// Two-level entries: two list-layout categories, so category-based
 /// delegates have two switchable groups of children.
 Set<SelectEntry> _categoryEntries() => {
-      SelectCategoryEntry<dynamic>.children(
-        id: 'catA',
-        name: 'Tab A',
-        layout: const SelectListLayout(),
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-          SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-          SelectTextEntry<dynamic>.name(id: 'c', name: 'C'),
-        },
-      ),
-      SelectCategoryEntry<dynamic>.children(
-        id: 'catB',
-        name: 'Tab B',
-        layout: const SelectListLayout(),
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'd', name: 'D'),
-          SelectTextEntry<dynamic>.name(id: 'e', name: 'E'),
-          SelectTextEntry<dynamic>.name(id: 'f', name: 'F'),
-        },
-      ),
-    };
+  SelectCategoryEntry<dynamic>.children(
+    id: 'catA',
+    name: 'Tab A',
+    layout: const SelectListLayout(),
+    children: {
+      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+      SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+      SelectTextEntry<dynamic>.name(id: 'c', name: 'C'),
+    },
+  ),
+  SelectCategoryEntry<dynamic>.children(
+    id: 'catB',
+    name: 'Tab B',
+    layout: const SelectListLayout(),
+    children: {
+      SelectTextEntry<dynamic>.name(id: 'd', name: 'D'),
+      SelectTextEntry<dynamic>.name(id: 'e', name: 'E'),
+      SelectTextEntry<dynamic>.name(id: 'f', name: 'F'),
+    },
+  ),
+};
 
 /// Two-level entries whose categories render as wrapped chips, exercising
 /// the chip-host path of the item builder.
 Set<SelectEntry> _wrapCategoryEntries() => {
-      SelectCategoryEntry<dynamic>.children(
-        id: 'catA',
-        name: 'Group A',
-        layout: const SelectWrapLayout(),
-        children: {
-          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-          SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-          SelectTextEntry<dynamic>.name(id: 'c', name: 'C'),
-        },
-      ),
-    };
+  SelectCategoryEntry<dynamic>.children(
+    id: 'catA',
+    name: 'Group A',
+    layout: const SelectWrapLayout(),
+    children: {
+      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+      SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+      SelectTextEntry<dynamic>.name(id: 'c', name: 'C'),
+    },
+  ),
+};
 
 Widget _harness(
   SelectDelegate delegate, {
@@ -115,10 +108,7 @@ Widget _harness(
 }) {
   return MaterialApp(
     home: Scaffold(
-      body: SelectView(
-        delegate: delegate,
-        onChanged: onChanged ?? (_) {},
-      ),
+      body: SelectView(delegate: delegate, onChanged: onChanged ?? (_) {}),
     ),
   );
 }
@@ -126,10 +116,14 @@ Widget _harness(
 void main() {
   group('ListSelectDelegate.itemBuilder', () {
     testWidgets('replaces the default list tiles', (tester) async {
-      await tester.pumpWidget(_harness(ListSelectDelegate(
-        itemBuilder: _itemBuilder,
-        entriesLoader: () async => _flatEntries(),
-      )));
+      await tester.pumpWidget(
+        _harness(
+          ListSelectDelegate(
+            itemBuilder: _itemBuilder,
+            entriesLoader: () async => _flatEntries(),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(_CustomItem), findsNWidgets(3));
@@ -139,16 +133,19 @@ void main() {
       expect(find.byType(SelectRadioListTile), findsNothing);
     });
 
-    testWidgets('taps flow through the normal selection flow (single)',
-        (tester) async {
+    testWidgets('taps flow through the normal selection flow (single)', (
+      tester,
+    ) async {
       final applied = <Set<SelectEntry>>[];
-      await tester.pumpWidget(_harness(
-        ListSelectDelegate(
-          itemBuilder: _itemBuilder,
-          entriesLoader: () async => _flatEntries(),
+      await tester.pumpWidget(
+        _harness(
+          ListSelectDelegate(
+            itemBuilder: _itemBuilder,
+            entriesLoader: () async => _flatEntries(),
+          ),
+          onChanged: applied.add,
         ),
-        onChanged: applied.add,
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -159,24 +156,27 @@ void main() {
       expect(find.text('[A]'), findsOneWidget);
     });
 
-    testWidgets('selections accumulate until applied (multiple)',
-        (tester) async {
+    testWidgets('selections accumulate until applied (multiple)', (
+      tester,
+    ) async {
       final applied = <Set<SelectEntry>>[];
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          // SelectView hides the action bar for inline usage; SelectPanel
-          // keeps it so the multi-selection can be applied.
-          body: SelectPanel(
-            delegate: ListSelectDelegate(
-              selectionMode: SelectionMode.multiple,
-              applyText: 'Apply',
-              itemBuilder: _itemBuilder,
-              entriesLoader: () async => _flatEntries(),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            // SelectView hides the action bar for inline usage; SelectPanel
+            // keeps it so the multi-selection can be applied.
+            body: SelectPanel(
+              delegate: ListSelectDelegate(
+                selectionMode: SelectionMode.multiple,
+                applyText: 'Apply',
+                itemBuilder: _itemBuilder,
+                entriesLoader: () async => _flatEntries(),
+              ),
+              onApplyTap: applied.add,
             ),
-            onApplyTap: applied.add,
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -194,28 +194,39 @@ void main() {
       expect(applied.last.map((e) => e.id), containsAll(['a', 'b']));
     });
 
-    testWidgets('custom range entry still renders as the built-in input field',
-        (tester) async {
-      await tester.pumpWidget(_harness(ListSelectDelegate(
-        itemBuilder: _itemBuilder,
-        entriesLoader: () async => _flatEntries(),
-      )));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'custom range entry still renders as the built-in input field',
+      (tester) async {
+        await tester.pumpWidget(
+          _harness(
+            ListSelectDelegate(
+              itemBuilder: _itemBuilder,
+              entriesLoader: () async => _flatEntries(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      // The custom entry renders as an input field, never through the
-      // builder, so only the three regular items build [_CustomItem]s.
-      expect(find.byType(SelectFieldTile), findsOneWidget);
-      expect(find.byType(_CustomItem), findsNWidgets(3));
-    });
+        // The custom entry renders as an input field, never through the
+        // builder, so only the three regular items build [_CustomItem]s.
+        expect(find.byType(SelectFieldTile), findsOneWidget);
+        expect(find.byType(_CustomItem), findsNWidgets(3));
+      },
+    );
 
-    testWidgets('search-filtered entries still pass through the builder',
-        (tester) async {
-      await tester.pumpWidget(_harness(ListSelectDelegate(
-        searchEnabled: true,
-        searchHintText: 'Search',
-        itemBuilder: _itemBuilder,
-        entriesLoader: () async => _flatEntries(),
-      )));
+    testWidgets('search-filtered entries still pass through the builder', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _harness(
+          ListSelectDelegate(
+            searchEnabled: true,
+            searchHintText: 'Search',
+            itemBuilder: _itemBuilder,
+            entriesLoader: () async => _flatEntries(),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // The custom range min/max fields are TextFields too; target the search
@@ -230,11 +241,12 @@ void main() {
       expect(find.widgetWithText(_CustomItem, 'B'), findsOneWidget);
     });
 
-    testWidgets('default tiles render when itemBuilder is omitted',
-        (tester) async {
-      await tester.pumpWidget(_harness(ListSelectDelegate(
-        entriesLoader: () async => _flatEntries(),
-      )));
+    testWidgets('default tiles render when itemBuilder is omitted', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _harness(ListSelectDelegate(entriesLoader: () async => _flatEntries())),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(_CustomItem), findsNothing);
@@ -244,11 +256,15 @@ void main() {
 
   group('GridSelectDelegate.itemBuilder', () {
     testWidgets('replaces the default grid tiles', (tester) async {
-      await tester.pumpWidget(_harness(GridSelectDelegate(
-        crossAxisCount: 3,
-        itemBuilder: _itemBuilder,
-        entriesLoader: () async => _flatEntries(),
-      )));
+      await tester.pumpWidget(
+        _harness(
+          GridSelectDelegate(
+            crossAxisCount: 3,
+            itemBuilder: _itemBuilder,
+            entriesLoader: () async => _flatEntries(),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(_CustomItem), findsNWidgets(3));
@@ -258,17 +274,20 @@ void main() {
       expect(find.byType(SelectGridTile), findsNothing);
     });
 
-    testWidgets('taps flow through the normal selection flow (single)',
-        (tester) async {
+    testWidgets('taps flow through the normal selection flow (single)', (
+      tester,
+    ) async {
       final applied = <Set<SelectEntry>>[];
-      await tester.pumpWidget(_harness(
-        GridSelectDelegate(
-          crossAxisCount: 3,
-          itemBuilder: _itemBuilder,
-          entriesLoader: () async => _flatEntries(),
+      await tester.pumpWidget(
+        _harness(
+          GridSelectDelegate(
+            crossAxisCount: 3,
+            itemBuilder: _itemBuilder,
+            entriesLoader: () async => _flatEntries(),
+          ),
+          onChanged: applied.add,
         ),
-        onChanged: applied.add,
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -278,27 +297,38 @@ void main() {
       expect(find.text('[A]'), findsOneWidget);
     });
 
-    testWidgets('custom range entry still renders as the built-in input field',
-        (tester) async {
-      await tester.pumpWidget(_harness(GridSelectDelegate(
-        crossAxisCount: 3,
-        itemBuilder: _itemBuilder,
-        entriesLoader: () async => _flatEntries(),
-      )));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'custom range entry still renders as the built-in input field',
+      (tester) async {
+        await tester.pumpWidget(
+          _harness(
+            GridSelectDelegate(
+              crossAxisCount: 3,
+              itemBuilder: _itemBuilder,
+              entriesLoader: () async => _flatEntries(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      // The custom entry renders as an input field, never through the
-      // builder, so only the three regular items build [_CustomItem]s.
-      expect(find.byType(SelectFieldTile), findsOneWidget);
-      expect(find.byType(_CustomItem), findsNWidgets(3));
-    });
+        // The custom entry renders as an input field, never through the
+        // builder, so only the three regular items build [_CustomItem]s.
+        expect(find.byType(SelectFieldTile), findsOneWidget);
+        expect(find.byType(_CustomItem), findsNWidgets(3));
+      },
+    );
 
-    testWidgets('default tiles render when itemBuilder is omitted',
-        (tester) async {
-      await tester.pumpWidget(_harness(GridSelectDelegate(
-        crossAxisCount: 3,
-        entriesLoader: () async => _flatEntries(),
-      )));
+    testWidgets('default tiles render when itemBuilder is omitted', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _harness(
+          GridSelectDelegate(
+            crossAxisCount: 3,
+            entriesLoader: () async => _flatEntries(),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(_CustomItem), findsNothing);
@@ -308,10 +338,14 @@ void main() {
 
   group('WrapSelectDelegate.itemBuilder', () {
     testWidgets('replaces the default chips', (tester) async {
-      await tester.pumpWidget(_harness(WrapSelectDelegate(
-        itemBuilder: _itemBuilder,
-        entriesLoader: () async => _flatEntries(),
-      )));
+      await tester.pumpWidget(
+        _harness(
+          WrapSelectDelegate(
+            itemBuilder: _itemBuilder,
+            entriesLoader: () async => _flatEntries(),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(_CustomItem), findsNWidgets(3));
@@ -320,16 +354,19 @@ void main() {
       expect(find.text('B'), findsOneWidget);
     });
 
-    testWidgets('taps flow through the normal selection flow (single)',
-        (tester) async {
+    testWidgets('taps flow through the normal selection flow (single)', (
+      tester,
+    ) async {
       final applied = <Set<SelectEntry>>[];
-      await tester.pumpWidget(_harness(
-        WrapSelectDelegate(
-          itemBuilder: _itemBuilder,
-          entriesLoader: () async => _flatEntries(),
+      await tester.pumpWidget(
+        _harness(
+          WrapSelectDelegate(
+            itemBuilder: _itemBuilder,
+            entriesLoader: () async => _flatEntries(),
+          ),
+          onChanged: applied.add,
         ),
-        onChanged: applied.add,
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('A'));
@@ -339,25 +376,32 @@ void main() {
       expect(find.text('[A]'), findsOneWidget);
     });
 
-    testWidgets('custom range entry still renders as the built-in input field',
-        (tester) async {
-      await tester.pumpWidget(_harness(WrapSelectDelegate(
-        itemBuilder: _itemBuilder,
-        entriesLoader: () async => _flatEntries(),
-      )));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'custom range entry still renders as the built-in input field',
+      (tester) async {
+        await tester.pumpWidget(
+          _harness(
+            WrapSelectDelegate(
+              itemBuilder: _itemBuilder,
+              entriesLoader: () async => _flatEntries(),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      // The custom entry renders as an input field, never through the
-      // builder, so only the three regular items build [_CustomItem]s.
-      expect(find.byType(SelectFieldTile), findsOneWidget);
-      expect(find.byType(_CustomItem), findsNWidgets(3));
-    });
+        // The custom entry renders as an input field, never through the
+        // builder, so only the three regular items build [_CustomItem]s.
+        expect(find.byType(SelectFieldTile), findsOneWidget);
+        expect(find.byType(_CustomItem), findsNWidgets(3));
+      },
+    );
 
-    testWidgets('default chips render when itemBuilder is omitted',
-        (tester) async {
-      await tester.pumpWidget(_harness(WrapSelectDelegate(
-        entriesLoader: () async => _flatEntries(),
-      )));
+    testWidgets('default chips render when itemBuilder is omitted', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _harness(WrapSelectDelegate(entriesLoader: () async => _flatEntries())),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(_CustomItem), findsNothing);
@@ -367,12 +411,17 @@ void main() {
   });
 
   group('TabNavSelectDelegate.itemBuilder', () {
-    testWidgets('replaces the default tiles and receives categoryId',
-        (tester) async {
-      await tester.pumpWidget(_harness(TabNavSelectDelegate(
-        itemBuilder: _categoryIdItemBuilder,
-        entriesLoader: () async => _categoryEntries(),
-      )));
+    testWidgets('replaces the default tiles and receives categoryId', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _harness(
+          TabNavSelectDelegate(
+            itemBuilder: _categoryIdItemBuilder,
+            entriesLoader: () async => _categoryEntries(),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Only the focused category's children render through the builder,
@@ -384,10 +433,14 @@ void main() {
     });
 
     testWidgets('categoryId follows the focused tab', (tester) async {
-      await tester.pumpWidget(_harness(TabNavSelectDelegate(
-        itemBuilder: _categoryIdItemBuilder,
-        entriesLoader: () async => _categoryEntries(),
-      )));
+      await tester.pumpWidget(
+        _harness(
+          TabNavSelectDelegate(
+            itemBuilder: _categoryIdItemBuilder,
+            entriesLoader: () async => _categoryEntries(),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Tab B'));
@@ -398,16 +451,17 @@ void main() {
       expect(find.text('A@catA'), findsNothing);
     });
 
-    testWidgets('taps flow through the normal selection flow',
-        (tester) async {
+    testWidgets('taps flow through the normal selection flow', (tester) async {
       final applied = <Set<SelectEntry>>[];
-      await tester.pumpWidget(_harness(
-        TabNavSelectDelegate(
-          itemBuilder: _categoryIdItemBuilder,
-          entriesLoader: () async => _categoryEntries(),
+      await tester.pumpWidget(
+        _harness(
+          TabNavSelectDelegate(
+            itemBuilder: _categoryIdItemBuilder,
+            entriesLoader: () async => _categoryEntries(),
+          ),
+          onChanged: applied.add,
         ),
-        onChanged: applied.add,
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('B@catA'));
@@ -421,12 +475,17 @@ void main() {
       expect(find.text('[B@catA]'), findsOneWidget);
     });
 
-    testWidgets('null falls back to the default tiles per category',
-        (tester) async {
-      await tester.pumpWidget(_harness(TabNavSelectDelegate(
-        itemBuilder: _partialItemBuilder,
-        entriesLoader: () async => _categoryEntries(),
-      )));
+    testWidgets('null falls back to the default tiles per category', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _harness(
+          TabNavSelectDelegate(
+            itemBuilder: _partialItemBuilder,
+            entriesLoader: () async => _categoryEntries(),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // catA's builder returns null -> default tiles.
@@ -443,12 +502,17 @@ void main() {
   });
 
   group('ExpandableSelectDelegate.itemBuilder', () {
-    testWidgets('replaces the default chips and receives categoryId',
-        (tester) async {
-      await tester.pumpWidget(_harness(ExpandableSelectDelegate(
-        itemBuilder: _categoryIdItemBuilder,
-        entriesLoader: () async => _wrapCategoryEntries(),
-      )));
+    testWidgets('replaces the default chips and receives categoryId', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _harness(
+          ExpandableSelectDelegate(
+            itemBuilder: _categoryIdItemBuilder,
+            entriesLoader: () async => _wrapCategoryEntries(),
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Category tiles start expanded, so children render right away.
@@ -457,16 +521,17 @@ void main() {
       expect(find.text('B@catA'), findsOneWidget);
     });
 
-    testWidgets('taps flow through the normal selection flow',
-        (tester) async {
+    testWidgets('taps flow through the normal selection flow', (tester) async {
       final applied = <Set<SelectEntry>>[];
-      await tester.pumpWidget(_harness(
-        ExpandableSelectDelegate(
-          itemBuilder: _categoryIdItemBuilder,
-          entriesLoader: () async => _wrapCategoryEntries(),
+      await tester.pumpWidget(
+        _harness(
+          ExpandableSelectDelegate(
+            itemBuilder: _categoryIdItemBuilder,
+            entriesLoader: () async => _wrapCategoryEntries(),
+          ),
+          onChanged: applied.add,
         ),
-        onChanged: applied.add,
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('C@catA'));

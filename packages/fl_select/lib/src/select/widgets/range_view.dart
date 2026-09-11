@@ -136,7 +136,8 @@ class _SelectRangeViewState extends State<SelectRangeView> {
     // Restore the previously selected range from [selectedEntries] when the
     // custom entry carries a saved min/max; otherwise start at the full
     // slider bounds.
-    _currentRange = _restoreFromSelected() ??
+    _currentRange =
+        _restoreFromSelected() ??
         RangeValues(
           _toDouble(_initialMin) ?? _min,
           _toDouble(_initialMax) ?? _max,
@@ -451,7 +452,8 @@ class _SelectRangeViewState extends State<SelectRangeView> {
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: DefaultTextStyle.merge(
-                style: Theme.of(context).textTheme.titleSmall ??
+                style:
+                    Theme.of(context).textTheme.titleSmall ??
                     const TextStyle(fontSize: 16),
                 child: Text(widget.category?.name ?? ''),
               ),

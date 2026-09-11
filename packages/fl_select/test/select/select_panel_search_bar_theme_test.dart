@@ -6,9 +6,9 @@ const _amber = Color(0xFFECC104);
 const _ambientPadding = EdgeInsets.fromLTRB(1, 2, 3, 4);
 
 Set<SelectEntry> get _flatEntries => {
-      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-      SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-    };
+  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+};
 
 Widget _panelHarness({
   SelectSearchBarTheme? delegateSearchBarTheme,
@@ -42,9 +42,7 @@ void main() {
         borderRadius: 8,
         iconSize: 20,
       );
-      final merged = base.merge(
-        const SelectSearchBarTheme(fillColor: _amber),
-      );
+      final merged = base.merge(const SelectSearchBarTheme(fillColor: _amber));
       expect(merged.fillColor, _amber);
       expect(merged.padding, _ambientPadding);
       expect(merged.borderRadius, 8);
@@ -54,12 +52,17 @@ void main() {
   });
 
   group('SelectPanel searchBarTheme injection', () {
-    testWidgets('delegate searchBarTheme.fillColor styles the search bar',
-        (tester) async {
-      await tester.pumpWidget(_panelHarness(
-        delegateSearchBarTheme:
-            const SelectSearchBarTheme(filled: true, fillColor: _amber),
-      ));
+    testWidgets('delegate searchBarTheme.fillColor styles the search bar', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _panelHarness(
+          delegateSearchBarTheme: const SelectSearchBarTheme(
+            filled: true,
+            fillColor: _amber,
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(SelectSearchBar), findsOneWidget);
@@ -67,16 +70,23 @@ void main() {
       expect(textField.decoration?.fillColor, _amber);
     });
 
-    testWidgets('delegate theme merges field-wise over the ambient theme',
-        (tester) async {
-      await tester.pumpWidget(_panelHarness(
-        delegateSearchBarTheme:
-            const SelectSearchBarTheme(filled: true, fillColor: _amber),
-        selectTheme: SelectThemeData(
-          ThemeData.light(),
-          searchBarTheme: const SelectSearchBarTheme(padding: _ambientPadding),
+    testWidgets('delegate theme merges field-wise over the ambient theme', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _panelHarness(
+          delegateSearchBarTheme: const SelectSearchBarTheme(
+            filled: true,
+            fillColor: _amber,
+          ),
+          selectTheme: SelectThemeData(
+            ThemeData.light(),
+            searchBarTheme: const SelectSearchBarTheme(
+              padding: _ambientPadding,
+            ),
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       // The delegate's fillColor wins while the ambient padding is
@@ -92,15 +102,20 @@ void main() {
       );
     });
 
-    testWidgets('ambient theme applies when delegate supplies none',
-        (tester) async {
-      await tester.pumpWidget(_panelHarness(
-        selectTheme: SelectThemeData(
-          ThemeData.light(),
-          searchBarTheme:
-              const SelectSearchBarTheme(filled: true, fillColor: Colors.teal),
+    testWidgets('ambient theme applies when delegate supplies none', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _panelHarness(
+          selectTheme: SelectThemeData(
+            ThemeData.light(),
+            searchBarTheme: const SelectSearchBarTheme(
+              filled: true,
+              fillColor: Colors.teal,
+            ),
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       final textField = tester.widget<TextField>(find.byType(TextField));

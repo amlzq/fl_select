@@ -5,16 +5,14 @@ import 'package:flutter_test/flutter_test.dart';
 /// A minimal [SelectDelegate] used to drive [SelectView] rendering and
 /// to capture the active controller for assertions.
 class _TestDelegate extends SelectDelegate {
-  _TestDelegate({
-    required this.bodyBuilder,
-    required super.entriesLoader,
-  });
+  _TestDelegate({required this.bodyBuilder, required super.entriesLoader});
 
   final Widget Function(
     BuildContext context,
     List<SelectEntry> entries,
     Set<SelectEntry>? previousSelected,
-  ) bodyBuilder;
+  )
+  bodyBuilder;
 
   @override
   Widget buildBody(
@@ -22,8 +20,7 @@ class _TestDelegate extends SelectDelegate {
     List<SelectEntry> entries,
     Set<SelectEntry>? previousSelected, {
     String searchQuery = '',
-  }) =>
-      bodyBuilder(context, entries, previousSelected);
+  }) => bodyBuilder(context, entries, previousSelected);
 
   @override
   Widget buildSkeleton(BuildContext context) => const Text('skeleton');
@@ -53,8 +50,9 @@ void main() {
       expect(find.text('entries:1'), findsOneWidget);
     });
 
-    testWidgets('forwards onChanged through an internal controller',
-        (tester) async {
+    testWidgets('forwards onChanged through an internal controller', (
+      tester,
+    ) async {
       SelectController? captured;
       var changed = false;
 
@@ -82,8 +80,9 @@ void main() {
       expect(changed, isTrue);
     });
 
-    testWidgets('disposes its own internal controller on unmount',
-        (tester) async {
+    testWidgets('disposes its own internal controller on unmount', (
+      tester,
+    ) async {
       SelectController? captured;
       await tester.pumpWidget(
         MaterialApp(
@@ -108,8 +107,9 @@ void main() {
       expect(captured!.isDisposed, isTrue);
     });
 
-    testWidgets('does not dispose an externally-provided controller',
-        (tester) async {
+    testWidgets('does not dispose an externally-provided controller', (
+      tester,
+    ) async {
       final controller = SelectController(selectionMode: SelectionMode.single);
       await tester.pumpWidget(
         MaterialApp(
@@ -130,8 +130,9 @@ void main() {
       expect(controller.isDisposed, isFalse);
     });
 
-    testWidgets('caps height to maxHeightFactor of the screen height',
-        (tester) async {
+    testWidgets('caps height to maxHeightFactor of the screen height', (
+      tester,
+    ) async {
       const mediaQuery = MediaQueryData(size: Size(400, 800));
       await tester.pumpWidget(
         MediaQuery(

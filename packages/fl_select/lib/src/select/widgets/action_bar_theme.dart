@@ -72,7 +72,10 @@ class SelectActionBarTheme with Diagnosticable {
 
   /// Linearly interpolates between two action bar themes.
   static SelectActionBarTheme lerp(
-      SelectActionBarTheme? a, SelectActionBarTheme? b, double t) {
+    SelectActionBarTheme? a,
+    SelectActionBarTheme? b,
+    double t,
+  ) {
     if (identical(a, b) && a != null) {
       return a;
     }
@@ -81,22 +84,28 @@ class SelectActionBarTheme with Diagnosticable {
       padding: EdgeInsets.lerp(a?.padding, b?.padding, t),
       resetFlex: a?.resetFlex ?? b?.resetFlex ?? 1.toInt(),
       applyFlex: a?.applyFlex ?? b?.applyFlex ?? 1.toInt(),
-      resetButtonStyle:
-          ButtonStyle.lerp(a?.resetButtonStyle, b?.resetButtonStyle, t),
-      applyButtonStyle:
-          ButtonStyle.lerp(a?.applyButtonStyle, b?.applyButtonStyle, t),
+      resetButtonStyle: ButtonStyle.lerp(
+        a?.resetButtonStyle,
+        b?.resetButtonStyle,
+        t,
+      ),
+      applyButtonStyle: ButtonStyle.lerp(
+        a?.applyButtonStyle,
+        b?.applyButtonStyle,
+        t,
+      ),
     );
   }
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        padding,
-        resetFlex,
-        applyFlex,
-        resetButtonStyle,
-        applyButtonStyle,
-      );
+    backgroundColor,
+    padding,
+    resetFlex,
+    applyFlex,
+    resetButtonStyle,
+    applyButtonStyle,
+  );
 
   @override
   bool operator ==(Object other) {

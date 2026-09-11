@@ -179,10 +179,7 @@ void main() {
         min: 0,
         max: 100,
       );
-      final c = _category('c', 'C', children: {
-        _text('c', 'a', 'A'),
-        range,
-      });
+      final c = _category('c', 'C', children: {_text('c', 'a', 'A'), range});
 
       final ranges = {c}.childRangesOf('c');
       expect(ranges.length, 1);
@@ -196,10 +193,11 @@ void main() {
     });
 
     test('returns empty list when no range entries exist', () {
-      final c = _category('c', 'C', children: {
-        _text('c', 'a', 'A'),
-        _text('c', 'b', 'B'),
-      });
+      final c = _category(
+        'c',
+        'C',
+        children: {_text('c', 'a', 'A'), _text('c', 'b', 'B')},
+      );
 
       expect({c}.childRangesOf('c'), isEmpty);
     });
@@ -243,26 +241,27 @@ void main() {
   });
 
   group(
-      'SelectEntriesExtension – findChildrenAtLevel / findIdsAtLevel / findExtrasAtLevel',
-      () {
-    test('findChildrenAtLevel delegates to SelectUtils', () {
-      final a = _text('c', 'a', 'A');
-      final c = _category('c', 'C', children: {a});
+    'SelectEntriesExtension – findChildrenAtLevel / findIdsAtLevel / findExtrasAtLevel',
+    () {
+      test('findChildrenAtLevel delegates to SelectUtils', () {
+        final a = _text('c', 'a', 'A');
+        final c = _category('c', 'C', children: {a});
 
-      final entries = <SelectEntry<dynamic>>{c};
-      expect(entries.findChildrenAtLevel(c, 0), {c});
-      expect(entries.findChildrenAtLevel(c, 1).contains(a), isTrue);
-    });
+        final entries = <SelectEntry<dynamic>>{c};
+        expect(entries.findChildrenAtLevel(c, 0), {c});
+        expect(entries.findChildrenAtLevel(c, 1).contains(a), isTrue);
+      });
 
-    test('findIdsAtLevel delegates to SelectUtils', () {
-      final a = _text('c', 'a', 'A');
-      final c = _category('c', 'C', children: {a});
+      test('findIdsAtLevel delegates to SelectUtils', () {
+        final a = _text('c', 'a', 'A');
+        final c = _category('c', 'C', children: {a});
 
-      final entries = <SelectEntry<dynamic>>{c};
-      expect(entries.findIdsAtLevel(c, 0), {'c'});
-      expect(entries.findIdsAtLevel(c, 1), {'a'});
-    });
-  });
+        final entries = <SelectEntry<dynamic>>{c};
+        expect(entries.findIdsAtLevel(c, 0), {'c'});
+        expect(entries.findIdsAtLevel(c, 1), {'a'});
+      });
+    },
+  );
 
   group('SelectEntriesExtension – firstSelectedId', () {
     test('returns id of first selected entry', () {
@@ -279,12 +278,16 @@ void main() {
 
   group('SelectEntriesExtension – toQueryMap', () {
     test('maps category children to key=leafId pairs', () {
-      final cate3 = _category('cate3', 'Cate 3', children: {
-        _text('cate3', 'b', 'B'),
-      });
-      final cate4 = _category('cate4', 'Cate 4', children: {
-        _text('cate4', 'd', 'D'),
-      });
+      final cate3 = _category(
+        'cate3',
+        'Cate 3',
+        children: {_text('cate3', 'b', 'B')},
+      );
+      final cate4 = _category(
+        'cate4',
+        'Cate 4',
+        children: {_text('cate4', 'd', 'D')},
+      );
 
       expect({cate3, cate4}.toQueryMap(), {
         'cate3': ['b'],
@@ -293,12 +296,21 @@ void main() {
     });
 
     test('groups the deepest leaves under one key in cascading trees', () {
-      final cate1 = _category('cate1', 'Cate 1', children: {
-        _text('cate1', 'l1-a', 'A', children: {
-          _text('l1-a', 'l2-a', 'Football'),
-          _text('l1-a', 'l2-b', 'Basketball'),
-        }),
-      });
+      final cate1 = _category(
+        'cate1',
+        'Cate 1',
+        children: {
+          _text(
+            'cate1',
+            'l1-a',
+            'A',
+            children: {
+              _text('l1-a', 'l2-a', 'Football'),
+              _text('l1-a', 'l2-b', 'Basketball'),
+            },
+          ),
+        },
+      );
 
       expect({cate1}.toQueryMap(), {
         'cate1': ['l2-a', 'l2-b'],
@@ -306,11 +318,13 @@ void main() {
     });
 
     test('resolves any leaves to their parent id', () {
-      final cate1 = _category('cate1', 'Cate 1', children: {
-        _text('cate1', 'l1-a', 'A', children: {
-          _text('l1-a', 'any', 'Any'),
-        }),
-      });
+      final cate1 = _category(
+        'cate1',
+        'Cate 1',
+        children: {
+          _text('cate1', 'l1-a', 'A', children: {_text('l1-a', 'any', 'Any')}),
+        },
+      );
 
       expect({cate1}.toQueryMap(), {
         'cate1': ['l1-a'],
@@ -322,12 +336,18 @@ void main() {
         'cate3',
         'Cate 3',
         children: {_text('cate3', 'a', 'Football')},
-        header: _text('cate3', 'c3-h', 'Header', children: {
-          _text('c3-h', 'h-a', 'Red'),
-        }),
-        footer: _text('cate3', 'c3-f', 'Footer', children: {
-          _text('c3-f', 'f-a', 'Blue'),
-        }),
+        header: _text(
+          'cate3',
+          'c3-h',
+          'Header',
+          children: {_text('c3-h', 'h-a', 'Red')},
+        ),
+        footer: _text(
+          'cate3',
+          'c3-f',
+          'Footer',
+          children: {_text('c3-f', 'f-a', 'Blue')},
+        ),
       );
 
       expect({cate3}.toQueryMap(), {
@@ -338,15 +358,19 @@ void main() {
     });
 
     test('formats custom range entries as min-max', () {
-      final cate1 = _category('cate1', 'Cate 1', children: {
-        SelectRangeEntry<int, dynamic>(
-          parentId: 'cate1',
-          id: 'custom',
-          name: null,
-          min: 111,
-          max: 222,
-        ),
-      });
+      final cate1 = _category(
+        'cate1',
+        'Cate 1',
+        children: {
+          SelectRangeEntry<int, dynamic>(
+            parentId: 'cate1',
+            id: 'custom',
+            name: null,
+            min: 111,
+            max: 222,
+          ),
+        },
+      );
 
       expect({cate1}.toQueryMap(), {
         'cate1': ['111-222'],
@@ -373,14 +397,16 @@ void main() {
 
   group('SelectEntriesExtension – toQueryParameters', () {
     Set<SelectEntry<dynamic>> multiValueSelection() => {
-          _category('cate1', 'Cate 1', children: {
-            _text('cate1', 'l2-a', 'Football'),
-            _text('cate1', 'l2-b', 'Basketball'),
-          }),
-          _category('cate2', 'Cate 2', children: {
-            _text('cate2', 'c', 'Lion'),
-          }),
-        };
+      _category(
+        'cate1',
+        'Cate 1',
+        children: {
+          _text('cate1', 'l2-a', 'Football'),
+          _text('cate1', 'l2-b', 'Basketball'),
+        },
+      ),
+      _category('cate2', 'Cate 2', children: {_text('cate2', 'c', 'Lion')}),
+    };
 
     test('defaults to repeat format', () {
       expect(
@@ -391,32 +417,36 @@ void main() {
 
     test('repeat format repeats the key per value', () {
       expect(
-        multiValueSelection()
-            .toQueryParameters(arrayFormat: SelectArrayFormat.repeat),
+        multiValueSelection().toQueryParameters(
+          arrayFormat: SelectArrayFormat.repeat,
+        ),
         'cate1=l2-a&cate1=l2-b&cate2=c',
       );
     });
 
     test('brackets format appends [] to the key', () {
       expect(
-        multiValueSelection()
-            .toQueryParameters(arrayFormat: SelectArrayFormat.brackets),
+        multiValueSelection().toQueryParameters(
+          arrayFormat: SelectArrayFormat.brackets,
+        ),
         'cate1%5B%5D=l2-a&cate1%5B%5D=l2-b&cate2%5B%5D=c',
       );
     });
 
     test('comma format joins values with commas', () {
       expect(
-        multiValueSelection()
-            .toQueryParameters(arrayFormat: SelectArrayFormat.comma),
+        multiValueSelection().toQueryParameters(
+          arrayFormat: SelectArrayFormat.comma,
+        ),
         'cate1=l2-a,l2-b&cate2=c',
       );
     });
 
     test('indices format numbers each value', () {
       expect(
-        multiValueSelection()
-            .toQueryParameters(arrayFormat: SelectArrayFormat.indices),
+        multiValueSelection().toQueryParameters(
+          arrayFormat: SelectArrayFormat.indices,
+        ),
         'cate1%5B0%5D=l2-a&cate1%5B1%5D=l2-b&cate2%5B0%5D=c',
       );
     });
@@ -424,15 +454,18 @@ void main() {
     test('delimited format joins values with the delimiter', () {
       expect(
         multiValueSelection().toQueryParameters(
-            arrayFormat: SelectArrayFormat.delimited, delimiter: '|'),
+          arrayFormat: SelectArrayFormat.delimited,
+          delimiter: '|',
+        ),
         'cate1=l2-a|l2-b&cate2=c',
       );
     });
 
     test('delimited format defaults delimiter to comma', () {
       expect(
-        multiValueSelection()
-            .toQueryParameters(arrayFormat: SelectArrayFormat.delimited),
+        multiValueSelection().toQueryParameters(
+          arrayFormat: SelectArrayFormat.delimited,
+        ),
         'cate1=l2-a,l2-b&cate2=c',
       );
     });
@@ -440,36 +473,40 @@ void main() {
     test('encode=false keeps reserved characters raw', () {
       expect(
         multiValueSelection().toQueryParameters(
-            arrayFormat: SelectArrayFormat.brackets, encode: false),
+          arrayFormat: SelectArrayFormat.brackets,
+          encode: false,
+        ),
         'cate1[]=l2-a&cate1[]=l2-b&cate2[]=c',
       );
       expect(
         multiValueSelection().toQueryParameters(
-            arrayFormat: SelectArrayFormat.delimited,
-            delimiter: '|',
-            encode: false),
+          arrayFormat: SelectArrayFormat.delimited,
+          delimiter: '|',
+          encode: false,
+        ),
         'cate1=l2-a|l2-b&cate2=c',
       );
     });
 
     test('percent-encodes values with special characters', () {
-      final cate = _category('cate', 'Cate', children: {
-        _text('cate', 'a&b=c', 'Weird'),
-      });
-
-      expect(
-        {cate}.toQueryParameters(),
-        'cate=a%26b%3Dc',
+      final cate = _category(
+        'cate',
+        'Cate',
+        children: {_text('cate', 'a&b=c', 'Weird')},
       );
+
+      expect({cate}.toQueryParameters(), 'cate=a%26b%3Dc');
     });
 
     test('mixes cascading and direct children under the same key', () {
-      final cate1 = _category('cate1', 'Cate 1', children: {
-        _text('cate1', 'l1-a', 'A', children: {
-          _text('l1-a', 'any', 'Any'),
-        }),
-        _text('cate1', 'l1-b', 'B'),
-      });
+      final cate1 = _category(
+        'cate1',
+        'Cate 1',
+        children: {
+          _text('cate1', 'l1-a', 'A', children: {_text('l1-a', 'any', 'Any')}),
+          _text('cate1', 'l1-b', 'B'),
+        },
+      );
 
       expect({cate1}.toQueryParameters(), 'cate1=l1-a&cate1=l1-b');
     });
@@ -497,10 +534,12 @@ void main() {
 
     test('walks to the deepest leaves of top-level branches', () {
       final entries = <SelectEntry<dynamic>>{
-        _text('', 'p', 'P', children: {
-          _text('p', 'l1', 'L1'),
-          _text('p', 'l2', 'L2'),
-        }),
+        _text(
+          '',
+          'p',
+          'P',
+          children: {_text('p', 'l1', 'L1'), _text('p', 'l2', 'L2')},
+        ),
       };
 
       expect(entries.toIdList(), ['l1', 'l2']);
@@ -521,9 +560,7 @@ void main() {
     });
 
     test('resolves any leaves to their parent id', () {
-      final entries = <SelectEntry<dynamic>>{
-        _text('p', 'any', 'Any'),
-      };
+      final entries = <SelectEntry<dynamic>>{_text('p', 'any', 'Any')};
 
       expect(entries.toIdList(), ['p']);
     });
@@ -556,17 +593,19 @@ void main() {
       expect(entries.hasAnyItem, isFalse);
     });
 
-    test('hasCustomItem returns true when iterable contains custom range entry',
-        () {
-      final custom = SelectRangeEntry<int, dynamic>.custom(
-        parentId: 'p',
-        name: 'Custom',
-      );
-      final a = _text('p', 'a', 'A');
+    test(
+      'hasCustomItem returns true when iterable contains custom range entry',
+      () {
+        final custom = SelectRangeEntry<int, dynamic>.custom(
+          parentId: 'p',
+          name: 'Custom',
+        );
+        final a = _text('p', 'a', 'A');
 
-      final entries = <SelectEntry<dynamic>>{custom, a};
-      expect(entries.hasCustomItem, isTrue);
-    });
+        final entries = <SelectEntry<dynamic>>{custom, a};
+        expect(entries.hasCustomItem, isTrue);
+      },
+    );
 
     test('hasCustomItem returns false when no custom entry', () {
       final a = _text('p', 'a', 'A');
@@ -613,13 +652,18 @@ void main() {
   });
 
   group('Top-level predicate functions', () {
-    test('testMultipleElement returns true for multiple-selection category',
-        () {
-      final c = _category('c', 'C',
+    test(
+      'testMultipleElement returns true for multiple-selection category',
+      () {
+        final c = _category(
+          'c',
+          'C',
           children: {_text('c', 'a', 'A')},
-          selectionMode: SelectionMode.multiple);
-      expect(testMultipleElement(c), isTrue);
-    });
+          selectionMode: SelectionMode.multiple,
+        );
+        expect(testMultipleElement(c), isTrue);
+      },
+    );
 
     test('testMultipleElement returns false for single-selection category', () {
       final c = _category('c', 'C', children: {_text('c', 'a', 'A')});
@@ -678,33 +722,38 @@ void main() {
     });
 
     test(
-        'testSameParentAnyOrCustomElement returns true for any with matching parentId',
-        () {
-      final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
-      expect(testSameParentAnyOrCustomElement(any, 'c'), isTrue);
-    });
+      'testSameParentAnyOrCustomElement returns true for any with matching parentId',
+      () {
+        final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
+        expect(testSameParentAnyOrCustomElement(any, 'c'), isTrue);
+      },
+    );
 
     test(
-        'testSameParentAnyOrCustomElement returns true for custom with matching parentId',
-        () {
-      final custom = SelectRangeEntry<int, dynamic>.custom(
-        parentId: 'c',
-        name: 'Custom',
-      );
-      expect(testSameParentAnyOrCustomElement(custom, 'c'), isTrue);
-    });
+      'testSameParentAnyOrCustomElement returns true for custom with matching parentId',
+      () {
+        final custom = SelectRangeEntry<int, dynamic>.custom(
+          parentId: 'c',
+          name: 'Custom',
+        );
+        expect(testSameParentAnyOrCustomElement(custom, 'c'), isTrue);
+      },
+    );
 
     test(
-        'testSameParentAnyOrCustomElement returns false for non-any/non-custom with matching parentId',
-        () {
-      final a = _text('c', 'a', 'A');
-      expect(testSameParentAnyOrCustomElement(a, 'c'), isFalse);
-    });
+      'testSameParentAnyOrCustomElement returns false for non-any/non-custom with matching parentId',
+      () {
+        final a = _text('c', 'a', 'A');
+        expect(testSameParentAnyOrCustomElement(a, 'c'), isFalse);
+      },
+    );
 
-    test('testSameParentAnyOrCustomElement returns false for wrong parentId',
-        () {
-      final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
-      expect(testSameParentAnyOrCustomElement(any, 'other'), isFalse);
-    });
+    test(
+      'testSameParentAnyOrCustomElement returns false for wrong parentId',
+      () {
+        final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
+        expect(testSameParentAnyOrCustomElement(any, 'other'), isFalse);
+      },
+    );
   });
 }

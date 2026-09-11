@@ -109,7 +109,10 @@ class SelectTabBarTheme with Diagnosticable {
 
   /// Linearly interpolates between two tab bar themes.
   static SelectTabBarTheme lerp(
-      SelectTabBarTheme? a, SelectTabBarTheme? b, double t) {
+    SelectTabBarTheme? a,
+    SelectTabBarTheme? b,
+    double t,
+  ) {
     if (identical(a, b) && a != null) {
       return a;
     }
@@ -136,17 +139,17 @@ class SelectTabBarTheme with Diagnosticable {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        padding,
-        selectedColor,
-        labelStyle,
-        selectedLabelStyle,
-        indicatorColor,
-        indicatorHeight,
-        indicatorPadding,
-        indicatorSize,
-        indicatorAnimationDuration,
-      );
+    backgroundColor,
+    padding,
+    selectedColor,
+    labelStyle,
+    selectedLabelStyle,
+    indicatorColor,
+    indicatorHeight,
+    indicatorPadding,
+    indicatorSize,
+    indicatorAnimationDuration,
+  );
 
   @override
   bool operator ==(Object other) {

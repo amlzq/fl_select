@@ -11,10 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 Widget _harness(SelectDelegate delegate) {
   return MaterialApp(
     home: Scaffold(
-      body: SelectView(
-        delegate: delegate,
-        onChanged: (_) {},
-      ),
+      body: SelectView(delegate: delegate, onChanged: (_) {}),
     ),
   );
 }
@@ -22,58 +19,62 @@ Widget _harness(SelectDelegate delegate) {
 void main() {
   group('ExpandableSelectDelegate list tiles', () {
     testWidgets(
-        'category without an explicit selectionMode inherits the delegate '
-        'multiple mode and renders checkbox tiles', (tester) async {
-      await tester.pumpWidget(
-        _harness(
-          ExpandableSelectDelegate(
-            defaultLayout: const SelectListLayout(),
-            selectionMode: SelectionMode.multiple,
-            entries: {
-              SelectCategoryEntry<dynamic>.children(
-                id: 'inherit',
-                name: 'Inherit',
-                children: {
-                  SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
-                  SelectTextEntry<dynamic>.name(id: 'b', name: 'Item B'),
-                },
-              ),
-            },
+      'category without an explicit selectionMode inherits the delegate '
+      'multiple mode and renders checkbox tiles',
+      (tester) async {
+        await tester.pumpWidget(
+          _harness(
+            ExpandableSelectDelegate(
+              defaultLayout: const SelectListLayout(),
+              selectionMode: SelectionMode.multiple,
+              entries: {
+                SelectCategoryEntry<dynamic>.children(
+                  id: 'inherit',
+                  name: 'Inherit',
+                  children: {
+                    SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
+                    SelectTextEntry<dynamic>.name(id: 'b', name: 'Item B'),
+                  },
+                ),
+              },
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.byType(SelectCheckboxListTile), findsNWidgets(2));
-      expect(find.byType(SelectRadioListTile), findsNothing);
-    });
+        expect(find.byType(SelectCheckboxListTile), findsNWidgets(2));
+        expect(find.byType(SelectRadioListTile), findsNothing);
+      },
+    );
 
     testWidgets(
-        'category-level single override renders radio tiles even when the '
-        'delegate mode is multiple', (tester) async {
-      await tester.pumpWidget(
-        _harness(
-          ExpandableSelectDelegate(
-            defaultLayout: const SelectListLayout(),
-            selectionMode: SelectionMode.multiple,
-            entries: {
-              SelectCategoryEntry<dynamic>.children(
-                id: 'single',
-                name: 'Single',
-                selectionMode: SelectionMode.single,
-                children: {
-                  SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
-                },
-              ),
-            },
+      'category-level single override renders radio tiles even when the '
+      'delegate mode is multiple',
+      (tester) async {
+        await tester.pumpWidget(
+          _harness(
+            ExpandableSelectDelegate(
+              defaultLayout: const SelectListLayout(),
+              selectionMode: SelectionMode.multiple,
+              entries: {
+                SelectCategoryEntry<dynamic>.children(
+                  id: 'single',
+                  name: 'Single',
+                  selectionMode: SelectionMode.single,
+                  children: {
+                    SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
+                  },
+                ),
+              },
+            ),
           ),
-        ),
-      );
-      await tester.pumpAndSettle();
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.byType(SelectRadioListTile), findsOneWidget);
-      expect(find.byType(SelectCheckboxListTile), findsNothing);
-    });
+        expect(find.byType(SelectRadioListTile), findsOneWidget);
+        expect(find.byType(SelectCheckboxListTile), findsNothing);
+      },
+    );
   });
 
   group('ListSelectDelegate list tiles', () {
@@ -100,9 +101,7 @@ void main() {
         _harness(
           ListSelectDelegate(
             selectionMode: SelectionMode.single,
-            entries: {
-              SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
-            },
+            entries: {SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A')},
           ),
         ),
       );

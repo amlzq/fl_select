@@ -89,7 +89,10 @@ class SelectListTileTheme with Diagnosticable {
 
   /// Linearly interpolates between two list tile themes.
   static SelectListTileTheme lerp(
-      SelectListTileTheme? a, SelectListTileTheme? b, double t) {
+    SelectListTileTheme? a,
+    SelectListTileTheme? b,
+    double t,
+  ) {
     if (identical(a, b) && a != null) {
       return a;
     }
@@ -97,8 +100,11 @@ class SelectListTileTheme with Diagnosticable {
       selectedColor: Color.lerp(a?.selectedColor, b?.selectedColor, t),
       textColor: Color.lerp(a?.textColor, b?.textColor, t),
       tileColor: Color.lerp(a?.tileColor, b?.tileColor, t),
-      selectedTileColor:
-          Color.lerp(a?.selectedTileColor, b?.selectedTileColor, t),
+      selectedTileColor: Color.lerp(
+        a?.selectedTileColor,
+        b?.selectedTileColor,
+        t,
+      ),
       labelStyle: TextStyle.lerp(a?.labelStyle, b?.labelStyle, t),
       sublabelStyle: TextStyle.lerp(a?.sublabelStyle, b?.sublabelStyle, t),
       radioBuilder: t < 0.5 ? a?.radioBuilder : b?.radioBuilder,
@@ -108,15 +114,15 @@ class SelectListTileTheme with Diagnosticable {
 
   @override
   int get hashCode => Object.hash(
-        selectedColor,
-        textColor,
-        tileColor,
-        selectedTileColor,
-        labelStyle,
-        sublabelStyle,
-        radioBuilder,
-        checkboxBuilder,
-      );
+    selectedColor,
+    textColor,
+    tileColor,
+    selectedTileColor,
+    labelStyle,
+    sublabelStyle,
+    radioBuilder,
+    checkboxBuilder,
+  );
 
   @override
   bool operator ==(Object other) {

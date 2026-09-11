@@ -85,17 +85,17 @@ class PopupSelectBarTheme extends ThemeExtension<PopupSelectBarTheme> {
 
   @override
   int get hashCode => Object.hash(
-        height,
-        backgroundColor,
-        labelColor,
-        labelStyle,
-        unselectedLabelColor,
-        unselectedLabelStyle,
-        indicator,
-        unselectedIndicator,
-        overlayStyle,
-        selectTheme,
-      );
+    height,
+    backgroundColor,
+    labelColor,
+    labelStyle,
+    unselectedLabelColor,
+    unselectedLabelStyle,
+    indicator,
+    unselectedIndicator,
+    overlayStyle,
+    selectTheme,
+  );
 
   @override
   bool operator ==(Object other) {
@@ -120,7 +120,9 @@ class PopupSelectBarTheme extends ThemeExtension<PopupSelectBarTheme> {
 
   @override
   ThemeExtension<PopupSelectBarTheme> lerp(
-      covariant ThemeExtension<PopupSelectBarTheme>? other, double t) {
+    covariant ThemeExtension<PopupSelectBarTheme>? other,
+    double t,
+  ) {
     if (other is! PopupSelectBarTheme) {
       return this;
     }
@@ -128,15 +130,21 @@ class PopupSelectBarTheme extends ThemeExtension<PopupSelectBarTheme> {
       height: height != null && other.height != null
           ? height! + (other.height! - height!) * t
           : t < 0.5
-              ? height
-              : other.height,
+          ? height
+          : other.height,
       backgroundColor: Color.lerp(backgroundColor, other.backgroundColor, t),
       labelColor: Color.lerp(labelColor, other.labelColor, t),
       labelStyle: TextStyle.lerp(labelStyle, other.labelStyle, t),
-      unselectedLabelColor:
-          Color.lerp(unselectedLabelColor, other.unselectedLabelColor, t),
-      unselectedLabelStyle:
-          TextStyle.lerp(unselectedLabelStyle, other.unselectedLabelStyle, t),
+      unselectedLabelColor: Color.lerp(
+        unselectedLabelColor,
+        other.unselectedLabelColor,
+        t,
+      ),
+      unselectedLabelStyle: TextStyle.lerp(
+        unselectedLabelStyle,
+        other.unselectedLabelStyle,
+        t,
+      ),
       indicator: indicator,
       unselectedIndicator: unselectedIndicator,
       overlayStyle: overlayStyle,

@@ -267,7 +267,8 @@ class _SelectChipBarState extends State<SelectChipBar>
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
               child: DefaultTextStyle.merge(
-                style: Theme.of(context).textTheme.titleSmall ??
+                style:
+                    Theme.of(context).textTheme.titleSmall ??
                     const TextStyle(fontSize: 16),
                 child: Text(category?.name ?? ''),
               ),
@@ -283,7 +284,8 @@ class _SelectChipBarState extends State<SelectChipBar>
           Padding(
             padding: const EdgeInsets.only(right: 10),
             child: DefaultTextStyle.merge(
-              style: Theme.of(context).textTheme.titleSmall ??
+              style:
+                  Theme.of(context).textTheme.titleSmall ??
                   const TextStyle(fontSize: 16),
               child: Text(category?.name ?? ''),
             ),
@@ -368,8 +370,9 @@ class _SelectChipBarState extends State<SelectChipBar>
         physics: const ClampingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         child: Row(
-          children: buildChipChildren(style)
-              .separateWith(SizedBox(width: widget.spacing)),
+          children: buildChipChildren(
+            style,
+          ).separateWith(SizedBox(width: widget.spacing)),
         ),
       ),
     );
@@ -521,9 +524,7 @@ class SelectChipBarSkeleton extends StatelessWidget {
       padding: EdgeInsets.zero,
       physics: const ClampingScrollPhysics(),
       scrollDirection: Axis.horizontal,
-      child: Row(
-        children: chips.separateWith(SizedBox(width: spacing)),
-      ),
+      child: Row(children: chips.separateWith(SizedBox(width: spacing))),
     );
 
     // ignore: deprecated_member_use_from_same_package

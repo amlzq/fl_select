@@ -140,8 +140,9 @@ void main() {
       expect(captured!.start, greaterThan(20));
     });
 
-    testWidgets('emits onChangeEnd with snap-to-step when divisions set',
-        (tester) async {
+    testWidgets('emits onChangeEnd with snap-to-step when divisions set', (
+      tester,
+    ) async {
       RangeValues? changeEnd;
       const divisions = 10; // step = (100-0)/10 = 10
       await tester.pumpWidget(
@@ -170,12 +171,16 @@ void main() {
       // Snapped end should be a multiple of 10.
       final end = changeEnd!.end;
       final rounded = (end / 10).round() * 10;
-      expect((end - rounded).abs() < 0.5, isTrue,
-          reason: 'snapped end ($end) should be near a multiple of 10');
+      expect(
+        (end - rounded).abs() < 0.5,
+        isTrue,
+        reason: 'snapped end ($end) should be near a multiple of 10',
+      );
     });
 
-    testWidgets('snaps onChanged values to steps while dragging',
-        (tester) async {
+    testWidgets('snaps onChanged values to steps while dragging', (
+      tester,
+    ) async {
       final captured = <RangeValues>[];
       const divisions = 10; // step = (100-0)/10 = 10
       await tester.pumpWidget(
@@ -206,55 +211,66 @@ void main() {
       await tester.pumpAndSettle();
       expect(captured, isNotEmpty);
       for (final v in captured) {
-        expect((v.start % divisions).abs(), lessThan(0.5),
-            reason: 'start ${v.start} should be a multiple of $divisions');
-        expect((v.end % divisions).abs(), lessThan(0.5),
-            reason: 'end ${v.end} should be a multiple of $divisions');
+        expect(
+          (v.start % divisions).abs(),
+          lessThan(0.5),
+          reason: 'start ${v.start} should be a multiple of $divisions',
+        );
+        expect(
+          (v.end % divisions).abs(),
+          lessThan(0.5),
+          reason: 'end ${v.end} should be a multiple of $divisions',
+        );
       }
     });
 
     testWidgets(
-        'tracks the finger with many small moves (no sticky resistance)',
-        (tester) async {
-      final captured = <RangeValues>[];
-      const divisions = 10; // step = (100-0)/10 = 10
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SizedBox(
-              width: 300,
-              child: SelectRangeSlider(
-                min: 0,
-                max: 100,
-                values: const RangeValues(20, 80),
-                divisions: divisions,
-                onChanged: captured.add,
+      'tracks the finger with many small moves (no sticky resistance)',
+      (tester) async {
+        final captured = <RangeValues>[];
+        const divisions = 10; // step = (100-0)/10 = 10
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SizedBox(
+                width: 300,
+                child: SelectRangeSlider(
+                  min: 0,
+                  max: 100,
+                  values: const RangeValues(20, 80),
+                  divisions: divisions,
+                  onChanged: captured.add,
+                ),
               ),
             ),
           ),
-        ),
-      );
-      // Drag the left thumb with many *tiny* moves. If the value were
-      // accumulated on top of an already-snapped base, each sub-step move
-      // would round back and the thumb would feel stuck (resistant). It must
-      // instead advance proportionally to the total finger travel.
-      final center = tester.getCenter(find.byType(SelectRangeSlider));
-      final gesture = await tester.startGesture(center);
-      for (var i = 0; i < 30; i++) {
-        await gesture.moveBy(const Offset(1, 0));
-        await tester.pump(const Duration(milliseconds: 16));
-      }
-      await gesture.up();
-      await tester.pumpAndSettle();
-      // ~30px of travel maps to roughly one step (10) of value; the final
-      // start value must have advanced well past the original 20.
-      final last = captured.last;
-      expect(last.start, greaterThan(20),
-          reason: 'thumb should track total finger travel, got ${last.start}');
-    });
+        );
+        // Drag the left thumb with many *tiny* moves. If the value were
+        // accumulated on top of an already-snapped base, each sub-step move
+        // would round back and the thumb would feel stuck (resistant). It must
+        // instead advance proportionally to the total finger travel.
+        final center = tester.getCenter(find.byType(SelectRangeSlider));
+        final gesture = await tester.startGesture(center);
+        for (var i = 0; i < 30; i++) {
+          await gesture.moveBy(const Offset(1, 0));
+          await tester.pump(const Duration(milliseconds: 16));
+        }
+        await gesture.up();
+        await tester.pumpAndSettle();
+        // ~30px of travel maps to roughly one step (10) of value; the final
+        // start value must have advanced well past the original 20.
+        final last = captured.last;
+        expect(
+          last.start,
+          greaterThan(20),
+          reason: 'thumb should track total finger travel, got ${last.start}',
+        );
+      },
+    );
 
-    testWidgets('thumbs align with the track ends at the extremes',
-        (tester) async {
+    testWidgets('thumbs align with the track ends at the extremes', (
+      tester,
+    ) async {
       const radius = 10.0;
       await tester.pumpWidget(
         const MaterialApp(
@@ -287,8 +303,9 @@ void main() {
       expect((rects.last.right - sliderRight).abs(), lessThan(0.5));
     });
 
-    testWidgets('enlarges the pressed thumb by 1.25x while dragging',
-        (tester) async {
+    testWidgets('enlarges the pressed thumb by 1.25x while dragging', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Scaffold(
@@ -351,8 +368,9 @@ void main() {
   });
 
   group('SelectRangeView', () {
-    testWidgets('renders the category name as title when showTitle is true',
-        (tester) async {
+    testWidgets('renders the category name as title when showTitle is true', (
+      tester,
+    ) async {
       final category = SelectCategoryEntry<dynamic>(
         id: 'price',
         name: 'Price range',
@@ -480,8 +498,9 @@ void main() {
       expect(tester.widget<TextField>(minField).controller!.text, '250');
     });
 
-    testWidgets('shows the min/max labels parsed from the range entry name',
-        (tester) async {
+    testWidgets('shows the min/max labels parsed from the range entry name', (
+      tester,
+    ) async {
       final rangeEntry = SelectIntEntry<dynamic>(
         parentId: 'price',
         id: 'range',
@@ -586,9 +605,7 @@ void main() {
         max: 100,
         divisions: 10,
       );
-      final customEntry = SelectIntEntry<dynamic>.custom(
-        parentId: 'price',
-      );
+      final customEntry = SelectIntEntry<dynamic>.custom(parentId: 'price');
       final category = SelectCategoryEntry<dynamic>(
         id: 'price',
         name: 'Price',
@@ -628,8 +645,11 @@ void main() {
         of: find.byType(SelectRangeSlider),
         matching: find.byType(GestureDetector),
       );
-      expect(gestures, findsOneWidget,
-          reason: 'the inner slider should expose a gesture detector');
+      expect(
+        gestures,
+        findsOneWidget,
+        reason: 'the inner slider should expose a gesture detector',
+      );
       final gestureCenter = tester.getCenter(gestures);
       final gesture = await tester.startGesture(gestureCenter);
       for (var i = 0; i < 5; i++) {
@@ -646,8 +666,9 @@ void main() {
       expect(lastMax, isNull);
     });
 
-    testWidgets('keeps field text after a parent rebuild (didUpdateWidget)',
-        (tester) async {
+    testWidgets('keeps field text after a parent rebuild (didUpdateWidget)', (
+      tester,
+    ) async {
       final rangeEntry = SelectIntEntry<dynamic>(
         parentId: 'price',
         id: 'range',
@@ -772,8 +793,9 @@ void main() {
       );
     });
 
-    testWidgets('does not move the slider until a field is committed',
-        (tester) async {
+    testWidgets('does not move the slider until a field is committed', (
+      tester,
+    ) async {
       final rangeEntry = SelectIntEntry<dynamic>(
         parentId: 'price',
         id: 'range',
@@ -831,60 +853,64 @@ void main() {
       );
     });
 
-    testWidgets('swaps bounds when the max field is typed below the min field',
-        (tester) async {
-      final rangeEntry = SelectIntEntry<dynamic>(
-        parentId: 'price',
-        id: 'range',
-        name: '',
-        min: 0,
-        max: 1000,
-      );
-      final customEntry = SelectIntEntry<dynamic>.custom(
-        parentId: 'price',
-        minHintText: 'No min',
-        maxHintText: 'No max',
-      );
-      final category = SelectCategoryEntry<dynamic>(
-        id: 'price',
-        name: 'Price',
-        selectionMode: SelectionMode.single,
-        children: {rangeEntry, customEntry},
-        layout: const SelectRangeLayout(),
-      );
-      await tester.pumpWidget(
-        MaterialApp(
-          home: Scaffold(
-            body: SelectRangeView(
-              category: category,
-              entries: category.children!.toList(),
-              selectedEntries: const <SelectEntry>{},
-              toText: const SelectRangeLayout().toText,
-              onChanged: (_, __) {},
+    testWidgets(
+      'swaps bounds when the max field is typed below the min field',
+      (tester) async {
+        final rangeEntry = SelectIntEntry<dynamic>(
+          parentId: 'price',
+          id: 'range',
+          name: '',
+          min: 0,
+          max: 1000,
+        );
+        final customEntry = SelectIntEntry<dynamic>.custom(
+          parentId: 'price',
+          minHintText: 'No min',
+          maxHintText: 'No max',
+        );
+        final category = SelectCategoryEntry<dynamic>(
+          id: 'price',
+          name: 'Price',
+          selectionMode: SelectionMode.single,
+          children: {rangeEntry, customEntry},
+          layout: const SelectRangeLayout(),
+        );
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SelectRangeView(
+                category: category,
+                entries: category.children!.toList(),
+                selectedEntries: const <SelectEntry>{},
+                toText: const SelectRangeLayout().toText,
+                onChanged: (_, __) {},
+              ),
             ),
           ),
-        ),
-      );
-      final fields = find.byType(TextField);
-      final minField = fields.first;
-      final maxField = fields.last;
+        );
+        final fields = find.byType(TextField);
+        final minField = fields.first;
+        final maxField = fields.last;
 
-      await tester.enterText(minField, '100');
-      await tester.testTextInput.receiveAction(TextInputAction.done);
-      await tester.pumpAndSettle();
+        await tester.enterText(minField, '100');
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pumpAndSettle();
 
-      await tester.enterText(maxField, '50');
-      await tester.testTextInput.receiveAction(TextInputAction.done);
-      await tester.pumpAndSettle();
+        await tester.enterText(maxField, '50');
+        await tester.testTextInput.receiveAction(TextInputAction.done);
+        await tester.pumpAndSettle();
 
-      // The typed max (50) is below the min (100) => the bounds auto-swap.
-      expect(
-        tester.widget<SelectRangeSlider>(find.byType(SelectRangeSlider)).values,
-        const RangeValues(50, 100),
-      );
-      expect(tester.widget<TextField>(minField).controller!.text, '50');
-      expect(tester.widget<TextField>(maxField).controller!.text, '100');
-    });
+        // The typed max (50) is below the min (100) => the bounds auto-swap.
+        expect(
+          tester
+              .widget<SelectRangeSlider>(find.byType(SelectRangeSlider))
+              .values,
+          const RangeValues(50, 100),
+        );
+        expect(tester.widget<TextField>(minField).controller!.text, '50');
+        expect(tester.widget<TextField>(maxField).controller!.text, '100');
+      },
+    );
   });
 }
 

@@ -96,8 +96,11 @@ class SideNavSelectState extends State<SideNavSelect> {
   bool get _isSearching => widget.searchQuery.isNotEmpty;
 
   List<SelectEntry> get _displayEntries => _isSearching
-      ? filterEntriesForSearch(widget.entries, widget.searchQuery,
-          predicate: widget.searchPredicate)
+      ? filterEntriesForSearch(
+          widget.entries,
+          widget.searchQuery,
+          predicate: widget.searchPredicate,
+        )
       : widget.entries;
 
   @override
@@ -120,8 +123,9 @@ class SideNavSelectState extends State<SideNavSelect> {
     // Clamp the focused category index when search results reduce the number
     // of categories.
     if (_focusedCategoryIndex >= _displayEntries.length) {
-      _focusedCategoryIndex =
-          _displayEntries.isEmpty ? 0 : _displayEntries.length - 1;
+      _focusedCategoryIndex = _displayEntries.isEmpty
+          ? 0
+          : _displayEntries.length - 1;
     }
   }
 
@@ -254,35 +258,37 @@ class SideNavSelectState extends State<SideNavSelect> {
     // inflated. The estimate is biased low, so the aligning animation that
     // follows only ever continues in the same direction instead of
     // overshooting and bouncing back.
-    final position =
-        _scrollController.hasClients ? _scrollController.position : null;
+    final position = _scrollController.hasClients
+        ? _scrollController.position
+        : null;
     if (position == null || !position.hasContentDimensions) return;
 
-    final target = ((position.maxScrollExtent + position.viewportDimension) *
-            index /
-            _displayEntries.length)
-        .clamp(0.0, position.maxScrollExtent)
-        .toDouble();
+    final target =
+        ((position.maxScrollExtent + position.viewportDimension) *
+                index /
+                _displayEntries.length)
+            .clamp(0.0, position.maxScrollExtent)
+            .toDouble();
 
     _isScrollingProgrammatically = true;
     position
         .animateTo(
-      target,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    )
+          target,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        )
         .then((_) {
-      if (!mounted) return;
-      final element = _findChildElement(
-        _scrollViewKey.currentContext!.findRenderObject()!,
-        sectionKey,
-      );
-      if (element != null) {
-        _animateToElement(element);
-      } else {
-        _isScrollingProgrammatically = false;
-      }
-    });
+          if (!mounted) return;
+          final element = _findChildElement(
+            _scrollViewKey.currentContext!.findRenderObject()!,
+            sectionKey,
+          );
+          if (element != null) {
+            _animateToElement(element);
+          } else {
+            _isScrollingProgrammatically = false;
+          }
+        });
   }
 
   /// Animates the right column so [targetElement]'s section box (including
@@ -307,8 +313,9 @@ class SideNavSelectState extends State<SideNavSelect> {
   /// after the animation completes, or immediately if it fails.
   void _animateToElement(Element targetElement) {
     final renderObject = targetElement.renderObject;
-    final position =
-        _scrollController.hasClients ? _scrollController.position : null;
+    final position = _scrollController.hasClients
+        ? _scrollController.position
+        : null;
     if (renderObject == null || !renderObject.attached) return;
     if (position == null || !position.hasContentDimensions) return;
 
@@ -326,29 +333,31 @@ class SideNavSelectState extends State<SideNavSelect> {
 
     position
         .animateTo(
-      target,
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-    )
+          target,
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeInOut,
+        )
         .then((_) {
-      // After scrolling ends, reset the flag with a short delay
-      if (!mounted) return;
-      Future.delayed(const Duration(milliseconds: 100), () {
-        if (mounted) {
-          _isScrollingProgrammatically = false;
-        }
-      });
-    }).catchError((error) {
-      // Handle any errors during scrolling
-      if (mounted) {
-        _isScrollingProgrammatically = false;
-      }
-    });
+          // After scrolling ends, reset the flag with a short delay
+          if (!mounted) return;
+          Future.delayed(const Duration(milliseconds: 100), () {
+            if (mounted) {
+              _isScrollingProgrammatically = false;
+            }
+          });
+        })
+        .catchError((error) {
+          // Handle any errors during scrolling
+          if (mounted) {
+            _isScrollingProgrammatically = false;
+          }
+        });
   }
 
   void _onTerminalItemTap(SelectChildEntry item) {
-    final categoryEntry =
-        widget.entries.singleWhereOrNull((e) => e.id == item.parentId);
+    final categoryEntry = widget.entries.singleWhereOrNull(
+      (e) => e.id == item.parentId,
+    );
     if (categoryEntry is! SelectCategoryEntry) {
       assert(() {
         debugPrint(
@@ -409,14 +418,11 @@ class SideNavSelectState extends State<SideNavSelect> {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
       child: DefaultTextStyle.merge(
-        style: Theme.of(context)
-                .textTheme
-                .titleSmall
-                ?.copyWith(fontWeight: FontWeight.w600) ??
-            const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-            ),
+        style:
+            Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600) ??
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         child: Text(name),
       ),
     );
@@ -519,8 +525,12 @@ class SideNavSelectState extends State<SideNavSelect> {
                         spacing: 12.0,
                         runSpacing: 12.0,
                         onChanged: (index, entry) =>
-                            _onHeaderOrFooterItemTap.call(category, true, index,
-                                entry as SelectChildEntry),
+                            _onHeaderOrFooterItemTap.call(
+                              category,
+                              true,
+                              index,
+                              entry as SelectChildEntry,
+                            ),
                       ),
                     ),
                   view,
@@ -535,8 +545,12 @@ class SideNavSelectState extends State<SideNavSelect> {
                         spacing: 12.0,
                         runSpacing: 12.0,
                         onChanged: (index, entry) =>
-                            _onHeaderOrFooterItemTap.call(category, false,
-                                index, entry as SelectChildEntry),
+                            _onHeaderOrFooterItemTap.call(
+                              category,
+                              false,
+                              index,
+                              entry as SelectChildEntry,
+                            ),
                       ),
                     ),
                 ],
@@ -550,19 +564,20 @@ class SideNavSelectState extends State<SideNavSelect> {
   Widget build(BuildContext context) {
     final theme = SelectTheme.of(context);
 
-    final actionBar = controller?.hasMultipleMode == true &&
+    final actionBar =
+        controller?.hasMultipleMode == true &&
             !SelectActionBarVisibility.isHidden(context)
         ? (delegate.actionBarBuilder?.call(
-              context,
-              onResetTap: _onResetTap,
-              onApplyTap: _onApplyTap,
-            ) ??
-            SelectActionBar(
-              resetText: delegate.resetText,
-              applyText: delegate.applyText,
-              onResetTap: _onResetTap,
-              onApplyTap: _onApplyTap,
-            ))
+                context,
+                onResetTap: _onResetTap,
+                onApplyTap: _onApplyTap,
+              ) ??
+              SelectActionBar(
+                resetText: delegate.resetText,
+                applyText: delegate.applyText,
+                onResetTap: _onResetTap,
+                onApplyTap: _onApplyTap,
+              ))
         : null;
 
     // A category badge should only appear when it has a "real" selection,

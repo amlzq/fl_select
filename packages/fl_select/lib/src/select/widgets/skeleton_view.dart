@@ -52,14 +52,8 @@ class _SkeletonViewState extends State<SkeletonView>
   @override
   void initState() {
     super.initState();
-    controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
-    curvedAnimation = CurvedAnimation(
-      parent: controller,
-      curve: Curves.linear,
-    );
+    controller = AnimationController(duration: widget.duration, vsync: this);
+    curvedAnimation = CurvedAnimation(parent: controller, curve: Curves.linear);
     gradientPosition = Tween<double>(
       begin: -3,
       end: 10,
@@ -99,7 +93,8 @@ class _SkeletonViewState extends State<SkeletonView>
             return LinearGradient(
               begin: Alignment(gradientPosition?.value ?? 0, 0),
               end: const Alignment(-1, 0),
-              colors: widget.colors ??
+              colors:
+                  widget.colors ??
                   const [
                     Color(0x05FFFFFF),
                     Color(0x80FFFFFF),
@@ -167,9 +162,10 @@ class SkeletonTile extends StatelessWidget {
     var effectiveWidth = width;
     if (random != null) {
       final screenHalfWidth = (MediaQuery.sizeOf(context).width ~/ 2).toInt();
-      effectiveWidth = (random!.nextInt(screenHalfWidth - widthUsed.toInt()) +
-              screenHalfWidth)
-          .toDouble();
+      effectiveWidth =
+          (random!.nextInt(screenHalfWidth - widthUsed.toInt()) +
+                  screenHalfWidth)
+              .toDouble();
     }
     return Align(
       alignment: Alignment.centerLeft,

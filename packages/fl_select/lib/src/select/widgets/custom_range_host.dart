@@ -111,9 +111,9 @@ mixin CustomRangeHost<T extends StatefulWidget> on State<T> {
     _syncCustomEntries();
     _restoreCustomSelectionToInputs();
 
-    final oldHadCustom = oldSelectedEntries
-        .whereType<SelectRangeEntry>()
-        .any((e) => e.isOwnCustomOf(customRangeCategory));
+    final oldHadCustom = oldSelectedEntries.whereType<SelectRangeEntry>().any(
+      (e) => e.isOwnCustomOf(customRangeCategory),
+    );
     final newHasCustom = customRangeSelectedEntries
         .whereType<SelectRangeEntry>()
         .any((e) => e.isOwnCustomOf(customRangeCategory));

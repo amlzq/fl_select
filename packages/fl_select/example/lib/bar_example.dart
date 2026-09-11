@@ -84,10 +84,7 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                   },
                 ),
                 SideNavSelectDelegate(
-                  defaultLayout: SelectWrapLayout(
-                    spacing: 12,
-                    runSpacing: 12,
-                  ),
+                  defaultLayout: SelectWrapLayout(spacing: 12, runSpacing: 12),
                   entries: multiCategoryData,
                   selectionMode: SelectionMode.multiple,
                   searchEnabled: true,
@@ -114,7 +111,8 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                 } else {
                   largePrint('toQueryMap: ${selected.toQueryMap()}');
                   largePrint(
-                      'toQueryParameters: ${selected.toQueryParameters()}');
+                    'toQueryParameters: ${selected.toQueryParameters()}',
+                  );
                 }
               },
             ),
@@ -191,7 +189,8 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                   } else {
                     largePrint('toQueryMap: ${selected.toQueryMap()}');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters()}');
+                      'toQueryParameters: ${selected.toQueryParameters()}',
+                    );
                   }
                 },
               ),
@@ -213,10 +212,7 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                   crossAxisSpacing: 10,
                 ),
                 SideNavSelectDelegate(
-                  defaultLayout: SelectWrapLayout(
-                    spacing: 12,
-                    runSpacing: 12,
-                  ),
+                  defaultLayout: SelectWrapLayout(spacing: 12, runSpacing: 12),
                   entries: multiCategoryData,
                   selectionMode: SelectionMode.multiple,
                   searchEnabled: true,
@@ -244,7 +240,8 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                 } else {
                   largePrint('toQueryMap: ${selected.toQueryMap()}');
                   largePrint(
-                      'toQueryParameters: ${selected.toQueryParameters()}');
+                    'toQueryParameters: ${selected.toQueryParameters()}',
+                  );
                 }
               },
             ),

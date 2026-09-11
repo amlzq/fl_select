@@ -25,8 +25,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: ListSelectDelegate(
                     entries: listData,
                     // searchEnabled: true,
@@ -46,15 +48,26 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: ListSelectDelegate(
                     entries: listData,
-                    itemBuilder: (context, entry,
-                        {required selected, required onTap, categoryId}) {
-                      return MyListItem(
-                          entry: entry, selected: selected, onTap: onTap);
-                    },
+                    itemBuilder:
+                        (
+                          context,
+                          entry, {
+                          required selected,
+                          required onTap,
+                          categoryId,
+                        }) {
+                          return MyListItem(
+                            entry: entry,
+                            selected: selected,
+                            onTap: onTap,
+                          );
+                        },
                     // searchEnabled: true,
                     // searchPredicate: (entry, query) {
                     //   return entry.name?.contains(query) == true;
@@ -72,8 +85,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: GridSelectDelegate(
                     entries: gridData,
                     crossAxisCount: 3,
@@ -99,19 +114,30 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: GridSelectDelegate(
                     entries: gridData,
                     crossAxisCount: 3,
                     childAspectRatio: 3,
                     mainAxisSpacing: 10,
                     crossAxisSpacing: 10,
-                    itemBuilder: (context, entry,
-                        {required onTap, required selected, categoryId}) {
-                      return MyGridItem(
-                          entry: entry, selected: selected, onTap: onTap);
-                    },
+                    itemBuilder:
+                        (
+                          context,
+                          entry, {
+                          required onTap,
+                          required selected,
+                          categoryId,
+                        }) {
+                          return MyGridItem(
+                            entry: entry,
+                            selected: selected,
+                            onTap: onTap,
+                          );
+                        },
                     gridTileTheme: const SelectGridTileTheme(
                       variant: SelectGridTileVariant.outlined,
                     ),
@@ -131,8 +157,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: WrapSelectDelegate(
                     entries: wrapData,
                     selectionMode: SelectionMode.multiple,
@@ -152,18 +180,29 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: WrapSelectDelegate(
                     entries: wrapData,
                     selectionMode: SelectionMode.multiple,
                     spacing: 12.0,
                     runSpacing: 12.0,
-                    itemBuilder: (context, entry,
-                        {required onTap, required selected, categoryId}) {
-                      return MyWrapItem(
-                          entry: entry, selected: selected, onTap: onTap);
-                    },
+                    itemBuilder:
+                        (
+                          context,
+                          entry, {
+                          required onTap,
+                          required selected,
+                          categoryId,
+                        }) {
+                          return MyWrapItem(
+                            entry: entry,
+                            selected: selected,
+                            onTap: onTap,
+                          );
+                        },
                     sideBarTheme: const SelectSideBarTheme(width: 90),
                   ),
                   onChanged: (SelectEntries selected) {
@@ -178,8 +217,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: CascadingSelectDelegate(
                     entriesLoader: fetchCascadingData,
                     selectionMode: SelectionMode.multiple,
@@ -199,7 +240,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters()}');
+                      'toQueryParameters: ${selected.toQueryParameters()}',
+                    );
                     showSelectResult(context, selected);
                   },
                 ),
@@ -209,8 +251,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: CascadingSelectDelegate(
                     entries: {
                       SelectCategoryEntry(
@@ -255,7 +299,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters()}');
+                      'toQueryParameters: ${selected.toQueryParameters()}',
+                    );
                     showSelectResult(context, selected);
                   },
                 ),
@@ -265,8 +310,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: TabNavSelectDelegate(
                     defaultLayout: SelectGridLayout(
                       crossAxisCount: 3,
@@ -286,7 +333,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters()}');
+                      'toQueryParameters: ${selected.toQueryParameters()}',
+                    );
                     showSelectResult(context, selected);
                   },
                 ),
@@ -296,8 +344,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: TabNavSelectDelegate(
                     defaultLayout: SelectGridLayout(
                       crossAxisCount: 3,
@@ -343,7 +393,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters()}');
+                      'toQueryParameters: ${selected.toQueryParameters()}',
+                    );
                     showSelectResult(context, selected);
                   },
                 ),
@@ -353,8 +404,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: SideNavSelectDelegate(
                     defaultLayout: SelectWrapLayout(
                       spacing: 12,
@@ -367,7 +420,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters()}');
+                      'toQueryParameters: ${selected.toQueryParameters()}',
+                    );
                     showSelectResult(context, selected);
                   },
                 ),
@@ -377,8 +431,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: SideNavSelectDelegate(
                     defaultLayout: SelectWrapLayout(
                       spacing: 12,
@@ -417,7 +473,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters()}');
+                      'toQueryParameters: ${selected.toQueryParameters()}',
+                    );
                     showSelectResult(context, selected);
                   },
                 ),
@@ -427,8 +484,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: ExpandableSelectDelegate(
                     defaultLayout: SelectListLayout(),
                     entries: multiCategoryData,
@@ -440,7 +499,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters()}');
+                      'toQueryParameters: ${selected.toQueryParameters()}',
+                    );
                     showSelectResult(context, selected);
                   },
                 ),
@@ -450,8 +510,10 @@ class SelectViewExamplePage extends StatelessWidget {
                   style: TextStyle(fontSize: 18),
                 ),
                 SelectView(
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 10,
+                  ),
                   delegate: ExpandableSelectDelegate(
                     defaultLayout: SelectListLayout(),
                     entries: {
@@ -489,7 +551,8 @@ class SelectViewExamplePage extends StatelessWidget {
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
                     largePrint(
-                        'toQueryParameters: ${selected.toQueryParameters()}');
+                      'toQueryParameters: ${selected.toQueryParameters()}',
+                    );
                     showSelectResult(context, selected);
                   },
                 ),

@@ -17,8 +17,8 @@ import 'select_overlay_style.dart';
 /// Default height for [PopupSelectBar] when no theme override is provided.
 const kPopupSelectBarHeight = 44.0;
 
-typedef PopupSelectBarWillToggleCallback = FutureOr<bool> Function(
-    PopupTabData tabData);
+typedef PopupSelectBarWillToggleCallback =
+    FutureOr<bool> Function(PopupTabData tabData);
 
 /// Callback parameter indicates which select is being shown or hidden.
 typedef PopupSelectBarToggleCallback = void Function(PopupTabData tabData);
@@ -26,8 +26,8 @@ typedef PopupSelectBarToggleCallback = void Function(PopupTabData tabData);
 /// Callback for selection change or apply events from a [PopupSelectBar].
 ///
 /// Receives the tab metadata and the selected entries directly.
-typedef PopupSelectBarResultCallback = void Function(
-    PopupTabData tabData, SelectEntries selected);
+typedef PopupSelectBarResultCallback =
+    void Function(PopupTabData tabData, SelectEntries selected);
 
 /// A tab bar that shows an overlay select panel when a tab is tapped.
 ///
@@ -248,15 +248,17 @@ class _PopupSelectBarState extends State<PopupSelectBar>
     if (_controller == null) {
       _controller = widget.controller ?? PopupSelectController();
       _controller!.addListener(_handlePopupSelectControllerTick);
-      _removeChangeListener =
-          _controller!.addChangeListener(_handleWidgetChange);
+      _removeChangeListener = _controller!.addChangeListener(
+        _handleWidgetChange,
+      );
       _removeApplyListener = _controller!.addApplyListener(_handleWidgetApply);
       _removeResetListener = _controller!.addResetListener(_handleWidgetReset);
     }
     _controller!.attachSelectDelegates(widget.selectDelegates);
     _controller!.attachTickerProvider(this);
     _controller!.attachScrollToTabHandler(
-        widget.isScrollable ? (int index) => _scrollToTab(index) : null);
+      widget.isScrollable ? (int index) => _scrollToTab(index) : null,
+    );
   }
 
   void _handlePopupSelectControllerTick() {
@@ -290,8 +292,8 @@ class _PopupSelectBarState extends State<PopupSelectBar>
       });
       return;
     }
-    final RenderObject? object =
-        _tabKeys[index]?.currentContext?.findRenderObject();
+    final RenderObject? object = _tabKeys[index]?.currentContext
+        ?.findRenderObject();
     if (object == null) return;
     await _scrollController.position.ensureVisible(
       object,
@@ -302,12 +304,14 @@ class _PopupSelectBarState extends State<PopupSelectBar>
   }
 
   void _handleWidgetChange(
-          SelectLabelState labelState, SelectEntries selected) =>
-      widget.onChanged?.call(labelState as PopupTabData, selected);
+    SelectLabelState labelState,
+    SelectEntries selected,
+  ) => widget.onChanged?.call(labelState as PopupTabData, selected);
 
   void _handleWidgetApply(
-          SelectLabelState labelState, SelectEntries selected) =>
-      widget.onApplied(labelState as PopupTabData, selected);
+    SelectLabelState labelState,
+    SelectEntries selected,
+  ) => widget.onApplied(labelState as PopupTabData, selected);
 
   void _handleWidgetReset() => widget.onReset?.call();
 
@@ -317,7 +321,8 @@ class _PopupSelectBarState extends State<PopupSelectBar>
     // Tapping a collapsed tab (or switching to a different one) will show the
     // overlay; tapping the already-expanded tab will hide it. Resolve the
     // intent before toggling so the matching pre-hook can run first.
-    final willShow = !_controller!.isSelectShowing ||
+    final willShow =
+        !_controller!.isSelectShowing ||
         _controller!.currentIndex != tabData.index;
 
     final proceed = willShow
@@ -394,7 +399,8 @@ class _PopupSelectBarState extends State<PopupSelectBar>
 
     _controller!.applyMultipleText = effectiveMultipleText;
 
-    final effectiveBackgroundColor = widget.backgroundColor ??
+    final effectiveBackgroundColor =
+        widget.backgroundColor ??
         theme?.backgroundColor ??
         defaults.backgroundColor!;
 
@@ -421,7 +427,8 @@ class _PopupSelectBarState extends State<PopupSelectBar>
                       indicator: widget.indicator,
                       unselectedIndicator: widget.unselectedIndicator,
                       child: _PopupSelectTabStyle(
-                        isSelected: (_controller?.isSelectShowing == true &&
+                        isSelected:
+                            (_controller?.isSelectShowing == true &&
                                 _controller!.currentIndex == i) ||
                             _controller?.labelStateMap[i]?.isResulted == true,
                         labelColor: widget.labelColor,
@@ -436,8 +443,9 @@ class _PopupSelectBarState extends State<PopupSelectBar>
               ];
 
               final row = Row(
-                mainAxisSize:
-                    widget.isScrollable ? MainAxisSize.min : MainAxisSize.max,
+                mainAxisSize: widget.isScrollable
+                    ? MainAxisSize.min
+                    : MainAxisSize.max,
                 children: widget.isScrollable
                     ? tabs
                     : tabs.map((t) => Expanded(child: t)).toList(),
@@ -448,8 +456,9 @@ class _PopupSelectBarState extends State<PopupSelectBar>
               }
 
               return ScrollConfiguration(
-                behavior:
-                    ScrollConfiguration.of(context).copyWith(overscroll: false),
+                behavior: ScrollConfiguration.of(
+                  context,
+                ).copyWith(overscroll: false),
                 child: SingleChildScrollView(
                   controller: _scrollController,
                   scrollDirection: Axis.horizontal,
@@ -487,7 +496,8 @@ class _PopupSelectTabStyle extends StatelessWidget {
   WidgetStateColor _resolveWithLabelColor(BuildContext context) {
     final PopupSelectBarTheme? theme = PopupSelectBarTheme.maybeOf(context);
 
-    Color selectedColor = labelColor ??
+    Color selectedColor =
+        labelColor ??
         theme?.labelColor ??
         labelStyle?.color ??
         theme?.labelStyle?.color ??
@@ -497,10 +507,12 @@ class _PopupSelectTabStyle extends StatelessWidget {
 
     if (selectedColor is WidgetStateColor) {
       unselectedColor = selectedColor.resolve(const <WidgetState>{});
-      selectedColor =
-          selectedColor.resolve(const <WidgetState>{WidgetState.selected});
+      selectedColor = selectedColor.resolve(const <WidgetState>{
+        WidgetState.selected,
+      });
     } else {
-      unselectedColor = unselectedLabelColor ??
+      unselectedColor =
+          unselectedLabelColor ??
           theme?.unselectedLabelColor ??
           unselectedLabelStyle?.color ??
           theme?.unselectedLabelStyle?.color ??
@@ -526,13 +538,15 @@ class _PopupSelectTabStyle extends StatelessWidget {
     // To enable TextStyle.lerp(style1, style2, value), both styles must have
     // the same value of inherit. Force that to be inherit=true here.
     final TextStyle effectiveLabelStyle =
-        (labelStyle ?? theme?.labelStyle ?? defaults.labelStyle!)
-            .copyWith(inherit: true);
+        (labelStyle ?? theme?.labelStyle ?? defaults.labelStyle!).copyWith(
+          inherit: true,
+        );
 
-    final TextStyle effectiveUnselectedLabelStyle = (unselectedLabelStyle ??
-            theme?.unselectedLabelStyle ??
-            defaults.unselectedLabelStyle!)
-        .copyWith(inherit: true);
+    final TextStyle effectiveUnselectedLabelStyle =
+        (unselectedLabelStyle ??
+                theme?.unselectedLabelStyle ??
+                defaults.unselectedLabelStyle!)
+            .copyWith(inherit: true);
 
     final Color color = _resolveWithLabelColor(context).resolve(states);
 
@@ -587,8 +601,10 @@ class PopupTab extends StatelessWidget {
     this.labelLoader,
     this.child,
     this.tag,
-  }) : assert(label == null || child == null,
-            'Either provide a label or an child, not both.');
+  }) : assert(
+         label == null || child == null,
+         'Either provide a label or an child, not both.',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -605,10 +621,11 @@ class PopupTab extends StatelessWidget {
         : null;
     if (tabData == null) {
       tabData = PopupTabData(
-          index: info.index,
-          originalLabel: label,
-          tag: tag,
-          labelLoader: labelLoader);
+        index: info.index,
+        originalLabel: label,
+        tag: tag,
+        labelLoader: labelLoader,
+      );
       controller.labelStateMap[info.index] = tabData;
     }
 
@@ -617,7 +634,8 @@ class PopupTab extends StatelessWidget {
       child: Container(
         alignment: Alignment.center,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        child: child ??
+        child:
+            child ??
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -652,7 +670,8 @@ class PopupTab extends StatelessWidget {
   ) {
     final effectiveIndicator =
         info.indicator ?? theme?.indicator ?? defaults.indicator!;
-    final effectiveUnselected = info.unselectedIndicator ??
+    final effectiveUnselected =
+        info.unselectedIndicator ??
         theme?.unselectedIndicator ??
         defaults.unselectedIndicator;
 
@@ -697,8 +716,8 @@ class _PopupSelectTabInfo extends InheritedWidget {
   final void Function(PopupTabData tabData) onTap;
 
   static _PopupSelectTabInfo of(BuildContext context) {
-    final _PopupSelectTabInfo? result =
-        context.dependOnInheritedWidgetOfExactType<_PopupSelectTabInfo>();
+    final _PopupSelectTabInfo? result = context
+        .dependOnInheritedWidgetOfExactType<_PopupSelectTabInfo>();
     assert(
       result != null,
       'PopupTab need a _PopupSelectTabInfo parent, '

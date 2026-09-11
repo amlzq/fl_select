@@ -189,7 +189,8 @@ class SelectGridViewState extends State<SelectGridView>
           Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: DefaultTextStyle.merge(
-              style: Theme.of(context).textTheme.titleSmall ??
+              style:
+                  Theme.of(context).textTheme.titleSmall ??
                   const TextStyle(fontSize: 16),
               child: Text(widget.category?.name ?? ''),
             ),
@@ -314,9 +315,7 @@ class SelectGridSkeleton extends StatelessWidget {
                 ),
                 itemCount: itemCount,
                 itemBuilder: (context, index) {
-                  return SkeletonTile(
-                    borderRadius: BorderRadius.circular(4),
-                  );
+                  return SkeletonTile(borderRadius: BorderRadius.circular(4));
                 },
               ),
             ),

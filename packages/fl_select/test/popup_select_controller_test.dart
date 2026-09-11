@@ -61,47 +61,50 @@ void main() {
     });
 
     testWidgets(
-        'toggleSelect switches to another open panel without closing the '
-        'overlay and renders the new panel content', (tester) async {
-      final controller = PopupSelectController();
-      await pumpBar(
-        tester,
-        controller,
-        const [PopupTab(label: 'T0'), PopupTab(label: 'T1')],
-        [
-          ListSelectDelegate(
-            entriesLoader: () async => {
-              SelectTextEntry<dynamic>.name(id: 'a0', name: 'A0'),
-            },
-          ),
-          ListSelectDelegate(
-            entriesLoader: () async => {
-              SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1'),
-            },
-          ),
-        ],
-      );
+      'toggleSelect switches to another open panel without closing the '
+      'overlay and renders the new panel content',
+      (tester) async {
+        final controller = PopupSelectController();
+        await pumpBar(
+          tester,
+          controller,
+          const [PopupTab(label: 'T0'), PopupTab(label: 'T1')],
+          [
+            ListSelectDelegate(
+              entriesLoader: () async => {
+                SelectTextEntry<dynamic>.name(id: 'a0', name: 'A0'),
+              },
+            ),
+            ListSelectDelegate(
+              entriesLoader: () async => {
+                SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1'),
+              },
+            ),
+          ],
+        );
 
-      // Open panel 0 first.
-      controller.toggleSelect(index: 0);
-      await tester.pumpAndSettle();
-      expect(controller.currentIndex, 0);
-      expect(find.text('A0'), findsOneWidget);
+        // Open panel 0 first.
+        controller.toggleSelect(index: 0);
+        await tester.pumpAndSettle();
+        expect(controller.currentIndex, 0);
+        expect(find.text('A0'), findsOneWidget);
 
-      // While panel 0 is open, switch to panel 1 programmatically.
-      controller.toggleSelect(index: 1);
-      await tester.pumpAndSettle();
+        // While panel 0 is open, switch to panel 1 programmatically.
+        controller.toggleSelect(index: 1);
+        await tester.pumpAndSettle();
 
-      // The overlay must stay open (no collapse/reopen) and show panel 1.
-      expect(controller.isSelectShowing, isTrue);
-      expect(controller.currentIndex, 1);
-      expect(find.text('A1'), findsOneWidget);
-      // The previous panel's content is gone.
-      expect(find.text('A0'), findsNothing);
-    });
+        // The overlay must stay open (no collapse/reopen) and show panel 1.
+        expect(controller.isSelectShowing, isTrue);
+        expect(controller.currentIndex, 1);
+        expect(find.text('A1'), findsOneWidget);
+        // The previous panel's content is gone.
+        expect(find.text('A0'), findsNothing);
+      },
+    );
 
-    testWidgets('toggleSelect on the already-open panel closes it',
-        (tester) async {
+    testWidgets('toggleSelect on the already-open panel closes it', (
+      tester,
+    ) async {
       final controller = PopupSelectController();
       await pumpBar(
         tester,
@@ -158,8 +161,9 @@ void main() {
       expect(controller.isSelectShowing, isFalse);
     });
 
-    testWidgets('toggleSelect is a no-op for an out-of-range index',
-        (tester) async {
+    testWidgets('toggleSelect is a no-op for an out-of-range index', (
+      tester,
+    ) async {
       final controller = PopupSelectController();
       await pumpBar(
         tester,

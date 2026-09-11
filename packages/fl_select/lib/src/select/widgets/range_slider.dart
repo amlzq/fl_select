@@ -122,19 +122,22 @@ class _SelectRangeSliderState extends State<SelectRangeSlider> {
     final effectiveThumbRadius =
         widget.thumbRadius ?? theme.thumbRadius ?? defaults.thumbRadius ?? 10.0;
     _thumbRadius = effectiveThumbRadius;
-    final effectiveActiveColor = widget.activeTrackColor ??
+    final effectiveActiveColor =
+        widget.activeTrackColor ??
         theme.activeTrackColor ??
         widget.selectedColor ??
         theme.selectedColor ??
         defaults.selectedColor ??
         Theme.of(context).colorScheme.primary;
-    final effectiveInactiveColor = widget.inactiveTrackColor ??
+    final effectiveInactiveColor =
+        widget.inactiveTrackColor ??
         theme.inactiveTrackColor ??
         defaults.inactiveTrackColor ??
         Colors.grey.shade300;
     final effectiveThumbBorder =
         widget.thumbColor ?? theme.thumbColor ?? effectiveActiveColor;
-    final effectiveThumbFill = widget.thumbFillColor ??
+    final effectiveThumbFill =
+        widget.thumbFillColor ??
         theme.thumbFillColor ??
         defaults.thumbFillColor ??
         Colors.white;
@@ -179,8 +182,9 @@ class _SelectRangeSliderState extends State<SelectRangeSlider> {
                         height: effectiveTrackHeight,
                         decoration: BoxDecoration(
                           color: effectiveInactiveColor,
-                          borderRadius:
-                              BorderRadius.circular(effectiveTrackHeight / 2),
+                          borderRadius: BorderRadius.circular(
+                            effectiveTrackHeight / 2,
+                          ),
                         ),
                       ),
                     ),
@@ -193,8 +197,9 @@ class _SelectRangeSliderState extends State<SelectRangeSlider> {
                         height: effectiveTrackHeight,
                         decoration: BoxDecoration(
                           color: effectiveActiveColor,
-                          borderRadius:
-                              BorderRadius.circular(effectiveTrackHeight / 2),
+                          borderRadius: BorderRadius.circular(
+                            effectiveTrackHeight / 2,
+                          ),
                         ),
                       ),
                     ),
@@ -242,17 +247,11 @@ class _SelectRangeSliderState extends State<SelectRangeSlider> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               if (widget.minLabel != null)
-                Text(
-                  widget.minLabel!,
-                  style: effectiveEndLabelStyle,
-                )
+                Text(widget.minLabel!, style: effectiveEndLabelStyle)
               else
                 const SizedBox.shrink(),
               if (widget.maxLabel != null)
-                Text(
-                  widget.maxLabel!,
-                  style: effectiveEndLabelStyle,
-                )
+                Text(widget.maxLabel!, style: effectiveEndLabelStyle)
               else
                 const SizedBox.shrink(),
             ],
@@ -292,8 +291,9 @@ class _SelectRangeSliderState extends State<SelectRangeSlider> {
     // position, so subsequent moves are resolved from the absolute pointer
     // location (1:1 with the finger) instead of by stacking deltas.
     _dragStartX = localX;
-    _dragStartValue =
-        active == _ActiveThumb.start ? widget.values.start : widget.values.end;
+    _dragStartValue = active == _ActiveThumb.start
+        ? widget.values.start
+        : widget.values.end;
     setState(() {
       _activeThumb = active;
     });
@@ -309,8 +309,10 @@ class _SelectRangeSliderState extends State<SelectRangeSlider> {
     // previous sticky / resistant feel.
     final valueAtStart = _fromPx(_dragStartX, trackWidth);
     final valueAtCurrent = _fromPx(localX, trackWidth);
-    var newValue = (_dragStartValue + (valueAtCurrent - valueAtStart))
-        .clamp(widget.min, widget.max);
+    var newValue = (_dragStartValue + (valueAtCurrent - valueAtStart)).clamp(
+      widget.min,
+      widget.max,
+    );
     final divisions = widget.divisions;
     if (divisions != null && divisions > 0) {
       // Snap the dragged value to the nearest division step so the handle —
@@ -318,8 +320,9 @@ class _SelectRangeSliderState extends State<SelectRangeSlider> {
       // dragging, instead of only snapping on release.
       newValue = _snapOne(newValue, divisions);
     }
-    final newStart =
-        active == _ActiveThumb.start ? newValue : widget.values.start;
+    final newStart = active == _ActiveThumb.start
+        ? newValue
+        : widget.values.start;
     final newEnd = active == _ActiveThumb.end ? newValue : widget.values.end;
     // Preserve ordering: when the active thumb crosses the other, the other
     // thumb follows so the user can "push" the range.
@@ -416,8 +419,8 @@ class _SelectRangeSliderDefaults extends SelectRangeSliderTheme {
 
   @override
   TextStyle? get endLabelStyle => _textTheme.bodyMedium?.copyWith(
-        color: _theme.onBackgroundColorHighest.withValues(alpha: 0.7),
-      );
+    color: _theme.onBackgroundColorHighest.withValues(alpha: 0.7),
+  );
 
   @override
   Color? get selectedColor => _theme.selectedColor;
@@ -441,11 +444,7 @@ class _SelectRangeSliderDefaults extends SelectRangeSliderTheme {
         0.5,
       );
     }
-    return Color.lerp(
-      _theme.onBackgroundColorHighest,
-      Colors.white,
-      0.8,
-    );
+    return Color.lerp(_theme.onBackgroundColorHighest, Colors.white, 0.8);
   }
 
   @override

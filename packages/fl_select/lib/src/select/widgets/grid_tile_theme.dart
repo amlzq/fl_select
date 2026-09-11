@@ -4,11 +4,7 @@ import 'package:flutter/material.dart';
 import '../select_theme.dart';
 
 /// Visual variant for [SelectGridTile].
-enum SelectGridTileVariant {
-  filled,
-
-  outlined,
-}
+enum SelectGridTileVariant { filled, outlined }
 
 /// Theme configuration for [SelectGridTile].
 @immutable
@@ -88,37 +84,20 @@ class SelectGridTileTheme with Diagnosticable {
 
   /// Linearly interpolates between two grid tile themes.
   static SelectGridTileTheme lerp(
-      SelectGridTileTheme? a, SelectGridTileTheme? b, double t) {
+    SelectGridTileTheme? a,
+    SelectGridTileTheme? b,
+    double t,
+  ) {
     if (identical(a, b) && a != null) {
       return a;
     }
     return SelectGridTileTheme(
-      selectedColor: Color.lerp(
-        a?.selectedColor,
-        b?.selectedColor,
-        t,
-      ),
-      textColor: Color.lerp(
-        a?.textColor,
-        b?.textColor,
-        t,
-      ),
-      labelStyle: TextStyle.lerp(
-        a?.labelStyle,
-        b?.labelStyle,
-        t,
-      ),
-      sublabelStyle: TextStyle.lerp(
-        a?.sublabelStyle,
-        b?.sublabelStyle,
-        t,
-      ),
+      selectedColor: Color.lerp(a?.selectedColor, b?.selectedColor, t),
+      textColor: Color.lerp(a?.textColor, b?.textColor, t),
+      labelStyle: TextStyle.lerp(a?.labelStyle, b?.labelStyle, t),
+      sublabelStyle: TextStyle.lerp(a?.sublabelStyle, b?.sublabelStyle, t),
       variant: t < 0.5 ? a?.variant : b?.variant,
-      tileColor: Color.lerp(
-        a?.tileColor,
-        b?.tileColor,
-        t,
-      ),
+      tileColor: Color.lerp(a?.tileColor, b?.tileColor, t),
       selectedTileColor: Color.lerp(
         a?.selectedTileColor,
         b?.selectedTileColor,
@@ -129,14 +108,14 @@ class SelectGridTileTheme with Diagnosticable {
 
   @override
   int get hashCode => Object.hash(
-        selectedColor,
-        textColor,
-        labelStyle,
-        sublabelStyle,
-        variant,
-        tileColor,
-        selectedTileColor,
-      );
+    selectedColor,
+    textColor,
+    labelStyle,
+    sublabelStyle,
+    variant,
+    tileColor,
+    selectedTileColor,
+  );
 
   @override
   bool operator ==(Object other) {

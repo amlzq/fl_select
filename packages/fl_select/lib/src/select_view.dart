@@ -58,15 +58,15 @@ class SelectView extends StatefulWidget {
     BoxConstraints? constraints,
     this.margin,
     required this.onChanged,
-  })  : assert(maxHeightFactor > 0 && maxHeightFactor <= 1),
-        assert(margin == null || margin.isNonNegative),
-        assert(padding == null || padding.isNonNegative),
-        assert(decoration == null || decoration.debugAssertIsValid()),
-        assert(constraints == null || constraints.debugAssertIsValid()),
-        constraints = (width != null || height != null)
-            ? constraints?.tighten(width: width, height: height) ??
-                BoxConstraints.tightFor(width: width, height: height)
-            : constraints;
+  }) : assert(maxHeightFactor > 0 && maxHeightFactor <= 1),
+       assert(margin == null || margin.isNonNegative),
+       assert(padding == null || padding.isNonNegative),
+       assert(decoration == null || decoration.debugAssertIsValid()),
+       assert(constraints == null || constraints.debugAssertIsValid()),
+       constraints = (width != null || height != null)
+           ? constraints?.tighten(width: width, height: height) ??
+                 BoxConstraints.tightFor(width: width, height: height)
+           : constraints;
 
   /// Configuration describing how entries are loaded and how the select body
   /// is rendered. Determines the concrete select type (Cascading, List, Grid

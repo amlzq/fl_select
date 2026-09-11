@@ -50,19 +50,21 @@ SelectCategoryEntry<dynamic> _category(
 
 void main() {
   group('SelectUtils.find*AtLevel', () {
-    test('findChildrenAtLevel/findIdsAtLevel/findExtrasAtLevel work for leafs',
-        () {
-      final root = _text('', 'root', 'Root');
+    test(
+      'findChildrenAtLevel/findIdsAtLevel/findExtrasAtLevel work for leafs',
+      () {
+        final root = _text('', 'root', 'Root');
 
-      expect(SelectUtils.findChildrenAtLevel(root, 0), {root});
-      expect(SelectUtils.findChildrenAtLevel(root, 1), isEmpty);
+        expect(SelectUtils.findChildrenAtLevel(root, 0), {root});
+        expect(SelectUtils.findChildrenAtLevel(root, 1), isEmpty);
 
-      expect(SelectUtils.findIdsAtLevel(root, 0), {'root'});
-      expect(SelectUtils.findIdsAtLevel(root, 1), isEmpty);
+        expect(SelectUtils.findIdsAtLevel(root, 0), {'root'});
+        expect(SelectUtils.findIdsAtLevel(root, 1), isEmpty);
 
-      expect(SelectUtils.findExtrasAtLevel<dynamic>(root, 0), [null]);
-      expect(SelectUtils.findExtrasAtLevel<dynamic>(root, 1), isEmpty);
-    });
+        expect(SelectUtils.findExtrasAtLevel<dynamic>(root, 0), [null]);
+        expect(SelectUtils.findExtrasAtLevel<dynamic>(root, 1), isEmpty);
+      },
+    );
 
     test('find*AtLevel traverses correctly', () {
       final a1 = SelectChildEntry<dynamic>(
@@ -122,8 +124,10 @@ void main() {
   group('SelectUtils.removeAnyEntries/deepCloneEntries', () {
     test('removeAnyEntries removes "any" at all levels without cloning', () {
       final any = SelectChildEntry<dynamic>.any(parentId: 'r', name: 'Any');
-      final leafAny =
-          SelectChildEntry<dynamic>.any(parentId: 'a', name: 'AnyLeaf');
+      final leafAny = SelectChildEntry<dynamic>.any(
+        parentId: 'a',
+        name: 'AnyLeaf',
+      );
       final a = _text('r', 'a', 'A', children: {leafAny, _text('a', 'x', 'X')});
       final root = _category('r', 'R', children: {any, a});
 
@@ -131,10 +135,13 @@ void main() {
       SelectUtils.removeAnyEntries(entries);
 
       final rootAfter = entries.single as SelectCategoryEntry<dynamic>;
-      expect(rootAfter.children!.any((e) => e is SelectChildEntry && e.isAny),
-          isFalse);
-      final aAfter = rootAfter.children!.singleWhere((e) => e.id == 'a')
-          as SelectTextEntry;
+      expect(
+        rootAfter.children!.any((e) => e is SelectChildEntry && e.isAny),
+        isFalse,
+      );
+      final aAfter =
+          rootAfter.children!.singleWhere((e) => e.id == 'a')
+              as SelectTextEntry;
       expect(
         aAfter.children!.any((e) => e is SelectChildEntry && e.isAny),
         isFalse,
@@ -159,8 +166,9 @@ void main() {
 
       final originalLeaf =
           (root.children!.singleWhere((e) => e.id == 'a') as SelectTextEntry);
-      final clonedLeaf = (clonedRoot.children!.singleWhere((e) => e.id == 'a')
-          as SelectTextEntry);
+      final clonedLeaf =
+          (clonedRoot.children!.singleWhere((e) => e.id == 'a')
+              as SelectTextEntry);
       expect(identical(originalLeaf, clonedLeaf), isFalse);
       expect(
         identical(originalLeaf.children!.first, clonedLeaf.children!.first),
@@ -237,9 +245,7 @@ void main() {
           <SelectEntry<dynamic>>{_text('r', 'c1', 'C1')},
         ],
         0,
-        {
-          'r': <SelectEntry<dynamic>>{},
-        },
+        {'r': <SelectEntry<dynamic>>{}},
         {},
       );
 
@@ -256,13 +262,9 @@ void main() {
       final entries = <SelectEntry<dynamic>>{any, a};
 
       // Only "Any" is selected → the clipped tree is empty.
-      SelectUtils.clippingTree(
-        entries,
-        [
-          <SelectEntry<dynamic>>{any},
-        ],
-        0,
-      );
+      SelectUtils.clippingTree(entries, [
+        <SelectEntry<dynamic>>{any},
+      ], 0);
       expect(entries, isEmpty);
     });
 
@@ -273,34 +275,28 @@ void main() {
       final entries = <SelectEntry<dynamic>>{root};
 
       // Level 1 holds only the "Any" placeholder → drop the whole category.
-      SelectUtils.clippingTree(
-        entries,
-        [
-          <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
-          <SelectEntry<dynamic>>{any},
-        ],
-        0,
-      );
+      SelectUtils.clippingTree(entries, [
+        <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
+        <SelectEntry<dynamic>>{any},
+      ], 0);
       expect(entries, isEmpty);
     });
 
     test('clippingTree keeps a deep "Any" and a header-selected category', () {
       // A cascading middle-level "Any" is a real choice (the whole parent).
-      final deepAny =
-          SelectChildEntry<dynamic>.any(parentId: 'c1', name: 'Any');
+      final deepAny = SelectChildEntry<dynamic>.any(
+        parentId: 'c1',
+        name: 'Any',
+      );
       final c1 = _text('r', 'c1', 'C1', children: {deepAny});
       final root = _category('r', 'R', children: {c1});
       final entries = <SelectEntry<dynamic>>{root};
 
-      SelectUtils.clippingTree(
-        entries,
-        [
-          <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
-          <SelectEntry<dynamic>>{_text('r', 'c1', 'C1')},
-          <SelectEntry<dynamic>>{deepAny},
-        ],
-        0,
-      );
+      SelectUtils.clippingTree(entries, [
+        <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
+        <SelectEntry<dynamic>>{_text('r', 'c1', 'C1')},
+        <SelectEntry<dynamic>>{deepAny},
+      ], 0);
 
       final rootAfter = entries.single as SelectCategoryEntry<dynamic>;
       final c1After = rootAfter.children!.single as SelectTextEntry<dynamic>;
@@ -332,25 +328,27 @@ void main() {
     });
 
     test(
-        'cloneTree can avoid cloning deep subtree when deepCloneSelectedSubtree=false',
-        () {
-      final g1 = _text('c1', 'g1', 'G1');
-      final c1 = _text('r', 'c1', 'C1', children: {g1});
-      final root = _category('r', 'R', children: {c1});
+      'cloneTree can avoid cloning deep subtree when deepCloneSelectedSubtree=false',
+      () {
+        final g1 = _text('c1', 'g1', 'G1');
+        final c1 = _text('r', 'c1', 'C1', children: {g1});
+        final root = _category('r', 'R', children: {c1});
 
-      final cloned = SelectUtils.cloneTree(
-        {root},
-        [
-          <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
-          <SelectEntry<dynamic>>{_text('r', 'c1', 'C1')},
-        ],
-        deepCloneSelectedSubtree: false,
-      );
+        final cloned = SelectUtils.cloneTree(
+          {root},
+          [
+            <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
+            <SelectEntry<dynamic>>{_text('r', 'c1', 'C1')},
+          ],
+          deepCloneSelectedSubtree: false,
+        );
 
-      final clonedRoot = cloned.single as SelectCategoryEntry<dynamic>;
-      final clonedC1 = clonedRoot.children!.single as SelectTextEntry<dynamic>;
-      expect(clonedC1.children, isNull);
-    });
+        final clonedRoot = cloned.single as SelectCategoryEntry<dynamic>;
+        final clonedC1 =
+            clonedRoot.children!.single as SelectTextEntry<dynamic>;
+        expect(clonedC1.children, isNull);
+      },
+    );
 
     test('cloneTree excludes a flat top-level "Any" placeholder', () {
       final any = SelectTextEntry<dynamic>.any(parentId: '', name: 'Any');
@@ -358,21 +356,15 @@ void main() {
       final entries = <SelectEntry<dynamic>>{any, a};
 
       // Only "Any" is selected (e.g. via initialization or tapping it).
-      final cloned = SelectUtils.cloneTree(
-        entries,
-        [
-          <SelectEntry<dynamic>>{any},
-        ],
-      );
+      final cloned = SelectUtils.cloneTree(entries, [
+        <SelectEntry<dynamic>>{any},
+      ]);
       expect(cloned, isEmpty);
 
       // A real selection still surfaces, and "Any" alone never does.
-      final clonedWithReal = SelectUtils.cloneTree(
-        entries,
-        [
-          <SelectEntry<dynamic>>{a},
-        ],
-      );
+      final clonedWithReal = SelectUtils.cloneTree(entries, [
+        <SelectEntry<dynamic>>{a},
+      ]);
       expect(clonedWithReal.map((e) => e.id), {'a'});
     });
 
@@ -425,14 +417,16 @@ void main() {
       expect(SelectUtils.getResultLabel({root}, 'Leaf'), 'Leaf');
     });
 
-    test('returns parent name for "any" leaf (except when parent is category)',
-        () {
-      final any = SelectChildEntry<dynamic>.any(parentId: 'c', name: 'Any');
-      final child = _text('r', 'c', 'Child', children: {any});
-      final root = _category('r', 'Root', children: {child});
+    test(
+      'returns parent name for "any" leaf (except when parent is category)',
+      () {
+        final any = SelectChildEntry<dynamic>.any(parentId: 'c', name: 'Any');
+        final child = _text('r', 'c', 'Child', children: {any});
+        final root = _category('r', 'Root', children: {child});
 
-      expect(SelectUtils.getResultLabel({root}, 'Child'), 'Child');
-    });
+        expect(SelectUtils.getResultLabel({root}, 'Child'), 'Child');
+      },
+    );
 
     test('returns Multiple when multiple valid labels exist', () {
       final p1 = _text('r', 'p1', 'P1', children: {_text('p1', 'l1', 'L1')});
@@ -448,10 +442,15 @@ void main() {
       final customInItems = _customRange('r', name: 'Custom', min: 0, max: 0);
       final items = <SelectEntry<dynamic>>{customInItems}.toList();
 
-      final previousCustom =
-          _customRange('r', name: 'Custom', min: 10, max: 20);
-      final restored =
-          SelectUtils.restorePreviousSelected(items, {previousCustom});
+      final previousCustom = _customRange(
+        'r',
+        name: 'Custom',
+        min: 10,
+        max: 20,
+      );
+      final restored = SelectUtils.restorePreviousSelected(items, {
+        previousCustom,
+      });
 
       expect(restored.length, 1);
       final selected = restored[0].single as SelectRangeEntry<int, dynamic>;

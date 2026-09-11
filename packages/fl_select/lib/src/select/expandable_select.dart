@@ -65,8 +65,11 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
   bool get _isSearching => widget.searchQuery.isNotEmpty;
 
   List<SelectEntry> get _displayEntries => _isSearching
-      ? filterEntriesForSearch(widget.entries, widget.searchQuery,
-          predicate: widget.searchPredicate)
+      ? filterEntriesForSearch(
+          widget.entries,
+          widget.searchQuery,
+          predicate: widget.searchPredicate,
+        )
       : widget.entries;
 
   @override
@@ -117,8 +120,9 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
       return;
     }
 
-    final categoryEntry =
-        widget.entries.singleWhereOrNull((e) => e.id == item.parentId);
+    final categoryEntry = widget.entries.singleWhereOrNull(
+      (e) => e.id == item.parentId,
+    );
     if (categoryEntry is! SelectCategoryEntry) {
       assert(() {
         debugPrint(
@@ -248,17 +252,19 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                                   child: SelectWrapView(
                                     category: categoryHeader,
                                     entries: categoryHeader.children!.toList(),
-                                    selectedEntries:
-                                        _headerSelectedFor(category.id),
+                                    selectedEntries: _headerSelectedFor(
+                                      category.id,
+                                    ),
                                     variant: SelectChipVariant.filled,
                                     spacing: 12.0,
                                     runSpacing: 12.0,
                                     onChanged: (index, entry) =>
                                         _onHeaderOrFooterItemTap.call(
-                                            category,
-                                            true,
-                                            index,
-                                            entry as SelectChildEntry),
+                                          category,
+                                          true,
+                                          index,
+                                          entry as SelectChildEntry,
+                                        ),
                                   ),
                                 ),
                               content,
@@ -268,17 +274,19 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                                   child: SelectWrapView(
                                     category: categoryFooter,
                                     entries: categoryFooter.children!.toList(),
-                                    selectedEntries:
-                                        _footerSelectedFor(category.id),
+                                    selectedEntries: _footerSelectedFor(
+                                      category.id,
+                                    ),
                                     variant: SelectChipVariant.filled,
                                     spacing: 12.0,
                                     runSpacing: 12.0,
                                     onChanged: (index, entry) =>
                                         _onHeaderOrFooterItemTap.call(
-                                            category,
-                                            false,
-                                            index,
-                                            entry as SelectChildEntry),
+                                          category,
+                                          false,
+                                          index,
+                                          entry as SelectChildEntry,
+                                        ),
                                   ),
                                 ),
                             ],

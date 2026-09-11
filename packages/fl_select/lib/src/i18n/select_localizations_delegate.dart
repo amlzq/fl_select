@@ -39,9 +39,15 @@ class SelectLocalizationsDelegate
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans'),
     Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant'),
     Locale.fromSubtags(
-        languageCode: 'zh', scriptCode: 'Hant', countryCode: 'HK'),
+      languageCode: 'zh',
+      scriptCode: 'Hant',
+      countryCode: 'HK',
+    ),
     Locale.fromSubtags(
-        languageCode: 'zh', scriptCode: 'Hant', countryCode: 'TW'),
+      languageCode: 'zh',
+      scriptCode: 'Hant',
+      countryCode: 'TW',
+    ),
   ];
 
   @override

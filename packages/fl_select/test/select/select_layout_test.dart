@@ -32,14 +32,8 @@ void main() {
 
   group('SelectGridLayout', () {
     test('== and hashCode: equal layouts are identical', () {
-      const a = SelectGridLayout(
-        crossAxisCount: 2,
-        childAspectRatio: 1.5,
-      );
-      const b = SelectGridLayout(
-        crossAxisCount: 2,
-        childAspectRatio: 1.5,
-      );
+      const a = SelectGridLayout(crossAxisCount: 2, childAspectRatio: 1.5);
+      const b = SelectGridLayout(crossAxisCount: 2, childAspectRatio: 1.5);
       expect(a, equals(b));
       expect(a.hashCode, equals(b.hashCode));
     });
@@ -52,10 +46,7 @@ void main() {
 
     test('== and hashCode: different spacing makes layouts unequal', () {
       const a = SelectGridLayout(crossAxisCount: 2);
-      const b = SelectGridLayout(
-        crossAxisCount: 2,
-        mainAxisSpacing: 8,
-      );
+      const b = SelectGridLayout(crossAxisCount: 2, mainAxisSpacing: 8);
       expect(a, isNot(equals(b)));
     });
 

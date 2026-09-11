@@ -173,8 +173,8 @@ class _SelectSideBarState extends State<SelectSideBar> {
       });
       return;
     }
-    final RenderObject? object =
-        _tileKeys[index]?.currentContext?.findRenderObject();
+    final RenderObject? object = _tileKeys[index]?.currentContext
+        ?.findRenderObject();
     if (object == null) return;
     await _scrollController.position.ensureVisible(
       object,
@@ -189,14 +189,16 @@ class _SelectSideBarState extends State<SelectSideBar> {
     final SelectSideBarTheme defaults = _SelectSideBarDefaults(context);
     final theme = SelectSideBarTheme.of(context);
 
-    final effectiveBackgroundColor = widget.backgroundColor ??
+    final effectiveBackgroundColor =
+        widget.backgroundColor ??
         theme.backgroundColor ??
         defaults.backgroundColor!;
 
     final effectivePadding =
         widget.padding ?? theme.padding ?? defaults.padding!;
-    final containerPadding =
-        widget.isScrollable ? EdgeInsets.zero : effectivePadding;
+    final containerPadding = widget.isScrollable
+        ? EdgeInsets.zero
+        : effectivePadding;
 
     final effctiveWidth = widget.width ?? theme.width ?? defaults.width!;
 
@@ -206,7 +208,8 @@ class _SelectSideBarState extends State<SelectSideBar> {
     final effectiveLabelStyle =
         widget.labelStyle ?? theme.labelStyle ?? defaults.labelStyle!;
 
-    final effectiveSelectedTileColor = widget.selectedTileColor ??
+    final effectiveSelectedTileColor =
+        widget.selectedTileColor ??
         theme.selectedTileColor ??
         defaults.selectedTileColor;
 
@@ -221,9 +224,10 @@ class _SelectSideBarState extends State<SelectSideBar> {
         selectedColor: effectiveSelectedColor,
         selectedTileColor: effectiveSelectedTileColor,
         leading: SelectBadge(
-            color: entry.hasChildren && selected
-                ? widget.selectedColor
-                : Colors.transparent),
+          color: entry.hasChildren && selected
+              ? widget.selectedColor
+              : Colors.transparent,
+        ),
         onTap: () => _handleTap(index, entry),
       );
       if (widget.isScrollable) {
@@ -249,8 +253,9 @@ class _SelectSideBarState extends State<SelectSideBar> {
       color: effectiveBackgroundColor,
       child: widget.isScrollable
           ? ScrollConfiguration(
-              behavior:
-                  ScrollConfiguration.of(context).copyWith(overscroll: false),
+              behavior: ScrollConfiguration.of(
+                context,
+              ).copyWith(overscroll: false),
               child: SingleChildScrollView(
                 controller: _scrollController,
                 physics: const ChainingClampingScrollPhysics(),
@@ -366,9 +371,8 @@ class _SelectSideBarDefaults extends SelectSideBarTheme {
   TextStyle? get labelStyle => _textTheme.bodyLarge;
 
   @override
-  TextStyle? get selectedLabelStyle => _textTheme.bodyMedium?.copyWith(
-        color: _theme.selectedColor,
-      );
+  TextStyle? get selectedLabelStyle =>
+      _textTheme.bodyMedium?.copyWith(color: _theme.selectedColor);
 
   @override
   Color? get indicatorColor => selectedColor;

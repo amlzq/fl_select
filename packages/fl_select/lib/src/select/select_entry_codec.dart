@@ -116,14 +116,13 @@ abstract final class SelectEntryCodec {
     final childrenJson = node['children'] as List<dynamic>? ?? <dynamic>[];
     if (childrenJson.isEmpty) {
       throw const FormatException(
-          'category node requires non-empty "children"');
+        'category node requires non-empty "children"',
+      );
     }
     return SelectCategoryEntry.children(
       id: _requiredId(node),
       name: _requiredName(node),
-      children: {
-        for (final child in childrenJson) _decodeEntry(_asMap(child)),
-      },
+      children: {for (final child in childrenJson) _decodeEntry(_asMap(child))},
       selectionMode: _decodeSelectionMode(node['selectionMode']),
       header: _decodeOptionalEntry(node['header']),
       footer: _decodeOptionalEntry(node['footer']),
@@ -225,18 +224,20 @@ abstract final class SelectEntryCodec {
     return switch (map['kind']) {
       'list' => SelectListLayout(toText: map['toText'] as String? ?? '-'),
       'grid' => SelectGridLayout(
-          crossAxisCount: (map['crossAxisCount'] as num?)?.toInt() ??
-              (throw const FormatException(
-                  'grid layout requires "crossAxisCount"')),
-          mainAxisSpacing: (map['mainAxisSpacing'] as num?)?.toDouble() ?? 0,
-          crossAxisSpacing: (map['crossAxisSpacing'] as num?)?.toDouble() ?? 0,
-          childAspectRatio: (map['childAspectRatio'] as num?)?.toDouble() ?? 1,
-          toText: map['toText'] as String? ?? '-',
-        ),
+        crossAxisCount:
+            (map['crossAxisCount'] as num?)?.toInt() ??
+            (throw const FormatException(
+              'grid layout requires "crossAxisCount"',
+            )),
+        mainAxisSpacing: (map['mainAxisSpacing'] as num?)?.toDouble() ?? 0,
+        crossAxisSpacing: (map['crossAxisSpacing'] as num?)?.toDouble() ?? 0,
+        childAspectRatio: (map['childAspectRatio'] as num?)?.toDouble() ?? 1,
+        toText: map['toText'] as String? ?? '-',
+      ),
       'chip' => SelectWrapLayout(
-          spacing: (map['spacing'] as num?)?.toDouble() ?? 12,
-          runSpacing: (map['runSpacing'] as num?)?.toDouble() ?? 12,
-        ),
+        spacing: (map['spacing'] as num?)?.toDouble() ?? 12,
+        runSpacing: (map['runSpacing'] as num?)?.toDouble() ?? 12,
+      ),
       'counter' => const SelectCounterLayout(),
       'range' => SelectRangeLayout(toText: map['toText'] as String? ?? '-'),
       null => throw const FormatException('layout is missing "kind"'),
@@ -248,7 +249,8 @@ abstract final class SelectEntryCodec {
     final id = node['id'];
     if (id is! String || id.isEmpty) {
       throw FormatException(
-          'entry is missing a non-empty "id": ${node['type']} node');
+        'entry is missing a non-empty "id": ${node['type']} node',
+      );
     }
     return id;
   }
@@ -257,7 +259,8 @@ abstract final class SelectEntryCodec {
     final name = node['name'];
     if (name is! String || name.isEmpty) {
       throw FormatException(
-          'entry is missing a non-empty "name": ${node['type']} node');
+        'entry is missing a non-empty "name": ${node['type']} node',
+      );
     }
     return name;
   }
@@ -275,8 +278,9 @@ abstract final class SelectEntryCodec {
       return entry.isCustom ? _encodeCustom(entry) : _encodeRange(entry);
     }
     throw UnsupportedError(
-        'SelectEntryCodec cannot serialize ${entry.runtimeType}; '
-        'use built-in entry classes only');
+      'SelectEntryCodec cannot serialize ${entry.runtimeType}; '
+      'use built-in entry classes only',
+    );
   }
 
   static Map<String, dynamic> _encodeCategory(SelectCategoryEntry entry) {
@@ -383,10 +387,10 @@ abstract final class SelectEntryCodec {
           'toText': toText,
         },
       SelectWrapLayout(:final spacing, :final runSpacing) => {
-          'kind': 'chip',
-          'spacing': spacing,
-          'runSpacing': runSpacing,
-        },
+        'kind': 'chip',
+        'spacing': spacing,
+        'runSpacing': runSpacing,
+      },
       SelectCounterLayout() => {'kind': 'counter'},
       SelectRangeLayout(:final toText) => {'kind': 'range', 'toText': toText},
     };

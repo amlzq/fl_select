@@ -53,9 +53,7 @@ void main() {
               'c',
               'a',
               'BranchA',
-              children: {
-                _text('a', 'a_leaf', 'BranchALeaf'),
-              },
+              children: {_text('a', 'a_leaf', 'BranchALeaf')},
             ),
             _text('c', 'b', 'BranchB'),
           },
@@ -79,11 +77,8 @@ void main() {
               child: SelectControllerProvider(
                 controller: controller,
                 child: Builder(
-                  builder: (context) => selector.buildBody(
-                    context,
-                    [category],
-                    previousSelected,
-                  ),
+                  builder: (context) =>
+                      selector.buildBody(context, [category], previousSelected),
                 ),
               ),
             ),
@@ -99,8 +94,9 @@ void main() {
       expect(find.text('BranchBLeaf'), findsNothing);
     });
 
-    testWidgets('reveals restored target item when it is initially offscreen',
-        (tester) async {
+    testWidgets('reveals restored target item when it is initially offscreen', (
+      tester,
+    ) async {
       await tester.binding.setSurfaceSize(const Size(800, 320));
       addTearDown(() => tester.binding.setSurfaceSize(null));
 
@@ -126,9 +122,7 @@ void main() {
               'c',
               'parent',
               'Parent',
-              children: {
-                _text('parent', 'target_leaf', 'TargetLeaf'),
-              },
+              children: {_text('parent', 'target_leaf', 'TargetLeaf')},
             ),
           },
           selectionMode: SelectionMode.multiple,
@@ -151,11 +145,8 @@ void main() {
               child: SelectControllerProvider(
                 controller: controller,
                 child: Builder(
-                  builder: (context) => selector.buildBody(
-                    context,
-                    [category],
-                    previousSelected,
-                  ),
+                  builder: (context) =>
+                      selector.buildBody(context, [category], previousSelected),
                 ),
               ),
             ),
@@ -201,17 +192,19 @@ void main() {
       );
     });
 
-    test('selectedEntries and selectedEntriesLoader are mutually exclusive',
-        () {
-      expect(
-        () => ListSelectDelegate(
-          entries: const <SelectEntry<dynamic>>{},
-          selectedEntries: const <SelectEntry<dynamic>>{},
-          selectedEntriesLoader: () => const <SelectEntry<dynamic>>{},
-        ),
-        throwsA(isA<AssertionError>()),
-      );
-    });
+    test(
+      'selectedEntries and selectedEntriesLoader are mutually exclusive',
+      () {
+        expect(
+          () => ListSelectDelegate(
+            entries: const <SelectEntry<dynamic>>{},
+            selectedEntries: const <SelectEntry<dynamic>>{},
+            selectedEntriesLoader: () => const <SelectEntry<dynamic>>{},
+          ),
+          throwsA(isA<AssertionError>()),
+        );
+      },
+    );
 
     test('resetEntries and resetEntriesLoader are mutually exclusive', () {
       expect(
@@ -248,8 +241,9 @@ void main() {
       expect(delegate.resetEntries, same(reset));
     });
 
-    testWidgets('sync entries render on the first frame without a skeleton',
-        (tester) async {
+    testWidgets('sync entries render on the first frame without a skeleton', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

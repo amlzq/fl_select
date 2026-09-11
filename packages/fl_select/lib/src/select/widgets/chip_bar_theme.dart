@@ -4,11 +4,7 @@ import 'package:flutter/material.dart';
 import '../select_theme.dart';
 
 /// Visual variant for chips rendered by [SelectChipBar].
-enum SelectChipVariant {
-  filled,
-
-  outlined,
-}
+enum SelectChipVariant { filled, outlined }
 
 /// Theme configuration for [SelectChipBar].
 @immutable
@@ -88,37 +84,24 @@ class SelectChipBarTheme with Diagnosticable {
 
   /// Linearly interpolates between two chip bar themes.
   static SelectChipBarTheme lerp(
-      SelectChipBarTheme? a, SelectChipBarTheme? b, double t) {
+    SelectChipBarTheme? a,
+    SelectChipBarTheme? b,
+    double t,
+  ) {
     if (identical(a, b) && a != null) {
       return a;
     }
     return SelectChipBarTheme(
-      backgroundColor: Color.lerp(
-        a?.backgroundColor,
-        b?.backgroundColor,
-        t,
-      ),
-      padding: EdgeInsetsGeometry.lerp(
-        a?.padding,
-        b?.padding,
-        t,
-      ),
+      backgroundColor: Color.lerp(a?.backgroundColor, b?.backgroundColor, t),
+      padding: EdgeInsetsGeometry.lerp(a?.padding, b?.padding, t),
       variant: t < 0.5 ? a?.variant : b?.variant,
-      chipColor: Color.lerp(
-        a?.chipColor,
-        b?.chipColor,
-        t,
-      ),
+      chipColor: Color.lerp(a?.chipColor, b?.chipColor, t),
       selectedChipColor: Color.lerp(
         a?.selectedChipColor,
         b?.selectedChipColor,
         t,
       ),
-      labelStyle: TextStyle.lerp(
-        a?.labelStyle,
-        b?.labelStyle,
-        t,
-      ),
+      labelStyle: TextStyle.lerp(a?.labelStyle, b?.labelStyle, t),
       selectedLabelStyle: TextStyle.lerp(
         a?.selectedLabelStyle,
         b?.selectedLabelStyle,
@@ -129,14 +112,14 @@ class SelectChipBarTheme with Diagnosticable {
 
   @override
   int get hashCode => Object.hash(
-        backgroundColor,
-        padding,
-        variant,
-        chipColor,
-        selectedChipColor,
-        labelStyle,
-        selectedLabelStyle,
-      );
+    backgroundColor,
+    padding,
+    variant,
+    chipColor,
+    selectedChipColor,
+    labelStyle,
+    selectedLabelStyle,
+  );
 
   @override
   bool operator ==(Object other) {

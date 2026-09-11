@@ -12,10 +12,7 @@ const _shapeB = RoundedRectangleBorder(
 void main() {
   group('SelectPanelTheme', () {
     test('copyWith replaces only non-null fields', () {
-      const base = SelectPanelTheme(
-        elevation: 1,
-        clipBehavior: Clip.antiAlias,
-      );
+      const base = SelectPanelTheme(elevation: 1, clipBehavior: Clip.antiAlias);
       final copy = base.copyWith(shape: _shapeA);
       expect(copy.elevation, 1);
       expect(copy.shape, _shapeA);
@@ -49,11 +46,13 @@ void main() {
       expect(end.clipBehavior, Clip.antiAlias);
     });
 
-    test('lerp returns identical non-null theme when a and b are identical',
-        () {
-      const a = SelectPanelTheme(elevation: 4);
-      expect(SelectPanelTheme.lerp(a, a, 0.3), same(a));
-    });
+    test(
+      'lerp returns identical non-null theme when a and b are identical',
+      () {
+        const a = SelectPanelTheme(elevation: 4);
+        expect(SelectPanelTheme.lerp(a, a, 0.3), same(a));
+      },
+    );
 
     test('equality and hashCode', () {
       const a = SelectPanelTheme(elevation: 2, shape: _shapeA);
@@ -109,14 +108,12 @@ void main() {
         (w) => w is Material && w.elevation > 0,
       );
       expect(panelMaterial, findsOneWidget);
-      expect(
-        tester.widget<Material>(panelMaterial).elevation,
-        6,
-      );
+      expect(tester.widget<Material>(panelMaterial).elevation, 6);
     });
 
-    testWidgets('SelectView falls back to ColoredBox when undecorated',
-        (tester) async {
+    testWidgets('SelectView falls back to ColoredBox when undecorated', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -143,8 +140,9 @@ void main() {
       expect(panelColoredBox, findsOneWidget);
     });
 
-    testWidgets('delegate.panelTheme is applied without a selectTheme',
-        (tester) async {
+    testWidgets('delegate.panelTheme is applied without a selectTheme', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
@@ -172,10 +170,7 @@ void main() {
 }
 
 class _EmptyDelegate extends SelectDelegate {
-  _EmptyDelegate({
-    required super.entriesLoader,
-    super.panelTheme,
-  });
+  _EmptyDelegate({required super.entriesLoader, super.panelTheme});
 
   @override
   Widget buildBody(
@@ -183,8 +178,7 @@ class _EmptyDelegate extends SelectDelegate {
     List<SelectEntry> entries,
     Set<SelectEntry>? previousSelected, {
     String searchQuery = '',
-  }) =>
-      const SizedBox();
+  }) => const SizedBox();
 
   @override
   Widget buildSkeleton(BuildContext context) => const SizedBox();

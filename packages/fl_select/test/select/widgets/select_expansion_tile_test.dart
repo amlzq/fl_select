@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget _harness({required bool showBadge}) => MaterialApp(
-      home: Scaffold(
-        body: SelectExpansionTile(
-          title: 'Cate 1',
-          showBadge: showBadge,
-          child: const SizedBox(height: 40),
-        ),
-      ),
-    );
+  home: Scaffold(
+    body: SelectExpansionTile(
+      title: 'Cate 1',
+      showBadge: showBadge,
+      child: const SizedBox(height: 40),
+    ),
+  ),
+);
 
 void main() {
   testWidgets('showBadge=false renders no badge', (tester) async {
@@ -20,8 +20,9 @@ void main() {
     expect(find.byType(SelectBadge), findsNothing);
   });
 
-  testWidgets('showBadge=true badges the title at its top-right corner',
-      (tester) async {
+  testWidgets('showBadge=true badges the title at its top-right corner', (
+    tester,
+  ) async {
     await tester.pumpWidget(_harness(showBadge: true));
     await tester.pumpAndSettle();
 

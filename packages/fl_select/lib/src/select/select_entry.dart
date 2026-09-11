@@ -82,9 +82,9 @@ extension SelectEntriesExtension on SelectEntries {
   List<SelectRangeEntry> childRangesOf(String categoryId) {
     final category = findCategory(categoryId);
     if (category?.children == null) return const [];
-    return category!.children!
-        .whereType<SelectRangeEntry>()
-        .toList(growable: false);
+    return category!.children!.whereType<SelectRangeEntry>().toList(
+      growable: false,
+    );
   }
 
   /// Returns parent → child-id pairs for a cascading category
@@ -98,12 +98,14 @@ extension SelectEntriesExtension on SelectEntries {
   ) {
     final category = findCategory(categoryId);
     if (category?.children == null) return const [];
-    return category!.children!.map((parent) {
-      final childIds = (parent.children ?? const <SelectEntry>[])
-          .map((c) => c.id)
-          .toList(growable: false);
-      return (id: parent.id, childIds: childIds);
-    }).toList(growable: false);
+    return category!.children!
+        .map((parent) {
+          final childIds = (parent.children ?? const <SelectEntry>[])
+              .map((c) => c.id)
+              .toList(growable: false);
+          return (id: parent.id, childIds: childIds);
+        })
+        .toList(growable: false);
   }
 
   /// Returns the child entries of [entry] located at the given tree [level].
@@ -412,9 +414,7 @@ class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
     super.name,
     super.enabled,
     super.immediate,
-  }) : super(
-          id: kCustomEntryId,
-        );
+  }) : super(id: kCustomEntryId);
 
   /// "Any" entry
   ///
@@ -622,8 +622,9 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
     bool immediate = false,
     E? extra,
   }) {
-    final injectedChildren =
-        children.map((e) => _injectParentId(e, id)).toSet();
+    final injectedChildren = children
+        .map((e) => _injectParentId(e, id))
+        .toSet();
     return SelectTextEntry<E>(
       parentId: '',
       id: id,
@@ -707,19 +708,17 @@ class SelectChildEntry<E> extends SelectEntry<E> {
     super.enabled,
     super.immediate,
     super.extra,
-  }) : super(
-          id: kAnyEntryId,
-        );
+  }) : super(id: kAnyEntryId);
 
   SelectChildEntry.empty({this.parentId = ''})
-      : super(
-          id: '',
-          name: null,
-          children: null,
-          enabled: true,
-          immediate: false,
-          extra: null,
-        );
+    : super(
+        id: '',
+        name: null,
+        children: null,
+        enabled: true,
+        immediate: false,
+        extra: null,
+      );
 
   /// Creates a child entry and automatically injects [id] as the
   /// [SelectChildEntry.parentId] of every child in [children], recursively.
@@ -759,8 +758,9 @@ class SelectChildEntry<E> extends SelectEntry<E> {
     bool immediate = false,
     E? extra,
   }) {
-    final injectedChildren =
-        children.map((e) => _injectParentId(e, id)).toSet();
+    final injectedChildren = children
+        .map((e) => _injectParentId(e, id))
+        .toSet();
     return SelectChildEntry<E>(
       parentId: '',
       id: id,
@@ -843,19 +843,23 @@ SelectEntry<E> _injectParentId<E>(SelectEntry<E> entry, String parentId) {
     final injected = entry.copyWith(parentId: parentId);
     // The direct parent of injected's children is injected itself, so their
     // parentId is injected's own id — not the parentId passed in above.
-    final injectedChildren =
-        injected.children?.map((e) => _injectParentId(e, injected.id)).toSet();
+    final injectedChildren = injected.children
+        ?.map((e) => _injectParentId(e, injected.id))
+        .toSet();
     return injected.copyWith(children: injectedChildren);
   }
   // For a non-child entry (a SelectCategoryEntry or a generic SelectEntry),
   // its children's direct parent is the entry itself, so recurse with entry.id.
-  final injectedChildren =
-      entry.children?.map((e) => _injectParentId(e, entry.id)).toSet();
+  final injectedChildren = entry.children
+      ?.map((e) => _injectParentId(e, entry.id))
+      .toSet();
   if (entry is SelectCategoryEntry<E>) {
-    final injectedHeader =
-        entry.header != null ? _injectParentId(entry.header!, entry.id) : null;
-    final injectedFooter =
-        entry.footer != null ? _injectParentId(entry.footer!, entry.id) : null;
+    final injectedHeader = entry.header != null
+        ? _injectParentId(entry.header!, entry.id)
+        : null;
+    final injectedFooter = entry.footer != null
+        ? _injectParentId(entry.footer!, entry.id)
+        : null;
     return entry.copyWith(
       children: injectedChildren,
       header: injectedHeader,
@@ -931,8 +935,9 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
     bool enabled = true,
     bool immediate = false,
   }) {
-    final injectedChildren =
-        children.map((e) => _injectParentId(e, id)).toSet();
+    final injectedChildren = children
+        .map((e) => _injectParentId(e, id))
+        .toSet();
     final injectedHeader = header != null ? _injectParentId(header, id) : null;
     final injectedFooter = footer != null ? _injectParentId(footer, id) : null;
 

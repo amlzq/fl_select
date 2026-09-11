@@ -6,9 +6,9 @@ const _amber = Color(0xFFECC104);
 const _ambientPadding = EdgeInsets.fromLTRB(1, 2, 3, 4);
 
 Set<SelectEntry> get _flatEntries => {
-      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-      SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-    };
+  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+};
 
 Widget _panelHarness({
   SelectActionBarTheme? delegateActionBarTheme,
@@ -52,31 +52,42 @@ void main() {
   });
 
   group('SelectPanel actionBarTheme injection', () {
-    testWidgets('delegate actionBarTheme.backgroundColor styles the action bar',
-        (tester) async {
-      await tester.pumpWidget(_panelHarness(
-        delegateActionBarTheme:
-            const SelectActionBarTheme(backgroundColor: _amber),
-      ));
-      await tester.pumpAndSettle();
+    testWidgets(
+      'delegate actionBarTheme.backgroundColor styles the action bar',
+      (tester) async {
+        await tester.pumpWidget(
+          _panelHarness(
+            delegateActionBarTheme: const SelectActionBarTheme(
+              backgroundColor: _amber,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      expect(find.byType(SelectActionBar), findsOneWidget);
-      expect(
-        find.byWidgetPredicate((w) => w is Container && w.color == _amber),
-        findsOneWidget,
-      );
-    });
+        expect(find.byType(SelectActionBar), findsOneWidget);
+        expect(
+          find.byWidgetPredicate((w) => w is Container && w.color == _amber),
+          findsOneWidget,
+        );
+      },
+    );
 
-    testWidgets('delegate theme merges field-wise over the ambient theme',
-        (tester) async {
-      await tester.pumpWidget(_panelHarness(
-        delegateActionBarTheme:
-            const SelectActionBarTheme(backgroundColor: _amber),
-        selectTheme: SelectThemeData(
-          ThemeData.light(),
-          actionBarTheme: const SelectActionBarTheme(padding: _ambientPadding),
+    testWidgets('delegate theme merges field-wise over the ambient theme', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _panelHarness(
+          delegateActionBarTheme: const SelectActionBarTheme(
+            backgroundColor: _amber,
+          ),
+          selectTheme: SelectThemeData(
+            ThemeData.light(),
+            actionBarTheme: const SelectActionBarTheme(
+              padding: _ambientPadding,
+            ),
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       // The delegate's backgroundColor wins while the ambient padding is
@@ -93,21 +104,23 @@ void main() {
       );
     });
 
-    testWidgets('ambient theme applies when delegate supplies none',
-        (tester) async {
-      await tester.pumpWidget(_panelHarness(
-        selectTheme: SelectThemeData(
-          ThemeData.light(),
-          actionBarTheme:
-              const SelectActionBarTheme(backgroundColor: Colors.teal),
+    testWidgets('ambient theme applies when delegate supplies none', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _panelHarness(
+          selectTheme: SelectThemeData(
+            ThemeData.light(),
+            actionBarTheme: const SelectActionBarTheme(
+              backgroundColor: Colors.teal,
+            ),
+          ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(
-        find.byWidgetPredicate(
-          (w) => w is Container && w.color == Colors.teal,
-        ),
+        find.byWidgetPredicate((w) => w is Container && w.color == Colors.teal),
         findsOneWidget,
       );
     });
