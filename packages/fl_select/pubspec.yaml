@@ -6,8 +6,8 @@ issue_tracker: https://github.com/amlzq/fl_select/issues
 topics: [select, multiselect, dropdown, cascade, widget]
 
 environment:
-  sdk: ^3.5.4
-  flutter: ">=1.17.0"
+  sdk: ^3.10.0
+  flutter: ">=3.35.7"
 
 # This package is resolved via the repository root pub workspace (melos).
 resolution: workspace

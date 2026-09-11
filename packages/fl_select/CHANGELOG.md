@@ -1,5 +1,7 @@
 ## Next
 
+- **BREAKING** raise the minimum Dart SDK from ^3.5.4 to ^3.10.0 and the minimum Flutter from 1.17.0 to 3.35.7.
+
 - **FEATURE** `itemBuilder` now works on the category delegates too: `TabNavSelectDelegate`, `SideNavSelectDelegate` and `ExpandableSelectDelegate` forward it to categories laid out as a list, grid or wrap. The builder may return null to fall back to the default item widget — customize only some entries or categories while keeping the built-in visuals elsewhere. Range-slider and counter category layouts keep their built-in controls; a category's header/footer chips are not covered; `CascadingSelectDelegate` ignores the builder.
 
 - **BREAKING** `SelectItemBuilder` gains an optional `String? categoryId` parameter — the owning `SelectCategoryEntry.id` on category delegates, null on flat delegates. Existing builder closures must accept the new parameter (add `, String? categoryId` to the signature; unused parameters can be omitted with a bare `categoryId`). The return type is now `Widget?` (non-breaking for closures returning `Widget`).

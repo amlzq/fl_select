@@ -4,7 +4,7 @@ publish_to: "none"
 version: 0.12.2
 
 environment:
-  sdk: ^3.10.9
+  sdk: ^3.10.0
 
 # Resolved via the repository root pub workspace (melos).
 resolution: workspace
