@@ -1,6 +1,7 @@
 import 'dart:async';
 
-import 'package:fl_select/fl_select.dart';
+import 'package:fl_select/fl_select.dart' hide SelectPanel;
+import 'package:fl_select/src/select/select_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 

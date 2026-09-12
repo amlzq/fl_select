@@ -8,8 +8,6 @@ import 'constants.dart';
 import 'skeleton_view.dart';
 import 'tab_bar_theme.dart';
 
-enum SelectTabBarIndicatorSize { tab, label }
-
 /// The fixed height of [SelectTabBar], matching [TabBar]'s text-only tab
 /// height (`_kTabHeight`).
 const double _kTabBarHeight = 48.0;

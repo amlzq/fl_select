@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 import 'select_entry.dart';
 
 /// Callback invoked with the currently selected entries.
@@ -18,9 +16,6 @@ enum SelectionMode {
   /// applied (see [SelectChildEntry.immediate] for the per-entry override).
   multiple,
 }
-
-/// Builds a skeleton widget while select data is loading.
-typedef SkeletonBuilder = Widget Function(BuildContext context);
 
 /// Returns true if the entry is a category explicitly configured with
 /// [SelectionMode.multiple].

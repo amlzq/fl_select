@@ -530,7 +530,7 @@ void main() {
       // removed: an extension member can never shadow the instance field
       // [SelectEntry.name], so it was unreachable dead code. Instead, the
       // hosting view writes the formatted name back on commit (e.g.
-      // SelectGridViewState._commitCustomRange), mirroring the slider.
+      // _SelectGridViewState._commitCustomRange), mirroring the slider.
       final entry = SelectRangeEntry<int, dynamic>.custom(
         parentId: 'p',
         min: 10,

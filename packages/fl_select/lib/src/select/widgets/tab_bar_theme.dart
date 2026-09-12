@@ -4,9 +4,18 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../select_theme.dart';
-import 'tab_bar.dart';
 
-/// Defines a theme for [SelectTabBar] widgets.
+/// Whether the tab indicator's width should match the tab or the tab's label,
+/// mirroring Flutter's [TabBarIndicatorSize].
+enum SelectTabBarIndicatorSize {
+  /// The indicator spans the full width of the tab.
+  tab,
+
+  /// The indicator matches the width of the tab's label (text or icon).
+  label,
+}
+
+/// Defines a theme for `SelectTabBar` widgets.
 @immutable
 class SelectTabBarTheme with Diagnosticable {
   const SelectTabBarTheme({
@@ -22,34 +31,34 @@ class SelectTabBarTheme with Diagnosticable {
     this.indicatorAnimationDuration,
   });
 
-  /// Overrides the default value of [SelectTabBar.selectedColor].
+  /// Overrides the default value of `SelectTabBar.backgroundColor`.
   final Color? backgroundColor;
 
-  /// Overrides the default value of [SelectTabBar.padding].
+  /// Overrides the default value of `SelectTabBar.padding`.
   final EdgeInsetsGeometry? padding;
 
-  /// Overrides the default value of [SelectTabBar.selectedColor].
+  /// Overrides the default value of `SelectTabBar.selectedColor`.
   final Color? selectedColor;
 
-  /// Overrides the default value of [SelectTabBar.labelStyle].
+  /// Overrides the default value of `SelectTabBar.labelStyle`.
   final TextStyle? labelStyle;
 
-  /// Overrides the default value of [SelectTabBar.selectedLabelStyle].
+  /// Overrides the default value of `SelectTabBar.selectedLabelStyle`.
   final TextStyle? selectedLabelStyle;
 
-  /// Overrides the default value of [SelectTabBar.indicatorColor].
+  /// Overrides the default value of `SelectTabBar.indicatorColor`.
   final Color? indicatorColor;
 
-  /// Overrides the default value of [SelectTabBar.indicatorHeight].
+  /// Overrides the default value of `SelectTabBar.indicatorHeight`.
   final double? indicatorHeight;
 
-  /// Overrides the default value of [SelectTabBar.indicatorPadding].
+  /// Overrides the default value of `SelectTabBar.indicatorPadding`.
   final EdgeInsetsGeometry? indicatorPadding;
 
-  /// Overrides the default value of [SelectTabBar.indicatorSize].
+  /// Overrides the default value of `SelectTabBar.indicatorSize`.
   final SelectTabBarIndicatorSize? indicatorSize;
 
-  /// Overrides the default value of [SelectTabBar.indicatorAnimationDuration].
+  /// Overrides the default value of `SelectTabBar.indicatorAnimationDuration`.
   final Duration? indicatorAnimationDuration;
 
   /// Returns a copy of this theme with the given fields replaced.

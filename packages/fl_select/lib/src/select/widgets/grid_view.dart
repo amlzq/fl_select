@@ -114,10 +114,10 @@ class SelectGridView extends StatefulWidget {
   final String toText;
 
   @override
-  State<SelectGridView> createState() => SelectGridViewState();
+  State<SelectGridView> createState() => _SelectGridViewState();
 }
 
-class SelectGridViewState extends State<SelectGridView>
+class _SelectGridViewState extends State<SelectGridView>
     with CustomRangeHost, AutomaticKeepAliveClientMixin {
   late List<SelectEntry> _entriesWithoutCustom;
 

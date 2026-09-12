@@ -1,5 +1,54 @@
 # Migration Guide
 
+## MIGRATE TO Next
+
+### Select panel widgets internalized
+
+`fl_select.dart` no longer re-exports the internal widgets barrel. The
+built-in widgets are rendering targets of `SelectPanel`, driven by a
+`SelectDelegate` plus `SelectLayout`s, and were not meant to be constructed
+directly. Only the public surface they are configured through remains
+exported:
+
+- the widget themes (`SelectActionBarTheme`, `SelectTabBarTheme`,
+  `SelectSideBarTheme`, `SelectGridTileTheme`, `SelectListTileTheme`,
+  `SelectFieldTileTheme`, `SelectExpansionTileTheme`,
+  `SelectRangeSliderTheme`, `SelectChipBarTheme`, `SelectSearchBarTheme`,
+  `SelectPanelTheme`) and their enums (`SelectChipVariant`,
+  `SelectGridTileVariant`, `SelectFieldTileVariant`,
+  `SelectTabBarIndicatorSize`);
+- `ToggleWidgetBuilder`, referenced by the themes and delegates;
+- `SelectActionBar`, reusable inside a custom `actionBarBuilder`.
+
+Every other symbol that used to leak through the barrel — the views
+(`SelectListView`, `SelectGridView`, `SelectWrapView`, `SelectRangeView`,
+`SelectSideBar`, `SelectTabBar`, `SelectChipBar`, `SelectSearchBar`,
+`SelectCounter`), the tiles (`SelectListTile`, `SelectCheckboxListTile`,
+`SelectRadioListTile`, `SelectGridTile`, `SelectFieldTile`,
+`SelectExpansionTile`, `SelectRangeSlider`), the skeletons
+(`Select*Skeleton`, `SkeletonView`, `SkeletonTile`), `SelectBadge`,
+the panel host (`SelectPanel`), the chip host symbols (`SelectChip`,
+`SelectChipBarStyle`, `resolveSelectChipBarStyle`),
+`ChainingClampingScrollPhysics`, the
+`OnChanged` typedef and the `kSelect*` constants — keeps compiling through
+a deprecated alias and **will be removed in a future minor version**.
+
+Migration: build the UI through the public entry points (`SelectView`,
+`showSelectBottomSheet`, `showSelectDialog`, `PopupSelectBar`,
+`PopupSelectButton`), pick layouts via `SelectLayout`s on the delegate or
+its categories, and style the built-in widgets through the themes listed
+above.
+
+### `SelectListViewState` / `SelectGridViewState` are private
+
+The state classes were internal implementation details leaked by the
+widgets barrel. Code referencing them directly must be updated:
+
+```diff
+-final key = GlobalKey<SelectListViewState>();
++final key = GlobalKey<State<dynamic>>();
+```
+
 ## MIGRATE TO 0.12.0
 
 ### `SelectController.badgedCategories` renamed to `realSelectedCategories`

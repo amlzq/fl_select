@@ -98,10 +98,10 @@ class SelectListView extends StatefulWidget {
   final String toText;
 
   @override
-  State<SelectListView> createState() => SelectListViewState();
+  State<SelectListView> createState() => _SelectListViewState();
 }
 
-class SelectListViewState extends State<SelectListView>
+class _SelectListViewState extends State<SelectListView>
     with CustomRangeHost, AutomaticKeepAliveClientMixin {
   late List<SelectEntry> entriesWithoutCustom;
 

@@ -9,21 +9,6 @@ const kSelectOverlayMaxHeightFactor = 0.7;
 /// Minimum inset kept between the overlay panel and the screen edges.
 const kSelectOverlayScreenMargin = 0.0;
 
-/// Vertical placement strategy for the select overlay relative to its trigger
-/// (a [PopupSelectButton] or [PopupSelectBar]).
-enum PopupSelectDirection {
-  /// Always present the panel below the trigger.
-  below,
-
-  /// Always present the panel above the trigger.
-  above,
-
-  /// Decide automatically: prefer below, but flip above when there is more
-  /// room there. The panel is always clamped horizontally so it stays on
-  /// screen (mirroring the behavior of [PopupMenuButton]).
-  adaptive,
-}
-
 /// Overlay container that hosts an arbitrary [child] widget (typically a
 /// [SelectPanel]).
 ///

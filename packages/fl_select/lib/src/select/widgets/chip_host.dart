@@ -8,9 +8,6 @@ import '../select_theme_data.dart';
 import 'chip_bar_theme.dart';
 import 'custom_range_host.dart';
 
-/// Default height of the single-row [SelectChipBar].
-const kSelectChipBarHeight = 44.0;
-
 /// A single selectable chip as rendered inside [SelectChipBar] and
 /// [SelectWrapView].
 ///

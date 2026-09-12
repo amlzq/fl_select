@@ -1,14 +1,20 @@
 ## Next
 
-- **BREAKING** raise the minimum Dart SDK from ^3.5.4 to ^3.10.0 and the minimum Flutter from 1.17.0 to 3.35.7.
+- **BREAKING** raise the minimum Dart SDK to ^3.10.0 and the minimum Flutter to 3.35.7.
 
-- **FEATURE** `itemBuilder` now works on the category delegates too: `TabNavSelectDelegate`, `SideNavSelectDelegate` and `ExpandableSelectDelegate` forward it to categories laid out as a list, grid or wrap. The builder may return null to fall back to the default item widget — customize only some entries or categories while keeping the built-in visuals elsewhere. Range-slider and counter category layouts keep their built-in controls; a category's header/footer chips are not covered; `CascadingSelectDelegate` ignores the builder.
+- **FEATURE** `itemBuilder` now also customizes the items of the category delegates (`TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0130)).
 
-- **BREAKING** `SelectItemBuilder` gains an optional `String? categoryId` parameter — the owning `SelectCategoryEntry.id` on category delegates, null on flat delegates. Existing builder closures must accept the new parameter (add `, String? categoryId` to the signature; unused parameters can be omitted with a bare `categoryId`). The return type is now `Widget?` (non-breaking for closures returning `Widget`).
+- **BREAKING** `SelectItemBuilder` gains an optional named `categoryId` parameter and now returns `Widget?` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0130)).
 
-- **BREAKING** remove the dual-mode entry points deprecated since 0.11.0: `FlattenSelectDelegate` / `FlattenSelect` (use `SideNavSelectDelegate` for two-level data or `WrapSelectDelegate` for flat data), two-level data on `GridSelectDelegate` / `ListSelectDelegate` (they now assert on category data; use `TabNavSelectDelegate` / `ExpandableSelectDelegate` instead) and the `SelectChipLayout` alias (use `SelectWrapLayout`) ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0110)).
+- **BREAKING** remove the dual-mode entry points deprecated since 0.11.0 ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0110)).
 
-- **IMPROVEMENT** Migrate the agent skill to the Dart Skills CLI (0.3.1): the skill now ships at `skills/fl_select-code-generation` inside the package (renamed from the repository-root `skills/fl-select` to satisfy the CLI's `<package_name>-` prefix rule), so `skills get` auto-discovers and installs it for any project depending on `fl_select`.
+- **IMPROVEMENT** the agent skill now ships inside the package (`skills/fl_select-code-generation`), so the Dart Skills CLI (0.3.1) auto-discovers it via `skills get`.
+
+- **DEPRECATION** internalize the select panel's built-in widgets — the leaked symbols keep compiling through deprecated aliases and **will be removed in a future minor version** ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0130)).
+
+- **BREAKING** `SelectListViewState` / `SelectGridViewState` are now private.
+
+- **BREAKING** remove the unused `SkeletonBuilder` typedef.
 
 ## 0.12.2
 

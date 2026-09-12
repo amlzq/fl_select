@@ -14,6 +14,9 @@ import 'field_tile_theme.dart';
 import 'skeleton_view.dart';
 import 'wrap_view.dart';
 
+/// Default height of the single-row [SelectChipBar].
+const kSelectChipBarHeight = 44.0;
+
 /// A single-row, horizontally scrollable chip bar for selecting among
 /// sibling [SelectEntry] entries — the classic "quick filter" strip.
 ///

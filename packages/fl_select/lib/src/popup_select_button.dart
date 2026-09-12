@@ -8,7 +8,6 @@ import 'popup_select_controller.dart';
 import 'select/select_delegate.dart';
 import 'select/select_entry.dart';
 import 'select_label_state.dart';
-import 'select_overlay.dart';
 import 'select_overlay_host.dart';
 import 'select_overlay_style.dart';
 

@@ -3,12 +3,6 @@ export 'action_bar_theme.dart';
 export 'badge.dart';
 export 'chip_bar.dart';
 export 'chip_bar_theme.dart';
-export 'chip_host.dart'
-    show
-        SelectChip,
-        SelectChipBarStyle,
-        kSelectChipBarHeight,
-        resolveSelectChipBarStyle;
 export 'constants.dart';
 export 'counter.dart';
 export 'expansion_tile.dart';
