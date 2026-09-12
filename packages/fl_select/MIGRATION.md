@@ -2,6 +2,36 @@
 
 ## MIGRATE TO Next
 
+### `itemBuilder` on the category delegates
+
+`TabNavSelectDelegate`, `SideNavSelectDelegate` and `ExpandableSelectDelegate`
+now forward their `itemBuilder` to their categories laid out as a list, grid
+or wrap, matching the flat-data delegates:
+
+- The builder may return null to fall back to the default item widget, so you
+  can customize only some entries or categories while keeping the built-in
+  visuals elsewhere.
+- Range-slider (`SelectRangeLayout`) and counter (`SelectCounterLayout`)
+  category layouts keep their built-in controls.
+- The builder does not cover a category's header/footer chips.
+- `CascadingSelectDelegate` ignores the builder.
+
+### `SelectItemBuilder` gains `categoryId` and returns `Widget?`
+
+`SelectItemBuilder` now takes an optional named `String? categoryId` — the id
+of the `SelectCategoryEntry` owning the entry on the category delegates, null
+on the flat delegates, so one builder can serve both — and returns `Widget?`
+instead of `Widget` (closures returning a non-null `Widget` keep compiling).
+
+Existing builder closures must declare the new parameter; declare it bare
+(no type annotation) when it is unused:
+
+```diff
+- itemBuilder: (context, entry, {required selected, required onTap}) =>
++ itemBuilder: (context, entry, {required selected, required onTap, categoryId}) =>
+      MyTile(entry: entry, selected: selected, onTap: onTap),
+```
+
 ### Select panel widgets internalized
 
 `fl_select.dart` no longer re-exports the internal widgets barrel. The
