@@ -13,7 +13,7 @@ Delegates carry the styling. Quick path: `selectedColor` / `onSelectedColor`; fi
 | `rangeEntryTheme` | Range slider/input entries |
 | `counterEntryTheme` | Counter (`SelectCounterLayout`) entries |
 | `actionBarTheme` | Apply/Reset action bar |
-| `searchBarTheme` | `SelectSearchBar` |
+| `searchBarTheme` | Built-in search bar |
 | `skeletonTheme` | Loading skeletons |
 | `panelTheme` | Panel background decoration (dialog/sheet panel) |
 

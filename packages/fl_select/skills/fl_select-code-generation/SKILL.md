@@ -5,10 +5,6 @@ description: A Flutter package (fl_select) for building selection UIs (e.g. filt
 
 # fl_select
 
-A Flutter package for building filter bars, cascading menus, and pickers.
-
-> Applies to fl_select `>=0.11.0` (verified against `0.12.0`).
-
 ## Mental model (two orthogonal layers)
 
 1. **Entry points** decide *where* the select appears:
@@ -61,8 +57,8 @@ final SelectEntries? selected = await showSelect(
 
 - `GridSelectDelegate` requires `crossAxisCount`.
 - The flat delegates (`ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate`) and the layout-based category delegates (`TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate`) accept an `itemBuilder` that fully replaces each item widget — render your own selected state from `selected`, wire `onTap` so taps flow through the library's normal selection flow, and branch per category on `categoryId` (the owning category's id; null on flat delegates). Returning null falls back to the default item widget; custom range entries still render as the built-in min/max input, the range-slider/counter category layouts keep their built-in controls, header/footer chips are not covered, and `CascadingSelectDelegate` ignores the builder.
-- `SelectChipBar.isWrapable` is deprecated (0.12.0): `SelectChipBar` is now single-row only; use `SelectWrapView` for the wrapping multi-row form (`WrapSelectDelegate` renders it internally).
-- `SelectController.badgedCategories` was renamed to `realSelectedCategories` (0.12.0); the old name is a deprecated alias. It returns the categories holding at least one non-"Any" selection and drives category badges and TabNavSelect's initial tab focus.
+- The panel's built-in widgets (views like `SelectChipBar` / `SelectWrapView`, tiles, skeletons, `SelectBadge`, `SelectPanel`) are internalized: they keep compiling through deprecated aliases but will be removed in a future minor version — do not construct them directly. Build through the entry points + delegates/`SelectLayout`s and style via the `Select*Theme`s; the wrapping chip form is what `WrapSelectDelegate` / `SelectWrapLayout` render internally.
+- `SelectController.badgedCategories` was renamed to `realSelectedCategories`; the old name is a deprecated alias. It returns the categories holding at least one non-"Any" selection and drives category badges and TabNavSelect's initial tab focus.
 - Every delegate is single-purpose: `ListSelectDelegate` / `GridSelectDelegate` accept flat data only and assert on two-level data (use `ExpandableSelectDelegate` / `TabNavSelectDelegate` for categories); `FlattenSelectDelegate` is removed (use `SideNavSelectDelegate` for two-level or `WrapSelectDelegate` for flat).
 - Only `CascadingSelectDelegate` navigates a tree; the other two-level delegates lay out each category's `children` according to `category.layout` (list / grid / chips / range slider / counter).
 - `SelectChildEntry` is identified by its `parentId`. Prefer the `SelectCategoryEntry(children: {...})` factory, which injects `parentId` automatically.

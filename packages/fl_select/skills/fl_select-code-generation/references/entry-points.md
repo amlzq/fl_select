@@ -43,7 +43,7 @@ Key parameters: `tabs` / `selectDelegates` (required, lengths must match) · `on
 
 `PopupTab` fields: `label`, `labelLoader` (async label), `child` (fully custom tab), `tag`.
 
-The selected tab label is derived from the applied selection automatically (falls back to `SelectLocalizations.multiple`, e.g. "Multiple", when more than one entry is selected). An applied selection that is empty or holds only "Any" entries restores the tab's original `label` — a `labelLoader` is skipped for an empty selection (0.11.2/0.12.0). When `isScrollable` is true, the tapped or focused tab scrolls to the center of the bar (0.11.0).
+The selected tab label is derived from the applied selection automatically (falls back to `SelectLocalizations.multiple`, e.g. "Multiple", when more than one entry is selected). An applied selection that is empty or holds only "Any" entries restores the tab's original `label` — a `labelLoader` is skipped for an empty selection. When `isScrollable` is true, the tapped or focused tab scrolls to the center of the bar.
 
 ## PopupSelectButton — single trigger
 
@@ -65,7 +65,7 @@ PopupSelectButton.outlined(
 );
 ```
 
-Variants: default constructor (filled), `.elevated(...)`, `.outlined(...)` (or pass `variant: PopupSelectButtonVariant.filled/elevated/outlined`). Other parameters mirror `PopupSelectBar`: `onApplied` (required, `void Function(SelectEntries)`), `onChanged`, `onReset`, `labelLoader`, `icon`, `direction`, `overlayStyle`, and the `onSelect*` lifecycle hooks.
+Variants: default constructor (`text` — transparent, no border, like `TextButton`), `.filled(...)`, `.elevated(...)`, `.outlined(...)` (or pass `variant: PopupSelectButtonVariant.text/filled/elevated/outlined`). Other parameters mirror `PopupSelectBar`: `onApplied` (required, `void Function(SelectEntries)`), `onChanged`, `onReset`, `labelLoader`, `icon`, `direction`, `overlayStyle`, and the `onSelect*` lifecycle hooks.
 
 ## showSelect — modal dialog
 
@@ -79,7 +79,7 @@ final SelectEntries? selected = await showSelect(
 
 Returns the selected `SelectEntries` when applied, `null` when dismissed. Interaction mirrors `showTimePicker`: single-selection taps apply and close immediately; multi-selection requires "Apply", and "Reset" only clears.
 
-Parameters: `context`, `delegate` (required) · `title`, `leading`, `trailing`, `centerTitle` (header row; `centerTitle` defaults platform-dependent — `true` on Android) · `barrierDismissible` (default `true`), `barrierColor`, `useRootNavigator` (default `true`), `builder`, `routeSettings`, `anchorPoint` · `elevation`, `shape`, `clipBehavior` (outer `Dialog` decoration; panel decoration is `delegate.panelTheme`). The dialog honors the ambient `DialogTheme.insetPadding` (0.11.3).
+Parameters: `context`, `delegate` (required) · `title`, `leading`, `trailing`, `centerTitle` (header row; `centerTitle` defaults platform-dependent — `true` on Android) · `barrierDismissible` (default `true`), `barrierColor`, `useRootNavigator` (default `true`), `builder`, `routeSettings`, `anchorPoint` · `elevation`, `shape`, `clipBehavior` (outer `Dialog` decoration; panel decoration is `delegate.panelTheme`). The dialog honors the ambient `DialogTheme.insetPadding`.
 
 ## showModalBottomSelect — modal bottom sheet
 
@@ -102,7 +102,7 @@ Height behavior: the body is shrink-wrapped with internal scrolling; unless `con
 
 Pass a `controller` to `SelectView` (or a `PopupSelectController` to the popup entry points) for external control. Useful members:
 
-- `realSelectedCategories` (`SelectEntries`) — top-level categories holding at least one non-"Any" selected child. Drives the category badges on `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` and TabNavSelect's initial tab focus. Renamed from `badgedCategories` in 0.12.0; the old name is kept as a deprecated alias.
+- `realSelectedCategories` (`SelectEntries`) — top-level categories holding at least one non-"Any" selected child. Drives the category badges on `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` and TabNavSelect's initial tab focus. Renamed from `badgedCategories`; the old name is kept as a deprecated alias.
 - `hasMultipleMode` — true when the delegate-level mode is multiple or any top-level category opts into multiple; drives the action bar visibility (see [entries.md](entries.md)).
 
 ## Choosing an entry point

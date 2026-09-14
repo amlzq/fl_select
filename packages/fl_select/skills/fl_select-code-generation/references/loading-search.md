@@ -62,7 +62,7 @@ GridSelectDelegate(
 
 ## Search
 
-Set `searchEnabled: true` on any delegate to render a `SelectSearchBar` above the body:
+Set `searchEnabled: true` on any delegate to render the built-in search bar above the body:
 
 ```dart
 CascadingSelectDelegate(

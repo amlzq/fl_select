@@ -10,7 +10,7 @@ A `SelectDelegate` controls both data loading (`entries` directly or `entriesLoa
 | `GridSelectDelegate` | Grid body (`crossAxisCount` required). |
 | `WrapSelectDelegate` | Wrapable chip bar — the go-to for filter bars. |
 
-### Custom item widgets — `itemBuilder` (0.12.0; category delegates + `categoryId` + null fallback since 0.13.0)
+### Custom item widgets — `itemBuilder`
 
 The flat delegates (`ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate`) and the three layout-based category delegates (`TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate`) accept an `itemBuilder` (`SelectItemBuilder`) that fully replaces the default item widget — list tile, grid tile or chip:
 
@@ -38,7 +38,7 @@ Rules: the builder renders its own selected-state visuals from `selected` and wi
 
 Scope on category delegates: applies to categories laid out as list, grid or wrap (via `category.layout`); the range-slider and counter layouts keep their built-in controls, and a category's header/footer chips are never passed to the builder. `CascadingSelectDelegate` ignores `itemBuilder` (its nodes render per level; a node builder may arrive later). Builders render their own chip visuals, styled to match `SelectChipBarTheme` (the built-in `SelectChip` is no longer part of the public API).
 
-Underlying chip widgets (0.12.0 split): `SelectChipBar` renders a single fixed-height row (`kSelectChipBarHeight`) with the title to its left; `SelectWrapView` renders the wrapping multi-row form — what `WrapSelectDelegate` and `SelectWrapLayout` render internally — and always stacks the title above the chips. `SelectChipBar.isWrapable` / `runSpacing` / `direction` are deprecated in favor of `SelectWrapView`; the skeleton split mirrors it (`SelectChipBarSkeleton` wrap form → `SelectWrapViewSkeleton`). `SelectChip`, `SelectChipBarStyle` and `resolveSelectChipBarStyle` are no longer part of the public API — custom `itemBuilder`s render their own chips, resolving visuals from `SelectChipBarTheme`. Style a `WrapSelectDelegate`'s chips via its `chipBarTheme` (`SelectChipBarTheme`: `variant` (filled/outlined), `chipColor`, `selectedChipColor`, `labelStyle`, `selectedLabelStyle`, `backgroundColor`, `padding`). Widget tests on built-in delegate trees should assert `find.byType(SelectWrapView)`, not `SelectChipBar`.
+Chip views (internalized): the built-in chip widgets — the single-row `SelectChipBar`, the wrapping `SelectWrapView`, their skeletons, and the chip symbols (`SelectChip`, `SelectChipBarStyle`, `resolveSelectChipBarStyle`) — are no longer public API; they keep compiling through deprecated aliases and will be removed in a future minor version. The wrap form is what `WrapSelectDelegate` and `SelectWrapLayout` render internally. Style a `WrapSelectDelegate`'s chips via its `chipBarTheme` (`SelectChipBarTheme`: `variant` (filled/outlined), `chipColor`, `selectedChipColor`, `labelStyle`, `selectedLabelStyle`, `backgroundColor`, `padding`); custom `itemBuilder`s render their own chips, resolving visuals from `SelectChipBarTheme`. In widget tests, the deprecated aliases still resolve to the real types, so `find.byType(SelectWrapView)` keeps working at the cost of a deprecation lint — prefer asserting on the visible chip text instead.
 
 **Two-level (category) data** — a tree of `SelectCategoryEntry` roots:
 
@@ -51,7 +51,7 @@ Underlying chip widgets (0.12.0 split): `SelectChipBar` renders a single fixed-h
 
 `TabNavSelectDelegate`, `SideNavSelectDelegate` and `ExpandableSelectDelegate` badge a category (tab / sidebar item / expansion tile) that holds a real selection — driven by `SelectController.realSelectedCategories` (see [entry-points.md](entry-points.md)).
 
-Scrolling (0.11.1–0.12.0): every scrollable body uses `ChainingClampingScrollPhysics` — a touch drag past an edge hands the leftover drag (and fling momentum) to the enclosing page-level scrollable, restoring the native nested-scrolling feel with no changes required on hosting pages. Since the next release, chaining follows the inner-first order of `NestedScrollView` and browsers: dragging back scrolls the body first, and the leftover only reaches the enclosing page once the body hits its edge. In `SideNavSelectDelegate`, tapping a sidebar item animates that category's full section (including its top padding) to the top of the right column, and the sidebar highlights the category at the right column's scroll position.
+Scrolling: every scrollable body chains its touch drag to the enclosing page-level scrollable — a drag past an edge hands the leftover drag (and fling momentum) upward, restoring the native nested-scrolling feel with no changes required on hosting pages (the physics class itself is internalized). Chaining follows the inner-first order of `NestedScrollView` and browsers: dragging back scrolls the body first, and the leftover only reaches the enclosing page once the body hits its edge. In `SideNavSelectDelegate`, tapping a sidebar item animates that category's full section (including its top padding) to the top of the right column, and the sidebar highlights the category at the right column's scroll position.
 
 ```dart
 PopupSelectBar(
@@ -83,7 +83,7 @@ ListSelectDelegate(
 ```
 
 **Search**
-- `searchEnabled` — renders a `SelectSearchBar` above the body.
+- `searchEnabled` — renders the built-in search bar above the body.
 - `searchPredicate` (`bool Function(SelectEntry, String)`; default `defaultSelectSearchPredicate`, case-insensitive substring on `name`).
 - `searchHintText`, `searchDebounceDuration` (default 300 ms).
 
