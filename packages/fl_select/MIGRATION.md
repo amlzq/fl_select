@@ -64,7 +64,7 @@ the panel host (`SelectPanel`), the chip host symbols (`SelectChip`,
 a deprecated alias and **will be removed in a future minor version**.
 
 Migration: build the UI through the public entry points (`SelectView`,
-`showSelectBottomSheet`, `showSelectDialog`, `PopupSelectBar`,
+`showModalBottomSelect`, `showSelect`, `PopupSelectBar`,
 `PopupSelectButton`), pick layouts via `SelectLayout`s on the delegate or
 its categories, and style the built-in widgets through the themes listed
 above.

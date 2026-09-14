@@ -1,14 +1,14 @@
 ## Next
 
-- **FEATURE** `itemBuilder` now also customizes the items of the category delegates (`TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0130)).
+- **FEATURE** `itemBuilder` now also customizes the items of the category delegates (`TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
 
 - **IMPROVEMENT** the agent skill now ships inside the package (`skills/fl_select-code-generation`), so the Dart Skills CLI (0.3.1) auto-discovers it via `skills get`.
 
-- **DEPRECATION** internalize the select panel's built-in widgets — the leaked symbols keep compiling through deprecated aliases and **will be removed in a future minor version** ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0130)).
+- **DEPRECATION** internalize the select panel's built-in widgets — the leaked symbols keep compiling through deprecated aliases ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
 
 - **BREAKING** raise the minimum Dart SDK to ^3.10.0 and the minimum Flutter to 3.35.7.
 
-- **BREAKING** `SelectItemBuilder` gains an optional named `categoryId` parameter and now returns `Widget?` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0130)).
+- **BREAKING** `SelectItemBuilder` gains an optional named `categoryId` parameter and now returns `Widget?` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
 
 - **BREAKING** remove the dual-mode entry points deprecated since 0.11.0 ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0110)).
 
