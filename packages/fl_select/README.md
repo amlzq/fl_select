@@ -329,7 +329,7 @@ await showModalBottomSelect(
 
 #### Search
 
-Set `searchEnabled: true` on any delegate to render a `SelectSearchBar` above the body. Typing filters the displayed entries (debounced 300 ms by default) while preserving the layout and selection state — canceling the search restores the original entries.
+Set `searchEnabled: true` on any delegate to render a search bar above the body. Typing filters the displayed entries (debounced 300 ms by default) while preserving the layout and selection state — canceling the search restores the original entries.
 
 ```dart
 CascadingSelectDelegate(
@@ -347,12 +347,12 @@ The default predicate (`defaultSelectSearchPredicate`) matches `SelectEntry.name
 
 #### Custom item builder
 
-The flat-data delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) accept an `itemBuilder` that replaces each regular item's widget — list tile, grid tile or chip — entirely. The builder receives the entry, its display index within the (search-filtered) list, the current `selected` state, and an `onTap` that you must wire to your own gesture handler (e.g. `InkWell.onTap`) so taps keep flowing through the library's normal selection logic:
+Every delegate except `CascadingSelectDelegate` accepts an `itemBuilder` that replaces each regular item's widget — list tile, grid tile or chip — entirely. The builder receives the entry, the current `selected` state, an `onTap` that you must wire to your own gesture handler (e.g. `InkWell.onTap`) so taps keep flowing through the library's normal selection logic, and the `categoryId` of the owning category (null on the flat delegates, so one builder can serve both):
 
 ```dart
 ListSelectDelegate(
   entries: listData,
-  itemBuilder: (context, entry, {required selected, required onTap}) {
+  itemBuilder: (context, entry, {required selected, required onTap, categoryId}) {
     return InkWell(
       onTap: onTap,
       child: Container(
@@ -371,7 +371,7 @@ ListSelectDelegate(
 );
 ```
 
-Custom range entries (`SelectRangeEntry.custom`) are not passed to the builder — they keep rendering as the built-in min/max input field. Omitting `itemBuilder` keeps the default item widgets; the deprecated two-level fallback paths (list → expandable, grid → tab-nav) do not forward it.
+Returning `null` falls back to the default item widget, so you can customize only some entries or categories while keeping the built-in visuals elsewhere. Custom range entries (`SelectRangeEntry.custom`) are not passed to the builder — they keep rendering as the built-in min/max input field — and range-slider / counter category layouts keep their built-in controls. The builder does not cover a category's header/footer chips; the deprecated two-level fallback paths (list → expandable, grid → tab-nav) do not forward it.
 
 #### Serializing selections
 
