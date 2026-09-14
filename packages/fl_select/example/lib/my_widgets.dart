@@ -64,14 +64,15 @@ class MyListItem extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.all(12),
-        color: selected ? Theme.of(context).colorScheme.primaryContainer : null,
-        child: Row(
-          children: [
-            Text(entry.name ?? ''),
-            Spacer(),
-            if (selected) const Icon(Icons.check),
-          ],
+        constraints: const BoxConstraints(minHeight: 42),
+        color: selected
+            ? Theme.of(context).colorScheme.primaryContainer
+            : Colors.transparent,
+        alignment: Alignment.center,
+        child: Text(
+          entry.name ?? '',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
@@ -96,17 +97,16 @@ class MyGridItem extends StatelessWidget {
       onTap: onTap,
       child: Stack(
         children: [
-          Container(
-            width: double.infinity,
-            height: double.infinity,
-            alignment: Alignment.center,
-            color: selected
-                ? Theme.of(context).colorScheme.primaryContainer
-                : null,
-            child: Text(entry.name ?? ''),
-          ),
+          Text(entry.name ?? ''),
           if (selected)
-            Positioned(right: 0, bottom: 0, child: const Icon(Icons.check)),
+            Positioned(
+              right: 0,
+              bottom: 0,
+              child: Icon(
+                Icons.check,
+                color: selected ? Theme.of(context).colorScheme.primary : null,
+              ),
+            ),
         ],
       ),
     );

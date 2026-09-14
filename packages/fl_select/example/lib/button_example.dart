@@ -1,5 +1,6 @@
 import 'package:example/entry_repository.dart';
 import 'package:example/log.dart';
+import 'package:example/my_widgets.dart';
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
 
@@ -101,6 +102,26 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                           ),
                           entries: multiCategoryData,
                           selectionMode: SelectionMode.multiple,
+                          itemBuilder:
+                              (
+                                context,
+                                entry, {
+                                categoryId,
+                                required onTap,
+                                required selected,
+                              }) {
+                                if (categoryId == 'cate1' ||
+                                    categoryId == 'cate3' ||
+                                    categoryId == 'cate4') {
+                                  return MyGridItem(
+                                    entry: entry,
+                                    selected: selected,
+                                    onTap: onTap,
+                                  );
+                                } else {
+                                  return null;
+                                }
+                              },
                         ),
                         onApplied: (selected) {
                           largePrint('onApplied: $selected');
