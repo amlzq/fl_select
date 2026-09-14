@@ -1,5 +1,36 @@
 # Migration Guide
 
+## MIGRATE TO 0.3.0
+
+### Agent skill shipped inside the package
+
+The package now ships a Dart Skills CLI (0.3.1) agent skill at
+`skills/fl_select_genui-code-generation`: projects depending on
+`fl_select_genui` auto-discover and install it via `skills get`. It covers:
+
+- catalog registration (`FlSelectCatalogItems`, `.asCatalog()` / `.all`);
+- authoring `Select` payloads (`delegate` + `entries` in the
+  `SelectEntryCodec` format);
+- selection write-back (`<id>.value`, `flatKey`);
+- `systemPromptFragment` and `SelectEntrySchema`.
+
+No code changes are required — the skill is additive.
+
+### fl_select bumped to `^0.13.0`
+
+fl_select 0.13.0 removes and internalizes several symbols; none of them are
+referenced by this package, so no source changes were needed:
+
+| fl_select 0.13.0 change | Why fl_select_genui is unaffected |
+| --- | --- |
+| `FlattenSelectDelegate` removed; `GridSelectDelegate` / `ListSelectDelegate` are flat-only now | every `delegate` token already routes to the single-purpose delegates (see the routing table under 0.1.0) |
+| `SelectItemBuilder` gains `categoryId` and returns `Widget?` | the catalog never passes an `itemBuilder` |
+| Panel widgets internalized (deprecated aliases) | rendering goes through the public entry point `SelectView` only |
+| `SelectListViewState` / `SelectGridViewState` private, `SkeletonBuilder` removed | not referenced |
+| Dart `^3.10.0` / Flutter 3.35.7 minimum | already this package's constraints |
+
+Agent payloads are unaffected: existing JSON keeps rendering identically.
+
 ## MIGRATE TO 0.2.0
 
 The catalog item is renamed to `Select` to reflect that it is a selection

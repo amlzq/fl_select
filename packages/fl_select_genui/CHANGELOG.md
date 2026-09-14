@@ -1,6 +1,8 @@
-## Next
+## 0.3.0
 
-- **FEATURE** Ship a Dart Skills CLI (0.3.1) agent skill at `skills/fl_select_genui-code-generation` inside the package: projects depending on `fl_select_genui` auto-discover and install it via `skills get`. It covers catalog registration (`FlSelectCatalogItems`), authoring `Select` payloads (delegate + `entries` in `SelectEntryCodec` format), selection write-back, `systemPromptFragment` and `SelectEntrySchema`.
+- **FEATURE** Ship a Dart Skills CLI agent skill inside the package ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-next)).
+
+- **IMPROVEMENT** Bump fl_select to `^0.13.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-next)).
 
 ## 0.2.1
 
