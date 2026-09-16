@@ -132,20 +132,25 @@ class SelectListTile extends StatelessWidget {
       );
     }
 
-    return InkWell(
-      onTap: enabled ? onTap : null,
-      child: Container(
-        height: kSelectListTileHeight,
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(horizontal: 10),
-        color: selected ? selectedTileColor : tileColor,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ?leading,
-            Expanded(child: content),
-            ?trailing,
-          ],
+    return Semantics(
+      button: true,
+      selected: selected,
+      enabled: enabled,
+      child: InkWell(
+        onTap: enabled ? onTap : null,
+        child: Container(
+          height: kSelectListTileHeight,
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          color: selected ? selectedTileColor : tileColor,
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              ?leading,
+              Expanded(child: content),
+              ?trailing,
+            ],
+          ),
         ),
       ),
     );

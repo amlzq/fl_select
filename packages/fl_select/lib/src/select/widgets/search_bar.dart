@@ -206,44 +206,53 @@ class _SelectSearchBarState extends State<SelectSearchBar> {
         valueListenable: widget.controller,
         builder: (context, TextEditingValue value, _) {
           final hasText = value.text.isNotEmpty;
-          return TextField(
-            controller: widget.controller,
-            focusNode: _focusNode,
-            onChanged: widget.onChanged,
-            style: effectiveTextStyle,
-            decoration:
-                widget.decoration ??
-                InputDecoration(
-                  hintText:
-                      widget.hintText ??
-                      SelectLocalizations.of(context)?.search ??
-                      'Search',
-                  hintStyle: effectiveHintStyle,
-                  prefixIcon: Icon(Icons.search, size: effectiveIconSize),
-                  prefixIconColor: effectiveIconColor,
-                  suffixIcon: hasText
-                      ? IconButton(
-                          icon: Icon(
-                            Icons.close,
-                            size: effectiveIconSize > 0
-                                ? effectiveIconSize - 2
-                                : effectiveIconSize,
-                          ),
-                          onPressed: () {
-                            widget.controller.clear();
-                            widget.onChanged?.call('');
-                          },
-                        )
-                      : null,
-                  suffixIconColor: effectiveIconColor,
-                  isDense: true,
-                  filled: effectiveFilled,
-                  fillColor: effectiveFillColor,
-                  contentPadding: effectiveContentPadding,
-                  border: border,
-                  enabledBorder: border,
-                  focusedBorder: focusedBorder,
-                ),
+          return Semantics(
+            label: SelectLocalizations.of(context)?.search ?? 'Search',
+            child: TextField(
+              controller: widget.controller,
+              focusNode: _focusNode,
+              onChanged: widget.onChanged,
+              style: effectiveTextStyle,
+              decoration:
+                  widget.decoration ??
+                  InputDecoration(
+                    hintText:
+                        widget.hintText ??
+                        SelectLocalizations.of(context)?.search ??
+                        'Search',
+                    hintStyle: effectiveHintStyle,
+                    prefixIcon: Icon(Icons.search, size: effectiveIconSize),
+                    prefixIconColor: effectiveIconColor,
+                    suffixIcon: hasText
+                        ? Semantics(
+                            button: true,
+                            label:
+                                SelectLocalizations.of(context)?.clearSearch ??
+                                'Clear search',
+                            child: IconButton(
+                              icon: Icon(
+                                Icons.close,
+                                size: effectiveIconSize > 0
+                                    ? effectiveIconSize - 2
+                                    : effectiveIconSize,
+                              ),
+                              onPressed: () {
+                                widget.controller.clear();
+                                widget.onChanged?.call('');
+                              },
+                            ),
+                          )
+                        : null,
+                    suffixIconColor: effectiveIconColor,
+                    isDense: true,
+                    filled: effectiveFilled,
+                    fillColor: effectiveFillColor,
+                    contentPadding: effectiveContentPadding,
+                    border: border,
+                    enabledBorder: border,
+                    focusedBorder: focusedBorder,
+                  ),
+            ),
           );
         },
       ),

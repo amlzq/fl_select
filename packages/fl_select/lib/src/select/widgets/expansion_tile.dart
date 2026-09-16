@@ -296,6 +296,7 @@ class _SelectExpansionTileState extends State<SelectExpansionTile>
           button: true,
           enabled: widget.enabled,
           expanded: _isExpanded,
+          label: widget.title,
           child: InkWell(
             onTap: widget.enabled ? _handleTap : null,
             child: title,

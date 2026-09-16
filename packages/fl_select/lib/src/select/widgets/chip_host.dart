@@ -54,22 +54,27 @@ class SelectChip extends StatelessWidget {
               ? selectedColor
               : color
         : Colors.grey[500]!;
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-        decoration: BoxDecoration(
-          color: variant == SelectChipVariant.filled ? effectiveColor : null,
-          border: variant == SelectChipVariant.filled
-              ? null
-              : Border.all(color: effectiveColor, width: 1.2),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Text(
-          label,
-          style: selected ? selectedLabelStyle : labelStyle,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+    return Semantics(
+      button: true,
+      selected: selected,
+      enabled: enabled,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            color: variant == SelectChipVariant.filled ? effectiveColor : null,
+            border: variant == SelectChipVariant.filled
+                ? null
+                : Border.all(color: effectiveColor, width: 1.2),
+            borderRadius: BorderRadius.circular(4),
+          ),
+          child: Text(
+            label,
+            style: selected ? selectedLabelStyle : labelStyle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ),
     );

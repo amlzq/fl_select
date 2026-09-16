@@ -114,19 +114,27 @@ class SelectActionBar extends StatelessWidget {
         children: [
           Expanded(
             flex: effectiveResetFlex,
-            child: FilledButton.tonal(
-              onPressed: onResetTap,
-              style: effectiveResetButtonStyle,
-              child: Text(effectiveResetText),
+            child: Semantics(
+              button: true,
+              label: effectiveResetText,
+              child: FilledButton.tonal(
+                onPressed: onResetTap,
+                style: effectiveResetButtonStyle,
+                child: Text(effectiveResetText),
+              ),
             ),
           ),
           const SizedBox(width: 12),
           Expanded(
             flex: effectiveApplyFlex,
-            child: FilledButton(
-              onPressed: onApplyTap,
-              style: effectiveApplyButtonStyle,
-              child: Text(effectiveApplyText),
+            child: Semantics(
+              button: true,
+              label: effectiveApplyText,
+              child: FilledButton(
+                onPressed: onApplyTap,
+                style: effectiveApplyButtonStyle,
+                child: Text(effectiveApplyText),
+              ),
             ),
           ),
         ],

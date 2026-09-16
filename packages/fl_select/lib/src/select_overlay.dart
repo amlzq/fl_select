@@ -139,59 +139,66 @@ class SelectOverlay extends StatelessWidget {
           screenSize.height,
         );
 
-        return Stack(
-          clipBehavior:
-              Clip.none, // Allow barrier/panel to extend beyond bounds
-          children: [
-            // Barrier layer: covers only the direction-specific half of the screen.
-            // - direction=below (growUp=false): covers area below the trigger
-            // - direction=above (growUp=true):  covers area above the trigger
-            // The trigger (Bar/Button) itself is never covered, so no ClipPath needed.
-            // Coordinates are in screen space (Stack origin = screen top-left).
-            if (targetRect != null)
-              Positioned(
-                left: 0,
-                top: growUp ? 0 : targetRect!.bottom,
-                width: screenSize.width,
-                height: growUp
-                    ? targetRect!.top
-                    : (screenSize.height - targetRect!.bottom),
-                child: _buildBarrier(
-                  intercept: intercept,
-                  onOverlayTap: onOverlayTap,
-                  barrierColor: barrierColor,
+        return Semantics(
+          onDismiss: () {
+            if (onOverlayTap != null) {
+              onOverlayTap!();
+            }
+          },
+          child: Stack(
+            clipBehavior:
+                Clip.none, // Allow barrier/panel to extend beyond bounds
+            children: [
+              // Barrier layer: covers only the direction-specific half of the screen.
+              // - direction=below (growUp=false): covers area below the trigger
+              // - direction=above (growUp=true):  covers area above the trigger
+              // The trigger (Bar/Button) itself is never covered, so no ClipPath needed.
+              // Coordinates are in screen space (Stack origin = screen top-left).
+              if (targetRect != null)
+                Positioned(
+                  left: 0,
+                  top: growUp ? 0 : targetRect!.bottom,
+                  width: screenSize.width,
+                  height: growUp
+                      ? targetRect!.top
+                      : (screenSize.height - targetRect!.bottom),
+                  child: _buildBarrier(
+                    intercept: intercept,
+                    onOverlayTap: onOverlayTap,
+                    barrierColor: barrierColor,
+                  ),
+                )
+              else
+                Positioned.fromRect(
+                  rect: screenRect,
+                  child: _buildBarrier(
+                    intercept: intercept,
+                    onOverlayTap: onOverlayTap,
+                    barrierColor: barrierColor,
+                  ),
                 ),
-              )
-            else
-              Positioned.fromRect(
-                rect: screenRect,
-                child: _buildBarrier(
-                  intercept: intercept,
-                  onOverlayTap: onOverlayTap,
-                  barrierColor: barrierColor,
+              // Panel layer: positioned by CustomSingleChildLayout in screen
+              // coordinates, renders on top of the barrier.
+              // below: panel top = targetRect.bottom
+              // above: panel top = targetRect.top - childHeight
+              CustomSingleChildLayout(
+                delegate: _SelectOverlayPositionDelegate(
+                  targetRect: targetRect,
+                  screenSize: screenSize,
+                  growUp: growUp,
+                  margin: screenMargin,
+                ),
+                child: FadeTransition(
+                  opacity: effectiveAnimation,
+                  child: SizeTransition(
+                    sizeFactor: effectiveAnimation,
+                    axisAlignment: growUp ? 1.0 : -1.0,
+                    child: child,
+                  ),
                 ),
               ),
-            // Panel layer: positioned by CustomSingleChildLayout in screen
-            // coordinates, renders on top of the barrier.
-            // below: panel top = targetRect.bottom
-            // above: panel top = targetRect.top - childHeight
-            CustomSingleChildLayout(
-              delegate: _SelectOverlayPositionDelegate(
-                targetRect: targetRect,
-                screenSize: screenSize,
-                growUp: growUp,
-                margin: screenMargin,
-              ),
-              child: FadeTransition(
-                opacity: effectiveAnimation,
-                child: SizeTransition(
-                  sizeFactor: effectiveAnimation,
-                  axisAlignment: growUp ? 1.0 : -1.0,
-                  child: child,
-                ),
-              ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

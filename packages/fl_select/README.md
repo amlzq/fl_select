@@ -31,6 +31,7 @@ A composable architecture of **entry points, delegates, and layouts** — any de
 - Search filtering.
 - Light & dark theming with rich styles.
 - Built-in i18n in 10 languages.
+- Accessibility support for screen readers.
 
 ### Getting started
 
@@ -484,3 +485,42 @@ MaterialApp(
 ```
 
 To override the labels for a single delegate, set `applyText` / `resetText` on it directly.
+
+## Accessibility
+
+fl_select provides comprehensive accessibility support for screen readers and assistive technologies. All components are designed to work out of the box with screen readers like TalkBack (Android) and VoiceOver (iOS).
+
+### What's Supported
+
+- **Screen reader announcements**: Panel open/close, apply/reset actions, and selection changes are automatically announced
+- **Semantic labels**: All interactive elements have proper semantic information (buttons, selected states, values)
+- **Keyboard navigation**: Full keyboard support for all components
+- **Localized labels**: Accessibility announcements use the same i18n system as the UI (10 languages supported)
+
+### How to Use
+
+No additional setup is required — accessibility is enabled by default. Simply use the components as you normally would:
+
+```dart
+PopupSelectButton(
+  label: 'Select options',
+  selectDelegate: ListSelectDelegate(entries: listData),
+  onApplied: (selected) => print('Selected: $selected'),
+);
+```
+
+For custom item builders, wrap your widgets with `Semantics` to maintain accessibility:
+
+```dart
+itemBuilder: (context, entry, {required selected, required onTap, categoryId}) {
+  return Semantics(
+    button: true,
+    selected: selected,
+    label: entry.name,
+    child: InkWell(
+      onTap: onTap,
+      child: YourCustomWidget(entry: entry),
+    ),
+  );
+}
+```

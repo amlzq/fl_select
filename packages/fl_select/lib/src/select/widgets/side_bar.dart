@@ -223,17 +223,19 @@ class _SelectSideBarState extends State<SelectSideBar> {
         labelStyle: effectiveLabelStyle,
         selectedColor: effectiveSelectedColor,
         selectedTileColor: effectiveSelectedTileColor,
-        leading: SelectBadge(
-          color: entry.hasChildren && selected
-              ? widget.selectedColor
-              : Colors.transparent,
+        leading: ExcludeSemantics(
+          child: SelectBadge(
+            color: entry.hasChildren && selected
+                ? widget.selectedColor
+                : Colors.transparent,
+          ),
         ),
         onTap: () => _handleTap(index, entry),
       );
       if (widget.isScrollable) {
         tile = KeyedSubtree(key: _tileKeys[index], child: tile);
       }
-      return tile;
+      return Semantics(selected: selected, button: true, child: tile);
     });
 
     final column = LayoutBuilder(

@@ -152,15 +152,18 @@ class _SelectCounterState extends State<SelectCounter> {
           if (labels.isEmpty)
             const SizedBox.shrink()
           else
-            _SpinBox(
-              values: labels,
-              index: _index,
-              decrementIcon: widget.decrementIcon,
-              incrementIcon: widget.incrementIcon,
-              valueColor: _index == 0
-                  ? theme.onBackgroundColorHighest
-                  : theme.selectedColor,
-              onChanged: _onSpinChanged,
+            Semantics(
+              value: labels[_index],
+              child: _SpinBox(
+                values: labels,
+                index: _index,
+                decrementIcon: widget.decrementIcon,
+                incrementIcon: widget.incrementIcon,
+                valueColor: _index == 0
+                    ? theme.onBackgroundColorHighest
+                    : theme.selectedColor,
+                onChanged: _onSpinChanged,
+              ),
             ),
         ],
       ),
@@ -207,10 +210,14 @@ class _SpinBox extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        IconButton.filled(
-          onPressed: canDecrement ? () => onChanged(index - 1) : null,
-          icon: Icon(decrementIcon),
-          tooltip: SelectLocalizations.of(context)?.decrease ?? 'Decrease',
+        Semantics(
+          button: true,
+          enabled: canDecrement,
+          child: IconButton.filled(
+            onPressed: canDecrement ? () => onChanged(index - 1) : null,
+            icon: Icon(decrementIcon),
+            tooltip: SelectLocalizations.of(context)?.decrease ?? 'Decrease',
+          ),
         ),
         Expanded(
           child: Text(
@@ -223,10 +230,14 @@ class _SpinBox extends StatelessWidget {
             ),
           ),
         ),
-        IconButton.filled(
-          onPressed: canIncrement ? () => onChanged(index + 1) : null,
-          icon: Icon(incrementIcon),
-          tooltip: SelectLocalizations.of(context)?.increase ?? 'Increase',
+        Semantics(
+          button: true,
+          enabled: canIncrement,
+          child: IconButton.filled(
+            onPressed: canIncrement ? () => onChanged(index + 1) : null,
+            icon: Icon(incrementIcon),
+            tooltip: SelectLocalizations.of(context)?.increase ?? 'Increase',
+          ),
         ),
       ],
     );

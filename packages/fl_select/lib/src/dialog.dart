@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/semantics.dart';
 
+import 'i18n/select_localizations.dart';
 import 'select/select_delegate.dart';
 import 'select/select_entry.dart';
 import 'select/select_panel.dart';
@@ -76,7 +78,25 @@ Future<SelectEntries?> showSelect({
   return Navigator.of(
     context,
     rootNavigator: useRootNavigator,
-  ).push<SelectEntries?>(route);
+  ).push<SelectEntries?>(route).then((result) {
+    if (!context.mounted) return result;
+
+    if (result != null) {
+      SemanticsService.sendAnnouncement(
+        View.of(context),
+        SelectLocalizations.of(context)?.applied(result.length) ??
+            'Applied, ${result.length} selected',
+        TextDirection.ltr,
+      );
+    } else {
+      SemanticsService.sendAnnouncement(
+        View.of(context),
+        SelectLocalizations.of(context)?.panelClosed ?? 'Panel closed',
+        TextDirection.ltr,
+      );
+    }
+    return result;
+  });
 }
 
 /// Modal route used by [showSelect].

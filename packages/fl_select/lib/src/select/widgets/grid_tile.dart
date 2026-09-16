@@ -121,24 +121,29 @@ class SelectGridTile extends StatelessWidget {
             width: 1.2,
           );
 
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: tileBackgroundColor,
-          border: effectiveBorder,
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            color: effectiveTextColor,
-            fontWeight: selected ? FontWeight.w500 : FontWeight.normal,
+    return Semantics(
+      button: true,
+      selected: selected,
+      enabled: enabled,
+      child: InkWell(
+        onTap: onTap,
+        child: Container(
+          alignment: Alignment.center,
+          decoration: BoxDecoration(
+            color: tileBackgroundColor,
+            border: effectiveBorder,
+            borderRadius: BorderRadius.circular(4),
           ),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              color: effectiveTextColor,
+              fontWeight: selected ? FontWeight.w500 : FontWeight.normal,
+            ),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
         ),
       ),
     );

@@ -55,6 +55,16 @@ class SelectLocalizations {
   String get increase => _currentValues['increase'] ?? 'Increase';
   String error(Object error) => '${_currentValues['error'] ?? 'Error'}: $error';
 
+  // Accessibility strings
+  String get panelOpened =>
+      _currentValues['panelOpened'] ?? 'Select panel opened';
+  String get panelClosed =>
+      _currentValues['panelClosed'] ?? 'Select panel closed';
+  String get cleared => _currentValues['cleared'] ?? 'Cleared';
+  String applied(int count) =>
+      '${_currentValues['applied'] ?? 'Applied'}, $count selected';
+  String get clearSearch => _currentValues['clearSearch'] ?? 'Clear search';
+
   // Extended language resource dictionary
   static const Map<String, Map<String, String>> _localizedValues = {
     'de': {
@@ -66,6 +76,11 @@ class SelectLocalizations {
       'error': 'Fehler',
       'decrease': 'Verringern',
       'increase': 'Erhöhen',
+      'panelOpened': 'Auswahlbereich geöffnet',
+      'panelClosed': 'Auswahlbereich geschlossen',
+      'cleared': 'Gelöscht',
+      'applied': 'Angewendet',
+      'clearSearch': 'Suche löschen',
     },
     'en': {
       'reset': 'Reset',
@@ -76,6 +91,11 @@ class SelectLocalizations {
       'error': 'Error',
       'decrease': 'Decrease',
       'increase': 'Increase',
+      'panelOpened': 'Select panel opened',
+      'panelClosed': 'Select panel closed',
+      'cleared': 'Cleared',
+      'applied': 'Applied',
+      'clearSearch': 'Clear search',
     },
     'es': {
       'reset': 'Restablecer',
@@ -86,6 +106,11 @@ class SelectLocalizations {
       'error': 'Error',
       'decrease': 'Reducir',
       'increase': 'Aumentar',
+      'panelOpened': 'Panel de selección abierto',
+      'panelClosed': 'Panel de selección cerrado',
+      'cleared': 'Borrado',
+      'applied': 'Aplicado',
+      'clearSearch': 'Borrar búsqueda',
     },
     'fr': {
       'reset': 'Réinitialiser',
@@ -96,6 +121,11 @@ class SelectLocalizations {
       'error': 'Erreur',
       'decrease': 'Diminuer',
       'increase': 'Augmenter',
+      'panelOpened': 'Panneau de sélection ouvert',
+      'panelClosed': 'Panneau de sélection fermé',
+      'cleared': 'Effacé',
+      'applied': 'Appliqué',
+      'clearSearch': 'Effacer la recherche',
     },
     'id': {
       'reset': 'Atur Ulang',
@@ -106,6 +136,11 @@ class SelectLocalizations {
       'error': 'Kesalahan',
       'decrease': 'Kurangi',
       'increase': 'Tambah',
+      'panelOpened': 'Panel seleksi dibuka',
+      'panelClosed': 'Panel seleksi ditutup',
+      'cleared': 'Dihapus',
+      'applied': 'Diterapkan',
+      'clearSearch': 'Hapus pencarian',
     },
     'ja': {
       'reset': 'リセット',
@@ -116,6 +151,11 @@ class SelectLocalizations {
       'error': 'エラー',
       'decrease': '減らす',
       'increase': '増やす',
+      'panelOpened': '選択パネルが開きました',
+      'panelClosed': '選択パネルが閉じました',
+      'cleared': 'クリアされました',
+      'applied': '適用されました',
+      'clearSearch': '検索をクリア',
     },
     'ko': {
       'reset': '초기화',
@@ -126,6 +166,11 @@ class SelectLocalizations {
       'error': '오류',
       'decrease': '감소',
       'increase': '증가',
+      'panelOpened': '선택 패널이 열렸습니다',
+      'panelClosed': '선택 패널이 닫혔습니다',
+      'cleared': '지워졌습니다',
+      'applied': '적용되었습니다',
+      'clearSearch': '검색 지우기',
     },
     'pt': {
       'reset': 'Redefinir',
@@ -136,6 +181,11 @@ class SelectLocalizations {
       'error': 'Erro',
       'decrease': 'Diminuir',
       'increase': 'Aumentar',
+      'panelOpened': 'Painel de seleção aberto',
+      'panelClosed': 'Painel de seleção fechado',
+      'cleared': 'Limpo',
+      'applied': 'Aplicado',
+      'clearSearch': 'Limpar pesquisa',
     },
     'vi': {
       'reset': 'Đặt lại',
@@ -146,6 +196,11 @@ class SelectLocalizations {
       'error': 'Lỗi',
       'decrease': 'Giảm',
       'increase': 'Tăng',
+      'panelOpened': 'Bảng chọn đã mở',
+      'panelClosed': 'Bảng chọn đã đóng',
+      'cleared': 'Đã xóa',
+      'applied': 'Đã áp dụng',
+      'clearSearch': 'Xóa tìm kiếm',
     },
     'zh_Hans': {
       'reset': '重置',
@@ -156,16 +211,26 @@ class SelectLocalizations {
       'error': '错误',
       'decrease': '减少',
       'increase': '增加',
+      'panelOpened': '选择面板已打开',
+      'panelClosed': '选择面板已关闭',
+      'cleared': '已清除',
+      'applied': '已应用',
+      'clearSearch': '清除搜索',
     },
     'zh_Hant': {
       'reset': '重置',
-      'apply': '应用',
+      'apply': '應用',
       'multiple': '多選',
       'search': '搜尋',
       'noResults': '暫無結果',
       'error': '錯誤',
       'decrease': '減少',
       'increase': '增加',
+      'panelOpened': '選擇面板已打開',
+      'panelClosed': '選擇面板已關閉',
+      'cleared': '已清除',
+      'applied': '已應用',
+      'clearSearch': '清除搜尋',
     },
     'zh_Hant_HK': {
       'reset': '重設',
@@ -176,6 +241,11 @@ class SelectLocalizations {
       'error': '錯誤',
       'decrease': '減少',
       'increase': '增加',
+      'panelOpened': '選擇面板已打開',
+      'panelClosed': '選擇面板已關閉',
+      'cleared': '已清除',
+      'applied': '已應用',
+      'clearSearch': '清除搜尋',
     },
     'zh_Hant_TW': {
       'reset': '重設',
@@ -186,6 +256,11 @@ class SelectLocalizations {
       'error': '錯誤',
       'decrease': '減少',
       'increase': '增加',
+      'panelOpened': '選擇面板已打開',
+      'panelClosed': '選擇面板已關閉',
+      'cleared': '已清除',
+      'applied': '已套用',
+      'clearSearch': '清除搜尋',
     },
   };
 }

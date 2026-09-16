@@ -108,54 +108,60 @@ class SelectFieldTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // final theme = SelectFieldTileTheme.of(context);
-    return TextFieldTapRegion(
-      child: Padding(
-        padding: padding ?? EdgeInsets.zero,
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            if (entry.inputLabel?.isNotEmpty ?? false)
-              Padding(
-                padding: const EdgeInsets.only(right: 10.0),
-                child: Text(
-                  entry.inputLabel ?? '',
-                  style: const TextStyle(fontSize: 14),
+    return Semantics(
+      textField: true,
+      focused:
+          (minFocusNode?.hasFocus ?? false) ||
+          (maxFocusNode?.hasFocus ?? false),
+      child: TextFieldTapRegion(
+        child: Padding(
+          padding: padding ?? EdgeInsets.zero,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              if (entry.inputLabel?.isNotEmpty ?? false)
+                Padding(
+                  padding: const EdgeInsets.only(right: 10.0),
+                  child: Text(
+                    entry.inputLabel ?? '',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ),
+              Expanded(
+                child: _TextField(
+                  controller: minController,
+                  focusNode: minFocusNode,
+                  hintText: entry.minHintText,
+                  tileColor: tileColor,
+                  selectedTileColor: selectedTileColor,
+                  variant: variant,
+                  allowDecimal: allowDecimal,
+                  onChanged: onMinChanged,
+                  onSubmitted: onMinSubmitted,
                 ),
               ),
-            Expanded(
-              child: _TextField(
-                controller: minController,
-                focusNode: minFocusNode,
-                hintText: entry.minHintText,
-                tileColor: tileColor,
-                selectedTileColor: selectedTileColor,
-                variant: variant,
-                allowDecimal: allowDecimal,
-                onChanged: onMinChanged,
-                onSubmitted: onMinSubmitted,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Text(
+                  separator,
+                  style: const TextStyle(color: Colors.grey),
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Text(
-                separator,
-                style: const TextStyle(color: Colors.grey),
+              Expanded(
+                child: _TextField(
+                  controller: maxController,
+                  focusNode: maxFocusNode,
+                  hintText: entry.maxHintText,
+                  tileColor: tileColor,
+                  selectedTileColor: selectedTileColor,
+                  variant: variant,
+                  allowDecimal: allowDecimal,
+                  onChanged: onMaxChanged,
+                  onSubmitted: onMaxSubmitted,
+                ),
               ),
-            ),
-            Expanded(
-              child: _TextField(
-                controller: maxController,
-                focusNode: maxFocusNode,
-                hintText: entry.maxHintText,
-                tileColor: tileColor,
-                selectedTileColor: selectedTileColor,
-                variant: variant,
-                allowDecimal: allowDecimal,
-                onChanged: onMaxChanged,
-                onSubmitted: onMaxSubmitted,
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

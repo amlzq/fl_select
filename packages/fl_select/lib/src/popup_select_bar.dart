@@ -628,33 +628,38 @@ class PopupTab extends StatelessWidget {
       controller.labelStateMap[info.index] = tabData;
     }
 
-    return InkWell(
-      onTap: () => info.onTap.call(tabData!),
-      child: Container(
-        alignment: Alignment.center,
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        child:
-            child ??
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Flexible(
-                  child: Text(
-                    tabData.label ?? '',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+    return Semantics(
+      button: true,
+      expanded: isSelectShowing,
+      hint: tabData.label ?? '',
+      child: InkWell(
+        onTap: () => info.onTap.call(tabData!),
+        child: Container(
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          child:
+              child ??
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Flexible(
+                    child: Text(
+                      tabData.label ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
-                ),
-                _buildIndicator(
-                  controller,
-                  info,
-                  theme,
-                  defaults,
-                  unselected,
-                  isSelectShowing,
-                ),
-              ],
-            ),
+                  _buildIndicator(
+                    controller,
+                    info,
+                    theme,
+                    defaults,
+                    unselected,
+                    isSelectShowing,
+                  ),
+                ],
+              ),
+        ),
       ),
     );
   }

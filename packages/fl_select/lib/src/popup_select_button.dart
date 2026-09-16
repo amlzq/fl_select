@@ -372,29 +372,34 @@ class _PopupSelectButtonState extends State<PopupSelectButton>
           ],
         );
 
-    return Material(
-      color: backgroundColor,
-      elevation: elevation,
-      shadowColor: resolved.shadowColor,
-      surfaceTintColor: resolved.surfaceTintColor,
-      shape: shape,
-      type:
-          widget.variant == PopupSelectButtonVariant.outlined ||
-              widget.variant == PopupSelectButtonVariant.text
-          ? MaterialType.transparency
-          : MaterialType.button,
-      child: InkWell(
-        onTap: _handleTap,
-        splashColor: splash,
-        highlightColor: splash.withValues(alpha: 0.5),
-        borderRadius: inkBorderRadius,
-        child: Padding(
-          padding: padding,
-          child: DefaultTextStyle(
-            style: textStyle.copyWith(color: foregroundColor),
-            child: IconTheme(
-              data: IconThemeData(color: iconColor),
-              child: content,
+    return Semantics(
+      button: true,
+      expanded: _controller.isSelectShowing,
+      hint: _labelState.label ?? widget.label ?? '',
+      child: Material(
+        color: backgroundColor,
+        elevation: elevation,
+        shadowColor: resolved.shadowColor,
+        surfaceTintColor: resolved.surfaceTintColor,
+        shape: shape,
+        type:
+            widget.variant == PopupSelectButtonVariant.outlined ||
+                widget.variant == PopupSelectButtonVariant.text
+            ? MaterialType.transparency
+            : MaterialType.button,
+        child: InkWell(
+          onTap: _handleTap,
+          splashColor: splash,
+          highlightColor: splash.withValues(alpha: 0.5),
+          borderRadius: inkBorderRadius,
+          child: Padding(
+            padding: padding,
+            child: DefaultTextStyle(
+              style: textStyle.copyWith(color: foregroundColor),
+              child: IconTheme(
+                data: IconThemeData(color: iconColor),
+                child: content,
+              ),
             ),
           ),
         ),

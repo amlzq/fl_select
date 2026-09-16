@@ -1,3 +1,7 @@
+## Next
+
+- **FEATURE** add comprehensive accessibility support for screen readers.
+
 ## 0.13.0
 
 - **FEATURE** `itemBuilder` now also customizes the items of the category delegates (`TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0130)).

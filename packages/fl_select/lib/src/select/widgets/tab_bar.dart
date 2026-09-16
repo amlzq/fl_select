@@ -289,23 +289,27 @@ class _SelectTabBarState extends State<SelectTabBar> {
       final selected = index == widget.focusedIndex;
       final label = entry.name ?? '';
 
-      Widget tab = _Tab(
-        label: label,
-        isScrollable: widget.isScrollable,
+      Widget tab = Semantics(
         selected: selected,
-        showBadge: widget.selectedCategories.contains(entry),
-        badgeColor: effectiveSelectedColor,
-        padding: effectivePadding,
-        selectedColor: effectiveSelectedColor,
-        labelStyle: selected
-            ? effectiveSelectedLabelStyle
-            : effectiveLabelStyle,
-        indicatorColor: effectiveIndicatorColor,
-        indicatorHeight: effectiveIndicatorHeight,
-        indicatorPadding: effectiveIndicatorPadding,
-        indicatorSize: effectiveIndicatorSize,
-        indicatorAnimationDuration: effectiveIndicatorAnimationDuration,
-        onTap: () => _handleTap(index, entry),
+        button: true,
+        child: _Tab(
+          label: label,
+          isScrollable: widget.isScrollable,
+          selected: selected,
+          showBadge: widget.selectedCategories.contains(entry),
+          badgeColor: effectiveSelectedColor,
+          padding: effectivePadding,
+          selectedColor: effectiveSelectedColor,
+          labelStyle: selected
+              ? effectiveSelectedLabelStyle
+              : effectiveLabelStyle,
+          indicatorColor: effectiveIndicatorColor,
+          indicatorHeight: effectiveIndicatorHeight,
+          indicatorPadding: effectiveIndicatorPadding,
+          indicatorSize: effectiveIndicatorSize,
+          indicatorAnimationDuration: effectiveIndicatorAnimationDuration,
+          onTap: () => _handleTap(index, entry),
+        ),
       );
 
       if (widget.isScrollable) {

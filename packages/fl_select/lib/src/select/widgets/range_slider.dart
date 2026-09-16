@@ -144,120 +144,148 @@ class _SelectRangeSliderState extends State<SelectRangeSlider> {
     final effectiveEndLabelStyle =
         theme.endLabelStyle ?? defaults.endLabelStyle;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        LayoutBuilder(
-          builder: (context, constraints) {
-            // Reserve enough width for both thumbs plus a small minimum
-            // track segment so the active segment is always visible.
-            final trackWidth = constraints.maxWidth;
-            // Leave vertical room for a pressed thumb that scales up to 1.25x,
-            // so it never clips.
-            final areaHeight = effectiveThumbRadius * 2.5;
+    return Semantics(
+      value: '${widget.values.start}-${widget.values.end}',
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          LayoutBuilder(
+            builder: (context, constraints) {
+              // Reserve enough width for both thumbs plus a small minimum
+              // track segment so the active segment is always visible.
+              final trackWidth = constraints.maxWidth;
+              // Leave vertical room for a pressed thumb that scales up to 1.25x,
+              // so it never clips.
+              final areaHeight = effectiveThumbRadius * 2.5;
 
-            final startX = _toPx(widget.values.start, trackWidth);
-            final endX = _toPx(widget.values.end, trackWidth);
-            final thumbDiameter = effectiveThumbRadius * 2;
+              final startX = _toPx(widget.values.start, trackWidth);
+              final endX = _toPx(widget.values.end, trackWidth);
+              final thumbDiameter = effectiveThumbRadius * 2;
 
-            return GestureDetector(
-              behavior: HitTestBehavior.opaque,
-              onPanStart: (d) => _onPanStart(d.localPosition.dx, trackWidth),
-              onPanUpdate: (d) => _onPanUpdate(d.localPosition.dx, trackWidth),
-              onPanEnd: (_) => _onPanEnd(),
-              onPanCancel: _clearActiveThumb,
-              child: SizedBox(
-                height: areaHeight,
-                width: trackWidth,
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    // Inactive track (full width).
-                    Positioned(
-                      left: 0,
-                      right: 0,
-                      top: (areaHeight - effectiveTrackHeight) / 2,
-                      child: Container(
-                        height: effectiveTrackHeight,
-                        decoration: BoxDecoration(
-                          color: effectiveInactiveColor,
-                          borderRadius: BorderRadius.circular(
-                            effectiveTrackHeight / 2,
+              return GestureDetector(
+                behavior: HitTestBehavior.opaque,
+                onPanStart: (d) => _onPanStart(d.localPosition.dx, trackWidth),
+                onPanUpdate: (d) =>
+                    _onPanUpdate(d.localPosition.dx, trackWidth),
+                onPanEnd: (_) => _onPanEnd(),
+                onPanCancel: _clearActiveThumb,
+                child: SizedBox(
+                  height: areaHeight,
+                  width: trackWidth,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      // Inactive track (full width).
+                      Positioned(
+                        left: 0,
+                        right: 0,
+                        top: (areaHeight - effectiveTrackHeight) / 2,
+                        child: Container(
+                          height: effectiveTrackHeight,
+                          decoration: BoxDecoration(
+                            color: effectiveInactiveColor,
+                            borderRadius: BorderRadius.circular(
+                              effectiveTrackHeight / 2,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    // Active track (between the two thumbs).
-                    Positioned(
-                      left: startX,
-                      top: (areaHeight - effectiveTrackHeight) / 2,
-                      width: (endX - startX).clamp(0.0, trackWidth),
-                      child: Container(
-                        height: effectiveTrackHeight,
-                        decoration: BoxDecoration(
-                          color: effectiveActiveColor,
-                          borderRadius: BorderRadius.circular(
-                            effectiveTrackHeight / 2,
+                      // Active track (between the two thumbs).
+                      Positioned(
+                        left: startX,
+                        top: (areaHeight - effectiveTrackHeight) / 2,
+                        width: (endX - startX).clamp(0.0, trackWidth),
+                        child: Container(
+                          height: effectiveTrackHeight,
+                          decoration: BoxDecoration(
+                            color: effectiveActiveColor,
+                            borderRadius: BorderRadius.circular(
+                              effectiveTrackHeight / 2,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    // Start thumb (scales to 1.25x while pressed).
-                    Positioned(
-                      left: startX - effectiveThumbRadius,
-                      top: (areaHeight - thumbDiameter) / 2,
-                      width: thumbDiameter,
-                      height: thumbDiameter,
-                      child: AnimatedScale(
-                        scale: _activeThumb == _ActiveThumb.start ? 1.25 : 1.0,
-                        duration: const Duration(milliseconds: 120),
-                        child: _Thumb(
-                          fill: effectiveThumbFill,
-                          border: effectiveThumbBorder,
-                          highlighted: _activeThumb == _ActiveThumb.start,
+                      // Start thumb (scales to 1.25x while pressed).
+                      Positioned(
+                        left: startX - effectiveThumbRadius,
+                        top: (areaHeight - thumbDiameter) / 2,
+                        width: thumbDiameter,
+                        height: thumbDiameter,
+                        child: Semantics(
+                          value: widget.values.start.toString(),
+                          button: true,
+                          child: AnimatedScale(
+                            scale: _activeThumb == _ActiveThumb.start
+                                ? 1.25
+                                : 1.0,
+                            duration: const Duration(milliseconds: 120),
+                            child: _Thumb(
+                              fill: effectiveThumbFill,
+                              border: effectiveThumbBorder,
+                              highlighted: _activeThumb == _ActiveThumb.start,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                    // End thumb (scales to 1.25x while pressed).
-                    Positioned(
-                      left: endX - effectiveThumbRadius,
-                      top: (areaHeight - thumbDiameter) / 2,
-                      width: thumbDiameter,
-                      height: thumbDiameter,
-                      child: AnimatedScale(
-                        scale: _activeThumb == _ActiveThumb.end ? 1.25 : 1.0,
-                        duration: const Duration(milliseconds: 120),
-                        child: _Thumb(
-                          fill: effectiveThumbFill,
-                          border: effectiveThumbBorder,
-                          highlighted: _activeThumb == _ActiveThumb.end,
+                      // End thumb (scales to 1.25x while pressed).
+                      Positioned(
+                        left: endX - effectiveThumbRadius,
+                        top: (areaHeight - thumbDiameter) / 2,
+                        width: thumbDiameter,
+                        height: thumbDiameter,
+                        child: Semantics(
+                          value: widget.values.end.toString(),
+                          button: true,
+                          child: AnimatedScale(
+                            scale: _activeThumb == _ActiveThumb.end
+                                ? 1.25
+                                : 1.0,
+                            duration: const Duration(milliseconds: 120),
+                            child: _Thumb(
+                              fill: effectiveThumbFill,
+                              border: effectiveThumbBorder,
+                              highlighted: _activeThumb == _ActiveThumb.end,
+                            ),
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            );
-          },
-        ),
-        if (widget.minLabel != null || widget.maxLabel != null) ...[
-          const SizedBox(height: 4),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              if (widget.minLabel != null)
-                Text(widget.minLabel!, style: effectiveEndLabelStyle)
-              else
-                const SizedBox.shrink(),
-              if (widget.maxLabel != null)
-                Text(widget.maxLabel!, style: effectiveEndLabelStyle)
-              else
-                const SizedBox.shrink(),
-            ],
+              );
+            },
           ),
+          if (widget.minLabel != null || widget.maxLabel != null) ...[
+            const SizedBox(height: 4),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                if (widget.minLabel != null)
+                  Semantics(
+                    label: widget.minLabel,
+                    child: Text(
+                      widget.minLabel!,
+                      style: effectiveEndLabelStyle,
+                    ),
+                  )
+                else
+                  const SizedBox.shrink(),
+                if (widget.maxLabel != null)
+                  Semantics(
+                    label: widget.maxLabel,
+                    child: Text(
+                      widget.maxLabel!,
+                      style: effectiveEndLabelStyle,
+                    ),
+                  )
+                else
+                  const SizedBox.shrink(),
+              ],
+            ),
+          ],
         ],
-      ],
+      ),
     );
   }
 

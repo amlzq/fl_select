@@ -88,12 +88,19 @@ Future<SelectEntries?> showModalBottomSelect({
     showDragHandle: showDragHandle,
     routeSettings: routeSettings,
     anchorPoint: anchorPoint,
-    builder: (sheetContext) => _ModalBottomSheetContent(
-      delegate: delegate,
-      title: title,
-      leading: leading,
-      trailing: trailing,
-      centerTitle: centerTitle,
+    builder: (sheetContext) => Semantics(
+      onDismiss: () {
+        if (isDismissible) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: _ModalBottomSheetContent(
+        delegate: delegate,
+        title: title,
+        leading: leading,
+        trailing: trailing,
+        centerTitle: centerTitle,
+      ),
     ),
   );
 }
