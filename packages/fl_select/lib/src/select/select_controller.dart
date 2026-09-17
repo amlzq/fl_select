@@ -240,14 +240,6 @@ class SelectController extends ChangeNotifier {
     }).toSet();
   }
 
-  /// Deprecated alias of [realSelectedCategories], named after the badge UI
-  /// it powers rather than the semantics.
-  @Deprecated(
-    'Use realSelectedCategories instead. Will be removed in a future minor '
-    'version.',
-  )
-  SelectEntries get badgedCategories => realSelectedCategories;
-
   void focusCategoryEntry(
     SelectCategoryEntry category, {
     required SelectionMode selectionMode,

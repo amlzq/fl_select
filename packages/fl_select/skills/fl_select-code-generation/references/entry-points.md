@@ -102,7 +102,7 @@ Height behavior: the body is shrink-wrapped with internal scrolling; unless `con
 
 Pass a `controller` to `SelectView` (or a `PopupSelectController` to the popup entry points) for external control. Useful members:
 
-- `realSelectedCategories` (`SelectEntries`) — top-level categories holding at least one non-"Any" selected child. Drives the category badges on `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` and TabNavSelect's initial tab focus. Renamed from `badgedCategories`; the old name is kept as a deprecated alias.
+- `realSelectedCategories` (`SelectEntries`) — top-level categories holding at least one non-"Any" selected child. Drives the category badges on `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` and TabNavSelect's initial tab focus. Renamed from `badgedCategories`; the old name has been removed.
 - `hasMultipleMode` — true when the delegate-level mode is multiple or any top-level category opts into multiple; drives the action bar visibility (see [entries.md](entries.md)).
 
 ## Choosing an entry point

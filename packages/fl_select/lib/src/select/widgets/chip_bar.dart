@@ -12,7 +12,6 @@ import 'custom_range_host.dart';
 import 'extensions.dart';
 import 'field_tile_theme.dart';
 import 'skeleton_view.dart';
-import 'wrap_view.dart';
 
 /// Default height of the single-row [SelectChipBar].
 const kSelectChipBarHeight = 44.0;
@@ -40,22 +39,8 @@ class SelectChipBar extends StatefulWidget {
     required this.entries,
     this.selectedEntries,
     this.selectionMode = SelectionMode.single,
-    @Deprecated(
-      'Use SelectWrapView instead. This will be removed in a future version.',
-    )
-    this.isWrapable = false,
     this.showTitle = true,
-    @Deprecated(
-      'Use SelectWrapView instead to stack the title above the chips. '
-      'This will be removed in a future version.',
-    )
-    this.direction = Axis.horizontal,
     this.spacing = 0.0,
-    @Deprecated(
-      'Only read in the deprecated isWrapable mode. '
-      'Use SelectWrapView instead.',
-    )
-    this.runSpacing = 0.0,
     this.backgroundColor,
     this.padding,
     this.variant,
@@ -87,45 +72,13 @@ class SelectChipBar extends StatefulWidget {
   /// Defaults to [SelectionMode.single].
   final SelectionMode selectionMode;
 
-  /// Whether the chip bar wraps onto multiple rows.
-  ///
-  /// Deprecated: use [SelectWrapView] for the wrapped layout. When true this
-  /// bar delegates to it entirely.
-  @Deprecated(
-    'Use SelectWrapView instead. This will be removed in a future version.',
-  )
-  final bool isWrapable;
-
   /// Whether to show the category title.
   final bool showTitle;
-
-  /// The direction of the [category] title relative to the chip row.
-  ///
-  /// Defaults to [Axis.horizontal], which lays the title to the left of the
-  /// chips in a single row. Set to [Axis.vertical] to stack the title above
-  /// the chip row.
-  ///
-  /// Deprecated: the vertical (title-above) layout moved to [SelectWrapView].
-  @Deprecated(
-    'Use SelectWrapView instead to stack the title above the chips. '
-    'This will be removed in a future version.',
-  )
-  final Axis direction;
 
   /// The width of the separators between chips in the row.
   ///
   /// Defaults to 0.0.
   final double spacing;
-
-  /// Vertical spacing between wrapped chip rows.
-  ///
-  /// Deprecated: only read in the deprecated [isWrapable] mode; see
-  /// [SelectWrapView.runSpacing].
-  @Deprecated(
-    'Only read in the deprecated isWrapable mode. '
-    'Use SelectWrapView instead.',
-  )
-  final double runSpacing;
 
   /// The color of the chip bar's background.
   ///
@@ -251,35 +204,12 @@ class _SelectChipBarState extends State<SelectChipBar>
     super.dispose();
   }
 
-  /// Lays the category title out around [chipGroup].
-  ///
-  /// [Axis.horizontal] (the default) puts the title to the left of the chip
-  /// group in a single row; [Axis.vertical] stacks the title above it.
+  /// Lays the category title out to the left of [chipGroup] in a single row.
   Widget layoutTitleAround(
     Widget chipGroup, {
-    required Axis direction,
     required bool showTitle,
     SelectEntry? category,
   }) {
-    if (direction == Axis.vertical) {
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (showTitle && category?.name != null)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: DefaultTextStyle.merge(
-                style:
-                    Theme.of(context).textTheme.titleSmall ??
-                    const TextStyle(fontSize: 16),
-                child: Text(category?.name ?? ''),
-              ),
-            ),
-          chipGroup,
-        ],
-      );
-    }
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -330,32 +260,6 @@ class _SelectChipBarState extends State<SelectChipBar>
 
   @override
   Widget build(BuildContext context) {
-    // Deprecated wrap mode: delegate the entire layout to [SelectWrapView].
-    // ignore: deprecated_member_use_from_same_package
-    if (widget.isWrapable) {
-      return SelectWrapView(
-        key: widget.key,
-        category: widget.category,
-        entries: widget.entries,
-        selectedEntries: widget.selectedEntries,
-        showTitle: widget.showTitle,
-        spacing: widget.spacing,
-        // ignore: deprecated_member_use_from_same_package
-        runSpacing: widget.runSpacing,
-        backgroundColor: widget.backgroundColor,
-        padding: widget.padding,
-        variant: widget.variant,
-        fieldVariant: widget.fieldVariant,
-        itemBuilder: widget.itemBuilder,
-        chipColor: widget.chipColor,
-        selectedChipColor: widget.selectedChipColor,
-        labelStyle: widget.labelStyle,
-        selectedLabelStyle: widget.selectedLabelStyle,
-        toText: widget.toText,
-        onChanged: widget.onChanged,
-      );
-    }
-
     final style = resolveSelectChipBarStyle(
       context,
       variant: widget.variant,
@@ -380,16 +284,11 @@ class _SelectChipBarState extends State<SelectChipBar>
       ),
     );
 
-    // In vertical layout the title sits above the chip row, so the bar
-    // height must grow to fit the chips rather than being fixed.
-    // ignore: deprecated_member_use_from_same_package
-    final useVertical = widget.direction == Axis.vertical;
-    final isFixedHeight = !useVertical && !hasCustomRange;
+    // A custom range entry grows the bar above its fixed height.
+    final isFixedHeight = !hasCustomRange;
 
     Widget content = layoutTitleAround(
       chipGroup,
-      // ignore: deprecated_member_use_from_same_package
-      direction: widget.direction,
       showTitle: widget.showTitle,
       category: widget.category,
     );
@@ -415,19 +314,8 @@ class SelectChipBarSkeleton extends StatelessWidget {
   const SelectChipBarSkeleton({
     super.key,
     this.itemCount = 4,
-    @Deprecated(
-      'Use SelectWrapViewSkeleton instead. '
-      'This will be removed in a future version.',
-    )
-    this.isWrapable = false,
     this.showTitle = true,
-    @Deprecated(
-      'Use SelectWrapViewSkeleton instead to stack the title placeholder '
-      'above the chips. This will be removed in a future version.',
-    )
-    this.direction = Axis.horizontal,
     this.spacing = 0.0,
-    this.runSpacing = 0.0,
     this.backgroundColor,
     this.padding,
   });
@@ -437,44 +325,15 @@ class SelectChipBarSkeleton extends StatelessWidget {
   /// Defaults to `4`.
   final int itemCount;
 
-  /// Whether the placeholder chips wrap onto multiple rows.
-  ///
-  /// Deprecated: use [SelectWrapViewSkeleton] for the wrapped layout. When
-  /// true this skeleton delegates to it entirely.
-  @Deprecated(
-    'Use SelectWrapViewSkeleton instead. '
-    'This will be removed in a future version.',
-  )
-  final bool isWrapable;
-
   /// Whether to render a placeholder for the category title.
   ///
   /// Defaults to true, matching [SelectChipBar.showTitle].
   final bool showTitle;
 
-  /// The direction of the title placeholder relative to the chip row.
-  ///
-  /// Defaults to [Axis.horizontal], which lays the title placeholder to the
-  /// left of the chips in a single row. Set to [Axis.vertical] to stack the
-  /// title placeholder above the chip row.
-  ///
-  /// Deprecated: the vertical (title-above) layout moved to
-  /// [SelectWrapViewSkeleton].
-  @Deprecated(
-    'Use SelectWrapViewSkeleton instead to stack the title placeholder '
-    'above the chips. This will be removed in a future version.',
-  )
-  final Axis direction;
-
   /// Horizontal spacing between placeholder chips.
   ///
   /// Defaults to 0.0, matching [SelectChipBar.spacing].
   final double spacing;
-
-  /// Vertical spacing between wrapped placeholder chip rows.
-  ///
-  /// Only read in the deprecated `isWrapable` mode.
-  final double runSpacing;
 
   /// The background color of the skeleton.
   ///
@@ -490,19 +349,6 @@ class SelectChipBarSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Deprecated wrap mode: delegate to [SelectWrapViewSkeleton].
-    // ignore: deprecated_member_use_from_same_package
-    if (isWrapable) {
-      return SelectWrapViewSkeleton(
-        itemCount: itemCount,
-        showTitle: showTitle,
-        spacing: spacing,
-        runSpacing: runSpacing,
-        backgroundColor: backgroundColor,
-        padding: padding,
-      );
-    }
-
     final theme = SelectChipBarTheme.of(context);
     final defaults = SelectChipBarDefaults(context);
 
@@ -530,44 +376,25 @@ class SelectChipBarSkeleton extends StatelessWidget {
       child: Row(children: chips.separateWith(SizedBox(width: spacing))),
     );
 
-    // ignore: deprecated_member_use_from_same_package
-    final content = direction == Axis.vertical
-        ? Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (showTitle)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: SkeletonTile(
-                    width: (random.nextInt(72) + 72).toDouble(),
-                    height: 24,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              chipGroup,
-            ],
-          )
-        : Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (showTitle)
-                Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: SkeletonTile(
-                    width: 60,
-                    height: 24,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                ),
-              Expanded(child: chipGroup),
-              const SizedBox(width: 12),
-            ],
-          );
+    final content = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (showTitle)
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: SkeletonTile(
+              width: 60,
+              height: 24,
+              borderRadius: BorderRadius.circular(4),
+            ),
+          ),
+        Expanded(child: chipGroup),
+        const SizedBox(width: 12),
+      ],
+    );
 
     return Container(
-      // ignore: deprecated_member_use_from_same_package
-      height: direction == Axis.horizontal ? kSelectChipBarHeight : null,
+      height: kSelectChipBarHeight,
       color: effectiveBackgroundColor,
       padding: effectivePadding,
       child: SkeletonView(child: content),
