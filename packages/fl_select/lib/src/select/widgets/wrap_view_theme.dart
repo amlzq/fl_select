@@ -4,10 +4,10 @@ import 'package:flutter/material.dart';
 import '../select_theme.dart';
 import 'chip.dart';
 
-/// Theme configuration for [SelectChipBar].
+/// Theme configuration for [SelectWrapView].
 @immutable
-class SelectChipBarTheme with Diagnosticable {
-  const SelectChipBarTheme({
+class SelectWrapViewTheme with Diagnosticable {
+  const SelectWrapViewTheme({
     this.backgroundColor,
     this.padding,
     this.variant,
@@ -17,29 +17,29 @@ class SelectChipBarTheme with Diagnosticable {
     this.selectedLabelStyle,
   });
 
-  /// Overrides the default value of [SelectChipBar.backgroundColor].
+  /// Overrides the default value of [SelectWrapView.backgroundColor].
   final Color? backgroundColor;
 
-  /// Overrides the default value of [SelectChipBar.padding].
+  /// Overrides the default value of [SelectWrapView.padding].
   final EdgeInsetsGeometry? padding;
 
-  /// Overrides the default value of [SelectChipBar.variant].
+  /// Overrides the default value of [SelectWrapView.variant].
   final SelectChipVariant? variant;
 
-  /// Overrides the default value of [SelectChipBar.chipColor].
+  /// Overrides the default value of [SelectWrapView.chipColor].
   final Color? chipColor;
 
-  /// Overrides the default value of [SelectChipBar.selectedChipColor].
+  /// Overrides the default value of [SelectWrapView.selectedChipColor].
   final Color? selectedChipColor;
 
-  /// Overrides the default value of [SelectChipBar.labelStyle].
+  /// Overrides the default value of [SelectWrapView.labelStyle].
   final TextStyle? labelStyle;
 
-  /// Overrides the default value of [SelectChipBar.selectedLabelStyle].
+  /// Overrides the default value of [SelectWrapView.selectedLabelStyle].
   final TextStyle? selectedLabelStyle;
 
   /// Returns a copy of this theme with the given fields replaced.
-  SelectChipBarTheme copyWith({
+  SelectWrapViewTheme copyWith({
     Color? backgroundColor,
     EdgeInsetsGeometry? padding,
     SelectChipVariant? variant,
@@ -48,7 +48,7 @@ class SelectChipBarTheme with Diagnosticable {
     TextStyle? labelStyle,
     TextStyle? selectedLabelStyle,
   }) {
-    return SelectChipBarTheme(
+    return SelectWrapViewTheme(
       backgroundColor: backgroundColor ?? this.backgroundColor,
       padding: padding ?? this.padding,
       variant: variant ?? this.variant,
@@ -61,11 +61,11 @@ class SelectChipBarTheme with Diagnosticable {
 
   /// Returns a new theme where non-null fields from [other] override the
   /// corresponding fields of this theme.
-  SelectChipBarTheme merge(SelectChipBarTheme? other) {
+  SelectWrapViewTheme merge(SelectWrapViewTheme? other) {
     if (other == null) {
       return this;
     }
-    return SelectChipBarTheme(
+    return SelectWrapViewTheme(
       backgroundColor: other.backgroundColor ?? backgroundColor,
       padding: other.padding ?? padding,
       variant: other.variant ?? variant,
@@ -76,20 +76,25 @@ class SelectChipBarTheme with Diagnosticable {
     );
   }
 
-  static SelectChipBarTheme of(BuildContext context) {
-    return SelectTheme.of(context).chipBarTheme;
+  /// The theme applying to [SelectWrapView] under [context].
+  ///
+  /// The wrap view resolves its own theme only. The deprecated `chipBarTheme`,
+  /// which used to style the wrap view as well, is mapped into this theme by
+  /// `SelectPanel` while it composes the ambient theme data.
+  static SelectWrapViewTheme of(BuildContext context) {
+    return SelectTheme.of(context).wrapViewTheme;
   }
 
-  /// Linearly interpolates between two chip bar themes.
-  static SelectChipBarTheme lerp(
-    SelectChipBarTheme? a,
-    SelectChipBarTheme? b,
+  /// Linearly interpolates between two wrap view themes.
+  static SelectWrapViewTheme lerp(
+    SelectWrapViewTheme? a,
+    SelectWrapViewTheme? b,
     double t,
   ) {
     if (identical(a, b) && a != null) {
       return a;
     }
-    return SelectChipBarTheme(
+    return SelectWrapViewTheme(
       backgroundColor: Color.lerp(a?.backgroundColor, b?.backgroundColor, t),
       padding: EdgeInsetsGeometry.lerp(a?.padding, b?.padding, t),
       variant: t < 0.5 ? a?.variant : b?.variant,
@@ -127,7 +132,7 @@ class SelectChipBarTheme with Diagnosticable {
     if (other.runtimeType != runtimeType) {
       return false;
     }
-    return other is SelectChipBarTheme &&
+    return other is SelectWrapViewTheme &&
         other.backgroundColor == backgroundColor &&
         other.variant == variant &&
         other.padding == padding &&

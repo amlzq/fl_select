@@ -90,7 +90,7 @@ class SelectGridLayout extends SelectLayout {
 
 /// Wrap of chips layout for the children of a [SelectCategoryEntry].
 ///
-/// Rendered by [SelectChipBar], which handles all [SelectEntry] subtypes
+/// Rendered by [SelectWrapView], which handles all [SelectEntry] subtypes
 /// using their [SelectEntry.name] as the chip label.
 class SelectWrapLayout extends SelectLayout {
   const SelectWrapLayout({this.spacing = 0.0, this.runSpacing = 0.0});

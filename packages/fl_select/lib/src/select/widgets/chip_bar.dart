@@ -3,10 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 
 import '../constants.dart';
-import '../select_delegate.dart';
 import '../select_entry.dart';
+import 'chip.dart';
 import 'chip_bar_theme.dart';
-import 'chip_host.dart';
 import 'constants.dart';
 import 'custom_range_host.dart';
 import 'extensions.dart';
@@ -45,7 +44,6 @@ class SelectChipBar extends StatefulWidget {
     this.padding,
     this.variant,
     this.fieldVariant,
-    this.itemBuilder,
     this.chipColor,
     this.selectedChipColor,
     this.labelStyle,
@@ -101,16 +99,6 @@ class SelectChipBar extends StatefulWidget {
   /// contains a custom range entry.
   final SelectFieldTileVariant? fieldVariant;
 
-  /// Optional builder that fully replaces each chip's widget.
-  ///
-  /// When non-null, regular entries render as the returned widget instead of
-  /// the default chip; the builder renders its own selected-state visuals
-  /// from `selected` and wires `onTap` (e.g. via [InkWell]) to its own
-  /// gesture handler so taps keep flowing through this bar's normal
-  /// selection logic. Returning null falls back to the default chip. Custom
-  /// range entries still render as the built-in min/max input field.
-  final SelectItemBuilder? itemBuilder;
-
   /// The color of an unselected chip.
   ///
   /// When [variant] is [SelectChipVariant.filled] this is used as the chip's
@@ -152,8 +140,7 @@ class SelectChipBar extends StatefulWidget {
   State<SelectChipBar> createState() => _SelectChipBarState();
 }
 
-class _SelectChipBarState extends State<SelectChipBar>
-    with CustomRangeHost, SelectChipHost {
+class _SelectChipBarState extends State<SelectChipBar> with CustomRangeHost {
   late SelectEntries _selectedEntries;
 
   @override
@@ -172,10 +159,6 @@ class _SelectChipBarState extends State<SelectChipBar>
   void notifyCustomRangeChanged(int index, SelectEntry entry) =>
       widget.onChanged(index, entry);
 
-  @override
-  SelectItemBuilder? get chipItemBuilder => widget.itemBuilder;
-
-  @override
   void onChipTap(int index, SelectEntry entry) =>
       widget.onChanged(index, entry);
 
@@ -204,72 +187,52 @@ class _SelectChipBarState extends State<SelectChipBar>
     super.dispose();
   }
 
-  /// Lays the category title out to the left of [chipGroup] in a single row.
-  Widget layoutTitleAround(
-    Widget chipGroup, {
-    required bool showTitle,
-    SelectEntry? category,
-  }) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (showTitle && category?.name != null)
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: DefaultTextStyle.merge(
-              style:
-                  Theme.of(context).textTheme.titleSmall ??
-                  const TextStyle(fontSize: 16),
-              child: Text(category?.name ?? ''),
-            ),
-          ),
-        Expanded(child: chipGroup),
-        const SizedBox(width: 12),
-      ],
-    );
-  }
-
-  /// Scaffolds the custom range field (if any) around [content]: a header
-  /// field above when [CustomRangeHost.firstCustomRange] is set, a footer
-  /// field below when [CustomRangeHost.lastCustomRange] is set.
-  Widget wrapCustomRangeFields(
-    Widget content, {
-    SelectFieldTileVariant? fieldVariant,
-  }) {
-    if (!hasCustomRange) return content;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (firstCustomRange != null)
-          buildCustomRangeFieldTile(
-            isHeader: true,
-            padding: const EdgeInsets.only(bottom: 10.0),
-            variant: fieldVariant,
-          ),
-        content,
-        if (lastCustomRange != null)
-          buildCustomRangeFieldTile(
-            isHeader: false,
-            padding: const EdgeInsets.only(top: 10.0),
-            variant: fieldVariant,
-          ),
-      ],
-    );
+  /// Handles a chip tap: the chip's selection replaces any in-progress
+  /// custom range input, then [onChipTap] forwards the tap.
+  void handleChipTap(int index, SelectEntry item) {
+    clearCustomRangeInput();
+    onChipTap(index, item);
   }
 
   @override
   Widget build(BuildContext context) {
-    final style = resolveSelectChipBarStyle(
-      context,
-      variant: widget.variant,
-      backgroundColor: widget.backgroundColor,
-      padding: widget.padding,
-      chipColor: widget.chipColor,
-      selectedChipColor: widget.selectedChipColor,
-      labelStyle: widget.labelStyle,
-      selectedLabelStyle: widget.selectedLabelStyle,
+    final theme = SelectChipBarTheme.of(context);
+
+    final effectiveVariant =
+        widget.variant ?? theme.variant ?? SelectChipVariant.filled;
+
+    final defaults = SelectChipBarDefaults(context, effectiveVariant);
+
+    final effectiveBackgroundColor =
+        widget.backgroundColor ??
+        theme.backgroundColor ??
+        defaults.backgroundColor!;
+
+    final effectivePadding =
+        widget.padding ?? theme.padding ?? defaults.padding!;
+
+    final effectiveChipColor =
+        widget.chipColor ?? theme.chipColor ?? defaults.chipColor!;
+
+    final effectiveSelectedChipColor =
+        widget.selectedChipColor ??
+        theme.selectedChipColor ??
+        defaults.selectedChipColor!;
+
+    final selectedTextColor = SelectChipDefaults.selectedTextColor(
+      effectiveVariant,
+      effectiveSelectedChipColor,
     );
+
+    final effectiveLabelStyle =
+        (widget.labelStyle ?? theme.labelStyle ?? defaults.labelStyle!)
+            .copyWith(inherit: true);
+
+    final effectiveSelectedLabelStyle =
+        (widget.selectedLabelStyle ??
+                theme.selectedLabelStyle ??
+                defaults.selectedLabelStyle!)
+            .copyWith(inherit: true, color: selectedTextColor);
 
     final chipGroup = Scrollbar(
       child: SingleChildScrollView(
@@ -277,9 +240,38 @@ class _SelectChipBarState extends State<SelectChipBar>
         physics: const ClampingScrollPhysics(),
         scrollDirection: Axis.horizontal,
         child: Row(
-          children: buildChipChildren(
-            style,
-          ).separateWith(SizedBox(width: widget.spacing)),
+          children: [
+            if (firstCustomRange != null)
+              buildCustomRangeFieldTile(
+                isHeader: true,
+                padding: const EdgeInsets.only(bottom: 10.0),
+                variant: widget.fieldVariant,
+              ),
+            for (final entry in customRangeEntries.asMap().entries)
+              if (testNotCustomItem(entry.value))
+                () {
+                  final index = entry.key;
+                  final item = entry.value;
+                  final selected = customRangeSelectedEntries.contains(item);
+                  return SelectChip(
+                    label: item.name ?? '',
+                    selected: selected,
+                    variant: effectiveVariant,
+                    color: effectiveChipColor,
+                    selectedColor: effectiveSelectedChipColor,
+                    labelStyle: effectiveLabelStyle,
+                    selectedLabelStyle: effectiveSelectedLabelStyle,
+                    enabled: item.enabled,
+                    onTap: () => handleChipTap(index, item),
+                  );
+                }(),
+            if (lastCustomRange != null)
+              buildCustomRangeFieldTile(
+                isHeader: false,
+                padding: const EdgeInsets.only(top: 10.0),
+                variant: widget.fieldVariant,
+              ),
+          ].separateWith(SizedBox(width: widget.spacing)),
         ),
       ),
     );
@@ -287,21 +279,69 @@ class _SelectChipBarState extends State<SelectChipBar>
     // A custom range entry grows the bar above its fixed height.
     final isFixedHeight = !hasCustomRange;
 
-    Widget content = layoutTitleAround(
-      chipGroup,
-      showTitle: widget.showTitle,
-      category: widget.category,
-    );
-
-    content = wrapCustomRangeFields(content, fieldVariant: widget.fieldVariant);
+    final showTitle = widget.showTitle && widget.category?.name != null;
 
     return Container(
       height: isFixedHeight ? kSelectChipBarHeight : null,
-      color: style.backgroundColor,
-      padding: style.padding,
-      child: content,
+      color: effectiveBackgroundColor,
+      padding: effectivePadding,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (showTitle)
+            Padding(
+              padding: const EdgeInsets.only(right: 10),
+              child: DefaultTextStyle.merge(
+                style:
+                    Theme.of(context).textTheme.titleSmall ??
+                    const TextStyle(fontSize: 16),
+                child: Text(widget.category?.name ?? ''),
+              ),
+            ),
+          Expanded(child: chipGroup),
+          const SizedBox(width: 12),
+        ],
+      ),
     );
   }
+}
+
+/// Theme defaults for [SelectChipBar].
+///
+/// The chip visuals come from [SelectChipDefaults] — the defaults of the
+/// [SelectChip] item that both chip views render — so the single-row bar and
+/// the wrap form cannot drift apart. The bar's own container defaults stay
+/// here. This class only exposes them through the [SelectChipBarTheme]
+/// interface.
+///
+/// Not part of the package's public API surface; visible only because the
+/// theme resolution happens in the view's library.
+class SelectChipBarDefaults extends SelectChipBarTheme {
+  SelectChipBarDefaults(this.context, [SelectChipVariant? variant])
+    : super(variant: variant);
+
+  final BuildContext context;
+
+  /// The shared defaults of the [SelectChip] item.
+  late final SelectChipDefaults _chip = SelectChipDefaults(context, variant);
+
+  @override
+  Color? get backgroundColor => Colors.transparent;
+
+  @override
+  EdgeInsetsGeometry? get padding => EdgeInsets.zero;
+
+  @override
+  Color? get chipColor => _chip.chipColor;
+
+  @override
+  Color? get selectedChipColor => _chip.selectedChipColor;
+
+  @override
+  TextStyle? get labelStyle => _chip.labelStyle;
+
+  @override
+  TextStyle? get selectedLabelStyle => _chip.selectedLabelStyle;
 }
 
 /// Loading skeleton for [SelectChipBar].
@@ -376,28 +416,28 @@ class SelectChipBarSkeleton extends StatelessWidget {
       child: Row(children: chips.separateWith(SizedBox(width: spacing))),
     );
 
-    final content = Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        if (showTitle)
-          Padding(
-            padding: const EdgeInsets.only(right: 10),
-            child: SkeletonTile(
-              width: 60,
-              height: 24,
-              borderRadius: BorderRadius.circular(4),
-            ),
-          ),
-        Expanded(child: chipGroup),
-        const SizedBox(width: 12),
-      ],
-    );
-
     return Container(
       height: kSelectChipBarHeight,
       color: effectiveBackgroundColor,
       padding: effectivePadding,
-      child: SkeletonView(child: content),
+      child: SkeletonView(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (showTitle)
+              Padding(
+                padding: const EdgeInsets.only(right: 10),
+                child: SkeletonTile(
+                  width: 60,
+                  height: 24,
+                  borderRadius: BorderRadius.circular(4),
+                ),
+              ),
+            Expanded(child: chipGroup),
+            const SizedBox(width: 12),
+          ],
+        ),
+      ),
     );
   }
 }

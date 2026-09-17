@@ -2,14 +2,15 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 
+import '../constants.dart';
 import '../select_delegate.dart';
 import '../select_entry.dart';
-import 'chip_bar_theme.dart';
-import 'chip_host.dart';
+import 'chip.dart';
 import 'constants.dart';
 import 'custom_range_host.dart';
 import 'field_tile_theme.dart';
 import 'skeleton_view.dart';
+import 'wrap_view_theme.dart';
 
 /// A wrap chip group for selecting among sibling [SelectEntry] entries.
 ///
@@ -71,13 +72,13 @@ class SelectWrapView extends StatefulWidget {
 
   /// The color of the group's background.
   ///
-  /// If null, the value from the surrounding [SelectChipBarTheme] or the
+  /// If null, the value from the surrounding [SelectWrapViewTheme] or the
   /// default is used.
   final Color? backgroundColor;
 
   /// The padding around the group's contents.
   ///
-  /// Defaults to [SelectChipBarTheme.padding] or [EdgeInsets.zero].
+  /// Defaults to [SelectWrapViewTheme.padding] or [EdgeInsets.zero].
   final EdgeInsetsGeometry? padding;
 
   /// The visual style of the chips.
@@ -135,8 +136,7 @@ class SelectWrapView extends StatefulWidget {
   State<SelectWrapView> createState() => _SelectWrapViewState();
 }
 
-class _SelectWrapViewState extends State<SelectWrapView>
-    with CustomRangeHost, SelectChipHost {
+class _SelectWrapViewState extends State<SelectWrapView> with CustomRangeHost {
   late SelectEntries _selectedEntries;
 
   @override
@@ -155,10 +155,8 @@ class _SelectWrapViewState extends State<SelectWrapView>
   void notifyCustomRangeChanged(int index, SelectEntry entry) =>
       widget.onChanged(index, entry);
 
-  @override
   SelectItemBuilder? get chipItemBuilder => widget.itemBuilder;
 
-  @override
   void onChipTap(int index, SelectEntry entry) =>
       widget.onChanged(index, entry);
 
@@ -182,24 +180,58 @@ class _SelectWrapViewState extends State<SelectWrapView>
     super.dispose();
   }
 
+  /// Handles a chip tap: the chip's selection replaces any in-progress
+  /// custom range input, then [onChipTap] forwards the tap.
+  void handleChipTap(int index, SelectEntry item) {
+    clearCustomRangeInput();
+    onChipTap(index, item);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final style = resolveSelectChipBarStyle(
-      context,
-      variant: widget.variant,
-      backgroundColor: widget.backgroundColor,
-      padding: widget.padding,
-      chipColor: widget.chipColor,
-      selectedChipColor: widget.selectedChipColor,
-      labelStyle: widget.labelStyle,
-      selectedLabelStyle: widget.selectedLabelStyle,
+    final theme = SelectWrapViewTheme.of(context);
+
+    final effectiveVariant =
+        widget.variant ?? theme.variant ?? SelectChipVariant.filled;
+
+    final defaults = SelectWrapViewDefaults(context, effectiveVariant);
+
+    final effectiveBackgroundColor =
+        widget.backgroundColor ??
+        theme.backgroundColor ??
+        defaults.backgroundColor!;
+
+    final effectivePadding =
+        widget.padding ?? theme.padding ?? defaults.padding!;
+
+    final effectiveChipColor =
+        widget.chipColor ?? theme.chipColor ?? defaults.chipColor!;
+
+    final effectiveSelectedChipColor =
+        widget.selectedChipColor ??
+        theme.selectedChipColor ??
+        defaults.selectedChipColor!;
+
+    final selectedTextColor = SelectChipDefaults.selectedTextColor(
+      effectiveVariant,
+      effectiveSelectedChipColor,
     );
+
+    final effectiveLabelStyle =
+        (widget.labelStyle ?? theme.labelStyle ?? defaults.labelStyle!)
+            .copyWith(inherit: true);
+
+    final effectiveSelectedLabelStyle =
+        (widget.selectedLabelStyle ??
+                theme.selectedLabelStyle ??
+                defaults.selectedLabelStyle!)
+            .copyWith(inherit: true, color: selectedTextColor);
 
     final showTitle = widget.showTitle && widget.category?.name != null;
 
     return Container(
-      color: style.backgroundColor,
-      padding: style.padding,
+      color: effectiveBackgroundColor,
+      padding: effectivePadding,
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -223,7 +255,37 @@ class _SelectWrapViewState extends State<SelectWrapView>
           Wrap(
             spacing: widget.spacing,
             runSpacing: widget.runSpacing,
-            children: buildChipChildren(style),
+            children: [
+              for (final entry in customRangeEntries.asMap().entries)
+                if (testNotCustomItem(entry.value))
+                  () {
+                    final index = entry.key;
+                    final item = entry.value;
+                    final selected = customRangeSelectedEntries.contains(item);
+                    final customBuilder = chipItemBuilder;
+                    if (customBuilder != null) {
+                      final custom = customBuilder(
+                        context,
+                        item,
+                        selected: selected,
+                        onTap: () => handleChipTap(index, item),
+                        categoryId: customRangeCategory?.id,
+                      );
+                      if (custom != null) return custom;
+                    }
+                    return SelectChip(
+                      label: item.name ?? '',
+                      selected: selected,
+                      variant: effectiveVariant,
+                      color: effectiveChipColor,
+                      selectedColor: effectiveSelectedChipColor,
+                      labelStyle: effectiveLabelStyle,
+                      selectedLabelStyle: effectiveSelectedLabelStyle,
+                      enabled: item.enabled,
+                      onTap: () => handleChipTap(index, item),
+                    );
+                  }(),
+            ],
           ),
           if (lastCustomRange != null)
             buildCustomRangeFieldTile(
@@ -235,6 +297,44 @@ class _SelectWrapViewState extends State<SelectWrapView>
       ),
     );
   }
+}
+
+/// Theme defaults for [SelectWrapView].
+///
+/// The chip visuals come from [SelectChipDefaults] — the defaults of the
+/// [SelectChip] item that both chip views render — so the wrap form and the
+/// single-row bar cannot drift apart. The wrap form's own container defaults
+/// stay here. This class only exposes them through the [SelectWrapViewTheme]
+/// interface.
+///
+/// Not part of the package's public API surface; visible only because the
+/// theme resolution happens in the view's library.
+class SelectWrapViewDefaults extends SelectWrapViewTheme {
+  SelectWrapViewDefaults(this.context, [SelectChipVariant? variant])
+    : super(variant: variant);
+
+  final BuildContext context;
+
+  /// The shared defaults of the [SelectChip] item.
+  late final SelectChipDefaults _chip = SelectChipDefaults(context, variant);
+
+  @override
+  Color? get backgroundColor => Colors.transparent;
+
+  @override
+  EdgeInsetsGeometry? get padding => EdgeInsets.zero;
+
+  @override
+  Color? get chipColor => _chip.chipColor;
+
+  @override
+  Color? get selectedChipColor => _chip.selectedChipColor;
+
+  @override
+  TextStyle? get labelStyle => _chip.labelStyle;
+
+  @override
+  TextStyle? get selectedLabelStyle => _chip.selectedLabelStyle;
 }
 
 /// Loading skeleton for [SelectWrapView].
@@ -276,20 +376,37 @@ class SelectWrapViewSkeleton extends StatelessWidget {
 
   /// The background color of the skeleton.
   ///
-  /// If null, [SelectChipBarTheme.backgroundColor] is used. If that is also
+  /// If null, [SelectWrapViewTheme.backgroundColor] is used. If that is also
   /// null, the value is [Colors.transparent].
   final Color? backgroundColor;
 
   /// The padding around the skeleton's contents.
   ///
-  /// If null, [SelectChipBarTheme.padding] is used. If that is also null,
+  /// If null, [SelectWrapViewTheme.padding] is used. If that is also null,
   /// the value is [EdgeInsets.zero].
   final EdgeInsetsGeometry? padding;
 
+  /// Builds a chip placeholder whose layout width matches its visual width.
+  ///
+  /// [SkeletonTile] left-aligns its tile with an [Align] that expands to the
+  /// available width, so a bare tile inside a [Wrap] would claim a whole row
+  /// and blow up the skeleton's height. The tight [SizedBox] keeps the wrap
+  /// layout honest.
+  static Widget _chipPlaceholder(double width) {
+    return SizedBox(
+      width: width,
+      child: SkeletonTile(
+        width: width,
+        height: 30,
+        borderRadius: BorderRadius.circular(4),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = SelectChipBarTheme.of(context);
-    final defaults = SelectChipBarDefaults(context);
+    final theme = SelectWrapViewTheme.of(context);
+    final defaults = SelectWrapViewDefaults(context);
 
     final effectiveBackgroundColor =
         backgroundColor ?? theme.backgroundColor ?? defaults.backgroundColor!;
@@ -301,11 +418,7 @@ class SelectWrapViewSkeleton extends StatelessWidget {
     final random = Random();
     final chips = [
       for (var i = 0; i < itemCount; i++)
-        SkeletonTile(
-          width: (random.nextInt(48) + 48).toDouble(),
-          height: 30,
-          borderRadius: BorderRadius.circular(4),
-        ),
+        _chipPlaceholder((random.nextInt(48) + 48).toDouble()),
     ];
 
     return Container(

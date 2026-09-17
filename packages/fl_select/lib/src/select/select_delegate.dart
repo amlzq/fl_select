@@ -101,6 +101,7 @@ abstract class SelectDelegate {
     this.fieldTileTheme,
     this.expansionTileTheme,
     this.chipBarTheme,
+    this.wrapViewTheme,
     this.rangeSliderTheme,
     this.panelTheme,
     this.skeletonBuilder,
@@ -271,6 +272,12 @@ abstract class SelectDelegate {
   /// Theme overrides for the selected chips bar.
   final SelectChipBarTheme? chipBarTheme;
 
+  /// Theme overrides for the wrap view.
+  ///
+  /// Takes precedence over [chipBarTheme] for [SelectWrapView]; [chipBarTheme]
+  /// stays as the shared fallback so existing code keeps working.
+  final SelectWrapViewTheme? wrapViewTheme;
+
   /// Theme overrides for range sliders in range fields.
   final SelectRangeSliderTheme? rangeSliderTheme;
 
@@ -368,6 +375,7 @@ class ListSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.wrapViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -473,6 +481,7 @@ class GridSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.wrapViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -592,6 +601,7 @@ class WrapSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.wrapViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -606,7 +616,7 @@ class WrapSelectDelegate extends SelectDelegate {
 
   /// Horizontal spacing between chips in a wrapped row.
   ///
-  /// Forwarded to [SelectChipBar.spacing]. Defaults to 0.0.
+  /// Forwarded to [SelectWrapView.spacing]. Defaults to 0.0.
   final double spacing;
 
   /// Vertical spacing between wrapped chip rows.
@@ -700,6 +710,7 @@ class CascadingSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.wrapViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -796,6 +807,7 @@ class TabNavSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.wrapViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -915,6 +927,7 @@ class SideNavSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.wrapViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -1029,6 +1042,7 @@ class ExpandableSelectDelegate extends SelectDelegate {
     super.fieldTileTheme,
     super.expansionTileTheme,
     super.chipBarTheme,
+    super.wrapViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,

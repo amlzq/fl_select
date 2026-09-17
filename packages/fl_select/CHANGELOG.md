@@ -1,10 +1,14 @@
 ## Next
 
-- **FEATURE** add comprehensive accessibility support for screen readers.
-
 - **BREAKING** remove the deprecated `SelectController.badgedCategories` getter.
 
 - **BREAKING** remove the deprecated `SelectChipBar` and `SelectChipBarSkeleton` wrap parameters (`isWrapable`, `direction`, `runSpacing`).
+
+- **FEATURE** add comprehensive accessibility support for screen readers.
+
+- **FEATURE** add `SelectWrapViewTheme` — set it through `SelectThemeData.wrapViewTheme` or a delegate's `wrapViewTheme` — so the wrapping chip view can be styled independently from the single-row `SelectChipBar`.
+
+- **DEPRECATION** rename `SelectThemeData.chipBarThemeData` to `SelectThemeData.chipBarTheme`, matching `SelectDelegate.chipBarTheme` and `SelectThemeData.wrapViewTheme` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
 
 ## 0.13.0
 

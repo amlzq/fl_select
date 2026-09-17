@@ -82,9 +82,7 @@ void main() {
           ),
           selectTheme: SelectThemeData(
             ThemeData.light(),
-            chipBarThemeData: const SelectChipBarTheme(
-              padding: _ambientPadding,
-            ),
+            chipBarTheme: const SelectChipBarTheme(padding: _ambientPadding),
           ),
         ),
       );
@@ -111,7 +109,7 @@ void main() {
         _panelHarness(
           selectTheme: SelectThemeData(
             ThemeData.light(),
-            chipBarThemeData: const SelectChipBarTheme(
+            chipBarTheme: const SelectChipBarTheme(
               backgroundColor: Colors.teal,
             ),
           ),

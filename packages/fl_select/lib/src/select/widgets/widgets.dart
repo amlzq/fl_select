@@ -1,6 +1,7 @@
 export 'action_bar.dart';
 export 'action_bar_theme.dart';
 export 'badge.dart';
+export 'chip.dart';
 export 'chip_bar.dart';
 export 'chip_bar_theme.dart';
 export 'constants.dart';
@@ -27,3 +28,4 @@ export 'skeleton_view.dart';
 export 'tab_bar.dart';
 export 'tab_bar_theme.dart';
 export 'wrap_view.dart';
+export 'wrap_view_theme.dart';

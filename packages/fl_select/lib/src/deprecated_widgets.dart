@@ -17,7 +17,7 @@ import 'package:flutter/material.dart';
 
 import 'select/select_entry.dart';
 import 'select/select_panel.dart' as p;
-import 'select/widgets/chip_host.dart' as h;
+import 'select/widgets/chip.dart' as c;
 import 'select/widgets/widgets.dart' as w;
 
 const String _removalNote = 'This will be removed in a future minor release.';
@@ -79,15 +79,44 @@ SelectChipBarStyle resolveSelectChipBarStyle(
   TextStyle? labelStyle,
   TextStyle? selectedLabelStyle,
 }) {
-  return h.resolveSelectChipBarStyle(
-    context,
-    variant: variant,
-    backgroundColor: backgroundColor,
-    padding: padding,
-    chipColor: chipColor,
-    selectedChipColor: selectedChipColor,
-    labelStyle: labelStyle,
-    selectedLabelStyle: selectedLabelStyle,
+  final theme = w.SelectChipBarTheme.of(context);
+
+  final effectiveVariant =
+      variant ?? theme.variant ?? w.SelectChipVariant.filled;
+
+  final defaults = w.SelectChipBarDefaults(context, effectiveVariant);
+
+  final effectiveBackgroundColor =
+      backgroundColor ?? theme.backgroundColor ?? defaults.backgroundColor!;
+
+  final effectivePadding = padding ?? theme.padding ?? defaults.padding!;
+
+  final effectiveChipColor =
+      chipColor ?? theme.chipColor ?? defaults.chipColor!;
+
+  final effectiveSelectedChipColor =
+      selectedChipColor ??
+      theme.selectedChipColor ??
+      defaults.selectedChipColor!;
+
+  final selectedTextColor = w.SelectChipDefaults.selectedTextColor(
+    effectiveVariant,
+    effectiveSelectedChipColor,
+  );
+
+  return SelectChipBarStyle(
+    variant: effectiveVariant,
+    backgroundColor: effectiveBackgroundColor,
+    padding: effectivePadding,
+    chipColor: effectiveChipColor,
+    selectedChipColor: effectiveSelectedChipColor,
+    labelStyle: (labelStyle ?? theme.labelStyle ?? defaults.labelStyle!)
+        .copyWith(inherit: true),
+    selectedLabelStyle:
+        (selectedLabelStyle ??
+                theme.selectedLabelStyle ??
+                defaults.selectedLabelStyle!)
+            .copyWith(inherit: true, color: selectedTextColor),
   );
 }
 
@@ -117,7 +146,7 @@ typedef SelectCheckboxListTile = w.SelectCheckboxListTile;
   'SelectChip is no longer part of the public API; build custom chips in '
   'your itemBuilder, styled to match SelectChipBarTheme. $_removalNote',
 )
-typedef SelectChip = h.SelectChip;
+typedef SelectChip = c.SelectChip;
 
 /// A single-row bar of chips for the selected entries.
 @Deprecated(
@@ -135,10 +164,37 @@ typedef SelectChipBar = w.SelectChipBar;
 typedef SelectChipBarSkeleton = w.SelectChipBarSkeleton;
 
 /// The fully-resolved visual configuration of a chip view.
+///
+/// Retained for compatibility with the pre-0.13 public API; the chip views
+/// resolve their visuals internally now.
 @Deprecated(
   'SelectChipBarStyle is no longer part of the public API. $_removalNote',
 )
-typedef SelectChipBarStyle = h.SelectChipBarStyle;
+class SelectChipBarStyle {
+  const SelectChipBarStyle({
+    required this.variant,
+    required this.backgroundColor,
+    required this.padding,
+    required this.chipColor,
+    required this.selectedChipColor,
+    required this.labelStyle,
+    required this.selectedLabelStyle,
+  });
+
+  final w.SelectChipVariant variant;
+
+  final Color backgroundColor;
+
+  final EdgeInsetsGeometry padding;
+
+  final Color chipColor;
+
+  final Color selectedChipColor;
+
+  final TextStyle labelStyle;
+
+  final TextStyle selectedLabelStyle;
+}
 
 /// A spin-box counter stepping through a category's text entries.
 @Deprecated(

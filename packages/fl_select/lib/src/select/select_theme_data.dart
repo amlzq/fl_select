@@ -12,6 +12,7 @@ import 'widgets/range_slider_theme.dart';
 import 'widgets/search_bar_theme.dart';
 import 'widgets/side_bar_theme.dart';
 import 'widgets/tab_bar_theme.dart';
+import 'widgets/wrap_view_theme.dart';
 
 /// Theme configuration for select widgets.
 ///
@@ -40,9 +41,10 @@ class SelectThemeData with Diagnosticable {
     SelectRangeSliderTheme? rangeSliderTheme,
     RadioThemeData? radioTheme,
     CheckboxThemeData? checkboxTheme,
-    SelectChipBarTheme? chipBarThemeData,
+    SelectChipBarTheme? chipBarTheme,
     SelectPanelTheme? panelTheme,
     SelectSearchBarTheme? searchBarTheme,
+    SelectWrapViewTheme? wrapViewTheme,
   }) {
     return SelectThemeData.raw(
       selectedColor: selectedColor ?? theme.colorScheme.primary,
@@ -66,9 +68,10 @@ class SelectThemeData with Diagnosticable {
       rangeSliderTheme: rangeSliderTheme ?? const SelectRangeSliderTheme(),
       radioTheme: radioTheme ?? const RadioThemeData(),
       checkboxTheme: checkboxTheme ?? const CheckboxThemeData(),
-      chipBarThemeData: chipBarThemeData ?? const SelectChipBarTheme(),
+      chipBarTheme: chipBarTheme ?? const SelectChipBarTheme(),
       panelTheme: panelTheme ?? const SelectPanelTheme(),
       searchBarTheme: searchBarTheme ?? const SelectSearchBarTheme(),
+      wrapViewTheme: wrapViewTheme ?? const SelectWrapViewTheme(),
     );
   }
 
@@ -91,9 +94,10 @@ class SelectThemeData with Diagnosticable {
     required this.rangeSliderTheme,
     required this.radioTheme,
     required this.checkboxTheme,
-    required this.chipBarThemeData,
+    required this.chipBarTheme,
     required this.panelTheme,
     required this.searchBarTheme,
+    required this.wrapViewTheme,
   });
 
   /// Convenience factory that uses [theme] defaults without any overrides.
@@ -149,14 +153,29 @@ class SelectThemeData with Diagnosticable {
   /// Theme used for checkbox controls when rendered by select widgets.
   final CheckboxThemeData checkboxTheme;
 
-  /// Theme overrides for the selected chips bar.
-  final SelectChipBarTheme chipBarThemeData;
+  /// Theme overrides for the single-row chips bar.
+  ///
+  /// Styles the horizontally scrolling chip bar only: the wrap form owns its
+  /// own [wrapViewTheme]. A delegate's `chipBarTheme` is merged into this field
+  /// by `SelectPanel`, and is still mapped onto [wrapViewTheme] as a deprecated
+  /// fallback.
+  final SelectChipBarTheme chipBarTheme;
+
+  /// Deprecated alias of [chipBarTheme].
+  @Deprecated(
+    'Use chipBarTheme instead; the renamed field matches '
+    'SelectDelegate.chipBarTheme and pairs with wrapViewTheme.',
+  )
+  SelectChipBarTheme get chipBarThemeData => chipBarTheme;
 
   /// Theme overrides for the panel's elevation, shadow and shape decoration.
   final SelectPanelTheme panelTheme;
 
   /// Theme overrides for the search bar.
   final SelectSearchBarTheme searchBarTheme;
+
+  /// Theme overrides for the wrap view.
+  final SelectWrapViewTheme wrapViewTheme;
 
   /// Creates a copy of this theme data with the given fields replaced.
   SelectThemeData copyWith({
@@ -177,9 +196,10 @@ class SelectThemeData with Diagnosticable {
     SelectRangeSliderTheme? rangeSliderTheme,
     RadioThemeData? radioTheme,
     CheckboxThemeData? checkboxTheme,
-    SelectChipBarTheme? chipBarThemeData,
+    SelectChipBarTheme? chipBarTheme,
     SelectPanelTheme? panelTheme,
     SelectSearchBarTheme? searchBarTheme,
+    SelectWrapViewTheme? wrapViewTheme,
   }) {
     return SelectThemeData.raw(
       selectedColor: selectedColor ?? this.selectedColor,
@@ -201,9 +221,10 @@ class SelectThemeData with Diagnosticable {
       rangeSliderTheme: rangeSliderTheme ?? this.rangeSliderTheme,
       radioTheme: radioTheme ?? this.radioTheme,
       checkboxTheme: checkboxTheme ?? this.checkboxTheme,
-      chipBarThemeData: chipBarThemeData ?? this.chipBarThemeData,
+      chipBarTheme: chipBarTheme ?? this.chipBarTheme,
       panelTheme: panelTheme ?? this.panelTheme,
       searchBarTheme: searchBarTheme ?? this.searchBarTheme,
+      wrapViewTheme: wrapViewTheme ?? this.wrapViewTheme,
     );
   }
 
@@ -282,9 +303,9 @@ class SelectThemeData with Diagnosticable {
         b?.checkboxTheme,
         t,
       ),
-      chipBarThemeData: SelectChipBarTheme.lerp(
-        a?.chipBarThemeData,
-        b?.chipBarThemeData,
+      chipBarTheme: SelectChipBarTheme.lerp(
+        a?.chipBarTheme,
+        b?.chipBarTheme,
         t,
       ),
       panelTheme: SelectPanelTheme.lerp(a?.panelTheme, b?.panelTheme, t),
@@ -293,11 +314,16 @@ class SelectThemeData with Diagnosticable {
         b?.searchBarTheme,
         t,
       ),
+      wrapViewTheme: SelectWrapViewTheme.lerp(
+        a?.wrapViewTheme,
+        b?.wrapViewTheme,
+        t,
+      ),
     );
   }
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     selectedColor,
     onSelectedColor,
     backgroundColor,
@@ -315,10 +341,11 @@ class SelectThemeData with Diagnosticable {
     rangeSliderTheme,
     radioTheme,
     checkboxTheme,
-    chipBarThemeData,
+    chipBarTheme,
     panelTheme,
     searchBarTheme,
-  );
+    wrapViewTheme,
+  ]);
 
   @override
   bool operator ==(Object other) {
@@ -346,8 +373,9 @@ class SelectThemeData with Diagnosticable {
         other.rangeSliderTheme == rangeSliderTheme &&
         other.radioTheme == radioTheme &&
         other.checkboxTheme == checkboxTheme &&
-        other.chipBarThemeData == chipBarThemeData &&
+        other.chipBarTheme == chipBarTheme &&
         other.panelTheme == panelTheme &&
-        other.searchBarTheme == searchBarTheme;
+        other.searchBarTheme == searchBarTheme &&
+        other.wrapViewTheme == wrapViewTheme;
   }
 }

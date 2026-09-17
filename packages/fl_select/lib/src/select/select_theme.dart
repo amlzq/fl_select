@@ -48,8 +48,9 @@ class SelectTheme extends InheritedTheme {
           rangeSliderTheme: data.rangeSliderTheme,
           radioTheme: data.radioTheme,
           checkboxTheme: data.checkboxTheme,
-          chipBarThemeData: data.chipBarThemeData,
+          chipBarTheme: data.chipBarTheme,
           searchBarTheme: data.searchBarTheme,
+          wrapViewTheme: data.wrapViewTheme,
         );
         return SelectTheme(
           key: key,

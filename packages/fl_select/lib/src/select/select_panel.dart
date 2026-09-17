@@ -212,6 +212,16 @@ class _SelectPanelState extends State<SelectPanel> {
     final delegateFieldTileTheme = widget.delegate.fieldTileTheme;
     final delegateSideBarTheme = widget.delegate.sideBarTheme;
     final delegateRangeSliderTheme = widget.delegate.rangeSliderTheme;
+    final delegateWrapViewTheme = widget.delegate.wrapViewTheme;
+    // Deprecated bridge: `chipBarTheme` used to style the wrap view as well.
+    // Mapping it into the wrap view's own theme here — as the lowest-priority
+    // layer — keeps that styling working while letting the wrap view resolve
+    // [SelectWrapViewTheme] alone.
+    final effectiveWrapViewTheme = _legacyWrapViewThemeFromChipBar(
+      delegateChipBarTheme == null
+          ? baseTheme.chipBarTheme
+          : baseTheme.chipBarTheme.merge(delegateChipBarTheme),
+    ).merge(baseTheme.wrapViewTheme).merge(delegateWrapViewTheme);
     final effectiveTheme = baseTheme.copyWith(
       selectedColor: widget.delegate.selectedColor,
       onSelectedColor: widget.delegate.onSelectedColor,
@@ -238,9 +248,9 @@ class _SelectPanelState extends State<SelectPanel> {
       expansionTileTheme: delegateExpansionTileTheme == null
           ? null
           : baseTheme.expansionTileTheme.merge(delegateExpansionTileTheme),
-      chipBarThemeData: delegateChipBarTheme == null
+      chipBarTheme: delegateChipBarTheme == null
           ? null
-          : baseTheme.chipBarThemeData.merge(delegateChipBarTheme),
+          : baseTheme.chipBarTheme.merge(delegateChipBarTheme),
       gridTileTheme: delegateGridTileTheme == null
           ? null
           : baseTheme.gridTileTheme.merge(delegateGridTileTheme),
@@ -253,7 +263,9 @@ class _SelectPanelState extends State<SelectPanel> {
       rangeSliderTheme: delegateRangeSliderTheme == null
           ? null
           : baseTheme.rangeSliderTheme.merge(delegateRangeSliderTheme),
+      wrapViewTheme: effectiveWrapViewTheme,
     );
+
     return SelectTheme(
       data: effectiveTheme,
       child: _PanelDecoratedBox(
@@ -388,4 +400,23 @@ class _PanelDecoratedBox extends StatelessWidget {
       child: child,
     );
   }
+}
+
+/// Maps the deprecated shared chip theme onto [SelectWrapViewTheme].
+///
+/// [SelectChipBar] and [SelectWrapView] own independent themes now, but
+/// `chipBarTheme` used to style both, so the two chip views still share a
+/// compat bridge. It lives here, at the panel that composes the ambient theme,
+/// so the wrap view never has to look at the chip bar's theme. Remove it once
+/// the deprecated alias is dropped.
+SelectWrapViewTheme _legacyWrapViewThemeFromChipBar(SelectChipBarTheme theme) {
+  return SelectWrapViewTheme(
+    backgroundColor: theme.backgroundColor,
+    padding: theme.padding,
+    variant: theme.variant,
+    chipColor: theme.chipColor,
+    selectedChipColor: theme.selectedChipColor,
+    labelStyle: theme.labelStyle,
+    selectedLabelStyle: theme.selectedLabelStyle,
+  );
 }

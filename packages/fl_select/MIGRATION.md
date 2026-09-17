@@ -2,6 +2,34 @@
 
 ## MIGRATE TO Next
 
+### `SelectThemeData.chipBarThemeData` renamed to `chipBarTheme`
+
+`SelectThemeData` now calls the chip-bar theme `chipBarTheme`, matching
+`SelectDelegate.chipBarTheme` and its sibling `SelectThemeData.wrapViewTheme`.
+Reading the old name keeps working through a deprecated getter, but the
+`SelectThemeData(...)` factory and `SelectThemeData.raw(...)` only accept the
+new name:
+
+```diff
+- SelectThemeData(ThemeData.light(), chipBarThemeData: const SelectChipBarTheme());
++ SelectThemeData(ThemeData.light(), chipBarTheme: const SelectChipBarTheme());
+```
+
+### `chipBarTheme` no longer styles the wrapping chip view
+
+The wrap form resolves `wrapViewTheme` alone, so style its chips with
+`SelectWrapViewTheme`:
+
+```diff
+- SelectThemeData(ThemeData.light(), chipBarTheme: const SelectChipBarTheme(chipColor: _tint));
++ SelectThemeData(ThemeData.light(), wrapViewTheme: const SelectWrapViewTheme(chipColor: _tint));
+```
+
+`chipBarTheme` is still folded into the wrap view theme as a lowest-priority
+fallback, so existing wrap-chip styling keeps rendering unchanged. That bridge
+is deprecated together with the shared-chip-theme model and will be dropped in
+a future minor version; a field set on both is resolved from `wrapViewTheme`.
+
 ## MIGRATE TO 0.13.0
 
 ### `itemBuilder` on the category delegates
