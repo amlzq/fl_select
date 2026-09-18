@@ -80,7 +80,7 @@ SelectCategoryEntry(
 
 - **"Any" entry** (`.any(...)`): selecting it clears the category. In `toQueryMap()` an "Any" leaf resolves to its parent id (e.g. `price: [price]`). An "Any"-only selection is not a "real" selection: it shows no category badge, does not steal TabNavSelect's initial tab focus, and the trigger label falls back to its original text. On flat delegates in multiple mode, unselecting the last item falls back to the "Any" entry as the placeholder.
 - **`immediate: true`** (multi-selection): the entry applies on tap, skipping the action bar — e.g. "Apply all"/date-shortcut entries.
-- **Custom range** (`SelectIntEntry.custom(...)`): renders as min/max text input; serializes as `min-max`.
+- **Custom range** (`SelectIntEntry.custom(...)`): renders as min/max text input; serializes as `min-max`. It needs a view with room for an input field, so the single-row chip bar — including a category's header/footer rows — does not support it and throws if it gets one; use the wrap, list or grid layout for it.
 - **`extra`**: attach any payload (enum, id, whole model) for use in callbacks.
 
 ## Category headers and footers
@@ -99,4 +99,4 @@ SelectCategoryEntry(
 );
 ```
 
-`header`/`footer` are `SelectChildEntry`s rendered alongside (but separately from) `children`; `headerSelectionMode`/`footerSelectionMode` control their selection behavior (default: inherit the category's effective mode).
+`header`/`footer` are `SelectChildEntry`s rendered alongside (but separately from) `children`; `headerSelectionMode`/`footerSelectionMode` control their selection behavior (default: inherit the category's effective mode). Both are laid out as a single row of chips, so their `children` must not contain a custom range entry — it has no chip representation and makes the chip bar throw a `FlutterError`.

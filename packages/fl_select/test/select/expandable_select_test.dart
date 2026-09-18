@@ -1,5 +1,5 @@
 import 'package:fl_select/fl_select.dart'
-    hide SelectExpansionTile, SelectListView, SelectWrapView;
+    hide SelectChipBar, SelectExpansionTile, SelectListView, SelectWrapView;
 import 'package:fl_select/src/select/widgets/widgets.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -79,7 +79,8 @@ void main() {
       // the initially expanded tile.
       expect(find.byType(SelectExpansionTile), findsOneWidget);
       expect(find.byType(SelectListView), findsOneWidget);
-      expect(find.byType(SelectWrapView), findsNWidgets(2));
+      expect(find.byType(SelectChipBar), findsNWidgets(2));
+      expect(find.byType(SelectWrapView), findsNothing);
       expect(find.text('H1'), findsOneWidget);
       expect(find.text('H2'), findsOneWidget);
       expect(find.text('F1'), findsOneWidget);

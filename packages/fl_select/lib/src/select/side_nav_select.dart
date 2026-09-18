@@ -469,6 +469,8 @@ class SideNavSelectState extends State<SideNavSelect> {
     required int index,
     required bool isLast,
   }) {
+    // Neither header nor footer children support a custom range entry: both
+    // rows render as chips and SelectChipBar throws on a custom entry.
     final categoryHeader = category.header;
     final categoryFooter = category.footer;
     final hasHeader = categoryHeader != null && categoryHeader.children != null;
@@ -517,13 +519,11 @@ class SideNavSelectState extends State<SideNavSelect> {
                   if (hasHeader)
                     Padding(
                       padding: const EdgeInsets.only(bottom: 10),
-                      child: SelectWrapView(
+                      child: SelectChipBar(
                         category: categoryHeader,
                         entries: categoryHeader.children!.toList(),
                         selectedEntries: _headerSelectedFor(category.id),
-                        variant: SelectChipVariant.filled,
                         spacing: 12.0,
-                        runSpacing: 12.0,
                         onChanged: (index, entry) =>
                             _onHeaderOrFooterItemTap.call(
                               category,
@@ -537,13 +537,11 @@ class SideNavSelectState extends State<SideNavSelect> {
                   if (hasFooter)
                     Padding(
                       padding: const EdgeInsets.only(top: 10),
-                      child: SelectWrapView(
+                      child: SelectChipBar(
                         category: categoryFooter,
                         entries: categoryFooter.children!.toList(),
                         selectedEntries: _footerSelectedFor(category.id),
-                        variant: SelectChipVariant.filled,
                         spacing: 12.0,
-                        runSpacing: 12.0,
                         onChanged: (index, entry) =>
                             _onHeaderOrFooterItemTap.call(
                               category,

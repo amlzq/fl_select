@@ -11,7 +11,7 @@ import 'field_tile_theme.dart';
 /// at the header and/or footer of the view.
 ///
 /// This mixin consolidates the logic previously duplicated across
-/// `SelectChipBar`, `SelectGridView` and `SelectListView`:
+/// `SelectWrapView`, `SelectGridView` and `SelectListView`:
 ///
 /// * extracting the custom entry from the head/tail of [customRangeEntries]
 ///   (see [IterableExtension.firstCustomOrNull] / [lastCustomOrNull]),

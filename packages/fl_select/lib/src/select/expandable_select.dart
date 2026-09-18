@@ -229,6 +229,9 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                     onTerminalItemTap: _onTerminalItemTap,
                   );
 
+                  // Neither header nor footer children support a custom range
+                  // entry: both rows render as chips and SelectChipBar throws
+                  // on a custom entry.
                   final categoryHeader = category.header;
                   final categoryFooter = category.footer;
                   final hasHeader =
@@ -249,15 +252,13 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                               if (hasHeader)
                                 Padding(
                                   padding: const EdgeInsets.only(bottom: 10),
-                                  child: SelectWrapView(
+                                  child: SelectChipBar(
                                     category: categoryHeader,
                                     entries: categoryHeader.children!.toList(),
                                     selectedEntries: _headerSelectedFor(
                                       category.id,
                                     ),
-                                    variant: SelectChipVariant.filled,
                                     spacing: 12.0,
-                                    runSpacing: 12.0,
                                     onChanged: (index, entry) =>
                                         _onHeaderOrFooterItemTap.call(
                                           category,
@@ -271,15 +272,13 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                               if (hasFooter)
                                 Padding(
                                   padding: const EdgeInsets.only(top: 10),
-                                  child: SelectWrapView(
+                                  child: SelectChipBar(
                                     category: categoryFooter,
                                     entries: categoryFooter.children!.toList(),
                                     selectedEntries: _footerSelectedFor(
                                       category.id,
                                     ),
-                                    variant: SelectChipVariant.filled,
                                     spacing: 12.0,
-                                    runSpacing: 12.0,
                                     onChanged: (index, entry) =>
                                         _onHeaderOrFooterItemTap.call(
                                           category,

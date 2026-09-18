@@ -51,6 +51,27 @@ Future<SelectEntries> fetchCascadingData() async {
     );
   }
 
+  final residentialEntry =
+      entries.firstWhere((e) => e.id == 'residential') as SelectCategoryEntry;
+  residentialEntry.header = SelectTextEntry(
+    id: 'h',
+    name: 'Header',
+    parentId: 'residential',
+    children: {
+      // SelectIntEntry(id: kCustomEntryId, parentId: 'h', name: ''),
+      SelectTextEntry(id: 'h-a', parentId: 'h', name: '1'),
+      SelectTextEntry(id: 'h-b', parentId: 'h', name: '2'),
+      SelectTextEntry(id: 'h-c', parentId: 'h', name: '3'),
+      SelectTextEntry(id: 'h-d', parentId: 'h', name: '4'),
+      SelectTextEntry(id: 'h-e', parentId: 'h', name: '5'),
+      SelectTextEntry(id: 'h-f', parentId: 'h', name: '6'),
+      SelectTextEntry(id: 'h-g', parentId: 'h', name: '7'),
+      SelectTextEntry(id: 'h-h', parentId: 'h', name: '8'),
+      SelectTextEntry(id: 'h-i', parentId: 'h', name: '9'),
+      SelectTextEntry(id: 'h-j', parentId: 'h', name: '10'),
+    },
+  );
+
   debugPrint('cascading length: ${entries.length}');
   return Future.value(entries);
 }
@@ -427,7 +448,13 @@ SelectEntries get multiCategoryData {
           SelectTextEntry.name(id: 'f-b', name: 'B'),
           SelectTextEntry.name(id: 'f-c', name: 'C'),
           SelectTextEntry.name(id: 'f-d', name: 'D'),
-          SelectTextEntry.name(id: 'f-d', name: 'E'),
+          SelectTextEntry.name(id: 'f-e', name: 'E'),
+          SelectTextEntry.name(id: 'f-f', name: 'F'),
+          SelectTextEntry.name(id: 'f-g', name: 'G'),
+          SelectTextEntry.name(id: 'f-h', name: 'H'),
+          SelectTextEntry.name(id: 'f-i', name: 'I'),
+          SelectTextEntry.name(id: 'f-j', name: 'J'),
+          SelectTextEntry.name(id: 'f-k', name: 'K'),
         },
       ),
       footerSelectionMode: SelectionMode.single,
@@ -443,7 +470,13 @@ SelectEntries get multiCategoryData {
           SelectTextEntry.name(id: 'h-b', name: '2'),
           SelectTextEntry.name(id: 'h-c', name: '3'),
           SelectTextEntry.name(id: 'h-d', name: '4'),
-          SelectTextEntry.name(id: 'h-d', name: '5'),
+          SelectTextEntry.name(id: 'h-e', name: '5'),
+          SelectTextEntry.name(id: 'h-f', name: '6'),
+          SelectTextEntry.name(id: 'h-g', name: '7'),
+          SelectTextEntry.name(id: 'h-h', name: '8'),
+          SelectTextEntry.name(id: 'h-i', name: '9'),
+          SelectTextEntry.name(id: 'h-j', name: '10'),
+          SelectTextEntry.name(id: 'h-k', name: '11'),
         },
       ),
       headerSelectionMode: SelectionMode.single,

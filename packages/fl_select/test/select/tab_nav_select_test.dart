@@ -1,5 +1,5 @@
 import 'package:fl_select/fl_select.dart'
-    hide SelectBadge, SelectPanel, SelectTabBar, SelectWrapView;
+    hide SelectBadge, SelectChipBar, SelectPanel, SelectTabBar, SelectWrapView;
 import 'package:fl_select/src/select/select_panel.dart';
 import 'package:fl_select/src/select/widgets/widgets.dart';
 import 'package:flutter/material.dart';
@@ -362,7 +362,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.byType(SelectWrapView), findsNWidgets(2));
+      expect(find.byType(SelectChipBar), findsNWidgets(2));
+      expect(find.byType(SelectWrapView), findsNothing);
       expect(find.text('H1'), findsOneWidget);
       expect(find.text('H2'), findsOneWidget);
       expect(find.text('One'), findsOneWidget);

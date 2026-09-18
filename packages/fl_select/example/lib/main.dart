@@ -83,6 +83,12 @@ class _MyAppState extends State<MyApp> {
                       // actionBarTheme: SelectActionBarTheme(
                       //   backgroundColor: Colors.red,
                       // ),
+                      // wrapViewTheme: SelectWrapViewTheme(
+                      //   variant: SelectChipVariant.outlined,
+                      // ),
+                      // chipBarTheme: SelectChipBarTheme(
+                      //   variant: SelectChipVariant.outlined,
+                      // ),
                     ),
                   ),
                   PopupSelectButtonTheme(

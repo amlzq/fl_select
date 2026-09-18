@@ -128,6 +128,7 @@ class _DialogExampleState extends State<DialogExample> {
                         ),
                         entries: multiCategoryData,
                         selectionMode: SelectionMode.multiple,
+                        sideBarTheme: const SelectSideBarTheme(width: 120),
                       ),
                       title: Text('SideNavSelect'),
                     );

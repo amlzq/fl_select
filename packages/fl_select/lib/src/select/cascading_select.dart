@@ -785,6 +785,8 @@ class CascadingSelectState extends State<CascadingSelect> {
     // final isMultipleSelectionMode =
     //     SelectionMode.multiple == focusedCategory.selectionMode;
 
+    // Neither header nor footer children support a custom range entry: both
+    // rows render as chips and SelectChipBar throws on a custom entry.
     final categoryHeader = focusedCategory.header;
     final categoryFooter = focusedCategory.footer;
     final headerSelected = _headerSelectedFor(focusedCategory.id);
@@ -834,14 +836,16 @@ class CascadingSelectState extends State<CascadingSelect> {
                   children: [
                     if (categoryHeader != null &&
                         categoryHeader.children != null)
-                      SelectChipBar(
-                        category: categoryHeader,
-                        entries: categoryHeader.children!.toList(),
-                        selectedEntries: headerSelected,
-                        variant: SelectChipVariant.filled,
-                        spacing: 12.0,
-                        onChanged: (index, entry) => _onHeaderOrFooterItemTap
-                            .call(true, index, entry as SelectChildEntry),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: SelectChipBar(
+                          category: categoryHeader,
+                          entries: categoryHeader.children!.toList(),
+                          selectedEntries: headerSelected,
+                          spacing: 12.0,
+                          onChanged: (index, entry) => _onHeaderOrFooterItemTap
+                              .call(true, index, entry as SelectChildEntry),
+                        ),
                       ),
                     Expanded(
                       child: isScrollable
@@ -885,14 +889,16 @@ class CascadingSelectState extends State<CascadingSelect> {
                     ),
                     if (categoryFooter != null &&
                         categoryFooter.children != null)
-                      SelectChipBar(
-                        category: categoryFooter,
-                        entries: categoryFooter.children!.toList(),
-                        selectedEntries: footerSelected,
-                        variant: SelectChipVariant.filled,
-                        spacing: 12.0,
-                        onChanged: (index, entry) => _onHeaderOrFooterItemTap
-                            .call(false, index, entry as SelectChildEntry),
+                      Padding(
+                        padding: const EdgeInsets.only(left: 10),
+                        child: SelectChipBar(
+                          category: categoryFooter,
+                          entries: categoryFooter.children!.toList(),
+                          selectedEntries: footerSelected,
+                          spacing: 12.0,
+                          onChanged: (index, entry) => _onHeaderOrFooterItemTap
+                              .call(false, index, entry as SelectChildEntry),
+                        ),
                       ),
                   ],
                 ),

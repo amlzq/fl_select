@@ -153,12 +153,7 @@ class SelectThemeData with Diagnosticable {
   /// Theme used for checkbox controls when rendered by select widgets.
   final CheckboxThemeData checkboxTheme;
 
-  /// Theme overrides for the single-row chips bar.
-  ///
-  /// Styles the horizontally scrolling chip bar only: the wrap form owns its
-  /// own [wrapViewTheme]. A delegate's `chipBarTheme` is merged into this field
-  /// by `SelectPanel`, and is still mapped onto [wrapViewTheme] as a deprecated
-  /// fallback.
+  /// Theme overrides for the chip bar widget.
   final SelectChipBarTheme chipBarTheme;
 
   /// Deprecated alias of [chipBarTheme].

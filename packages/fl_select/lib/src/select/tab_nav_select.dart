@@ -301,6 +301,8 @@ class TabNavSelectState extends State<TabNavSelect> {
     final selectedCategories =
         controller?.realSelectedCategories ?? <SelectEntry>{};
 
+    // Neither header nor footer children support a custom range entry: both
+    // rows render as chips and SelectChipBar throws on a custom entry.
     final categoryHeader = category.header;
     final categoryFooter = category.footer;
     final headerSelected = _headerSelectedFor(category.id);
@@ -328,13 +330,11 @@ class TabNavSelectState extends State<TabNavSelect> {
                 if (categoryHeader != null && categoryHeader.children != null)
                   Padding(
                     padding: const EdgeInsets.only(bottom: 10),
-                    child: SelectWrapView(
+                    child: SelectChipBar(
                       category: categoryHeader,
                       entries: categoryHeader.children!.toList(),
                       selectedEntries: headerSelected,
-                      variant: SelectChipVariant.filled,
                       spacing: 12.0,
-                      runSpacing: 12.0,
                       onChanged: (index, entry) => _onHeaderOrFooterItemTap
                           .call(true, index, entry as SelectChildEntry),
                     ),
@@ -353,13 +353,11 @@ class TabNavSelectState extends State<TabNavSelect> {
                 if (categoryFooter != null && categoryFooter.children != null)
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
-                    child: SelectWrapView(
+                    child: SelectChipBar(
                       category: categoryFooter,
                       entries: categoryFooter.children!.toList(),
                       selectedEntries: footerSelected,
-                      variant: SelectChipVariant.filled,
                       spacing: 12.0,
-                      runSpacing: 12.0,
                       onChanged: (index, entry) => _onHeaderOrFooterItemTap
                           .call(false, index, entry as SelectChildEntry),
                     ),

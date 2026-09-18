@@ -130,6 +130,7 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                         ),
                         entries: multiCategoryData,
                         selectionMode: SelectionMode.multiple,
+                        sideBarTheme: const SelectSideBarTheme(width: 120),
                       ),
                       title: Text('SideNavSelect'),
                     );

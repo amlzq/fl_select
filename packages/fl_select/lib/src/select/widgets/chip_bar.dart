@@ -7,9 +7,7 @@ import '../select_entry.dart';
 import 'chip.dart';
 import 'chip_bar_theme.dart';
 import 'constants.dart';
-import 'custom_range_host.dart';
 import 'extensions.dart';
-import 'field_tile_theme.dart';
 import 'skeleton_view.dart';
 
 /// Default height of the single-row [SelectChipBar].
@@ -21,14 +19,17 @@ const kSelectChipBarHeight = 44.0;
 /// Renders all [SelectEntry] subtypes as chips using their [SelectEntry.name]
 /// as the label. Selection state is provided by [selectedEntries] and user
 /// interactions are reported via [onChanged]. The bar keeps a fixed height
-/// ([kSelectChipBarHeight]) unless the title is stacked vertically or a
-/// custom range field is present.
+/// ([kSelectChipBarHeight]).
 ///
 /// A custom range entry (a [SelectRangeEntry] with the special id `custom`,
-/// see [SelectRangeEntryExt.isCustom]) placed first or last in [entries] is
-/// not rendered as a chip. Instead it is rendered as a min/max input field
-/// above or below the chip row, mirroring [SelectGridView]. The committed
-/// value is reported through [onChanged] once both fields lose focus.
+/// see [SelectRangeEntryExt.isCustom]) is **not supported**: it has no chip
+/// representation and the bar has no room for its min/max input field, so
+/// passing one in [entries] throws a [FlutterError] while building. Render it
+/// with [SelectWrapView], [SelectGridView] or [SelectListView] — or a
+/// category's [SelectRangeLayout] — instead.
+///
+/// A category's header/footer bars render this widget, so their
+/// [SelectEntry.children] must not contain a custom range entry either.
 ///
 /// For the multi-row wrapped variant see [SelectWrapView].
 class SelectChipBar extends StatefulWidget {
@@ -43,12 +44,10 @@ class SelectChipBar extends StatefulWidget {
     this.backgroundColor,
     this.padding,
     this.variant,
-    this.fieldVariant,
     this.chipColor,
     this.selectedChipColor,
     this.labelStyle,
     this.selectedLabelStyle,
-    this.toText = '-',
     required this.onChanged,
   });
 
@@ -95,10 +94,6 @@ class SelectChipBar extends StatefulWidget {
   /// [SelectChipVariant.filled].
   final SelectChipVariant? variant;
 
-  /// The visual variant of the custom range input field, if [entries]
-  /// contains a custom range entry.
-  final SelectFieldTileVariant? fieldVariant;
-
   /// The color of an unselected chip.
   ///
   /// When [variant] is [SelectChipVariant.filled] this is used as the chip's
@@ -124,13 +119,7 @@ class SelectChipBar extends StatefulWidget {
   /// default is used.
   final TextStyle? selectedLabelStyle;
 
-  /// Text rendered between the two custom range input fields.
-  ///
-  /// Only used when [entries] contains a custom range entry. Defaults to
-  /// `'-'`.
-  final String toText;
-
-  /// Called when the user taps a chip or commits the custom range input.
+  /// Called when the user taps a chip.
   ///
   /// The `index` of the tapped entry within [entries] and the tapped entry
   /// itself are passed to the callback.
@@ -140,35 +129,14 @@ class SelectChipBar extends StatefulWidget {
   State<SelectChipBar> createState() => _SelectChipBarState();
 }
 
-class _SelectChipBarState extends State<SelectChipBar> with CustomRangeHost {
+class _SelectChipBarState extends State<SelectChipBar> {
   late SelectEntries _selectedEntries;
-
-  @override
-  List<SelectEntry> get customRangeEntries => widget.entries;
-
-  @override
-  SelectEntry? get customRangeCategory => widget.category;
-
-  @override
-  SelectEntries get customRangeSelectedEntries => _selectedEntries;
-
-  @override
-  String get customRangeToText => widget.toText;
-
-  @override
-  void notifyCustomRangeChanged(int index, SelectEntry entry) =>
-      widget.onChanged(index, entry);
-
-  void onChipTap(int index, SelectEntry entry) =>
-      widget.onChanged(index, entry);
 
   @override
   void initState() {
     super.initState();
 
     _selectedEntries = widget.selectedEntries ?? {};
-
-    initCustomRange();
   }
 
   @override
@@ -176,26 +144,33 @@ class _SelectChipBarState extends State<SelectChipBar> with CustomRangeHost {
     super.didUpdateWidget(oldWidget);
 
     _selectedEntries = widget.selectedEntries ?? {};
-
-    updateCustomRange(oldSelectedEntries: oldWidget.selectedEntries ?? {});
-  }
-
-  @override
-  void dispose() {
-    disposeCustomRange();
-
-    super.dispose();
-  }
-
-  /// Handles a chip tap: the chip's selection replaces any in-progress
-  /// custom range input, then [onChipTap] forwards the tap.
-  void handleChipTap(int index, SelectEntry item) {
-    clearCustomRangeInput();
-    onChipTap(index, item);
   }
 
   @override
   Widget build(BuildContext context) {
+    // A custom range entry has no chip representation — the bar is a single
+    // row of chips with no room for its min/max input field — so rendering one
+    // is a programming error rather than something to silently drop.
+    final customEntries = widget.entries.where(testCustomElement).toList();
+
+    if (customEntries.isNotEmpty) {
+      throw FlutterError.fromParts([
+        ErrorSummary('SelectChipBar does not support custom range entries.'),
+        ErrorDescription(
+          '`entries` contains the custom range entry '
+          '${customEntries.map((entry) => entry.id).join(', ')}. A custom '
+          'range entry renders as a min/max input field, which this single-row '
+          'chip bar has no room for.',
+        ),
+        ErrorHint(
+          'Render it with SelectWrapView, SelectGridView or SelectListView '
+          "(or a category's SelectRangeLayout) instead. A category's "
+          'header/footer is rendered by this bar too, so its children must not '
+          'contain a custom range entry either.',
+        ),
+      ]);
+    }
+
     final theme = SelectChipBarTheme.of(context);
 
     final effectiveVariant =
@@ -241,48 +216,29 @@ class _SelectChipBarState extends State<SelectChipBar> with CustomRangeHost {
         scrollDirection: Axis.horizontal,
         child: Row(
           children: [
-            if (firstCustomRange != null)
-              buildCustomRangeFieldTile(
-                isHeader: true,
-                padding: const EdgeInsets.only(bottom: 10.0),
-                variant: widget.fieldVariant,
-              ),
-            for (final entry in customRangeEntries.asMap().entries)
-              if (testNotCustomItem(entry.value))
-                () {
-                  final index = entry.key;
-                  final item = entry.value;
-                  final selected = customRangeSelectedEntries.contains(item);
-                  return SelectChip(
-                    label: item.name ?? '',
-                    selected: selected,
-                    variant: effectiveVariant,
-                    color: effectiveChipColor,
-                    selectedColor: effectiveSelectedChipColor,
-                    labelStyle: effectiveLabelStyle,
-                    selectedLabelStyle: effectiveSelectedLabelStyle,
-                    enabled: item.enabled,
-                    onTap: () => handleChipTap(index, item),
-                  );
-                }(),
-            if (lastCustomRange != null)
-              buildCustomRangeFieldTile(
-                isHeader: false,
-                padding: const EdgeInsets.only(top: 10.0),
-                variant: widget.fieldVariant,
+            // Every entry renders as a chip: custom range entries were already
+            // rejected above.
+            for (final entry in widget.entries.asMap().entries)
+              SelectChip(
+                label: entry.value.name ?? '',
+                selected: _selectedEntries.contains(entry.value),
+                variant: effectiveVariant,
+                color: effectiveChipColor,
+                selectedColor: effectiveSelectedChipColor,
+                labelStyle: effectiveLabelStyle,
+                selectedLabelStyle: effectiveSelectedLabelStyle,
+                enabled: entry.value.enabled,
+                onTap: () => widget.onChanged(entry.key, entry.value),
               ),
           ].separateWith(SizedBox(width: widget.spacing)),
         ),
       ),
     );
 
-    // A custom range entry grows the bar above its fixed height.
-    final isFixedHeight = !hasCustomRange;
-
     final showTitle = widget.showTitle && widget.category?.name != null;
 
     return Container(
-      height: isFixedHeight ? kSelectChipBarHeight : null,
+      height: kSelectChipBarHeight,
       color: effectiveBackgroundColor,
       padding: effectivePadding,
       child: Row(

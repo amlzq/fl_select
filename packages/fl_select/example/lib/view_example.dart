@@ -415,7 +415,7 @@ class SelectViewExamplePage extends StatelessWidget {
                     ),
                     entries: multiCategoryData,
                     selectionMode: SelectionMode.multiple,
-                    sideBarTheme: const SelectSideBarTheme(width: 90),
+                    sideBarTheme: const SelectSideBarTheme(width: 120),
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');
@@ -468,7 +468,7 @@ class SelectViewExamplePage extends StatelessWidget {
                       ),
                     },
                     selectionMode: SelectionMode.multiple,
-                    sideBarTheme: const SelectSideBarTheme(width: 90),
+                    sideBarTheme: const SelectSideBarTheme(width: 120),
                   ),
                   onChanged: (SelectEntries selected) {
                     largePrint('onChanged: $selected');

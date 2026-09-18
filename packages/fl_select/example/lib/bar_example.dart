@@ -88,6 +88,7 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                   defaultLayout: SelectWrapLayout(spacing: 12, runSpacing: 12),
                   entries: multiCategoryData,
                   selectionMode: SelectionMode.multiple,
+                  sideBarTheme: const SelectSideBarTheme(width: 120),
                   searchEnabled: true,
                   searchPredicate: (entry, query) {
                     return entry.name?.contains(query) == true;
@@ -103,7 +104,7 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                         if (categoryId == 'cate1' ||
                             categoryId == 'cate3' ||
                             categoryId == 'cate4') {
-                          return MyGridItem(
+                          return MyWrapItem(
                             entry: entry,
                             selected: selected,
                             onTap: onTap,
@@ -236,6 +237,7 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                   defaultLayout: SelectWrapLayout(spacing: 12, runSpacing: 12),
                   entries: multiCategoryData,
                   selectionMode: SelectionMode.multiple,
+                  sideBarTheme: const SelectSideBarTheme(width: 120),
                   searchEnabled: true,
                   searchPredicate: (entry, query) {
                     return entry.name?.contains(query) == true;

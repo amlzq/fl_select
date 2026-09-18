@@ -1,5 +1,6 @@
 import 'package:fl_select/fl_select.dart'
     hide
+        SelectChipBar,
         SelectCounter,
         SelectGridView,
         SelectListView,
@@ -241,10 +242,10 @@ void main() {
       await tester.pumpWidget(_sideNavHarness({categoryWithHeaderFooter()}));
       await tester.pumpAndSettle();
 
-      // Category content (list) plus header and footer chip bars
-      // (rendered as wrap views).
+      // Category content (list) plus header and footer chip bars.
       expect(find.byType(SelectListView), findsOneWidget);
-      expect(find.byType(SelectWrapView), findsNWidgets(2));
+      expect(find.byType(SelectChipBar), findsNWidgets(2));
+      expect(find.byType(SelectWrapView), findsNothing);
       expect(find.text('H1'), findsOneWidget);
       expect(find.text('H2'), findsOneWidget);
       expect(find.text('F1'), findsOneWidget);

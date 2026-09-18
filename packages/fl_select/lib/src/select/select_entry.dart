@@ -977,6 +977,12 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
   final SelectionMode? selectionMode;
 
   /// An optional header entry rendered above this category's children.
+  ///
+  /// Its [SelectEntry.children] are laid out as a single row of chips (the
+  /// delegates render them with the internal chip bar), which has no room for
+  /// an input field: a custom range entry (see
+  /// [SelectRangeEntryExt.isCustom]) among them is not supported and makes the
+  /// chip bar throw a [FlutterError] while building.
   SelectEntry<E>? header;
 
   /// The selection mode applied to [header].
@@ -991,6 +997,12 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
   final SelectionMode? headerSelectionMode;
 
   /// An optional footer entry rendered below this category's children.
+  ///
+  /// Its [SelectEntry.children] are laid out as a single row of chips (the
+  /// delegates render them with the internal chip bar), which has no room for
+  /// an input field: a custom range entry (see
+  /// [SelectRangeEntryExt.isCustom]) among them is not supported and makes the
+  /// chip bar throw a [FlutterError] while building.
   SelectEntry<E>? footer;
 
   /// The selection mode applied to [footer].

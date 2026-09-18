@@ -4,6 +4,10 @@
 
 - **BREAKING** remove the deprecated `SelectChipBar` and `SelectChipBarSkeleton` wrap parameters (`isWrapable`, `direction`, `runSpacing`).
 
+- **BREAKING** the category header/footer bars of `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate` and `CascadingSelectDelegate` render the single-row `SelectChipBar`.
+
+- **BREAKING** `SelectChipBar` not support custom entry rendering.
+
 - **FEATURE** add comprehensive accessibility support for screen readers.
 
 - **FEATURE** add `SelectWrapViewTheme` — set it through `SelectThemeData.wrapViewTheme` or a delegate's `wrapViewTheme` — so the wrapping chip view can be styled independently from the single-row `SelectChipBar`.
