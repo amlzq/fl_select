@@ -79,7 +79,7 @@ final SelectEntries? selected = await showSelect(
 
 Returns the selected `SelectEntries` when applied, `null` when dismissed. Interaction mirrors `showTimePicker`: single-selection taps apply and close immediately; multi-selection requires "Apply", and "Reset" only clears.
 
-Parameters: `context`, `delegate` (required) · `title`, `leading`, `trailing`, `centerTitle` (header row; `centerTitle` defaults platform-dependent — `true` on Android) · `barrierDismissible` (default `true`), `barrierColor`, `useRootNavigator` (default `true`), `builder`, `routeSettings`, `anchorPoint` · `elevation`, `shape`, `clipBehavior` (outer `Dialog` decoration; panel decoration is `delegate.panelTheme`). The dialog honors the ambient `DialogTheme.insetPadding`.
+Parameters: `context`, `delegate` (required) · `title`, `leading`, `trailing`, `centerTitle` (header row; `centerTitle` resolves explicit → `AppBarTheme.centerTitle` → platform default, i.e. `true` on iOS/macOS and `false` elsewhere) · `barrierDismissible` (default `true`), `barrierColor`, `useRootNavigator` (default `true`), `builder`, `routeSettings`, `anchorPoint` · `elevation`, `shape`, `clipBehavior`, `insetPadding` (outer `Dialog` decoration; panel decoration is `delegate.panelTheme`). Without an explicit `insetPadding` the dialog honors the ambient `DialogTheme.insetPadding`.
 
 ## showModalBottomSelect — modal bottom sheet
 
@@ -102,7 +102,7 @@ Height behavior: the body is shrink-wrapped with internal scrolling; unless `con
 
 Pass a `controller` to `SelectView` (or a `PopupSelectController` to the popup entry points) for external control. Useful members:
 
-- `realSelectedCategories` (`SelectEntries`) — top-level categories holding at least one non-"Any" selected child. Drives the category badges on `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` and TabNavSelect's initial tab focus. Renamed from `badgedCategories`; the old name has been removed.
+- `realSelectedCategories` (`SelectEntries`) — top-level categories holding at least one non-"Any" selected child. Drives the category badges on `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` and TabNavSelect's initial tab focus.
 - `hasMultipleMode` — true when the delegate-level mode is multiple or any top-level category opts into multiple; drives the action bar visibility (see [entries.md](entries.md)).
 
 ## Choosing an entry point

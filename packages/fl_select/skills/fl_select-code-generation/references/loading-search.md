@@ -43,11 +43,11 @@ Future<SelectEntries> _fetchNeighborhood() async {
 ```dart
 CascadingSelectDelegate(
   entriesLoader: _fetchNeighborhood,
-  errorBuilder: (context, error, stackTrace, reload) => ErrorRetry(reload: reload),
+  errorBuilder: (error, stackTrace) => Text('Failed to load: $error'),
 );
 ```
 
-Style the default skeletons via `delegate.skeletonTheme`.
+`errorBuilder` takes only `(Object error, StackTrace? stackTrace)` — there is no `context` parameter and no reload callback. The default skeletons are painted with `SelectThemeData.backgroundColorHigh`; pass `skeletonBuilder` (a `WidgetBuilder`) to replace them wholesale.
 
 ## Initial selection (async restore)
 

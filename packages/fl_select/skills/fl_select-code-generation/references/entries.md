@@ -11,9 +11,9 @@ Selections and data are a tree of `SelectEntry` nodes:
 | Entry | Purpose |
 | --- | --- |
 | `SelectTextEntry` | Plain text leaf. `.any(...)` builds the "Any" (clear) entry; `.name(...)` builds a parentless leaf for flat lists. |
-| `SelectRangeEntry<N extends num, E>` | Numeric range leaf (`min`/`max`). `.any(...)` for "Any"; `.custom(...)` for a user-input range. `SelectIntEntry<E>` = `SelectRangeEntry<int, E>`. |
+| `SelectRangeEntry<N, E>` | Range leaf (`min` / `max`). `.any(...)` for "Any"; `.custom(...)` for a user-input range. `SelectIntEntry<E>` = `SelectRangeEntry<int, E>`. |
 
-Common fields on every entry: `id`, `name`, `parentId`, `extra` (free-form payload, any type — attach your domain object here), `enabled` (defaults `true`; `false` renders the entry disabled), and `children` (nesting — see below).
+Common fields on every entry: `id`, `name`, `extra` (free-form payload, any type — attach your domain object here), `enabled` (defaults `true`; `false` renders the entry disabled), and `children` (nesting — see below). `parentId` is on the non-root `SelectChildEntry` (and its subclasses) only — the root `SelectCategoryEntry` has none.
 
 ## Building a tree
 

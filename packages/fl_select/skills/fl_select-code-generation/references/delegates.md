@@ -34,7 +34,7 @@ GridSelectDelegate(
 );
 ```
 
-Rules: the builder renders its own selected-state visuals from `selected` and wires `onTap` (e.g. via `InkWell`) to its own gesture handler; custom range entries are not passed to the builder and keep rendering as the built-in min/max input field. `categoryId` carries the owning `SelectCategoryEntry.id` on category delegates and is null on flat delegates, so one builder can branch per category (e.g. render price tiles only for the price category and return null elsewhere). Returning **null** falls back to the default item widget — customize only some entries or categories while keeping the built-in visuals elsewhere.
+Rules: the builder renders its own selected-state visuals from `selected` and wires `onTap` (e.g. via `InkWell`) to its own gesture handler; custom range entries are not passed to the builder and keep rendering as the built-in min/max input field. `categoryId` carries the owning `SelectCategoryEntry.id` on category delegates and is null on flat delegates, so one builder can branch per category (e.g. render price tiles only for the price category and return null elsewhere). Returning **null** falls back to the default item widget — customize only some entries or categories while keeping the built-in visuals elsewhere. Because the builder replaces the built-in widget, its semantics go with it: wrap the returned widget in `Semantics` (`button: true`, `selected: selected`, `label: entry.name`) so screen readers still describe it.
 
 Scope on category delegates: applies to categories laid out as list, grid or wrap (via `category.layout`); the range-slider and counter layouts keep their built-in controls, and a category's header/footer chips are never passed to the builder. `CascadingSelectDelegate` ignores `itemBuilder` (its nodes render per level; a node builder may arrive later). Builders render their own chip visuals, styled to match `SelectChipBarTheme` (the built-in `SelectChip` is no longer part of the public API).
 
@@ -96,7 +96,7 @@ ListSelectDelegate(
 
 **Styling** (details in [theming-i18n.md](theming-i18n.md))
 - `selectedColor`, `onSelectedColor`.
-- Fine-grained `*Theme` fields: `categoryTheme`, `bodyTheme`, `categoryItemTheme`, `entryTheme`, `rangeEntryTheme`, `counterEntryTheme`, `actionBarTheme`, `searchBarTheme`, `skeletonTheme`, `panelTheme` (panel background decoration).
+- Fine-grained `*Theme` fields: `actionBarTheme`, `searchBarTheme`, `tabBarTheme`, `sideBarTheme`, `expansionTileTheme`, `listTileTheme`, `gridTileTheme`, `fieldTileTheme`, `rangeSliderTheme`, `wrapViewTheme` (wrapping chip view), `chipBarTheme` (legacy shared chip theme), `panelTheme` (panel background decoration). More colors: `backgroundColor` / `onBackgroundColor`, `backgroundColorHigh` / `backgroundColorHighest` / `onBackgroundColorHighest`. Every theme field also exists on `SelectThemeData` for app-wide styling (a delegate's value wins).
 
 `GridSelectDelegate` additionally requires `crossAxisCount`.
 
