@@ -37,6 +37,9 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get themeModeDark => '深色';
+
+  @override
+  String get accessibilityExample => '无障碍服务示例';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hans`).
@@ -72,6 +75,9 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
 
   @override
   String get themeModeDark => '深色';
+
+  @override
+  String get accessibilityExample => '无障碍服务示例';
 }
 
 /// The translations for Chinese, using the Han script (`zh_Hant`).
@@ -107,6 +113,9 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
 
   @override
   String get themeModeDark => '深色';
+
+  @override
+  String get accessibilityExample => '無障礙服務範例';
 }
 
 /// The translations for Chinese, as used in Hong Kong, using the Han script (`zh_Hant_HK`).
@@ -142,6 +151,9 @@ class AppLocalizationsZhHantHk extends AppLocalizationsZh {
 
   @override
   String get themeModeDark => '深色';
+
+  @override
+  String get accessibilityExample => '無障礙服務範例';
 }
 
 /// The translations for Chinese, as used in Taiwan, using the Han script (`zh_Hant_TW`).
@@ -177,4 +189,7 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
 
   @override
   String get themeModeDark => '深色';
+
+  @override
+  String get accessibilityExample => '無障礙服務範例';
 }

@@ -37,4 +37,7 @@ class AppLocalizationsEs extends AppLocalizations {
 
   @override
   String get themeModeDark => 'Oscuro';
+
+  @override
+  String get accessibilityExample => 'Ejemplo de accesibilidad';
 }

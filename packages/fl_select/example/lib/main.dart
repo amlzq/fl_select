@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import 'accessibility_example.dart';
 import 'bar_example.dart';
 import 'bottom_sheet_example.dart';
 import 'button_example.dart';
@@ -186,6 +187,17 @@ class MyHomePage extends StatelessWidget {
                 );
               },
               child: Text(l10n.showModalBottomSelectExample),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const AccessibilityExample(),
+                  ),
+                );
+              },
+              child: Text(l10n.accessibilityExample),
             ),
           ],
         ),

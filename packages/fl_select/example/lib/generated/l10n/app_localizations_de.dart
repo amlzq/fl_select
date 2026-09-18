@@ -37,4 +37,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get themeModeDark => 'Dunkel';
+
+  @override
+  String get accessibilityExample => 'Barrierefreiheit-Beispiel';
 }

@@ -9,5 +9,6 @@
   "theme": "테마",
   "themeModeSystem": "시스템",
   "themeModeLight": "라이트",
-  "themeModeDark": "다크"
+  "themeModeDark": "다크",
+  "accessibilityExample": "접근성 예제"
 }

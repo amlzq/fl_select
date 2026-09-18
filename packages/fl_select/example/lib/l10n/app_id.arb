@@ -9,5 +9,6 @@
   "theme": "Tema",
   "themeModeSystem": "Sistem",
   "themeModeLight": "Terang",
-  "themeModeDark": "Gelap"
+  "themeModeDark": "Gelap",
+  "accessibilityExample": "Contoh Aksesibilitas"
 }

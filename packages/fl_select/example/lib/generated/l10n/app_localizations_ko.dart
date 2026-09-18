@@ -37,4 +37,7 @@ class AppLocalizationsKo extends AppLocalizations {
 
   @override
   String get themeModeDark => '다크';
+
+  @override
+  String get accessibilityExample => '접근성 예제';
 }

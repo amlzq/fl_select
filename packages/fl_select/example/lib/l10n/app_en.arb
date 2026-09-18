@@ -9,5 +9,6 @@
   "theme": "Theme",
   "themeModeSystem": "System",
   "themeModeLight": "Light",
-  "themeModeDark": "Dark"
+  "themeModeDark": "Dark",
+  "accessibilityExample": "Accessibility Example"
 }

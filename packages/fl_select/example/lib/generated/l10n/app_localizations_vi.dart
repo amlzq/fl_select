@@ -37,4 +37,7 @@ class AppLocalizationsVi extends AppLocalizations {
 
   @override
   String get themeModeDark => 'Tối';
+
+  @override
+  String get accessibilityExample => 'Ví dụ về trợ năng';
 }

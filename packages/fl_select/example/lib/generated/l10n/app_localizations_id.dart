@@ -37,4 +37,7 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get themeModeDark => 'Gelap';
+
+  @override
+  String get accessibilityExample => 'Contoh Aksesibilitas';
 }

@@ -9,5 +9,6 @@
   "theme": "主题",
   "themeModeSystem": "跟随系统",
   "themeModeLight": "浅色",
-  "themeModeDark": "深色"
+  "themeModeDark": "深色",
+  "accessibilityExample": "无障碍服务示例"
 }

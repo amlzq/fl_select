@@ -185,6 +185,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dark'**
   String get themeModeDark;
+
+  /// No description provided for @accessibilityExample.
+  ///
+  /// In en, this message translates to:
+  /// **'Accessibility Example'**
+  String get accessibilityExample;
 }
 
 class _AppLocalizationsDelegate

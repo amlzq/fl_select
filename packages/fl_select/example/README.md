@@ -7,6 +7,7 @@ A demo app covering every entry point of `fl_select`:
 - `PopupSelectButton` — a single-trigger button (`button_example.dart`)
 - `showSelect` — a select in a modal dialog (`dialog_example.dart`)
 - `showModalBottomSelect` — a select in a modal bottom sheet (`bottom_sheet_example.dart`)
+- Accessibility — built-in semantics, live screen-reader announcements and the recommended `Semantics` wrapper for custom `itemBuilder`s (`accessibility_example.dart`)
 
 Each demo combines the built-in delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`, `CascadingSelectDelegate`, `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) with async `entriesLoader` data, search filtering, theming, and i18n.
 

@@ -9,5 +9,6 @@
   "theme": "Design",
   "themeModeSystem": "System",
   "themeModeLight": "Hell",
-  "themeModeDark": "Dunkel"
+  "themeModeDark": "Dunkel",
+  "accessibilityExample": "Barrierefreiheit-Beispiel"
 }
