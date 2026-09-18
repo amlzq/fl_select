@@ -10,7 +10,7 @@ description: A Flutter package (fl_select) for building selection UIs (e.g. filt
 1. **Entry points** decide *where* the select appears:
    `SelectView` (inline) · `PopupSelectBar` (filter-bar tabs) · `PopupSelectButton` (single trigger) · `showSelect` (dialog) · `showModalBottomSelect` (bottom sheet).
 2. **Delegates** decide *how* entries are laid out — seven single-purpose styles:
-   flat data: `ListSelectDelegate` · `GridSelectDelegate` · `WrapSelectDelegate`; two-level (category) data: `CascadingSelectDelegate` · `TabNavSelectDelegate` · `SideNavSelectDelegate` · `ExpandableSelectDelegate`.
+   flat data: `ListSelectDelegate` · `GridSelectDelegate` · `WrapSelectDelegate`; two-level (category) data: `TabNavSelectDelegate` · `SideNavSelectDelegate` · `ExpandableSelectDelegate`; multi-level (cascading) data: `CascadingSelectDelegate`.
 
 Any delegate plugs into any entry point — there is exactly one delegate parameter, no per-entry-point variants. Custom layouts come from subclassing `SelectDelegate`, not from new entry points; custom item widgets come from `itemBuilder` on the flat and layout-based category delegates (not `CascadingSelectDelegate`), not from subclassing.
 
@@ -61,7 +61,7 @@ final SelectEntries? selected = await showSelect(
 - The panel's built-in widgets (views like `SelectChipBar` / `SelectWrapView`, tiles, skeletons, `SelectBadge`, `SelectPanel`) are internalized: they keep compiling through deprecated aliases but will be removed in a future minor version — do not construct them directly. Build through the entry points + delegates/`SelectLayout`s and style via the `Select*Theme`s; the wrapping chip form is what `WrapSelectDelegate` / `SelectWrapLayout` render internally, and its chips are styled with `wrapViewTheme` (`SelectWrapViewTheme`) on the delegate or on `SelectThemeData`.
 - `SelectController.realSelectedCategories` (`SelectEntries`) returns the categories holding at least one non-"Any" selection and drives category badges and TabNavSelect's initial tab focus.
 - Every delegate is single-purpose: `ListSelectDelegate` / `GridSelectDelegate` accept flat data only and assert on two-level data (use `ExpandableSelectDelegate` / `TabNavSelectDelegate` for categories, or `WrapSelectDelegate` for flat chips).
-- Only `CascadingSelectDelegate` navigates a tree; the other two-level delegates lay out each category's `children` according to `category.layout` (list / grid / chips / range slider / counter).
+- Only `CascadingSelectDelegate` navigates a multi-level tree; the three two-level category delegates lay out each category's `children` according to `category.layout` (list / grid / chips / range slider / counter).
 - `SelectChildEntry` is identified by its `parentId`. Prefer the `SelectCategoryEntry(children: {...})` factory, which injects `parentId` automatically.
 - Use `SelectTextEntry.name(...)` (parentless leaf) for flat single-level lists.
 - An "Any" entry (`.any(...)`) clears its category; in `toQueryMap()` it resolves to the parent id.

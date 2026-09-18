@@ -57,7 +57,7 @@ schema `enum` and the system prompt fragment.
 
 ### Delegate token routing
 
-| payload `delegate` | two-level (category) data | flat data |
+| payload `delegate` | category data | flat data |
 | --- | --- | --- |
 | `tabNav` (new) | `TabNavSelectDelegate` | falls back to `ListSelectDelegate` |
 | `sideNav` (new) | `SideNavSelectDelegate` | falls back to `ListSelectDelegate` |
@@ -65,9 +65,10 @@ schema `enum` and the system prompt fragment.
 | `grid` | `TabNavSelectDelegate`¹ | `GridSelectDelegate` |
 | `wrap` / `chips` / `flatten` | `SideNavSelectDelegate` | `WrapSelectDelegate` |
 | `list` (default) / unknown | `ExpandableSelectDelegate` | `ListSelectDelegate` |
-| `cascading` | `CascadingSelectDelegate` | `CascadingSelectDelegate` |
+| `cascading`² | `CascadingSelectDelegate` | `CascadingSelectDelegate` |
 
 ¹ `crossAxisCount` maps onto the delegate's `defaultLayout` grid.
+² `cascading` is a multi-level cascade (unlimited depth), not one of the two-level category layouts — it renders both entry-tree shapes natively and ignores `category.layout`.
 
 ### Recommendations for new payloads
 

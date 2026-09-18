@@ -40,16 +40,21 @@ Scope on category delegates: applies to categories laid out as list, grid or wra
 
 Chip views (internalized): the built-in chip widgets — the single-row `SelectChipBar`, the wrapping `SelectWrapView`, their skeletons, and the chip symbols (`SelectChip`, `SelectChipBarStyle`, `resolveSelectChipBarStyle`) — are no longer public API; they keep compiling through deprecated aliases and will be removed in a future minor version. The wrap form is what `WrapSelectDelegate` and `SelectWrapLayout` render internally. Style a `WrapSelectDelegate`'s chips via its `wrapViewTheme` (`SelectWrapViewTheme`: `variant` (filled/outlined), `chipColor`, `selectedChipColor`, `labelStyle`, `selectedLabelStyle`, `backgroundColor`, `padding`). `SelectPanel` still folds the legacy `chipBarTheme` (`SelectChipBarTheme`) into the wrap view theme as a lowest-priority fallback, so it only fills in the fields `wrapViewTheme` leaves unset — deprecated, prefer `wrapViewTheme`. Custom `itemBuilder`s render their own chips, resolving visuals from `SelectWrapViewTheme` on the wrap form and from `SelectChipBarTheme` on the single-row bar. In widget tests, the deprecated aliases still resolve to the real types, so `find.byType(SelectWrapView)` keeps working at the cost of a deprecation lint — prefer asserting on the visible chip text instead.
 
-**Two-level (category) data** — a tree of `SelectCategoryEntry` roots:
+**Two-level (category) data** — a tree of `SelectCategoryEntry` roots; at most two levels are rendered:
 
 | Delegate | Body |
 | --- | --- |
-| `CascadingSelectDelegate` | Tree select: categories on the left, cascading list on the right. Ignores `category.layout`. |
 | `TabNavSelectDelegate` | Category tabs on top drive the content below; the tab bar hides with a single category. |
 | `SideNavSelectDelegate` | Category sidebar on the left scrolls the single right column to the matching section. Best with `SelectionMode.multiple` and an "Any" entry. |
 | `ExpandableSelectDelegate` | One expandable group per category; header/footer entries render as chip bars around the expanded content. |
 
-`TabNavSelectDelegate`, `SideNavSelectDelegate` and `ExpandableSelectDelegate` badge a category (tab / sidebar item / expansion tile) that holds a real selection — driven by `SelectController.realSelectedCategories` (see [entry-points.md](entry-points.md)).
+These three badge a category (tab / sidebar item / expansion tile) that holds a real selection — driven by `SelectController.realSelectedCategories` (see [entry-points.md](entry-points.md)).
+
+**Multi-level (cascading) data** — nested `children` at unlimited depth (`category -> child -> grandchild -> ...`):
+
+| Delegate | Body |
+| --- | --- |
+| `CascadingSelectDelegate` | Tree select: categories on the left, cascading list on the right. One column per level with arbitrary depth; ignores `category.layout`. |
 
 Scrolling: every scrollable body chains its touch drag to the enclosing page-level scrollable — a drag past an edge hands the leftover drag (and fling momentum) upward, restoring the native nested-scrolling feel with no changes required on hosting pages (the physics class itself is internalized). Chaining follows the inner-first order of `NestedScrollView` and browsers: dragging back scrolls the body first, and the leftover only reaches the enclosing page once the body hits its edge. In `SideNavSelectDelegate`, tapping a sidebar item animates that category's full section (including its top padding) to the top of the right column, and the sidebar highlights the category at the right column's scroll position.
 

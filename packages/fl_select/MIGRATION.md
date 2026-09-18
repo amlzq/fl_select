@@ -198,6 +198,9 @@ Check your `entries`: if the top level contains `SelectCategoryEntry` items
 (two-level data), you are on a two-level mode; if it contains plain entries
 such as `SelectTextEntry` (flat data), you are on a flat mode.
 
+> Note: `CascadingSelectDelegate` is unrelated to this two-level/flat split — it
+> navigates a multi-level cascade of unlimited depth.
+
 ### FlattenSelectDelegate (renamed)
 
 ```diff

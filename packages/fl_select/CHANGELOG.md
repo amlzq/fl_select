@@ -4,7 +4,7 @@
 
 - **BREAKING** remove the deprecated `SelectChipBar` and `SelectChipBarSkeleton` wrap parameters (`isWrapable`, `direction`, `runSpacing`).
 
-- **BREAKING** the category header/footer bars of `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate` and `CascadingSelectDelegate` render the single-row `SelectChipBar`.
+- **BREAKING** the header/footer bars of the two-level category delegates (`TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) and of `CascadingSelectDelegate` render the single-row `SelectChipBar`.
 
 - **BREAKING** `SelectChipBar` not support custom entry rendering.
 

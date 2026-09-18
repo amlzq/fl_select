@@ -51,7 +51,7 @@ import 'package:fl_select/fl_select.dart';
 
 #### Delegates
 
-A delegate controls both data loading and how the body is rendered, and works with every entry point above. Flat delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) render parentless leaves created with `.name(...)`, while category delegates (`CascadingSelectDelegate`, `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) render a tree of `SelectCategoryEntry` roots whose children follow `category.layout` (list / grid / wrap / range slider / counter):
+A delegate controls both data loading and how the body is rendered, and works with every entry point above. Flat delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) render parentless leaves created with `.name(...)`; `CascadingSelectDelegate` renders a multi-level cascade of unlimited depth (`category -> child -> grandchild -> ...`) and ignores `category.layout`; the three two-level category delegates (`TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) render a tree of `SelectCategoryEntry` roots whose children follow `category.layout` (list / grid / wrap / range slider / counter):
 
 | `ListSelectDelegate`        | `GridSelectDelegate`        | `WrapSelectDelegate`        | `CascadingSelectDelegate`   | `TabNavSelectDelegate`      | `SideNavSelectDelegate`     | `ExpandableSelectDelegate`  |
 | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- |
@@ -94,7 +94,7 @@ SelectEntries get wrapData => {
     };
 ```
 
-Two-level data for `CascadingSelectDelegate` / `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` — every category picks its own `selectionMode`, `layout`, and optional `header` / `footer`:
+Two-level (category) data for `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` — every category picks its own `selectionMode`, `layout`, and optional `header` / `footer`:
 
 ```dart
 SelectEntries get multiCategoryData => {
@@ -137,6 +137,76 @@ SelectEntries get multiCategoryData => {
     };
 ```
 
+Multi-level (cascading) data for `CascadingSelectDelegate` (the shape of `example/assets/cascading.json`, a housing-transaction taxonomy) — nested `children` open one cascade column per level, at unlimited depth, and `category.layout` is ignored:
+
+```dart
+SelectEntries get cascadingData => {
+      SelectCategoryEntry.children(
+        id: 'residential',
+        name: 'Residential',
+        children: {
+          SelectTextEntry.children(
+            id: '11',
+            name: 'Single-Family',
+            children: {
+              SelectTextEntry.children(
+                id: '111',
+                name: 'Rural',
+                children: {
+                  SelectTextEntry.name(id: '1111', name: 'RR'),
+                  SelectTextEntry.name(id: '1112', name: 'SF-1'),
+                },
+              ),
+              SelectTextEntry.children(
+                id: '112',
+                name: 'Urban',
+                children: {
+                  SelectTextEntry.name(id: '1121', name: 'SF-2'),
+                  SelectTextEntry.name(id: '1122', name: 'SF-3'),
+                  // ...
+                },
+              ),
+            },
+          ),
+          SelectTextEntry.children(
+            id: '12',
+            name: 'Multi-Family',
+            children: {
+              SelectTextEntry.children(
+                id: '121',
+                name: 'Low',
+                children: {
+                  SelectTextEntry.name(id: '1211', name: 'MF-1'),
+                  SelectTextEntry.name(id: '1212', name: 'MF-2'),
+                },
+              ),
+              // Medium / High ...
+            },
+          ),
+        },
+      ),
+      SelectCategoryEntry.children(
+        id: 'commercial',
+        name: 'Commercial',
+        children: {
+          SelectTextEntry.children(
+            id: '21',
+            name: 'Downtown',
+            children: {
+              SelectTextEntry.name(id: '211', name: 'CBD'),
+              SelectTextEntry.name(id: '212', name: 'DMU'),
+              SelectTextEntry.name(id: '213', name: 'CBD-R'),
+            },
+          ),
+          // Retail & Office ...
+        },
+      ),
+      // Industrial / Special / Overlay ...
+    };
+```
+
+`SelectTextEntry.children(...)` / `SelectCategoryEntry.children(...)` inject each child's `parentId` recursively, so a tree can be nested as deep as needed (`category -> child -> grandchild -> ...`) without wiring `parentId` by hand.
+
 An async loader (`entriesLoader`) — any `Future<SelectEntries>`, e.g. decoded from JSON:
 
 ```dart
@@ -144,12 +214,19 @@ Future<SelectEntries> fetchCascadingData() async {
   await Future.delayed(const Duration(milliseconds: 350)); // simulate a network delay
   return {
     SelectCategoryEntry.children(
-      id: 'region',
-      name: 'Region',
+      id: 'residential',
+      name: 'Residential',
       children: {
         SelectTextEntry.any(parentId: '', name: 'Any', immediate: true), // parentId auto-injected
-        SelectTextEntry.name(id: 'north', name: 'North'),
-        // ...
+        SelectTextEntry.children(
+          id: '11',
+          name: 'Single-Family',
+          children: {
+            SelectTextEntry.name(id: '111', name: 'Rural'),
+            SelectTextEntry.name(id: '112', name: 'Urban'),
+          },
+        ),
+        SelectTextEntry.name(id: '12', name: 'Multi-Family'),
       },
       selectionMode: SelectionMode.multiple,
     ),
