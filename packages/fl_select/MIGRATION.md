@@ -1,6 +1,6 @@
 # Migration Guide
 
-## MIGRATE TO Next
+## MIGRATE TO 0.14.0
 
 ### `SelectThemeData.chipBarThemeData` renamed to `chipBarTheme`
 

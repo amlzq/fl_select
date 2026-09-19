@@ -1,8 +1,8 @@
-## Next
+## 0.14.0
 
-- **BREAKING** remove the deprecated `SelectController.badgedCategories` getter.
+- **BREAKING** remove the deprecated `SelectController.badgedCategories` getter ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0120)).
 
-- **BREAKING** remove the deprecated `SelectChipBar` and `SelectChipBarSkeleton` wrap parameters (`isWrapable`, `direction`, `runSpacing`).
+- **BREAKING** remove the deprecated `SelectChipBar` and `SelectChipBarSkeleton` wrap parameters (`isWrapable`, `direction`, `runSpacing`) ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0120)).
 
 - **BREAKING** the header/footer bars of the two-level category delegates (`TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) and of `CascadingSelectDelegate` render the single-row `SelectChipBar`.
 
@@ -12,7 +12,7 @@
 
 - **FEATURE** add `SelectWrapViewTheme` — set it through `SelectThemeData.wrapViewTheme` or a delegate's `wrapViewTheme` — so the wrapping chip view can be styled independently from the single-row `SelectChipBar`.
 
-- **DEPRECATION** rename `SelectThemeData.chipBarThemeData` to `SelectThemeData.chipBarTheme`, matching `SelectDelegate.chipBarTheme` and `SelectThemeData.wrapViewTheme` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+- **DEPRECATION** rename `SelectThemeData.chipBarThemeData` to `SelectThemeData.chipBarTheme`, matching `SelectDelegate.chipBarTheme` and `SelectThemeData.wrapViewTheme` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0140)).
 
 ## 0.13.0
 
