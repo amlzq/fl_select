@@ -2,23 +2,6 @@
 
 ## MIGRATE TO Next
 
-### fl_select bumped to `^0.14.0`
-
-fl_select 0.14.0 ships breaking changes plus new theming and accessibility
-features; none of them are referenced by this package, so no source changes
-were needed:
-
-| fl_select 0.14.0 change | Why fl_select_genui is unaffected |
-| --- | --- |
-| `SelectController.badgedCategories` removed | the catalog never reads `SelectController` |
-| the deprecated wrap parameters of `SelectChipBar` / `SelectChipBarSkeleton` (`isWrapable`, `direction`, `runSpacing`) removed | the catalog never constructs the internal chip-bar widgets |
-| the header/footer bars of the two-level category delegates and of `CascadingSelectDelegate` now render the single-row `SelectChipBar` | `header`/`footer` are forwarded as entry-tree nodes, so agent payloads keep rendering unchanged |
-| `SelectChipBar` no longer supports custom entry rendering | the catalog never passes an `itemBuilder` |
-| `SelectThemeData.chipBarThemeData` renamed to `chipBarTheme`; new `SelectWrapViewTheme` | the catalog does not build `SelectThemeData`; panel theming stays with the host app |
-| accessibility support for screen readers | additive; no API change |
-
-Agent payloads are unaffected: existing JSON keeps rendering identically.
-
 ## MIGRATE TO 0.3.0
 
 ### Agent skill shipped inside the package

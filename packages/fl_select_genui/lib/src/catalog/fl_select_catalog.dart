@@ -8,11 +8,7 @@ import 'schema/select_entry_schema.dart';
 /// Catalog items exposing fl_select widgets to GenUI/A2UI agents.
 abstract final class FlSelectCatalogItems {
   /// All fl_select catalog items.
-  ///
-  /// Includes the deprecated `SelectFilter` payload alias so legacy agent
-  /// payloads keep rendering; the alias will be dropped in a future minor
-  /// release.
-  static List<CatalogItem> get all => [select, _legacySelectFilter];
+  static List<CatalogItem> get all => [select];
 
   /// The catalog as a whole, ready to be merged into a surface controller:
   ///
@@ -28,29 +24,11 @@ abstract final class FlSelectCatalogItems {
   /// The agent supplies an entry tree (`SelectEntryCodec` JSON format) and a
   /// delegate type; user selections are written back to the data model as a
   /// `Map<String, List<String>>` (same shape as `toQueryMap`).
-  static CatalogItem get select => _buildItem('Select');
+  static CatalogItem get select => _buildItem();
 
-  /// Deprecated alias of [select], kept for backward compatibility.
-  ///
-  /// Legacy agent payloads typed `SelectFilter` keep rendering through
-  /// [all]. Both the alias and this getter will be removed in a future
-  /// minor release — migrate payloads to the `Select` type and Dart call
-  /// sites to [select].
-  @Deprecated(
-    'Use `select` instead. Will be removed in a future minor release.',
-  )
-  static CatalogItem get selectFilter => _legacySelectFilter;
-
-  /// The deprecated `SelectFilter` payload alias, registered in [all] so
-  /// legacy agent payloads keep rendering.
-  static final CatalogItem _legacySelectFilter = _buildItem('SelectFilter');
-
-  /// Builds the selection catalog item under the given payload [name].
-  ///
-  /// [name] exists twice: `Select` (current) and `SelectFilter` (deprecated
-  /// alias, see the `selectFilter` getter).
-  static CatalogItem _buildItem(String name) => CatalogItem(
-    name: name,
+  /// Builds the selection catalog item.
+  static CatalogItem _buildItem() => CatalogItem(
+    name: 'Select',
     dataSchema: S.object(
       description:
           'A selection component with categories, options, sliders and '
@@ -141,8 +119,7 @@ When the user needs to pick values from a structured option set, render a `Selec
   category without leaf picks maps to its own id.
 - Flat panels (top-level `text`/`range` leaves, no `category`) additionally
   require `flatKey`: the key under which the selection is written back
-  (e.g. `"sort"` → `{"sort": ["recent"]}`).
-- Legacy payloads typed `SelectFilter` keep rendering this component.''';
+  (e.g. `"sort"` → `{"sort": ["recent"]}`).''';
 }
 
 class _SelectWidget extends StatelessWidget {
@@ -261,7 +238,13 @@ class _SelectWidget extends StatelessWidget {
         entries: entries,
       ),
 
-      // Cascading — drill-down tree, renders both shapes natively.
+      // Cascading — drill-down tree; flat data falls back to the list,
+      // because the cascading body only renders category trees.
+      'cascading' when !isCategoryData => ListSelectDelegate(
+        searchEnabled: searchEnabled,
+        selectionMode: selectionMode,
+        entries: entries,
+      ),
       'cascading' => CascadingSelectDelegate(
         searchEnabled: searchEnabled,
         selectionMode: selectionMode,

@@ -1,6 +1,10 @@
 ## Next
 
-- **IMPROVEMENT** Bump fl_select to `^0.14.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-next)).
+- **BREAKING** remove the deprecated `FlSelectCatalogItems.selectFilter` getter and the `SelectFilter` payload alias ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-020)).
+
+- **IMPROVEMENT** Bump fl_select to `^0.14.0`.
+
+- **BUGFIX** `"delegate": "cascading"` with flat (non-category) `entries` now falls back to the flat list delegate instead of crashing: the cascading body only renders category trees, so it follows the same shape-based fallback as `tabNav`/`sideNav`/`expandable`.
 
 ## 0.3.0
 

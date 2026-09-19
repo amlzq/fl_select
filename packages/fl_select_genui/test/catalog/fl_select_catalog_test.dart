@@ -1,17 +1,19 @@
+import 'dart:convert';
+
+import 'package:fl_select/fl_select.dart';
 import 'package:fl_select_genui/src/catalog/fl_select_catalog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
 
-/// Pumps the Select catalog widget with [data] as the agent-supplied payload
+/// Pumps the `Select` catalog widget with [data] as the agent-supplied payload
 /// and returns the DataContext so tests can inspect write-backs.
-Future<DataContext> pumpFilter(
+Future<DataContext> pumpSelect(
   WidgetTester tester,
   Map<String, Object?> data, {
-  String id = 'filter1',
-  CatalogItem? item,
+  String id = 'select1',
 }) async {
-  item ??= FlSelectCatalogItems.select;
+  final item = FlSelectCatalogItems.select;
   final model = InMemoryDataModel();
   final context = DataContext(model, DataPath('root'));
   await tester.pumpWidget(const MaterialApp(home: Placeholder()));
@@ -36,6 +38,10 @@ Future<DataContext> pumpFilter(
   return context;
 }
 
+/// The delegate the catalog wired into the [SelectView] on screen.
+SelectDelegate delegateOf(WidgetTester tester) =>
+    tester.widget<SelectView>(find.byType(SelectView)).delegate;
+
 const _entries = [
   {
     'type': 'category',
@@ -53,9 +59,55 @@ const _flatEntries = [
   {'type': 'text', 'id': 'cheapest', 'name': 'Cheapest'},
 ];
 
+/// The delegate each documented `delegate` token must produce for a category
+/// tree. Grouped tokens land on their own delegate; flat-only tokens fall
+/// through to the grouped default.
+final _categoryDelegates = <String, Matcher>{
+  'list': isA<ExpandableSelectDelegate>(),
+  'grid': isA<TabNavSelectDelegate>(),
+  'wrap': isA<SideNavSelectDelegate>(),
+  'cascading': isA<CascadingSelectDelegate>(),
+  'tabNav': isA<TabNavSelectDelegate>(),
+  'sideNav': isA<SideNavSelectDelegate>(),
+  'expandable': isA<ExpandableSelectDelegate>(),
+  'flatten': isA<SideNavSelectDelegate>(),
+};
+
+/// The same tokens for a flat option list: every grouped token falls back to
+/// its flat equivalent, since only the flat-only delegates support flat data.
+final _flatDelegates = <String, Matcher>{
+  'list': isA<ListSelectDelegate>(),
+  'grid': isA<GridSelectDelegate>(),
+  'wrap': isA<WrapSelectDelegate>(),
+  'cascading': isA<ListSelectDelegate>(),
+  'tabNav': isA<ListSelectDelegate>(),
+  'sideNav': isA<ListSelectDelegate>(),
+  'expandable': isA<ListSelectDelegate>(),
+  'flatten': isA<WrapSelectDelegate>(),
+};
+
 void main() {
+  test('schema + exampleData + catalog merge', () {
+    final item = FlSelectCatalogItems.select;
+    expect(item.name, 'Select');
+    expect(item.dataSchema.required, containsAll(['delegate', 'entries']));
+
+    for (final example in item.exampleData) {
+      final json = jsonDecode(example()) as Map<String, dynamic>;
+      final entries = SelectEntryCodec.fromJson(json['entries'] as List);
+      expect(entries.first, isA<SelectCategoryEntry>());
+    }
+
+    final merged = const Catalog(
+      <CatalogItem>[],
+      catalogId: 'base',
+    ).copyWith(newItems: FlSelectCatalogItems.all);
+    expect(merged.items.length, 1);
+    expect(merged.items.map((item) => item.name), contains('Select'));
+  });
+
   testWidgets('renders entries authored by an agent', (tester) async {
-    await pumpFilter(tester, {'delegate': 'flatten', 'entries': _entries});
+    await pumpSelect(tester, {'delegate': 'flatten', 'entries': _entries});
 
     expect(find.text('More'), findsWidgets);
     expect(find.text('A 1'), findsOneWidget);
@@ -63,7 +115,7 @@ void main() {
   });
 
   testWidgets('writes the selection back to the data model', (tester) async {
-    final context = await pumpFilter(tester, {
+    final context = await pumpSelect(tester, {
       'delegate': 'flatten',
       'selectionMode': 'single',
       'entries': _entries,
@@ -73,13 +125,13 @@ void main() {
     await tester.pumpAndSettle();
 
     final value =
-        context.getValue<dynamic>(DataPath('filter1.value'))
+        context.getValue<dynamic>(DataPath('select1.value'))
             as Map<dynamic, dynamic>;
     expect(value['more'], ['a2']);
   });
 
   testWidgets('flat entries write back under flatKey', (tester) async {
-    final context = await pumpFilter(tester, {
+    final context = await pumpSelect(tester, {
       'delegate': 'list',
       'selectionMode': 'single',
       'flatKey': 'sort',
@@ -92,7 +144,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final value =
-        context.getValue<dynamic>(DataPath('filter1.value'))
+        context.getValue<dynamic>(DataPath('select1.value'))
             as Map<dynamic, dynamic>;
     expect(value['sort'], ['recent']);
   });
@@ -100,7 +152,7 @@ void main() {
   testWidgets('flat entries without flatKey show an error card', (
     tester,
   ) async {
-    await pumpFilter(tester, {'delegate': 'list', 'entries': _flatEntries});
+    await pumpSelect(tester, {'delegate': 'list', 'entries': _flatEntries});
 
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
   });
@@ -108,10 +160,10 @@ void main() {
   testWidgets('shows an error card instead of crashing on bad entries', (
     tester,
   ) async {
-    await pumpFilter(tester, {'delegate': 'flatten', 'entries': <Object?>[]});
+    await pumpSelect(tester, {'delegate': 'flatten', 'entries': <Object?>[]});
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
 
-    await pumpFilter(tester, {
+    await pumpSelect(tester, {
       'delegate': 'flatten',
       'entries': [
         {'type': 'nonsense'},
@@ -120,44 +172,58 @@ void main() {
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
   });
 
-  testWidgets('all delegate tokens build without throwing', (tester) async {
-    for (final delegate in [
-      'list',
-      'grid',
-      'wrap',
-      'cascading',
-      'tabNav',
-      'sideNav',
-      'expandable',
-      'flatten',
-    ]) {
-      await pumpFilter(tester, {
-        'delegate': delegate,
+  testWidgets('delegate tokens map to the expected delegate', (tester) async {
+    // Driven by the schema enum, so a newly documented token cannot ship
+    // without an expected delegate (and a stale table entry cannot linger).
+    final tokens = FlSelectCatalogItems
+        .select
+        .dataSchema
+        .properties!['delegate']!
+        .enumValues!
+        .cast<String>();
+    expect(tokens.toSet(), unorderedEquals(_categoryDelegates.keys));
+    expect(_flatDelegates.keys, unorderedEquals(_categoryDelegates.keys));
+
+    for (final token in tokens) {
+      await pumpSelect(tester, {
+        'delegate': token,
         'crossAxisCount': 2,
         'entries': _entries,
       });
       expect(
-        find.byIcon(Icons.warning_amber_rounded),
-        findsNothing,
-        reason: '$delegate delegate should render',
+        delegateOf(tester),
+        _categoryDelegates[token],
+        reason: '"$token" with category entries',
+      );
+
+      await pumpSelect(tester, {
+        'delegate': token,
+        'crossAxisCount': 2,
+        'flatKey': 'sort',
+        'entries': _flatEntries,
+      });
+      expect(
+        delegateOf(tester),
+        _flatDelegates[token],
+        reason: '"$token" with flat entries',
       );
     }
   });
 
   testWidgets('search flag toggles the search field', (tester) async {
-    await pumpFilter(tester, {
+    await pumpSelect(tester, {
       'delegate': 'flatten',
       'entries': _entries,
       'search': true,
     });
     expect(find.byType(TextField), findsOneWidget);
 
-    await pumpFilter(tester, {'delegate': 'flatten', 'entries': _entries});
+    await pumpSelect(tester, {'delegate': 'flatten', 'entries': _entries});
     expect(find.byType(TextField), findsNothing);
   });
 
   testWidgets('category layout is wired through', (tester) async {
-    await pumpFilter(tester, {
+    await pumpSelect(tester, {
       'delegate': 'tabNav',
       'entries': [
         {
@@ -177,7 +243,7 @@ void main() {
     expect(find.byType(GridView), findsOneWidget);
 
     // A malformed layout shows the error card instead of crashing.
-    await pumpFilter(tester, {
+    await pumpSelect(tester, {
       'delegate': 'tabNav',
       'entries': [
         {
@@ -195,7 +261,7 @@ void main() {
   });
 
   testWidgets('category header/footer are wired through', (tester) async {
-    await pumpFilter(tester, {
+    await pumpSelect(tester, {
       'delegate': 'tabNav',
       'entries': [
         {
@@ -226,19 +292,5 @@ void main() {
     });
     expect(find.text('Any'), findsOneWidget);
     expect(find.text('Footer'), findsOneWidget);
-  });
-
-  testWidgets('legacy SelectFilter payloads keep rendering', (tester) async {
-    final legacy = FlSelectCatalogItems.all.firstWhere(
-      (item) => item.name == 'SelectFilter',
-    );
-    await pumpFilter(tester, {
-      'delegate': 'flatten',
-      'entries': _entries,
-    }, item: legacy);
-
-    expect(find.text('More'), findsWidgets);
-    expect(find.text('A 1'), findsOneWidget);
-    expect(find.byIcon(Icons.warning_amber_rounded), findsNothing);
   });
 }

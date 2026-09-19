@@ -1,6 +1,6 @@
 ---
 name: fl_select_genui-code-generation
-description: GenUI SDK (A2UI) bridge for fl_select — registers a `Select` CatalogItem (`FlSelectCatalogItems.select` / `.all` / `.asCatalog()`) with a GenUI `SurfaceController` so AI agents render real fl_select panels from JSON payloads (`delegate` + `entries` tree in `SelectEntryCodec` format) and receive selections back as `Map<String, List<String>>` at `<id>.value`. Also covers `FlSelectCatalogItems.systemPromptFragment` and the `SelectEntrySchema` JSON Schema. Use this skill when integrating fl_select with the GenUI SDK (package:genui), building A2UI/chat surfaces with catalog items, authoring or debugging `Select` / `SelectFilter` agent payloads, or handling selection write-back in GenUI data models. For fl_select widgets, delegates, and entry trees themselves, use the `fl_select-code-generation` skill shipped with fl_select.
+description: GenUI SDK (A2UI) bridge for fl_select — registers a `Select` CatalogItem (`FlSelectCatalogItems.select` / `.all` / `.asCatalog()`) with a GenUI `SurfaceController` so AI agents render real fl_select panels from JSON payloads (`delegate` + `entries` tree in `SelectEntryCodec` format) and receive selections back as `Map<String, List<String>>` at `<id>.value`. Also covers `FlSelectCatalogItems.systemPromptFragment` and the `SelectEntrySchema` JSON Schema. Use this skill when integrating fl_select with the GenUI SDK (package:genui), building A2UI/chat surfaces with catalog items, authoring or debugging `Select` agent payloads, or handling selection write-back in GenUI data models. For fl_select widgets, delegates, and entry trees themselves, use the `fl_select-code-generation` skill shipped with fl_select.
 ---
 
 # fl_select_genui
@@ -30,7 +30,7 @@ FlSelectCatalogItems.systemPromptFragment;
 The API surface hangs off `FlSelectCatalogItems`:
 
 - `select` — the `CatalogItem` for the `Select` payload type (backed by `SelectView`).
-- `all` — `[select, selectFilter]`; includes the deprecated `SelectFilter` payload alias so legacy agent payloads keep rendering (the alias will be dropped in a future minor release).
+- `all` — every catalog item (currently `[select]`).
 - `asCatalog()` — the whole catalog (`catalogId: `fl_select`), ready for `SurfaceController(catalogs: [...])`.
 - `systemPromptFragment` — const string documenting the payload format for agents.
 - `SelectEntrySchema.node()` / `.tree()` — the generated JSON Schema of the entry tree.
