@@ -2,11 +2,13 @@
 
 - **BREAKING** remove the deprecated `FlSelectCatalogItems.selectFilter` getter and the `SelectFilter` payload alias ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-020)).
 
+- **BUGFIX** `"delegate": "cascading"` with flat (non-category) `entries` now falls back to the flat list delegate instead of crashing.
+
+- **BUGFIX** a `custom` range entry inside a category `header`/`footer` now renders the schema error card instead of crashing the surface.
+
 - **IMPROVEMENT** Bump fl_select to `^0.14.0`.
 
-- **BUGFIX** `"delegate": "cascading"` with flat (non-category) `entries` now falls back to the flat list delegate instead of crashing: the cascading body only renders category trees, so it follows the same shape-based fallback as `tabNav`/`sideNav`/`expandable`.
-
-- **BUGFIX** a `custom` range entry inside a category `header`/`footer` now renders the schema error card instead of crashing the surface: both rows render as a single row of chips, which has no room for the entry's min/max input field.
+- **IMPROVEMENT** Keep the shipped agent skill validator-clean and in sync with the catalog.
 
 ## 0.3.0
 
