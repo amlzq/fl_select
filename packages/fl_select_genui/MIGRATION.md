@@ -1,7 +1,5 @@
 # Migration Guide
 
-## MIGRATE TO Next
-
 ## MIGRATE TO 0.3.0
 
 ### Agent skill shipped inside the package

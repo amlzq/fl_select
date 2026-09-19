@@ -1,4 +1,4 @@
-## Next
+## 0.4.0
 
 - **BREAKING** remove the deprecated `FlSelectCatalogItems.selectFilter` getter and the `SelectFilter` payload alias ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-020)).
 
