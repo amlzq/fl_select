@@ -80,6 +80,19 @@ void main() {
       expect(properties['selectionMode']!.enumValues, ['single', 'multiple']);
     });
 
+    test('rules out custom range entries in the header/footer chip rows', () {
+      final properties = _node().properties!;
+      for (final row in ['header', 'footer']) {
+        // The row is rendered by the internal chip bar, which has no chip for
+        // a custom entry, so the agent has to be told not to author one.
+        expect(
+          properties[row]!.description,
+          contains('`custom`'),
+          reason: '"$row" must document that it is chips only',
+        );
+      }
+    });
+
     test('leaves "children" open since the builder cannot recurse', () {
       final children = _node().properties!['children']! as ListSchema;
       final items = children.items! as ObjectSchema;

@@ -260,6 +260,83 @@ void main() {
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
   });
 
+  testWidgets('a custom range entry in a header/footer shows an error card', (
+    tester,
+  ) async {
+    Map<String, Object?> payload({
+      String row = 'header',
+      bool nested = false,
+    }) => {
+      'delegate': 'sideNav',
+      'entries': [
+        {
+          'type': 'category',
+          'id': 'price',
+          'name': 'Price',
+          row: {
+            'type': 'text',
+            'id': 'h',
+            'name': 'H',
+            'children': [
+              if (nested)
+                {
+                  'type': 'text',
+                  'id': 'sub',
+                  'name': 'Sub',
+                  'children': [
+                    {'type': 'custom', 'name': 'Custom'},
+                  ],
+                }
+              else
+                {'type': 'custom', 'name': 'Custom', 'min': 0, 'max': 1000},
+            ],
+          },
+          'children': [
+            {'type': 'text', 'id': 'a', 'name': 'A'},
+          ],
+        },
+      ],
+    };
+
+    // A chip row has no room for a custom range entry's input field, so the
+    // payload is reported instead of letting the chip bar throw.
+    await pumpSelect(tester, payload());
+    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+
+    await pumpSelect(tester, payload(row: 'footer'));
+    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+
+    // Nested deeper than the chip row it is reported too, instead of being
+    // silently dropped.
+    await pumpSelect(tester, payload(nested: true));
+    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+
+    // Under the category's own children a custom entry is supported.
+    await pumpSelect(tester, {
+      'delegate': 'sideNav',
+      'entries': [
+        {
+          'type': 'category',
+          'id': 'price',
+          'name': 'Price',
+          'header': {
+            'type': 'text',
+            'id': 'h',
+            'name': 'H',
+            'children': [
+              {'type': 'any', 'name': 'Any'},
+            ],
+          },
+          'children': [
+            {'type': 'text', 'id': 'a', 'name': 'A'},
+            {'type': 'custom', 'name': 'Custom', 'min': 0, 'max': 1000},
+          ],
+        },
+      ],
+    });
+    expect(find.byIcon(Icons.warning_amber_rounded), findsNothing);
+  });
+
   testWidgets('category header/footer are wired through', (tester) async {
     await pumpSelect(tester, {
       'delegate': 'tabNav',

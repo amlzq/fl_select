@@ -31,7 +31,7 @@ The API surface hangs off `FlSelectCatalogItems`:
 
 - `select` — the `CatalogItem` for the `Select` payload type (backed by `SelectView`).
 - `all` — every catalog item (currently `[select]`).
-- `asCatalog()` — the whole catalog (`catalogId: `fl_select`), ready for `SurfaceController(catalogs: [...])`.
+- `asCatalog()` — the whole catalog (`catalogId: 'fl_select'`), ready for `SurfaceController(catalogs: [...])`.
 - `systemPromptFragment` — const string documenting the payload format for agents.
 - `SelectEntrySchema.node()` / `.tree()` — the generated JSON Schema of the entry tree.
 
@@ -58,7 +58,7 @@ Required: `delegate` + a non-empty `entries` array.
 - `delegate`: `list` / `grid` (with `crossAxisCount`) / `wrap` (flat chip cloud) / `cascading` (drill-down tree) / `tabNav` (category tabs) / `sideNav` (recommended for category groups — left rail) / `expandable` (accordion groups). `flatten` is a legacy alias. Layouts auto-fallback to match the `entries` shape, so a grouped layout on flat data (or vice versa) never asserts.
 - `selectionMode`: `single` / `multiple` (default `multiple`). `search`: boolean.
 - `flatKey`: required when the top-level entries are not categories (flat panel) — the key the selection is written back under, e.g. `"sort"`; ignored for category trees.
-- `entries`: an entry tree in the `SelectEntryCodec` JSON format. Node `type`s: `category` (optional `selectionMode`, `layout` such as `{"kind":"grid","crossAxisCount":3}`, and `header`/`footer` chip rows), `text` (option or sub-branch), `range` (`min`/`max`/`divisions`), `any` (reset sentinel — omit `id`), `custom` (user-typed range, `minHintText`/`maxHintText`).
+- `entries`: an entry tree in the `SelectEntryCodec` JSON format. Node `type`s: `category` (optional `selectionMode`, `layout` such as `{"kind":"grid","crossAxisCount":3}`, and `header`/`footer` — branch nodes whose `children` render as a single-row chip bar pinned above/below the category children), `text` (option or sub-branch), `range` (`min`/`max`/`divisions`), `any` (reset sentinel — omit `id`), `custom` (user-typed range, `minHintText`/`maxHintText`). A `header`/`footer` row renders chips only, so its `children` must not contain a `custom` entry — a custom range entry is rejected with the error card; put it under the category's own `children` instead.
 
 ## Selection write-back
 
@@ -68,6 +68,6 @@ Selections are written to the GenUI data model at `<id>.value` (or the payload's
 - Flat panels — `{flatKey: [ids]}` (fl_select's `toIdList()`).
 - An empty selection writes `{}`.
 
-Invalid payloads (malformed JSON, empty `entries`, or a flat panel missing `flatKey`) render an inline error card instead of crashing.
+Invalid payloads (malformed JSON, empty `entries`, a flat panel missing `flatKey`, or a `custom` entry inside a `header`/`footer`) render an inline error card instead of crashing.
 
 Package: <https://pub.dev/packages/fl_select_genui> · fl_select: <https://pub.dev/packages/fl_select>

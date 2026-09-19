@@ -6,7 +6,7 @@
 
 ### Agent skill shipped inside the package
 
-The package now ships a Dart Skills CLI (0.3.1) agent skill at
+The package now ships a Dart Skills CLI agent skill at
 `skills/fl_select_genui-code-generation`: projects depending on
 `fl_select_genui` auto-discover and install it via `skills get`. It covers:
 

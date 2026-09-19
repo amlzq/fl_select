@@ -52,13 +52,15 @@ abstract final class SelectEntrySchema {
         description:
             'category only: a branch node whose `children` render as a chip '
             'row pinned above the category children (e.g. `{"type":"any"}` '
-            'as a reset).',
+            'as a reset). The row is chips only, so it must not contain a '
+            '`custom` entry.',
         additionalProperties: true,
       ),
       'footer': S.object(
         description:
             'category only: a branch node whose `children` render as a chip '
-            'row pinned below the category children.',
+            'row pinned below the category children. The row is chips only, '
+            'so it must not contain a `custom` entry.',
         additionalProperties: true,
       ),
       'immediate': S.boolean(

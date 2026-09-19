@@ -109,7 +109,9 @@ When the user needs to pick values from a structured option set, render a `Selec
     `selectionMode` ("single"/"multiple"), `layout`
     (`{"kind":"grid","crossAxisCount":3}` etc.), and `header`/`footer`
     (branch nodes whose `children` render as chip rows pinned above/below
-    the category children).
+    the category children). A `header`/`footer` row renders chips only, so
+    its `children` must not contain a `custom` entry — put `custom` under the
+    category's own `children` instead.
   - `text`: option (leaf) or sub-branch (with `children`); requires `id`,`name`.
   - `range`: slider option with `min`/`max`; requires `id`,`name`.
   - `any`: resets the category to "any" (no bounds) — omit `id`.
@@ -149,6 +151,13 @@ class _SelectWidget extends StatelessWidget {
     } on UnsupportedError catch (e) {
       return _SchemaError('Unsupported entries: ${e.message}');
     }
+
+    // A category's header/footer renders as a single-row chip bar, which has
+    // no room for a custom range entry's min/max input field: rendering one
+    // throws inside the chip bar, so reject it up front and surface the
+    // payload error as a schema error card instead.
+    final chipRowError = _chipRowError(entries);
+    if (chipRowError != null) return _SchemaError(chipRowError);
 
     // Flat vs category shape decides both the delegate fallback below and
     // the write-back encoding.
@@ -306,6 +315,51 @@ class _SelectWidget extends StatelessWidget {
     // Flat selection: `flatKey` is guaranteed non-null by the build-time
     // validation above.
     return {flatKey!: selected.toIdList()};
+  }
+
+  /// Describes the first `header`/`footer` row that carries a custom range
+  /// entry, or null when every category in [entries] is chip-bar safe.
+  ///
+  /// Both rows render as a single row of chips and a custom range entry has
+  /// no chip representation, so the chip bar throws a `FlutterError` while
+  /// building on one.
+  static String? _chipRowError(Set<SelectEntry> entries) {
+    for (final entry in entries) {
+      if (entry is SelectCategoryEntry) {
+        for (final (label, row) in [
+          ('header', entry.header),
+          ('footer', entry.footer),
+        ]) {
+          final customId = _customIdIn(row?.children);
+          if (customId != null) {
+            return 'Category "${entry.id}" $label contains the custom range '
+                'entry "$customId", but a $label renders as a single-row chip '
+                'bar with no room for its min/max input field. Move the custom '
+                'entry into the category\'s "children".';
+          }
+        }
+      }
+
+      // Categories nest (e.g. "cascading"), so keep walking the tree.
+      final children = entry.children;
+      if (children != null && children.isNotEmpty) {
+        final error = _chipRowError(children);
+        if (error != null) return error;
+      }
+    }
+    return null;
+  }
+
+  /// The id of the first custom range entry in [entries] or their descendants,
+  /// or null when the row carries no custom entry.
+  static String? _customIdIn(Set<SelectEntry>? entries) {
+    if (entries == null) return null;
+    for (final entry in entries) {
+      if (entry is SelectRangeEntry && entry.isCustom) return entry.id;
+      final nested = _customIdIn(entry.children);
+      if (nested != null) return nested;
+    }
+    return null;
   }
 }
 
