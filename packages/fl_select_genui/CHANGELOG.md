@@ -1,3 +1,7 @@
+## Next
+
+- **IMPROVEMENT** Bump fl_select to `^0.14.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-next)).
+
 ## 0.3.0
 
 - **FEATURE** Ship a Dart Skills CLI agent skill inside the package ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-next)).
