@@ -9,7 +9,7 @@ class AppLocalizationsVi extends AppLocalizations {
   AppLocalizationsVi([String locale = 'vi']) : super(locale);
 
   @override
-  String get appName => 'Ví dụ Select';
+  String get appName => 'Select Playground';
 
   @override
   String get themeMode => 'Chủ đề';

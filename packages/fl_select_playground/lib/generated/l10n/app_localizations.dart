@@ -129,7 +129,7 @@ abstract class AppLocalizations {
   /// No description provided for @appName.
   ///
   /// In en, this message translates to:
-  /// **'Select Example'**
+  /// **'Select Playground'**
   String get appName;
 
   /// No description provided for @themeMode.

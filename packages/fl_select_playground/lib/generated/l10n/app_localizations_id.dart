@@ -9,7 +9,7 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
-  String get appName => 'Contoh Select';
+  String get appName => 'Select Playground';
 
   @override
   String get themeMode => 'Tema';

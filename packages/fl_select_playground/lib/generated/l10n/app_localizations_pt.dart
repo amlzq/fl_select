@@ -9,7 +9,7 @@ class AppLocalizationsPt extends AppLocalizations {
   AppLocalizationsPt([String locale = 'pt']) : super(locale);
 
   @override
-  String get appName => 'Exemplo de Select';
+  String get appName => 'Select Playground';
 
   @override
   String get themeMode => 'Tema';

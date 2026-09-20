@@ -9,7 +9,7 @@ class AppLocalizationsFr extends AppLocalizations {
   AppLocalizationsFr([String locale = 'fr']) : super(locale);
 
   @override
-  String get appName => 'Exemple Select';
+  String get appName => 'Select Playground';
 
   @override
   String get themeMode => 'Thème';

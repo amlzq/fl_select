@@ -9,7 +9,7 @@ class AppLocalizationsZh extends AppLocalizations {
   AppLocalizationsZh([String locale = 'zh']) : super(locale);
 
   @override
-  String get appName => '选择器示例';
+  String get appName => '选择器演练场';
 
   @override
   String get themeMode => '主题模式';
@@ -215,7 +215,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   AppLocalizationsZhHans() : super('zh_Hans');
 
   @override
-  String get appName => '选择器示例';
+  String get appName => '选择器演练场';
 
   @override
   String get themeMode => '主题模式';
@@ -421,7 +421,7 @@ class AppLocalizationsZhHantHk extends AppLocalizationsZh {
   AppLocalizationsZhHantHk() : super('zh_Hant_HK');
 
   @override
-  String get appName => '選擇器示範';
+  String get appName => '選擇器演練場';
 
   @override
   String get themeMode => '主題模式';
@@ -627,7 +627,7 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   AppLocalizationsZhHantTw() : super('zh_Hant_TW');
 
   @override
-  String get appName => '選擇器範例';
+  String get appName => '選擇器演練場';
 
   @override
   String get themeMode => '主題模式';
@@ -833,7 +833,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   AppLocalizationsZhHant() : super('zh_Hant');
 
   @override
-  String get appName => '選擇器示例';
+  String get appName => '選擇器演練場';
 
   @override
   String get themeMode => '主題模式';

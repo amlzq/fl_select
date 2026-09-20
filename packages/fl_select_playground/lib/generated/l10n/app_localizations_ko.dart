@@ -9,7 +9,7 @@ class AppLocalizationsKo extends AppLocalizations {
   AppLocalizationsKo([String locale = 'ko']) : super(locale);
 
   @override
-  String get appName => 'Select 예제';
+  String get appName => 'Select 플레이그라운드';
 
   @override
   String get themeMode => '테마';

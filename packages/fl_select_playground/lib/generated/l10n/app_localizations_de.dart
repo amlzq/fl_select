@@ -9,7 +9,7 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
-  String get appName => 'Select-Beispiel';
+  String get appName => 'Select-Spielwiese';
 
   @override
   String get themeMode => 'Design';
