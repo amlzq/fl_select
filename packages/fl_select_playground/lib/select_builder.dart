@@ -163,7 +163,14 @@ SelectDelegate buildDelegate(
 }
 
 SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
-  final chipBarTheme = SelectChipBarTheme(variant: _chipVariant(p.tileVariant));
+  // Since 0.14.0 the single-row `SelectChipBar` and the wrapping
+  // `SelectWrapView` own independent themes: `chipBarTheme` styles the bars
+  // (a category's header/footer), `wrapViewTheme` styles the wrap form. Build
+  // both from the same chip variant so either surface renders the chosen tile
+  // style without falling back to the deprecated shared-chip-theme bridge.
+  final chipVariant = _chipVariant(p.tileVariant);
+  final chipBarTheme = SelectChipBarTheme(variant: chipVariant);
+  final wrapViewTheme = SelectWrapViewTheme(variant: chipVariant);
   switch (p.delegate) {
     case Delegate.list:
       return ListSelectDelegate(
@@ -205,7 +212,7 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
         selectionMode: p.selectionMode,
         spacing: p.spacing,
         runSpacing: p.runSpacing,
-        chipBarTheme: chipBarTheme,
+        wrapViewTheme: wrapViewTheme,
         searchEnabled: p.searchEnabled,
         searchPredicate: (entry, query) {
           return entry.name?.contains(query) == true;
@@ -260,6 +267,7 @@ SelectDelegate _createDelegate(PlaygroundParams p, PlaygroundDataSource data) {
           variant: _gridVariant(p.tileVariant),
         ),
         chipBarTheme: chipBarTheme,
+        wrapViewTheme: wrapViewTheme,
         sideBarTheme: const SelectSideBarTheme(width: 110),
         searchEnabled: p.searchEnabled,
         searchPredicate: (entry, query) {

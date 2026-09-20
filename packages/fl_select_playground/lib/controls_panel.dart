@@ -302,7 +302,7 @@ class ControlsPanel extends StatelessWidget {
           l10n.tileVariant,
           techParam: params.delegate == Delegate.grid
               ? 'SelectGridTileTheme.variant'
-              : 'SelectChipBarTheme.variant',
+              : 'SelectWrapViewTheme.variant',
         ),
         SegmentedButton<TileVariant>(
           selected: {params.tileVariant},
