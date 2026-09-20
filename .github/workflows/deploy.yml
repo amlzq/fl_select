@@ -34,11 +34,10 @@ jobs:
         run: flutter build web --wasm --release
 
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/pages-action@v1
+        uses: cloudflare/wrangler-action@v4
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          projectName: flselect
-          branch: main
-          directory: packages/fl_select_playground/build/web
+          workingDirectory: packages/fl_select_playground
+          command: pages deploy build/web --project-name=flselect --branch=main
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
