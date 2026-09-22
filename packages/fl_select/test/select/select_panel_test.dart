@@ -15,6 +15,31 @@ Set<SelectEntry> get _flatEntries => {
   SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
 };
 
+/// Wraps [panel] in a [SelectTheme] when [selectTheme] is provided.
+///
+/// This mirrors how the overlay host injects the trigger's resolved theme:
+/// the overlay lives outside the trigger's subtree, so the theme is passed
+/// down as an inherited widget instead of a parameter.
+Widget _themedPanel(Widget panel, SelectThemeData? selectTheme) {
+  if (selectTheme == null) {
+    return panel;
+  }
+  return SelectTheme(data: selectTheme, child: panel);
+}
+
+/// Returns the [SelectThemeData] the panel injected below itself, i.e. after
+/// merging the delegate-level theme fields over the ambient theme.
+SelectThemeData _injectedTheme(WidgetTester tester) {
+  return tester
+      .widget<SelectTheme>(
+        find.descendant(
+          of: find.byType(SelectPanel),
+          matching: find.byType(SelectTheme),
+        ),
+      )
+      .data;
+}
+
 /// A minimal [SelectDelegate] used to drive [SelectPanel] rendering and to
 /// capture the active controller for assertions.
 class _TestDelegate extends SelectDelegate {
@@ -106,14 +131,16 @@ void main() {
     }) {
       return MaterialApp(
         home: Scaffold(
-          body: SelectPanel(
-            delegate: WrapSelectDelegate(
-              selectionMode: SelectionMode.multiple,
-              entries: _flatEntries,
-              chipBarTheme: delegateChipBarTheme,
-              wrapViewTheme: delegateWrapViewTheme,
+          body: _themedPanel(
+            SelectPanel(
+              delegate: WrapSelectDelegate(
+                selectionMode: SelectionMode.multiple,
+                entries: _flatEntries,
+                chipBarTheme: delegateChipBarTheme,
+                wrapViewTheme: delegateWrapViewTheme,
+              ),
             ),
-            selectTheme: selectTheme,
+            selectTheme,
           ),
         ),
       );
@@ -328,21 +355,23 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SelectPanel(
-              delegate: WrapSelectDelegate(
-                selectionMode: SelectionMode.multiple,
-                entries: _flatEntries,
-                gridTileTheme: gridTileTheme,
-                fieldTileTheme: fieldTileTheme,
-                sideBarTheme: sideBarTheme,
+            body: _themedPanel(
+              SelectPanel(
+                delegate: WrapSelectDelegate(
+                  selectionMode: SelectionMode.multiple,
+                  entries: _flatEntries,
+                  gridTileTheme: gridTileTheme,
+                  fieldTileTheme: fieldTileTheme,
+                  sideBarTheme: sideBarTheme,
+                ),
               ),
-              selectTheme: selectTheme,
+              selectTheme,
             ),
           ),
         ),
       );
       await tester.pumpAndSettle();
-      return tester.widget<SelectTheme>(find.byType(SelectTheme)).data;
+      return _injectedTheme(tester);
     }
 
     testWidgets('gridTileTheme', (tester) async {
@@ -463,12 +492,14 @@ void main() {
     Widget injectionPanelHarness({SelectThemeData? selectTheme}) {
       return MaterialApp(
         home: Scaffold(
-          body: SelectPanel(
-            delegate: WrapSelectDelegate(
-              selectionMode: SelectionMode.multiple,
-              entries: _flatEntries,
+          body: _themedPanel(
+            SelectPanel(
+              delegate: WrapSelectDelegate(
+                selectionMode: SelectionMode.multiple,
+                entries: _flatEntries,
+              ),
             ),
-            selectTheme: selectTheme,
+            selectTheme,
           ),
         ),
       );
@@ -484,12 +515,12 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            body: SelectPanel(delegate: delegate, selectTheme: selectTheme),
+            body: _themedPanel(SelectPanel(delegate: delegate), selectTheme),
           ),
         ),
       );
       await tester.pumpAndSettle();
-      return tester.widget<SelectTheme>(find.byType(SelectTheme)).data;
+      return _injectedTheme(tester);
     }
 
     testWidgets('panelTheme', (tester) async {
@@ -620,14 +651,16 @@ void main() {
     }) {
       return MaterialApp(
         home: Scaffold(
-          body: SelectPanel(
-            delegate: WrapSelectDelegate(
-              selectionMode: SelectionMode.multiple,
-              entries: _flatEntries,
-              searchEnabled: true,
-              searchBarTheme: delegateSearchBarTheme,
+          body: _themedPanel(
+            SelectPanel(
+              delegate: WrapSelectDelegate(
+                selectionMode: SelectionMode.multiple,
+                entries: _flatEntries,
+                searchEnabled: true,
+                searchBarTheme: delegateSearchBarTheme,
+              ),
             ),
-            selectTheme: selectTheme,
+            selectTheme,
           ),
         ),
       );
@@ -734,22 +767,24 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: SelectPanel(
-            delegate: WrapSelectDelegate(
-              selectionMode: SelectionMode.multiple,
-              entries: _flatEntries,
-              selectedColor: selectedColor,
-              backgroundColorHigh: backgroundColorHigh,
-              rangeSliderTheme: rangeSliderTheme,
+          body: _themedPanel(
+            SelectPanel(
+              delegate: WrapSelectDelegate(
+                selectionMode: SelectionMode.multiple,
+                entries: _flatEntries,
+                selectedColor: selectedColor,
+                backgroundColorHigh: backgroundColorHigh,
+                rangeSliderTheme: rangeSliderTheme,
+              ),
             ),
-            selectTheme: selectTheme,
+            selectTheme,
           ),
         ),
       ),
     );
     await tester.pumpAndSettle();
-    return tester.widget<SelectTheme>(find.byType(SelectTheme)).data;
-  }
+    return _injectedTheme(tester);
+    }
 
   group('SelectPanel rangeSliderTheme injection', () {
     testWidgets('delegate rangeSliderTheme merges over ambient', (
@@ -827,13 +862,15 @@ void main() {
     }) {
       return MaterialApp(
         home: Scaffold(
-          body: SelectPanel(
-            delegate: WrapSelectDelegate(
-              selectionMode: SelectionMode.multiple,
-              entries: _flatEntries,
-              chipBarTheme: delegateChipBarTheme,
+          body: _themedPanel(
+            SelectPanel(
+              delegate: WrapSelectDelegate(
+                selectionMode: SelectionMode.multiple,
+                entries: _flatEntries,
+                chipBarTheme: delegateChipBarTheme,
+              ),
             ),
-            selectTheme: selectTheme,
+            selectTheme,
           ),
         ),
       );
@@ -939,13 +976,15 @@ void main() {
     }) {
       return MaterialApp(
         home: Scaffold(
-          body: SelectPanel(
-            delegate: WrapSelectDelegate(
-              selectionMode: SelectionMode.multiple,
-              entries: _flatEntries,
-              actionBarTheme: delegateActionBarTheme,
+          body: _themedPanel(
+            SelectPanel(
+              delegate: WrapSelectDelegate(
+                selectionMode: SelectionMode.multiple,
+                entries: _flatEntries,
+                actionBarTheme: delegateActionBarTheme,
+              ),
             ),
-            selectTheme: selectTheme,
+            selectTheme,
           ),
         ),
       );

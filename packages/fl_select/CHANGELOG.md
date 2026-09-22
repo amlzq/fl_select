@@ -2,6 +2,8 @@
 
 - **BREAKING** remove the deprecated aliases of the internalized select panel widgets — the views, tiles, skeletons, `SelectBadge`, `SelectPanel`, the chip symbols (`SelectChip`, `SelectChipBarStyle`, `resolveSelectChipBarStyle`), `ChainingClampingScrollPhysics`, the `OnChanged` typedef and the `kSelect*` constants ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0130)).
 
+- **IMPROVEMENT** the select panel now resolves its base theme from the ambient `SelectTheme` (falling back to one derived from `ThemeData` when absent), so wrapping a select in `SelectTheme` styles it instead of being ignored. The popup triggers inject their resolved `selectTheme` the same way.
+
 ## 0.14.0
 
 - **BREAKING** remove the deprecated `SelectController.badgedCategories` getter ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0120)).

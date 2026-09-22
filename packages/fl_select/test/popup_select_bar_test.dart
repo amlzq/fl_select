@@ -1,4 +1,5 @@
 import 'package:fl_select/fl_select.dart';
+import 'package:fl_select/src/select/select_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -425,5 +426,100 @@ void main() {
         expect(find.text('Banana'), findsOneWidget);
       },
     );
+  });
+
+  group('PopupSelectBar selectTheme', () {
+    const teal = Color(0xFF00796B);
+
+    /// Returns the [SelectThemeData] the overlay panel injected below itself.
+    ///
+    /// The overlay sits outside the trigger's subtree, so the trigger's theme
+    /// must arrive as a [SelectTheme] wrapped around the panel.
+    SelectThemeData injectedPanelTheme(WidgetTester tester) {
+      return tester
+          .widget<SelectTheme>(
+            find.descendant(
+              of: find.byType(SelectPanel),
+              matching: find.byType(SelectTheme),
+            ),
+          )
+          .data;
+    }
+
+    PopupSelectBar bar({SelectThemeData? selectTheme}) => PopupSelectBar(
+      tabs: const [PopupTab(label: 'Filter')],
+      selectDelegates: [
+        ListSelectDelegate(
+          entriesLoader: () async => <SelectEntry<dynamic>>{
+            SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+          },
+        ),
+      ],
+      selectTheme: selectTheme,
+      onApplied: (_, _) {},
+    );
+
+    testWidgets('the bar selectTheme reaches the overlay panel', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            appBar: bar(
+              selectTheme: SelectThemeData(
+                ThemeData.light(),
+                selectedColor: teal,
+              ),
+            ),
+            body: const SizedBox.expand(),
+          ),
+        ),
+      );
+
+      await tester.tap(find.text('Filter'));
+      await tester.pumpAndSettle();
+
+      expect(injectedPanelTheme(tester).selectedColor, teal);
+    });
+
+    testWidgets('PopupSelectBarTheme.selectTheme reaches the overlay panel', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            extensions: [
+              PopupSelectBarTheme(
+                selectTheme: SelectThemeData(
+                  ThemeData.light(),
+                  selectedColor: teal,
+                ),
+              ),
+            ],
+          ),
+          home: Scaffold(appBar: bar(), body: const SizedBox.expand()),
+        ),
+      );
+
+      await tester.tap(find.text('Filter'));
+      await tester.pumpAndSettle();
+
+      expect(injectedPanelTheme(tester).selectedColor, teal);
+    });
+
+    testWidgets('the panel falls back to the Material theme when none is '
+        'resolved', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(appBar: bar(), body: const SizedBox.expand()),
+        ),
+      );
+
+      await tester.tap(find.text('Filter'));
+      await tester.pumpAndSettle();
+
+      expect(
+        injectedPanelTheme(tester).selectedColor,
+        ThemeData.light().colorScheme.primary,
+      );
+    });
   });
 }

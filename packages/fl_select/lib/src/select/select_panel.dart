@@ -7,7 +7,6 @@ import 'select_controller.dart';
 import 'select_delegate.dart';
 import 'select_entry.dart';
 import 'select_theme.dart';
-import 'select_theme_data.dart';
 import 'widgets/widgets.dart';
 
 /// A widget that renders a [SelectDelegate] and manages its selection state.
@@ -15,7 +14,9 @@ import 'widgets/widgets.dart';
 /// The panel loads the delegate's data ([SelectDelegate.entries] or
 /// [SelectDelegate.entriesLoader]) and displays the select body once the data
 /// is available, or a skeleton while it is loading. Select widgets rendered by
-/// the panel are styled according to [selectTheme].
+/// the panel are styled according to the ambient [SelectTheme], or a theme
+/// derived from the Material [ThemeData] when none is provided. Delegate-level
+/// theme fields are merged field-wise on top of that base theme.
 ///
 /// The selection state is driven by a [SelectController]. If [controller] is
 /// omitted, the panel creates and owns an internal controller. In both cases
@@ -36,7 +37,6 @@ class SelectPanel extends StatefulWidget {
     this.onChangeTap,
     this.onApplyTap,
     this.onResetTap,
-    this.selectTheme,
   });
 
   final SelectDelegate delegate;
@@ -67,13 +67,6 @@ class SelectPanel extends StatefulWidget {
   ///
   /// Forwarded in both cases, whether [controller] is provided or not.
   final VoidCallback? onResetTap;
-
-  /// Theme overrides applied to the select widgets rendered by the panel.
-  ///
-  /// When null, a [SelectThemeData] derived from the ambient Material
-  /// [ThemeData] is used. The delegate-level theme fields (when provided)
-  /// are merged field-wise on top of this theme.
-  final SelectThemeData? selectTheme;
 
   @override
   State<SelectPanel> createState() => _SelectPanelState();
@@ -200,8 +193,7 @@ class _SelectPanelState extends State<SelectPanel> {
 
   @override
   Widget build(BuildContext context) {
-    final baseTheme =
-        widget.selectTheme ?? SelectThemeData.fallback(Theme.of(context));
+    final baseTheme = SelectTheme.of(context);
     final delegateActionBarTheme = widget.delegate.actionBarTheme;
     final delegateSearchBarTheme = widget.delegate.searchBarTheme;
     final delegateTabBarTheme = widget.delegate.tabBarTheme;

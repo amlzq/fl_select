@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'popup_select_controller.dart';
 import 'select/select_panel.dart';
+import 'select/select_theme.dart';
 import 'select/select_theme_data.dart';
 import 'select_overlay.dart';
 import 'select_overlay_style.dart';
@@ -21,7 +22,10 @@ import 'select_overlay_style.dart';
 ///
 /// The trigger only supplies its own UI ([triggerChild]) plus the already
 /// resolved [style], [selectTheme], and [direction], and optionally whether the
-/// panel should keep at least the trigger's width ([minWidthFromTrigger]).
+/// panel should keep at least the trigger's width ([minWidthFromTrigger]). The
+/// resolved [selectTheme] is injected into the panel through a [SelectTheme],
+/// because the overlay sits outside the trigger's subtree and cannot inherit a
+/// theme placed around the trigger.
 ///
 /// Trigger geometry is measured in a post-frame callback and cached — never
 /// during [State.build]. Reading render geometry in the build phase crashes
@@ -146,11 +150,7 @@ class _SelectOverlayHostState extends State<SelectOverlayHost> {
                 style: resolvedStyle,
                 animation: widget.controller.overlayAnimation,
                 onOverlayTap: () => widget.controller.hideSelect(),
-                child: SelectPanel(
-                  controller: widget.controller.selectController,
-                  delegate: widget.controller.previousSelectDelegate!,
-                  selectTheme: widget.selectTheme,
-                ),
+                child: _themedPanel(),
               ),
             );
           },
@@ -158,5 +158,24 @@ class _SelectOverlayHostState extends State<SelectOverlayHost> {
         ),
       ),
     );
+  }
+
+  /// Builds the overlay panel, injecting the trigger's resolved [selectTheme].
+  ///
+  /// The overlay is inserted into the [Overlay] above the trigger's route, so
+  /// it cannot inherit a [SelectTheme] wrapped around the trigger — the
+  /// resolved theme is provided here instead. When the trigger resolved no
+  /// theme, the panel falls back to a theme derived from the ambient
+  /// [ThemeData].
+  Widget _themedPanel() {
+    final panel = SelectPanel(
+      controller: widget.controller.selectController,
+      delegate: widget.controller.previousSelectDelegate!,
+    );
+    final selectTheme = widget.selectTheme;
+    if (selectTheme == null) {
+      return panel;
+    }
+    return SelectTheme(data: selectTheme, child: panel);
   }
 }

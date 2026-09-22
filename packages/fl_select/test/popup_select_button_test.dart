@@ -1,4 +1,5 @@
 import 'package:fl_select/fl_select.dart';
+import 'package:fl_select/src/select/select_panel.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -232,6 +233,60 @@ void main() {
         materials.any((material) => material.type == MaterialType.transparency),
         isTrue,
       );
+    });
+  });
+
+  group('PopupSelectButton selectTheme', () {
+    const teal = Color(0xFF00796B);
+
+    /// Returns the [SelectThemeData] the overlay panel injected below itself.
+    ///
+    /// The overlay sits outside the trigger's subtree, so the trigger's theme
+    /// must arrive as a [SelectTheme] wrapped around the panel.
+    SelectThemeData injectedPanelTheme(WidgetTester tester) {
+      return tester
+          .widget<SelectTheme>(
+            find.descendant(
+              of: find.byType(SelectPanel),
+              matching: find.byType(SelectTheme),
+            ),
+          )
+          .data;
+    }
+
+    Widget button() => PopupSelectButton(
+      label: 'Filter',
+      selectDelegate: ListSelectDelegate(
+        entriesLoader: () async => <SelectEntry<dynamic>>{
+          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+        },
+      ),
+      onApplied: (_) {},
+    );
+
+    testWidgets('PopupSelectButtonTheme.selectTheme reaches the overlay panel', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData(
+            extensions: [
+              PopupSelectButtonTheme(
+                selectTheme: SelectThemeData(
+                  ThemeData.light(),
+                  selectedColor: teal,
+                ),
+              ),
+            ],
+          ),
+          home: Scaffold(body: button()),
+        ),
+      );
+
+      await tester.tap(find.text('Filter'));
+      await tester.pumpAndSettle();
+
+      expect(injectedPanelTheme(tester).selectedColor, teal);
     });
   });
 }
