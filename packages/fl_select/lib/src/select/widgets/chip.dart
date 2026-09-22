@@ -7,8 +7,8 @@ import '../select_theme_data.dart';
 /// Visual variant for chip.
 enum SelectChipVariant { filled, outlined }
 
-/// A single selectable chip as rendered inside [SelectChipBar] and
-/// [SelectWrapView].
+/// A single selectable chip as rendered inside the chip bar and
+/// the wrap view.
 ///
 /// Handles the filled/outlined [SelectChipVariant] treatments, the selected
 /// and disabled color states and single-line label truncation. Exposed so
@@ -80,9 +80,9 @@ class SelectChip extends StatelessWidget {
   }
 }
 
-/// Default visuals of the [SelectChip] item.
+/// Default visuals of the chip item.
 ///
-/// [SelectChip] is the item of both chip views — the single-row [SelectChipBar]
+/// The chip item is the item of both chip views — the single-row chip bar
 /// lays chips out in a row, the wrap form flows them — so its default look is
 /// defined once here and reused by each view's defaults class. The views stay
 /// independently themable through their own themes; this class only supplies

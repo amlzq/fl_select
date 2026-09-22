@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 
 import '../select_theme.dart';
 
-/// Theme configuration for [SelectSearchBar].
+/// Theme configuration for the search bar.
 @immutable
 class SelectSearchBarTheme with Diagnosticable {
   const SelectSearchBarTheme({

@@ -234,7 +234,7 @@ class _PopupSelectBarState extends State<PopupSelectBar>
     _updatePopupSelectController(context);
   }
 
-  /// Keeps [_tabKeys] in sync with the current number of tabs, reusing
+  /// Keeps the tab keys in sync with the current number of tabs, reusing
   /// existing keys so tab rects stay measurable across rebuilds.
   void _syncTabKeys() {
     for (int i = 0; i < widget.tabs.length; i++) {

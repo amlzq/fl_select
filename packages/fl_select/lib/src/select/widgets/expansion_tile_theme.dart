@@ -15,25 +15,25 @@ class SelectExpansionTileTheme with Diagnosticable {
     this.collapseCurve,
   });
 
-  /// Overrides the default value of [SelectExpansionTile.titleStyle].
+  /// Overrides the default value of the title style.
   final TextStyle? titleStyle;
 
-  /// Overrides the default value of [SelectExpansionTile.selectedColor].
+  /// Overrides the default value of the title padding.
   final EdgeInsetsGeometry? titlePadding;
 
-  /// Overrides the default value of [SelectExpansionTile.selectedColor].
+  /// Overrides the default value of the selected color.
   final Color? selectedColor;
 
-  /// Overrides the default value of [SelectExpansionTile.childPadding].
+  /// Overrides the default value of the child padding.
   final EdgeInsetsGeometry? childPadding;
 
-  /// Overrides the default value of [SelectExpansionTile.animationDuration].
+  /// Overrides the default value of the animation duration.
   final Duration? animationDuration;
 
-  /// Overrides the default value of [SelectExpansionTile.expansionCurve].
+  /// Overrides the default value of the expansion curve.
   final Curve? expansionCurve;
 
-  /// Overrides the default value of [SelectExpansionTile.collapseCurve].
+  /// Overrides the default value of the collapse curve.
   final Curve? collapseCurve;
 
   SelectExpansionTileTheme copyWith({

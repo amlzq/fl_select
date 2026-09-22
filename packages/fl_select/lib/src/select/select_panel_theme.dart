@@ -6,12 +6,12 @@ import 'package:flutter/material.dart';
 import 'select_theme.dart';
 
 /// Defines the elevation, shadow and shape decoration applied to the
-/// [SelectPanel] background.
+/// panel background.
 ///
 /// Unlike the host-level decoration (e.g. [Dialog.elevation] /
 /// [showModalBottomSheet]'s `shape`), this theme is applied to the panel
 /// background itself and therefore works for every host, including inline
-/// [SelectPanel] and the dropdown overlay. The two layers are independent and
+/// the panel and the dropdown overlay. The two layers are independent and
 /// can be used together or separately.
 ///
 /// All fields are nullable. When [elevation] and [shape] are both `null`, the

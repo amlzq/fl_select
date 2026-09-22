@@ -4,9 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../select_theme.dart';
-import 'side_bar.dart';
 
-/// Defines a theme for [SelectSideBar] widgets.
+/// Defines a theme for the sidebar widgets.
 @immutable
 class SelectSideBarTheme with Diagnosticable {
   const SelectSideBarTheme({
@@ -23,40 +22,40 @@ class SelectSideBarTheme with Diagnosticable {
     this.indicatorAnimationDuration,
   });
 
-  /// Overrides the default value of [SelectSideBar.selectedColor].
+  /// Overrides the default value of the background color.
   final Color? backgroundColor;
 
-  /// Overrides the default value of [SelectSideBar.width].
+  /// Overrides the default value of the width.
   final double? width;
 
-  /// Overrides the default value of [SelectSideBar.padding].
+  /// Overrides the default value of the padding.
   final EdgeInsetsGeometry? padding;
 
-  /// Overrides the default value of [SelectSideBar.selectedColor].
+  /// Overrides the default value of the selected color.
   final Color? selectedColor;
 
-  /// Overrides the default value of [SelectSideBar.labelStyle].
+  /// Overrides the default value of the label style.
   final TextStyle? labelStyle;
 
   /// Overrides the default value of the selected label style used by
-  /// [SelectSideBar].
+  /// the sidebar.
   final TextStyle? selectedLabelStyle;
 
-  /// Overrides the default value of [SelectSideBar.selectedTileColor].
+  /// Overrides the default value of the selected tile color.
   final Color? selectedTileColor;
 
-  /// Overrides the default value of the indicator color used by [SelectSideBar].
+  /// Overrides the default value of the indicator color used by the sidebar.
   final Color? indicatorColor;
 
-  /// Overrides the default value of the indicator height used by [SelectSideBar].
+  /// Overrides the default value of the indicator height used by the sidebar.
   final double? indicatorHeight;
 
   /// Overrides the default value of the indicator padding used by
-  /// [SelectSideBar].
+  /// the sidebar.
   final EdgeInsetsGeometry? indicatorPadding;
 
   /// Overrides the default value of the indicator animation duration used by
-  /// [SelectSideBar].
+  /// the sidebar.
   final Duration? indicatorAnimationDuration;
 
   /// Returns a copy of this theme with the given fields replaced.

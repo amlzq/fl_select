@@ -136,9 +136,9 @@ class _SelectDialogRoute<T> extends RawDialogRoute<T> {
        );
 }
 
-/// The dialog body rendered by [_SelectDialogRoute].
+/// The dialog body rendered by the dialog route.
 ///
-/// Wraps a [SelectPanel] and closes the route (returning the selection) when
+/// Wraps the panel and closes the route (returning the selection) when
 /// the panel fires its apply callback.
 class _SelectDialog extends StatefulWidget {
   const _SelectDialog({

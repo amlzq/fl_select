@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 import '../select_theme.dart';
 
-/// Visual variant for [SelectGridTile].
+/// Visual variant for the grid tile.
 enum SelectGridTileVariant { filled, outlined }
 
-/// Theme configuration for [SelectGridTile].
+/// Theme configuration for the grid tile.
 @immutable
 class SelectGridTileTheme with Diagnosticable {
   const SelectGridTileTheme({
@@ -19,25 +19,25 @@ class SelectGridTileTheme with Diagnosticable {
     this.selectedTileColor,
   });
 
-  /// Overrides the default value of [SelectGridTile.selectedColor].
+  /// Overrides the default value of the selected color.
   final Color? selectedColor;
 
-  /// Overrides the default value of [SelectGridTile.textColor].
+  /// Overrides the default value of the text color.
   final Color? textColor;
 
-  /// Overrides the default value of [SelectGridTile.labelStyle].
+  /// Overrides the default value of the label style.
   final TextStyle? labelStyle;
 
-  /// Overrides the default value of [SelectGridTile.sublabelStyle].
+  /// Overrides the default value of the sublabel style.
   final TextStyle? sublabelStyle;
 
-  /// Overrides the default value of [SelectGridTile.variant].
+  /// Overrides the default value of the variant.
   final SelectGridTileVariant? variant;
 
-  /// Overrides the default value of [SelectGridTile.tileColor].
+  /// Overrides the default value of the tile color.
   final Color? tileColor;
 
-  /// Overrides the default value of [SelectGridTile.selectedTileColor].
+  /// Overrides the default value of the selected tile color.
   final Color? selectedTileColor;
 
   /// Returns a copy of this theme with the given fields replaced.

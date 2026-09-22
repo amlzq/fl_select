@@ -101,7 +101,7 @@ class PopupSelectController extends ChangeNotifier {
   final Map<int, SelectLabelState> labelStateMap = {};
   bool _isDisposed = false;
 
-  /// Returns the nearest controller provided by [PopupSelectControllerProvider]
+  /// Returns the nearest controller provided by the popup select host
   /// or null if none is found.
   static PopupSelectController? maybeOf(BuildContext context) {
     return context
@@ -109,7 +109,7 @@ class PopupSelectController extends ChangeNotifier {
         ?.controller;
   }
 
-  /// Returns the nearest controller provided by [PopupSelectControllerProvider].
+  /// Returns the nearest controller provided by the popup select host.
   static PopupSelectController of(BuildContext context) {
     final PopupSelectController? controller = maybeOf(context);
     assert(() {
@@ -176,9 +176,9 @@ class PopupSelectController extends ChangeNotifier {
 
   /// The [SelectController] for the currently active select panel, if any.
   ///
-  /// Created when a select is shown (see [_showSelect]) and disposed when
+  /// Created when a select is shown and disposed when
   /// the overlay is hidden. Exposed so that [PopupSelectBar] can pass it to
-  /// [SelectPanel] via its `controller` parameter.
+  /// the panel via its `controller` parameter.
   SelectController? get selectController => _selectController;
   SelectController? _selectController;
 

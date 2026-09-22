@@ -107,7 +107,7 @@ Future<SelectEntries?> showModalBottomSelect({
 
 /// The bottom-sheet body rendered by [showModalBottomSheet].
 ///
-/// Wraps a [SelectPanel] and closes the sheet (returning the selection) when
+/// Wraps the panel and closes the sheet (returning the selection) when
 /// the panel fires its apply callback.
 class _ModalBottomSheetContent extends StatefulWidget {
   const _ModalBottomSheetContent({

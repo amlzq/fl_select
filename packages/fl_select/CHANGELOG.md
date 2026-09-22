@@ -1,3 +1,7 @@
+## Next
+
+- **BREAKING** remove the deprecated aliases of the internalized select panel widgets — the views, tiles, skeletons, `SelectBadge`, `SelectPanel`, the chip symbols (`SelectChip`, `SelectChipBarStyle`, `resolveSelectChipBarStyle`), `ChainingClampingScrollPhysics`, the `OnChanged` typedef and the `kSelect*` constants ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0130)).
+
 ## 0.14.0
 
 - **BREAKING** remove the deprecated `SelectController.badgedCategories` getter ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0120)).
@@ -18,7 +22,7 @@
 
 - **FEATURE** `itemBuilder` now also customizes the items of the category delegates (`TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0130)).
 
-- **IMPROVEMENT** the agent skill now ships inside the package (`skills/fl_select-code-generation`), so the Dart Skills CLI (0.3.1) auto-discovers it via `skills get`.
+- **IMPROVEMENT** the agent skill now ships inside the package (`skills/fl_select-code-generation`), so the Dart Skills CLI auto-discovers it via `skills get`.
 
 - **DEPRECATION** internalize the select panel's built-in widgets — the leaked symbols keep compiling through deprecated aliases ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0130)).
 

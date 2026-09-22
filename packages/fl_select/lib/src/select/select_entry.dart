@@ -381,7 +381,7 @@ class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
 
   /// Optional step count for range-slider UIs.
   ///
-  /// When set, [SelectRangeSlider] snaps the released handle positions
+  /// When set, the range slider snaps the released handle positions
   /// to the nearest multiple of `(max - min) / divisions`. The track is
   /// **not** decorated with tick marks regardless of this value.
   ///
@@ -654,7 +654,7 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
   /// [SelectCategoryEntry.children] auto-injects the [SelectChildEntry.parentId],
   /// it calls `copyWith` on each child. The base implementation returns a
   /// plain [SelectChildEntry], which would lose the `SelectTextEntry` type and
-  /// break callers that filter by concrete type (e.g. [SelectCounter] using
+  /// break callers that filter by concrete type (e.g. the counter using
   /// `whereType<SelectTextEntry>()`).
   @override
   SelectTextEntry<E> copyWith({

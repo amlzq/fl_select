@@ -9,13 +9,13 @@ import 'select/select_panel.dart';
 /// A high-level, ready-to-use select.
 ///
 /// [SelectView] is the public entry point for embedding a select
-/// directly in a page or dialog body. It wraps [SelectPanel] — now an
+/// directly in a page or dialog body. It wraps the panel — now an
 /// internal implementation detail that is no longer exported — and takes care
 /// of the controller lifecycle so callers get a complete, styled component
 /// without extra wiring.
 ///
 /// Inline selects do not show the apply/reset action bar: [SelectView]
-/// wraps its panel in a [SelectActionBarVisibility] scope that hides it, so
+/// wraps its panel in an internal visibility scope that hides it, so
 /// selections apply immediately through [onChanged]. The action bar is still
 /// shown by the modal hosts ([showSelect] / [showModalBottomSelect]), which
 /// do not provide that scope. The [delegate]'s
@@ -34,7 +34,7 @@ import 'select/select_panel.dart';
 /// In addition to select-specific options, [SelectView] accepts the same
 /// sizing and decorating parameters as [Container] — [width], [height],
 /// [constraints], [padding], [margin] and [decoration]. These surround the
-/// [SelectPanel] exactly as [Container] surrounds its child: the panel is
+/// panel exactly as [Container] surrounds its child: the panel is
 /// inset by [padding] (inflated by any border in the [decoration]), the
 /// [decoration] is painted to fill the padded extent, then [constraints]
 /// (combining [width]/[height]) are applied, and finally the [margin]
@@ -99,10 +99,10 @@ class SelectView extends StatefulWidget {
   /// with this cap (a tighter bound still wins); see [constraints].
   ///
   /// It has no effect on the modal [showSelect] / [showModalBottomSelect],
-  /// which use [SelectPanel] directly with their own height constraints.
+  /// which use the panel directly with their own height constraints.
   final double maxHeightFactor;
 
-  /// Empty space to inscribe inside the [decoration]. The [SelectPanel] is
+  /// Empty space to inscribe inside the [decoration]. The panel is
   /// placed inside this padding.
   ///
   /// This padding is in addition to any padding inherent in the [decoration]
@@ -114,7 +114,7 @@ class SelectView extends StatefulWidget {
 
   /// The decoration to paint behind the select content.
   ///
-  /// Commonly a [BoxDecoration]. The [SelectPanel] is not clipped to the
+  /// Commonly a [BoxDecoration]. The panel is not clipped to the
   /// decoration; to clip it to a particular shape, consider wrapping the box
   /// in a [ClipPath].
   final Decoration? decoration;
@@ -210,7 +210,7 @@ class _SelectViewState extends State<SelectView> {
     // delegate-owned action bar) is rendered by the internal SelectPanel,
     // which is kept as the building block used by dialogs and bottom sheets.
     //
-    // Layout mirrors [Container]: the [SelectPanel] is surrounded by
+    // Layout mirrors [Container]: the panel is surrounded by
     // [padding] (inflated by any border in the [decoration]), then the
     // [decoration] is painted, then constraints are applied (combining
     // [width]/[height]/[constraints] with the [maxHeightFactor] cap), and

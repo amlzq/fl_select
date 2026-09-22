@@ -274,7 +274,7 @@ abstract class SelectDelegate {
 
   /// Theme overrides for the wrap view.
   ///
-  /// Takes precedence over [chipBarTheme] for [SelectWrapView]; [chipBarTheme]
+  /// Takes precedence over [chipBarTheme] for the wrap view; [chipBarTheme]
   /// stays as the shared fallback so existing code keeps working.
   final SelectWrapViewTheme? wrapViewTheme;
 
@@ -284,7 +284,7 @@ abstract class SelectDelegate {
   /// Theme overrides for the panel's elevation, shadow and shape decoration.
   ///
   /// When provided, this is merged into the ambient [SelectThemeData] used by
-  /// [SelectPanel], so it applies to every host (inline [SelectView],
+  /// the panel, so it applies to every host (inline [SelectView],
   /// [showSelect], [showModalBottomSelect] and the dropdown overlay). It is
   /// independent from the host-level decoration (e.g. [Dialog.elevation]).
   final SelectPanelTheme? panelTheme;
@@ -562,7 +562,7 @@ class GridSelectDelegate extends SelectDelegate {
 /// A wrap select for flat (parentless) data.
 ///
 /// The top-level entries render directly as a wrapped chip group
-/// ([SelectWrapView]); no category navigation is shown.
+/// (the wrap view); no category navigation is shown.
 ///
 /// Two-level (category) structures are not supported; use
 /// [SideNavSelectDelegate] for two-level data.
@@ -616,12 +616,12 @@ class WrapSelectDelegate extends SelectDelegate {
 
   /// Horizontal spacing between chips in a wrapped row.
   ///
-  /// Forwarded to [SelectWrapView.spacing]. Defaults to 0.0.
+  /// Forwarded to the spacing of the wrap view. Defaults to 0.0.
   final double spacing;
 
   /// Vertical spacing between wrapped chip rows.
   ///
-  /// Forwarded to [SelectWrapView.runSpacing]. Defaults to 0.0.
+  /// Forwarded to the run spacing of the wrap view. Defaults to 0.0.
   final double runSpacing;
 
   /// Optional builder that fully replaces each chip's widget.

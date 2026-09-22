@@ -1,5 +1,4 @@
-import 'package:fl_select/fl_select.dart'
-    hide SelectBadge, SelectChipBar, SelectPanel, SelectTabBar, SelectWrapView;
+import 'package:fl_select/fl_select.dart';
 import 'package:fl_select/src/select/select_panel.dart';
 import 'package:fl_select/src/select/widgets/widgets.dart';
 import 'package:flutter/material.dart';

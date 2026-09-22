@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../select_theme.dart';
 import 'chip.dart';
 
-/// Theme configuration for [SelectChipBar].
+/// Theme configuration for the chip bar.
 @immutable
 class SelectChipBarTheme with Diagnosticable {
   const SelectChipBarTheme({
@@ -17,25 +17,25 @@ class SelectChipBarTheme with Diagnosticable {
     this.selectedLabelStyle,
   });
 
-  /// Overrides the default value of [SelectChipBar.backgroundColor].
+  /// Overrides the default value of the background color.
   final Color? backgroundColor;
 
-  /// Overrides the default value of [SelectChipBar.padding].
+  /// Overrides the default value of the padding.
   final EdgeInsetsGeometry? padding;
 
-  /// Overrides the default value of [SelectChipBar.variant].
+  /// Overrides the default value of the variant.
   final SelectChipVariant? variant;
 
-  /// Overrides the default value of [SelectChipBar.chipColor].
+  /// Overrides the default value of the chip color.
   final Color? chipColor;
 
-  /// Overrides the default value of [SelectChipBar.selectedChipColor].
+  /// Overrides the default value of the selected chip color.
   final Color? selectedChipColor;
 
-  /// Overrides the default value of [SelectChipBar.labelStyle].
+  /// Overrides the default value of the label style.
   final TextStyle? labelStyle;
 
-  /// Overrides the default value of [SelectChipBar.selectedLabelStyle].
+  /// Overrides the default value of the selected label style.
   final TextStyle? selectedLabelStyle;
 
   /// Returns a copy of this theme with the given fields replaced.

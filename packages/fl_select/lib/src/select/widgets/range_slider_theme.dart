@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../select_theme.dart';
 
-/// Theme configuration for [SelectRangeSlider].
+/// Theme configuration for the range slider.
 @immutable
 class SelectRangeSliderTheme with Diagnosticable {
   const SelectRangeSliderTheme({

@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../select_theme.dart';
 import 'chip.dart';
 
-/// Theme configuration for [SelectWrapView].
+/// Theme configuration for the wrap view.
 @immutable
 class SelectWrapViewTheme with Diagnosticable {
   const SelectWrapViewTheme({
@@ -17,25 +17,25 @@ class SelectWrapViewTheme with Diagnosticable {
     this.selectedLabelStyle,
   });
 
-  /// Overrides the default value of [SelectWrapView.backgroundColor].
+  /// Overrides the default value of the background color.
   final Color? backgroundColor;
 
-  /// Overrides the default value of [SelectWrapView.padding].
+  /// Overrides the default value of the padding.
   final EdgeInsetsGeometry? padding;
 
-  /// Overrides the default value of [SelectWrapView.variant].
+  /// Overrides the default value of the variant.
   final SelectChipVariant? variant;
 
-  /// Overrides the default value of [SelectWrapView.chipColor].
+  /// Overrides the default value of the chip color.
   final Color? chipColor;
 
-  /// Overrides the default value of [SelectWrapView.selectedChipColor].
+  /// Overrides the default value of the selected chip color.
   final Color? selectedChipColor;
 
-  /// Overrides the default value of [SelectWrapView.labelStyle].
+  /// Overrides the default value of the label style.
   final TextStyle? labelStyle;
 
-  /// Overrides the default value of [SelectWrapView.selectedLabelStyle].
+  /// Overrides the default value of the selected label style.
   final TextStyle? selectedLabelStyle;
 
   /// Returns a copy of this theme with the given fields replaced.
@@ -76,7 +76,7 @@ class SelectWrapViewTheme with Diagnosticable {
     );
   }
 
-  /// The theme applying to [SelectWrapView] under [context].
+  /// The theme applying to the wrap view under [context].
   ///
   /// The wrap view resolves its own theme only. The deprecated `chipBarTheme`,
   /// which used to style the wrap view as well, is mapped into this theme by

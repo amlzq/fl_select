@@ -136,7 +136,7 @@ class SelectController extends ChangeNotifier {
   /// dropped. This check throws an [ArgumentError] during development instead
   /// of failing silently in release builds.
   ///
-  /// This is public so hosts (e.g. [SelectPanel]) can validate loaded entries
+  /// This is public so hosts (e.g. the panel) can validate loaded entries
   /// up front and surface the error through their error UI instead of letting
   /// it escape mid-build and hang the frame.
   static void validateEntries(List<SelectEntry> entries) {
@@ -147,7 +147,7 @@ class SelectController extends ChangeNotifier {
     // [SelectCategoryEntry]. The select widgets assume this invariant when they
     // resolve the focused/rendered category (e.g. via `entries.first` or by
     // indexing into the list), so violating it would crash during the build
-    // phase. Fail fast here instead so [SelectPanel] can surface it through the
+    // phase. Fail fast here instead so the panel can surface it through the
     // error UI.
     for (final entry in entries) {
       if (entry is! SelectCategoryEntry) {
@@ -228,8 +228,8 @@ class SelectController extends ChangeNotifier {
   /// focused/initialized.
   ///
   /// Consumers follow the selection rather than the focused category: this is
-  /// the set passed to [SelectSideBar.selectedCategories] and
-  /// [SelectTabBar.selectedCategories] so a selection stays visible after the
+  /// the set passed to the selected categories of the sidebar and
+  /// the selected categories of the tab bar so a selection stays visible after the
   /// user switches to another category, and it also drives TabNavSelect's
   /// initial tab focus.
   SelectEntries get realSelectedCategories {

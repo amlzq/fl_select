@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../select_theme.dart';
 import 'constants.dart';
 
-/// Theme configuration for [SelectListTile], including toggle builders.
+/// Theme configuration for the list tile, including toggle builders.
 @immutable
 class SelectListTileTheme with Diagnosticable {
   const SelectListTileTheme({
@@ -18,28 +18,28 @@ class SelectListTileTheme with Diagnosticable {
     this.checkboxBuilder,
   });
 
-  /// Overrides the default value of [SelectListTile.selectedColor].
+  /// Overrides the default value of the selected color.
   final Color? selectedColor;
 
-  /// Overrides the default value of [SelectListTile.textColor].
+  /// Overrides the default value of the text color.
   final Color? textColor;
 
-  /// Overrides the default value of [SelectListTile.tileColor].
+  /// Overrides the default value of the tile color.
   final Color? tileColor;
 
-  /// Overrides the default value of [SelectListTile.selectedTileColor].
+  /// Overrides the default value of the selected tile color.
   final Color? selectedTileColor;
 
-  /// Overrides the default value of [SelectListTile.labelStyle].
+  /// Overrides the default value of the label style.
   final TextStyle? labelStyle;
 
-  /// Overrides the default value of [SelectListTile.sublabelStyle].
+  /// Overrides the default value of the sublabel style.
   final TextStyle? sublabelStyle;
 
-  /// Overrides the default value of [SelectRadioListTile.radioBuilder].
+  /// Overrides the default value of the radio builder.
   final ToggleWidgetBuilder? radioBuilder;
 
-  /// Overrides the default value of [SelectCheckboxListTile.checkboxBuilder].
+  /// Overrides the default value of the checkbox builder.
   final ToggleWidgetBuilder? checkboxBuilder;
 
   /// Returns a copy of this theme with the given fields replaced.

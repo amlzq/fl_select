@@ -1,12 +1,4 @@
-import 'package:fl_select/fl_select.dart'
-    hide
-        SelectChipBar,
-        SelectCounter,
-        SelectGridView,
-        SelectListView,
-        SelectListTile,
-        SelectRangeView,
-        SelectWrapView;
+import 'package:fl_select/fl_select.dart';
 import 'package:fl_select/src/select/widgets/widgets.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';

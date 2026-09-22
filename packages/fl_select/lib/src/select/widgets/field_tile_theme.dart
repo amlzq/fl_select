@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 
 import '../select_theme.dart';
 
-/// Visual variant for [SelectFieldTile].
+/// Visual variant for the field tile.
 enum SelectFieldTileVariant { filled, outlined }
 
-/// Theme configuration for [SelectFieldTile].
+/// Theme configuration for the field tile.
 @immutable
 class SelectFieldTileTheme with Diagnosticable {
   const SelectFieldTileTheme({
@@ -19,27 +19,27 @@ class SelectFieldTileTheme with Diagnosticable {
     this.selectedTileColor,
   });
 
-  /// Overrides the default value of [SelectFieldTile.selectedColor].
+  /// Overrides the default value of the selected color.
   final Color? selectedColor;
 
-  /// Overrides the default text color used by [SelectFieldTile].
+  /// Overrides the default text color used by the field tile.
   final Color? textColor;
 
   /// Overrides the default text style of the label rendered by
-  /// [SelectFieldTile].
+  /// the field tile.
   final TextStyle? labelStyle;
 
   /// Overrides the default text style of the sublabel rendered by
-  /// [SelectFieldTile].
+  /// the field tile.
   final TextStyle? sublabelStyle;
 
-  /// Overrides the default value of [SelectFieldTile.variant].
+  /// Overrides the default value of the variant.
   final SelectFieldTileVariant? variant;
 
-  /// Overrides the default value of [SelectFieldTile.tileColor].
+  /// Overrides the default value of the tile color.
   final Color? tileColor;
 
-  /// Overrides the default value of [SelectFieldTile.selectedTileColor].
+  /// Overrides the default value of the selected tile color.
   final Color? selectedTileColor;
 
   /// Returns a copy of this theme with the given fields replaced.
