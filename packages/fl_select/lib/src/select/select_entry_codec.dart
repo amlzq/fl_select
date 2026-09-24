@@ -38,9 +38,8 @@
 ///
 /// Limitations (by design):
 /// * `extra` payload fields are runtime-only and never serialized.
-/// * `parentId` is derived from the tree structure and ignored in input
-///   (the `SelectCategoryEntry.children` / `SelectChildEntry.children`
-///   factories re-inject it on decode).
+/// * `parentId` is derived from the tree structure and ignored in input:
+///   decoding re-derives it, exactly as binding a hand-built tree does.
 /// * Range bounds decode as plain [num] (`int` when integral in JSON,
 ///   `double` otherwise).
 library;
@@ -48,14 +47,15 @@ library;
 import 'constants.dart';
 import 'select_entry.dart';
 import 'select_layout.dart';
+import 'select_utils.dart';
 
 /// Encoding and decoding of [SelectEntry] trees as JSON-compatible maps.
 abstract final class SelectEntryCodec {
   /// Decodes a JSON-encoded entry list (as produced by [toJson]) into an
   /// entry set, preserving order.
   ///
-  /// Children gain their `parentId` automatically via the `.children`
-  /// factories, exactly as with hand-built trees.
+  /// The parent links of the decoded entries are derived from the tree
+  /// structure, exactly as they are when hand-built entries are bound.
   ///
   /// Throws [FormatException] when a node is missing required fields, has
   /// an unknown `type`/`kind`, or a list/category is empty.
@@ -63,11 +63,12 @@ abstract final class SelectEntryCodec {
     if (json.isEmpty) {
       throw const FormatException('entry list must not be empty');
     }
-    final result = <SelectEntry>{};
-    for (final node in json) {
-      result.add(_decodeEntry(_asMap(node)));
-    }
-    return result;
+    final decoded = <SelectEntry>[
+      for (final node in json) _decodeEntry(_asMap(node)),
+    ];
+    // The same derivation the controller runs on bind, so a decoded tree is
+    // wired up before it ever reaches a delegate.
+    return SelectUtils.deriveParentIds(decoded).toSet();
   }
 
   /// Encodes an entry set into a JSON-compatible list of node maps.
@@ -119,7 +120,7 @@ abstract final class SelectEntryCodec {
         'category node requires non-empty "children"',
       );
     }
-    return SelectCategoryEntry.children(
+    return SelectCategoryEntry(
       id: _requiredId(node),
       name: _requiredName(node),
       children: {for (final child in childrenJson) _decodeEntry(_asMap(child))},
@@ -133,23 +134,13 @@ abstract final class SelectEntryCodec {
   }
 
   static SelectEntry _decodeText(Map<String, dynamic> node) {
-    final id = _requiredId(node);
-    final name = _requiredName(node);
     final childrenJson = node['children'] as List<dynamic>?;
-    if (childrenJson != null && childrenJson.isNotEmpty) {
-      return SelectTextEntry.children(
-        id: id,
-        name: name,
-        children: {
-          for (final child in childrenJson) _decodeEntry(_asMap(child)),
-        },
-        enabled: node['enabled'] != false,
-        immediate: node['immediate'] == true,
-      );
-    }
-    return SelectTextEntry.name(
-      id: id,
-      name: name,
+    return SelectTextEntry(
+      id: _requiredId(node),
+      name: _requiredName(node),
+      children: childrenJson == null || childrenJson.isEmpty
+          ? null
+          : {for (final child in childrenJson) _decodeEntry(_asMap(child))},
       enabled: node['enabled'] != false,
       immediate: node['immediate'] == true,
     );

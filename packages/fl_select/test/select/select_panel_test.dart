@@ -11,8 +11,8 @@ const _teal = Color(0xFF00796B);
 const _ambientPadding = EdgeInsets.fromLTRB(1, 2, 3, 4);
 
 Set<SelectEntry> get _flatEntries => {
-  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+  SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+  SelectTextEntry<dynamic>(id: 'b', name: 'B'),
 };
 
 /// Wraps [panel] in a [SelectTheme] when [selectTheme] is provided.
@@ -784,7 +784,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     return _injectedTheme(tester);
-    }
+  }
 
   group('SelectPanel rangeSliderTheme injection', () {
     testWidgets('delegate rangeSliderTheme merges over ambient', (
@@ -1096,7 +1096,7 @@ void main() {
             body: SelectPanel(
               delegate: _TestDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{
-                  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                  SelectTextEntry<dynamic>(id: 'a', name: 'A'),
                 },
                 bodyBuilder: (context, entries, _) =>
                     Text('entries:${entries.length}'),
@@ -1142,7 +1142,13 @@ void main() {
                       id: 'c1',
                       name: 'Cate 1',
                       children: {
-                        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                        // An *explicit* parentId is not derived, so the
+                        // mismatch is still reported instead of corrected.
+                        SelectTextEntry<dynamic>(
+                          parentId: 'c2',
+                          id: 'a',
+                          name: 'A',
+                        ),
                       },
                     ),
                   },
@@ -1175,7 +1181,11 @@ void main() {
                       id: 'c1',
                       name: 'Cate 1',
                       children: {
-                        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                        SelectTextEntry<dynamic>(
+                          parentId: 'c2',
+                          id: 'a',
+                          name: 'A',
+                        ),
                       },
                     ),
                   },
@@ -1191,6 +1201,38 @@ void main() {
         expect(find.text('body'), findsNothing);
         expect(find.textContaining('custom:'), findsOneWidget);
         expect(tester.takeException(), isNotNull);
+      },
+    );
+
+    testWidgets(
+      'derives an omitted parentId for a two-level structure instead of failing',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            home: Scaffold(
+              body: SelectPanel(
+                delegate: _TestDelegate(
+                  entriesLoader: () async => <SelectEntry<dynamic>>{
+                    SelectCategoryEntry<dynamic>(
+                      id: 'c1',
+                      name: 'Cate 1',
+                      children: {
+                        // No parentId: the library derives it from the tree.
+                        SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+                      },
+                    ),
+                  },
+                  bodyBuilder: (_, _, _) => const Text('body'),
+                ),
+              ),
+            ),
+          ),
+        );
+
+        await tester.pumpAndSettle();
+        expect(find.text('body'), findsOneWidget);
+        expect(find.textContaining('Error:'), findsNothing);
+        expect(tester.takeException(), isNull);
       },
     );
 
@@ -1378,7 +1420,7 @@ void main() {
     ) async {
       SelectController? captured;
       final previous = <SelectEntry<dynamic>>{
-        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+        SelectTextEntry<dynamic>(id: 'a', name: 'A'),
       };
       await tester.pumpWidget(
         MaterialApp(

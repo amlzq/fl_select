@@ -5,36 +5,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Set<SelectEntry<dynamic>> get _categoryEntries => {
-  SelectCategoryEntry<dynamic>.children(
+  SelectCategoryEntry<dynamic>(
     id: 'cate1',
     name: 'Cate 1',
     children: {
-      SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
-      SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
+      SelectTextEntry<dynamic>(id: 'a1', name: 'A 1'),
+      SelectTextEntry<dynamic>(id: 'a2', name: 'A 2'),
     },
   ),
-  SelectCategoryEntry<dynamic>.children(
+  SelectCategoryEntry<dynamic>(
     id: 'cate2',
     name: 'Cate 2',
-    children: {SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1')},
+    children: {SelectTextEntry<dynamic>(id: 'b1', name: 'B 1')},
   ),
 };
 
 /// Same as [_categoryEntries], but the first category starts with an "Any"
 /// placeholder child, which must never badge its tab on its own.
 Set<SelectEntry<dynamic>> get _categoryEntriesWithAny => {
-  SelectCategoryEntry<dynamic>.children(
+  SelectCategoryEntry<dynamic>(
     id: 'cate1',
     name: 'Cate 1',
     children: {
-      SelectTextEntry<dynamic>.any(parentId: 'cate1', name: 'Any'),
-      SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
+      SelectTextEntry<dynamic>.any(name: 'Any'),
+      SelectTextEntry<dynamic>(id: 'a1', name: 'A 1'),
     },
   ),
-  SelectCategoryEntry<dynamic>.children(
+  SelectCategoryEntry<dynamic>(
     id: 'cate2',
     name: 'Cate 2',
-    children: {SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1')},
+    children: {SelectTextEntry<dynamic>(id: 'b1', name: 'B 1')},
   ),
 };
 
@@ -161,17 +161,15 @@ void main() {
         _harness(
           controller,
           entries: {
-            SelectCategoryEntry<dynamic>.children(
+            SelectCategoryEntry<dynamic>(
               id: 'cate1',
               name: 'Cate 1',
-              children: {SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1')},
+              children: {SelectTextEntry<dynamic>(id: 'a1', name: 'A 1')},
             ),
-            SelectCategoryEntry<dynamic>.children(
+            SelectCategoryEntry<dynamic>(
               id: 'cate2',
               name: 'Cate 2',
-              children: {
-                SelectTextEntry<dynamic>.any(parentId: 'cate2', name: 'Any'),
-              },
+              children: {SelectTextEntry<dynamic>.any(name: 'Any')},
             ),
           },
         ),
@@ -192,10 +190,10 @@ void main() {
     final controller = SelectController(
       selectionMode: SelectionMode.multiple,
       selectedEntries: {
-        SelectCategoryEntry<dynamic>.children(
+        SelectCategoryEntry<dynamic>(
           id: 'cate2',
           name: 'Cate 2',
-          children: {SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1')},
+          children: {SelectTextEntry<dynamic>(id: 'b1', name: 'B 1')},
         ),
       },
     );
@@ -237,20 +235,14 @@ void main() {
             id: 'c1',
             name: 'C1',
             children: {
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-2', name: 'Two'),
+              SelectTextEntry<dynamic>(id: 'c1-1', name: 'One'),
+              SelectTextEntry<dynamic>(id: 'c1-2', name: 'Two'),
             },
           ),
           SelectCategoryEntry<dynamic>(
             id: 'c2',
             name: 'C2',
-            children: {
-              SelectTextEntry<dynamic>(
-                parentId: 'c2',
-                id: 'c2-1',
-                name: 'Three',
-              ),
-            },
+            children: {SelectTextEntry<dynamic>(id: 'c2-1', name: 'Three')},
           ),
         }),
       );
@@ -272,20 +264,12 @@ void main() {
           SelectCategoryEntry<dynamic>(
             id: 'c1',
             name: 'C1',
-            children: {
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
-            },
+            children: {SelectTextEntry<dynamic>(id: 'c1-1', name: 'One')},
           ),
           SelectCategoryEntry<dynamic>(
             id: 'c2',
             name: 'C2',
-            children: {
-              SelectTextEntry<dynamic>(
-                parentId: 'c2',
-                id: 'c2-1',
-                name: 'Three',
-              ),
-            },
+            children: {SelectTextEntry<dynamic>(id: 'c2-1', name: 'Three')},
           ),
         }),
       );
@@ -306,39 +290,22 @@ void main() {
           name: 'C1',
           layout: const SelectGridLayout(crossAxisCount: 3),
           header: SelectTextEntry<dynamic>(
-            parentId: 'c1',
             id: 'header',
             name: 'Header',
             children: {
-              SelectTextEntry<dynamic>(
-                parentId: 'header',
-                id: 'h1',
-                name: 'H1',
-                immediate: true,
-              ),
-              SelectTextEntry<dynamic>(
-                parentId: 'header',
-                id: 'h2',
-                name: 'H2',
-                immediate: true,
-              ),
+              SelectTextEntry<dynamic>(id: 'h1', name: 'H1', immediate: true),
+              SelectTextEntry<dynamic>(id: 'h2', name: 'H2', immediate: true),
             },
           ),
           children: {
-            SelectTextEntry<dynamic>(parentId: 'c1', id: 'any', name: 'Any'),
-            SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
+            SelectTextEntry<dynamic>(id: 'any', name: 'Any'),
+            SelectTextEntry<dynamic>(id: 'c1-1', name: 'One'),
           },
           footer: SelectTextEntry<dynamic>(
-            parentId: 'c1',
             id: 'footer',
             name: 'Footer',
             children: {
-              SelectTextEntry<dynamic>(
-                parentId: 'footer',
-                id: 'f1',
-                name: 'F1',
-                immediate: true,
-              ),
+              SelectTextEntry<dynamic>(id: 'f1', name: 'F1', immediate: true),
             },
           ),
         );

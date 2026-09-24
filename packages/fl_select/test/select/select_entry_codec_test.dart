@@ -68,7 +68,7 @@ void main() {
       expect(custom.isCustom, isTrue);
       expect(custom.id, 'custom');
 
-      // Branch text entry keeps children; flags survive; parentId injected.
+      // Branch text entry keeps children; flags survive; parentId derived.
       final more = entries.elementAt(1) as SelectCategoryEntry;
       final layout = more.children!.elementAt(1);
       expect(layout.children!.length, 3);
@@ -138,7 +138,7 @@ void main() {
       final category = entries.first as SelectCategoryEntry;
       expect(category.header!.id, 'h');
       expect(category.footer!.id, 'f');
-      // Header/footer subtrees also get parentId injected.
+      // Header/footer subtrees also get their parentId derived.
       expect(
         (category.header!.children!.single as SelectChildEntry).parentId,
         'h',
@@ -294,13 +294,13 @@ void main() {
 
   group('SelectEntryCodec.toJson', () {
     Set<SelectEntry> buildTree() => {
-      SelectCategoryEntry.children(
+      SelectCategoryEntry(
         id: 'price',
         name: 'price',
         selectionMode: SelectionMode.multiple,
         layout: const SelectGridLayout(crossAxisCount: 4),
         children: {
-          SelectTextEntry.any(parentId: 'price', name: 'any'),
+          SelectTextEntry.any(name: 'any'),
           SelectRangeEntry(id: '0-100', name: '0-100', min: 0, max: 100),
           SelectRangeEntry.custom(name: 'custom', min: 0, max: 1000),
         },
@@ -367,12 +367,12 @@ void main() {
 
     test('emits disabled and immediate flags', () {
       final entries = {
-        SelectCategoryEntry.children(
+        SelectCategoryEntry(
           id: 'c',
           name: 'C',
           children: {
-            SelectTextEntry.name(id: 'a', name: 'A', immediate: true),
-            SelectTextEntry.name(id: 'b', name: 'B', enabled: false),
+            SelectTextEntry(id: 'a', name: 'A', immediate: true),
+            SelectTextEntry(id: 'b', name: 'B', enabled: false),
           },
         ),
       };
@@ -387,20 +387,20 @@ void main() {
 
     test('serializes header and footer', () {
       final entries = {
-        SelectCategoryEntry.children(
+        SelectCategoryEntry(
           id: 'c',
           name: 'C',
-          header: SelectTextEntry.children(
+          header: SelectTextEntry(
             id: 'h',
             name: 'Header',
-            children: {SelectTextEntry.name(id: 'h-a', name: 'A')},
+            children: {SelectTextEntry(id: 'h-a', name: 'A')},
           ),
-          footer: SelectTextEntry.children(
+          footer: SelectTextEntry(
             id: 'f',
             name: 'Footer',
-            children: {SelectTextEntry.name(id: 'f-a', name: 'A')},
+            children: {SelectTextEntry(id: 'f-a', name: 'A')},
           ),
-          children: {SelectTextEntry.name(id: 'a', name: 'A')},
+          children: {SelectTextEntry(id: 'a', name: 'A')},
         ),
       };
 

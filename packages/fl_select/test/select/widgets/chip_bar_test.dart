@@ -19,11 +19,7 @@ Widget _harness(
     home: Scaffold(
       body: SingleChildScrollView(
         child: SelectChipBar(
-          category: SelectTextEntry<dynamic>(
-            parentId: '',
-            id: 'cate1',
-            name: 'Cate 1',
-          ),
+          category: SelectTextEntry<dynamic>(id: 'cate1', name: 'Cate 1'),
           entries: entries,
           selectedEntries: selectedEntries,
           onChanged: onChanged ?? (_, _) {},
@@ -60,8 +56,8 @@ void main() {
     final results = <(int, SelectEntry)>[];
     await tester.pumpWidget(
       _harness([
-        SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A'),
-        SelectTextEntry<dynamic>(parentId: 'cate1', id: 'b', name: 'B'),
+        SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+        SelectTextEntry<dynamic>(id: 'b', name: 'B'),
       ], onChanged: (i, e) => results.add((i, e))),
     );
     await tester.pumpAndSettle();
@@ -78,16 +74,16 @@ void main() {
 
   testWidgets('a header custom range entry throws', (tester) async {
     await _expectCustomEntryError(tester, [
-      SelectRangeEntry<int, dynamic>.custom(parentId: 'cate1'),
-      SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A'),
+      SelectRangeEntry<int, dynamic>.custom(),
+      SelectTextEntry<dynamic>(id: 'a', name: 'A'),
     ]);
   });
 
   testWidgets('a footer custom range entry throws', (tester) async {
     await _expectCustomEntryError(tester, [
-      SelectTextEntry<dynamic>(parentId: 'cate1', id: 'a', name: 'A'),
-      SelectTextEntry<dynamic>(parentId: 'cate1', id: 'b', name: 'B'),
-      SelectRangeEntry<int, dynamic>.custom(parentId: 'cate1'),
+      SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+      SelectTextEntry<dynamic>(id: 'b', name: 'B'),
+      SelectRangeEntry<int, dynamic>.custom(),
     ]);
   });
 }

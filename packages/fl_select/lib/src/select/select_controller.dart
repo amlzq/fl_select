@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'constants.dart';
 import 'select_entry.dart';
 import 'select_layout.dart';
+import 'select_utils.dart';
 import 'state/selection_rules.dart';
 import 'state/state_snapshot.dart';
 import 'state/state_tree.dart';
@@ -110,9 +111,15 @@ class SelectController extends ChangeNotifier {
     SelectEntries? selectedEntriesOverride,
     SelectEntries? resetEntriesOverride,
   }) {
-    validateEntries(entries);
+    // Derive the parent links from the tree structure before validating and
+    // binding, so an omitted `SelectChildEntry.parentId` is filled in from the
+    // position of the entry instead of being rejected. The list is returned
+    // unchanged (same instances) when nothing had to be derived, which keeps
+    // the duplicate-bind fast path below working.
+    final derivedEntries = SelectUtils.deriveParentIds(entries);
+    _validateDerivedEntries(derivedEntries);
     final changed = tree.bind(
-      entries,
+      derivedEntries,
       selectedEntries: selectedEntriesOverride,
       resetEntries: resetEntriesOverride,
       initializeAnyIfEmpty: initializeAnyIfEmpty,
@@ -125,21 +132,33 @@ class SelectController extends ChangeNotifier {
   /// Validates that every child entry's [SelectChildEntry.parentId] points to
   /// its direct parent in a two-level-or-deeper tree.
   ///
-  /// In a flat structure (no top-level [SelectCategoryEntry]), `parentId`
-  /// may legitimately be empty (e.g. entries built with
-  /// [SelectTextEntry.name]), so validation is skipped entirely.
+  /// An empty `parentId` is not an error: it is derived from the tree structure
+  /// first (see `SelectUtils.deriveParentIds`), exactly as [bindState] does
+  /// before binding. In a flat structure (no top-level [SelectCategoryEntry]),
+  /// `parentId` may also legitimately be empty, so the parent checks are
+  /// skipped entirely.
   ///
   /// Once at least one [SelectCategoryEntry] is present, every
   /// [SelectChildEntry] — including header/footer nodes and their children —
-  /// must have a `parentId` equal to the id of its direct parent, otherwise
-  /// tapping cannot resolve the owning category and the selection is silently
-  /// dropped. This check throws an [ArgumentError] during development instead
-  /// of failing silently in release builds.
+  /// must end up with a `parentId` equal to the id of its direct parent,
+  /// otherwise tapping cannot resolve the owning category and the selection is
+  /// silently dropped. A child that leaves `parentId` empty has it derived; a
+  /// child that **explicitly** carries a non-empty `parentId` pointing at the
+  /// wrong node is not corrected, and throws an [ArgumentError] during
+  /// development instead of failing silently in release builds.
   ///
   /// This is public so hosts (e.g. the panel) can validate loaded entries
   /// up front and surface the error through their error UI instead of letting
   /// it escape mid-build and hang the frame.
   static void validateEntries(List<SelectEntry> entries) {
+    _validateDerivedEntries(SelectUtils.deriveParentIds(entries));
+  }
+
+  /// Validates [entries] whose parent links are assumed to be already derived.
+  ///
+  /// Split out of [validateEntries] so [bindState] can derive once and still
+  /// validate exactly what it is about to bind.
+  static void _validateDerivedEntries(List<SelectEntry> entries) {
     final hasCategory = entries.any((e) => e is SelectCategoryEntry);
     if (!hasCategory) return;
 
@@ -166,9 +185,10 @@ class SelectController extends ChangeNotifier {
           'SelectChildEntry(parentId: "${child.parentId}", id: "${child.id}") '
           'has a parentId that does not match its parent node (id: "${parent.id}"). '
           'In a two-level-or-deeper structure, a child entry\'s parentId must equal its '
-          'direct parent\'s id, otherwise it cannot be selected. If this is a '
-          'flat list, make sure there is no SelectCategoryEntry at the top '
-          'level.',
+          'direct parent\'s id, otherwise it cannot be selected. Omit parentId '
+          'to have it derived from the tree structure, or set it to the id of '
+          'the direct parent. If this is a flat list, make sure there is no '
+          'SelectCategoryEntry at the top level.',
         );
       }
     }

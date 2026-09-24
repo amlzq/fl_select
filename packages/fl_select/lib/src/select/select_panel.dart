@@ -7,6 +7,7 @@ import 'select_controller.dart';
 import 'select_delegate.dart';
 import 'select_entry.dart';
 import 'select_theme.dart';
+import 'select_utils.dart';
 import 'widgets/widgets.dart';
 
 /// A widget that renders a [SelectDelegate] and manages its selection state.
@@ -304,12 +305,18 @@ class _SelectPanelState extends State<SelectPanel> {
   /// Validates [entries] up front and builds the search bar (when enabled)
   /// plus the delegate body.
   Widget _buildContent(BuildContext context, List<SelectEntry> entries) {
+    // Derive the parent links from the tree structure before the entries reach
+    // the body widgets: they resolve a tap through `parentId`, so a tree nested
+    // with `children` has to be wired by the time it renders. An already wired
+    // list is returned untouched (see `SelectUtils.deriveParentIds`).
+    final derivedEntries = SelectUtils.deriveParentIds(entries);
+
     // Validate the loaded entries up front so that bad parent/child
     // relationships surface through the error UI and are logged to the
     // console, instead of escaping during a descendant's build phase
     // (which freezes the frame).
     try {
-      SelectController.validateEntries(entries);
+      SelectController.validateEntries(derivedEntries);
     } catch (error, stackTrace) {
       FlutterError.reportError(
         FlutterErrorDetails(
@@ -349,7 +356,7 @@ class _SelectPanelState extends State<SelectPanel> {
             fit: FlexFit.loose,
             child: widget.delegate.buildBody(
               context,
-              entries,
+              derivedEntries,
               _controller.selectedEntries,
               searchQuery: _searchQuery,
             ),

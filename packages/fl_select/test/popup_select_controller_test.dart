@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// delegates the controller depends on; assertions then call
 /// `controller.toggleSelect` / `controller.hideSelect` directly.
 SelectEntries _restorationEntries(String id) => <SelectEntry<dynamic>>{
-  SelectTextEntry<dynamic>.name(id: id, name: id.toUpperCase()),
+  SelectTextEntry<dynamic>(id: id, name: id.toUpperCase()),
 };
 
 void main() {
@@ -43,12 +43,12 @@ void main() {
         [
           ListSelectDelegate(
             entriesLoader: () async => {
-              SelectTextEntry<dynamic>.name(id: 'a0', name: 'A0'),
+              SelectTextEntry<dynamic>(id: 'a0', name: 'A0'),
             },
           ),
           ListSelectDelegate(
             entriesLoader: () async => {
-              SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1'),
+              SelectTextEntry<dynamic>(id: 'a1', name: 'A1'),
             },
           ),
         ],
@@ -76,12 +76,12 @@ void main() {
           [
             ListSelectDelegate(
               entriesLoader: () async => {
-                SelectTextEntry<dynamic>.name(id: 'a0', name: 'A0'),
+                SelectTextEntry<dynamic>(id: 'a0', name: 'A0'),
               },
             ),
             ListSelectDelegate(
               entriesLoader: () async => {
-                SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1'),
+                SelectTextEntry<dynamic>(id: 'a1', name: 'A1'),
               },
             ),
           ],
@@ -117,12 +117,12 @@ void main() {
         [
           ListSelectDelegate(
             entriesLoader: () async => {
-              SelectTextEntry<dynamic>.name(id: 'a0', name: 'A0'),
+              SelectTextEntry<dynamic>(id: 'a0', name: 'A0'),
             },
           ),
           ListSelectDelegate(
             entriesLoader: () async => {
-              SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1'),
+              SelectTextEntry<dynamic>(id: 'a1', name: 'A1'),
             },
           ),
         ],
@@ -149,7 +149,7 @@ void main() {
         [
           ListSelectDelegate(
             entriesLoader: () async => {
-              SelectTextEntry<dynamic>.name(id: 'a0', name: 'A0'),
+              SelectTextEntry<dynamic>(id: 'a0', name: 'A0'),
             },
           ),
         ],
@@ -176,7 +176,7 @@ void main() {
         [
           ListSelectDelegate(
             entriesLoader: () async => {
-              SelectTextEntry<dynamic>.name(id: 'a0', name: 'A0'),
+              SelectTextEntry<dynamic>(id: 'a0', name: 'A0'),
             },
           ),
         ],
@@ -225,8 +225,8 @@ void main() {
         final delegate = ListSelectDelegate(
           selectionMode: SelectionMode.multiple,
           entriesLoader: () async => <SelectEntry<dynamic>>{
-            SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-            SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+            SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+            SelectTextEntry<dynamic>(id: 'b', name: 'B'),
           },
         );
 

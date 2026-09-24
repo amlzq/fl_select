@@ -252,12 +252,12 @@ SelectEntries get _bedroomsData => {
     selectionMode: SelectionMode.single,
     layout: const SelectCounterLayout(),
     children: {
-      SelectTextEntry.any(parentId: 'bedrooms', name: 'Any'),
-      SelectTextEntry(parentId: 'bedrooms', id: 'b1', name: '1'),
-      SelectTextEntry(parentId: 'bedrooms', id: 'b1p', name: '1+'),
-      SelectTextEntry(parentId: 'bedrooms', id: 'b2', name: '2'),
-      SelectTextEntry(parentId: 'bedrooms', id: 'b2p', name: '2+'),
-      SelectTextEntry(parentId: 'bedrooms', id: 'b3', name: '3'),
+      SelectTextEntry.any(name: 'Any'),
+      SelectTextEntry(id: 'b1', name: '1'),
+      SelectTextEntry(id: 'b1p', name: '1+'),
+      SelectTextEntry(id: 'b2', name: '2'),
+      SelectTextEntry(id: 'b2p', name: '2+'),
+      SelectTextEntry(id: 'b3', name: '3'),
     },
   ),
 };

@@ -6,6 +6,150 @@ import 'select_entry.dart';
 
 /// Utility methods for working with [SelectEntry] trees and selections.
 class SelectUtils {
+  /// Fills in the [SelectChildEntry.parentId] of [entry]'s descendants from the
+  /// tree structure and returns the resulting (possibly rebuilt) entry.
+  ///
+  /// [parentId] is the id of [entry]'s direct parent — pass `''` when [entry]
+  /// is a root.
+  ///
+  /// Two flags control the behaviour:
+  ///
+  /// - [overwrite] — when `true`, every descendant's `parentId` is replaced by
+  ///   the id of the node it actually sits under. The `.children` factory
+  ///   constructors use this mode because for them the tree shape is
+  ///   authoritative. When `false`, only descendants whose `parentId` is
+  ///   **empty** are filled in: an explicitly authored `parentId` is preserved
+  ///   so that one contradicting the tree still surfaces through
+  ///   `SelectController.validateEntries` instead of being silently corrected.
+  /// - [wrapGenerics] — when `true`, a descendant that is not a
+  ///   [SelectChildEntry] (e.g. a user-defined [SelectEntry] subclass) is
+  ///   rewritten into a [SelectChildEntry], the only form that can carry a
+  ///   parent link. When `false`, such a subtree is left untouched.
+  ///
+  /// [entry] itself is returned when nothing needed to change, so callers that
+  /// rely on instance identity (e.g. the change detection in `StateTree.bind`)
+  /// keep working.
+  static SelectEntry<E> injectParentIds<E>(
+    SelectEntry<E> entry, {
+    required String parentId,
+    bool overwrite = true,
+    bool wrapGenerics = true,
+  }) {
+    // Recurse first: a descendant that had to be rebuilt forces this entry to
+    // be rebuilt as well, because it has to own the new child set.
+    final children = entry.children;
+    Set<SelectEntry<E>>? filledChildren;
+    if (children != null && children.isNotEmpty) {
+      var childrenChanged = false;
+      final buffer = <SelectEntry<E>>{};
+      for (final child in children) {
+        final filled = injectParentIds<E>(
+          child,
+          parentId: entry.id,
+          overwrite: overwrite,
+          wrapGenerics: wrapGenerics,
+        );
+        if (!identical(filled, child)) childrenChanged = true;
+        buffer.add(filled);
+      }
+      if (childrenChanged) filledChildren = buffer;
+    }
+
+    if (entry is SelectChildEntry<E>) {
+      // Overwriting always rebuilds; otherwise only a missing link is derived
+      // (an entry that is already empty and stays empty, like a flat top-level
+      // item, is left untouched), so an explicit link is validated rather than
+      // replaced.
+      final needsParentId =
+          overwrite || (entry.parentId.isEmpty && parentId.isNotEmpty);
+      if (!needsParentId && filledChildren == null) return entry;
+      return entry.copyWith(
+        parentId: needsParentId ? parentId : null,
+        children: filledChildren,
+      );
+    }
+
+    if (entry is SelectCategoryEntry<E>) {
+      SelectEntry<E>? filledHeader;
+      final header = entry.header;
+      if (header != null) {
+        final filled = injectParentIds<E>(
+          header,
+          parentId: entry.id,
+          overwrite: overwrite,
+          wrapGenerics: wrapGenerics,
+        );
+        if (!identical(filled, header)) filledHeader = filled;
+      }
+
+      SelectEntry<E>? filledFooter;
+      final footer = entry.footer;
+      if (footer != null) {
+        final filled = injectParentIds<E>(
+          footer,
+          parentId: entry.id,
+          overwrite: overwrite,
+          wrapGenerics: wrapGenerics,
+        );
+        if (!identical(filled, footer)) filledFooter = filled;
+      }
+
+      if (!overwrite &&
+          filledChildren == null &&
+          filledHeader == null &&
+          filledFooter == null) {
+        return entry;
+      }
+      return entry.copyWith(
+        children: filledChildren,
+        header: filledHeader,
+        footer: filledFooter,
+      );
+    }
+
+    // A generic [SelectEntry] subclass has no `parentId` of its own, so the
+    // only way to give it one is to rewrite it into a [SelectChildEntry].
+    if (!wrapGenerics) return entry;
+    return SelectChildEntry<E>(
+      parentId: parentId,
+      id: entry.id,
+      name: entry.name,
+      children: filledChildren ?? entry.children,
+      enabled: entry.enabled,
+      immediate: entry.immediate,
+      extra: entry.extra,
+    );
+  }
+
+  /// Derives [SelectChildEntry.parentId] for [entries] and their descendants
+  /// from the tree structure.
+  ///
+  /// Only empty `parentId` values are filled in: entries that already carry an
+  /// explicit link are returned unchanged, and custom [SelectEntry] subclasses
+  /// that are not [SelectChildEntry] are left untouched (they have nowhere to
+  /// store a parent link — build those with the `.children` factory
+  /// constructors instead). This makes an omitted `parentId` legal without
+  /// weakening `SelectController.validateEntries` for explicitly authored
+  /// links.
+  ///
+  /// The original list is returned when nothing needed to change, so repeated
+  /// binds of the same entries stay identity-equal.
+  static List<SelectEntry> deriveParentIds(List<SelectEntry> entries) {
+    var changed = false;
+    final derived = <SelectEntry>[];
+    for (final entry in entries) {
+      final result = injectParentIds(
+        entry,
+        parentId: '',
+        overwrite: false,
+        wrapGenerics: false,
+      );
+      if (!identical(result, entry)) changed = true;
+      derived.add(result);
+    }
+    return changed ? derived : entries;
+  }
+
   /// Returns the entries at the given tree [level] starting from [entry].
   ///
   /// - If [level] is 0, returns a set containing [entry].

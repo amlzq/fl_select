@@ -28,9 +28,9 @@ void main() {
     testWidgets('renders a grid without category tabs', (tester) async {
       await tester.pumpWidget(
         _gridHarness({
-          SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
-          SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
-          SelectTextEntry<dynamic>.name(id: 'a3', name: 'A 3'),
+          SelectTextEntry<dynamic>(id: 'a1', name: 'A 1'),
+          SelectTextEntry<dynamic>(id: 'a2', name: 'A 2'),
+          SelectTextEntry<dynamic>(id: 'a3', name: 'A 3'),
         }),
       );
       await tester.pumpAndSettle();
@@ -52,8 +52,8 @@ void main() {
                 crossAxisCount: 3,
                 selectionMode: SelectionMode.single,
                 entriesLoader: () async => {
-                  SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
-                  SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
+                  SelectTextEntry<dynamic>(id: 'a1', name: 'A 1'),
+                  SelectTextEntry<dynamic>(id: 'a2', name: 'A 2'),
                 },
               ),
               onChanged: applied.add,

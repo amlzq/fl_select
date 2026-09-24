@@ -37,12 +37,12 @@ void main() {
     /// the right column's ListView has maxScrollExtent == 0.
     Set<SelectEntry> shortCategories() => {
       for (var i = 0; i < 2; i++)
-        SelectCategoryEntry<dynamic>.children(
+        SelectCategoryEntry<dynamic>(
           id: 'cate$i',
           name: 'Cate $i',
           children: {
-            SelectTextEntry<dynamic>.name(id: 'o${i}_0', name: 'O $i-0'),
-            SelectTextEntry<dynamic>.name(id: 'o${i}_1', name: 'O $i-1'),
+            SelectTextEntry<dynamic>(id: 'o${i}_0', name: 'O $i-0'),
+            SelectTextEntry<dynamic>(id: 'o${i}_1', name: 'O $i-1'),
           },
         ),
     };
@@ -50,12 +50,12 @@ void main() {
     /// Eight tall sections: the right column scrolls well beyond the viewport.
     Set<SelectEntry> longCategories() => {
       for (var i = 0; i < 8; i++)
-        SelectCategoryEntry<dynamic>.children(
+        SelectCategoryEntry<dynamic>(
           id: 'cate$i',
           name: 'Cate $i',
           children: {
             for (var j = 0; j < 30; j++)
-              SelectTextEntry<dynamic>.name(id: 'o${i}_$j', name: 'O $i-$j'),
+              SelectTextEntry<dynamic>(id: 'o${i}_$j', name: 'O $i-$j'),
           },
         ),
     };
@@ -360,12 +360,12 @@ void main() {
   group('SideNavSelect click-to-scroll', () {
     Set<SelectEntry> navCategories() => {
       for (var i = 0; i < 8; i++)
-        SelectCategoryEntry<dynamic>.children(
+        SelectCategoryEntry<dynamic>(
           id: 'cate$i',
           name: 'Cate $i',
           children: {
             for (var j = 0; j < 30; j++)
-              SelectTextEntry<dynamic>.name(id: 'o${i}_$j', name: 'O $i-$j'),
+              SelectTextEntry<dynamic>(id: 'o${i}_$j', name: 'O $i-$j'),
           },
         ),
     };
@@ -478,8 +478,8 @@ void main() {
             'C1',
             null,
             children: {
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-2', name: 'Two'),
+              SelectTextEntry<dynamic>(id: 'c1-1', name: 'One'),
+              SelectTextEntry<dynamic>(id: 'c1-2', name: 'Two'),
             },
           ),
         }),
@@ -498,8 +498,8 @@ void main() {
             'C1',
             const SelectListLayout(),
             children: {
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-2', name: 'Two'),
+              SelectTextEntry<dynamic>(id: 'c1-1', name: 'One'),
+              SelectTextEntry<dynamic>(id: 'c1-2', name: 'Two'),
             },
           ),
         }),
@@ -518,8 +518,8 @@ void main() {
             'C1',
             const SelectGridLayout(crossAxisCount: 3),
             children: {
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-2', name: 'Two'),
+              SelectTextEntry<dynamic>(id: 'c1-1', name: 'One'),
+              SelectTextEntry<dynamic>(id: 'c1-2', name: 'Two'),
             },
           ),
         }),
@@ -538,8 +538,8 @@ void main() {
             'C1',
             const SelectWrapLayout(),
             children: {
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-2', name: 'Two'),
+              SelectTextEntry<dynamic>(id: 'c1-1', name: 'One'),
+              SelectTextEntry<dynamic>(id: 'c1-2', name: 'Two'),
             },
           ),
         }),
@@ -559,9 +559,7 @@ void main() {
             'c1',
             'C1',
             const SelectRangeLayout(),
-            children: {
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
-            },
+            children: {SelectTextEntry<dynamic>(id: 'c1-1', name: 'One')},
           ),
         }),
       );
@@ -580,8 +578,8 @@ void main() {
             'C1',
             const SelectCounterLayout(),
             children: {
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-2', name: 'Two'),
+              SelectTextEntry<dynamic>(id: 'c1-1', name: 'One'),
+              SelectTextEntry<dynamic>(id: 'c1-2', name: 'Two'),
             },
           ),
         }),
@@ -598,21 +596,13 @@ void main() {
             'c1',
             'C1',
             const SelectListLayout(),
-            children: {
-              SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
-            },
+            children: {SelectTextEntry<dynamic>(id: 'c1-1', name: 'One')},
           ),
           _category(
             'c2',
             'C2',
             const SelectWrapLayout(),
-            children: {
-              SelectTextEntry<dynamic>(
-                parentId: 'c2',
-                id: 'c2-1',
-                name: 'ChipA',
-              ),
-            },
+            children: {SelectTextEntry<dynamic>(id: 'c2-1', name: 'ChipA')},
           ),
         }),
       );
@@ -630,39 +620,22 @@ void main() {
           name: 'C1',
           layout: const SelectListLayout(),
           header: SelectTextEntry<dynamic>(
-            parentId: 'c1',
             id: 'header',
             name: 'Header',
             children: {
-              SelectTextEntry<dynamic>(
-                parentId: 'header',
-                id: 'h1',
-                name: 'H1',
-                immediate: true,
-              ),
-              SelectTextEntry<dynamic>(
-                parentId: 'header',
-                id: 'h2',
-                name: 'H2',
-                immediate: true,
-              ),
+              SelectTextEntry<dynamic>(id: 'h1', name: 'H1', immediate: true),
+              SelectTextEntry<dynamic>(id: 'h2', name: 'H2', immediate: true),
             },
           ),
           children: {
-            SelectTextEntry<dynamic>(parentId: 'c1', id: 'any', name: 'Any'),
-            SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
+            SelectTextEntry<dynamic>(id: 'any', name: 'Any'),
+            SelectTextEntry<dynamic>(id: 'c1-1', name: 'One'),
           },
           footer: SelectTextEntry<dynamic>(
-            parentId: 'c1',
             id: 'footer',
             name: 'Footer',
             children: {
-              SelectTextEntry<dynamic>(
-                parentId: 'footer',
-                id: 'f1',
-                name: 'F1',
-                immediate: true,
-              ),
+              SelectTextEntry<dynamic>(id: 'f1', name: 'F1', immediate: true),
             },
           ),
         );

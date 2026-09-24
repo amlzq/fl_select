@@ -31,12 +31,12 @@ void main() {
     /// panel cap, so the body's scroll view scrolls well beyond the viewport.
     Set<SelectEntry> longCategories() => {
       for (var i = 0; i < 6; i++)
-        SelectCategoryEntry<dynamic>.children(
+        SelectCategoryEntry<dynamic>(
           id: 'cate$i',
           name: 'Cate $i',
           children: {
             for (var j = 0; j < 12; j++)
-              SelectTextEntry<dynamic>.name(id: 'o${i}_$j', name: 'O $i-$j'),
+              SelectTextEntry<dynamic>(id: 'o${i}_$j', name: 'O $i-$j'),
           },
         ),
     };
@@ -45,12 +45,12 @@ void main() {
     /// the body's scroll view has maxScrollExtent == 0.
     Set<SelectEntry> shortCategories() => {
       for (var i = 0; i < 2; i++)
-        SelectCategoryEntry<dynamic>.children(
+        SelectCategoryEntry<dynamic>(
           id: 'cate$i',
           name: 'Cate $i',
           children: {
-            SelectTextEntry<dynamic>.name(id: 'o${i}_0', name: 'O $i-0'),
-            SelectTextEntry<dynamic>.name(id: 'o${i}_1', name: 'O $i-1'),
+            SelectTextEntry<dynamic>(id: 'o${i}_0', name: 'O $i-0'),
+            SelectTextEntry<dynamic>(id: 'o${i}_1', name: 'O $i-1'),
           },
         ),
     };
@@ -301,12 +301,12 @@ void main() {
               defaultLayout: const SelectListLayout(),
               selectionMode: SelectionMode.multiple,
               entries: {
-                SelectCategoryEntry<dynamic>.children(
+                SelectCategoryEntry<dynamic>(
                   id: 'inherit',
                   name: 'Inherit',
                   children: {
-                    SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
-                    SelectTextEntry<dynamic>.name(id: 'b', name: 'Item B'),
+                    SelectTextEntry<dynamic>(id: 'a', name: 'Item A'),
+                    SelectTextEntry<dynamic>(id: 'b', name: 'Item B'),
                   },
                 ),
               },
@@ -330,13 +330,11 @@ void main() {
               defaultLayout: const SelectListLayout(),
               selectionMode: SelectionMode.multiple,
               entries: {
-                SelectCategoryEntry<dynamic>.children(
+                SelectCategoryEntry<dynamic>(
                   id: 'single',
                   name: 'Single',
                   selectionMode: SelectionMode.single,
-                  children: {
-                    SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
-                  },
+                  children: {SelectTextEntry<dynamic>(id: 'a', name: 'Item A')},
                 ),
               },
             ),
@@ -357,8 +355,8 @@ void main() {
           ListSelectDelegate(
             selectionMode: SelectionMode.multiple,
             entries: {
-              SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
-              SelectTextEntry<dynamic>.name(id: 'b', name: 'Item B'),
+              SelectTextEntry<dynamic>(id: 'a', name: 'Item A'),
+              SelectTextEntry<dynamic>(id: 'b', name: 'Item B'),
             },
           ),
         ),
@@ -376,7 +374,7 @@ void main() {
         listTileHarness(
           ListSelectDelegate(
             selectionMode: SelectionMode.single,
-            entries: {SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A')},
+            entries: {SelectTextEntry<dynamic>(id: 'a', name: 'Item A')},
           ),
         ),
       );
@@ -401,23 +399,23 @@ void main() {
             delegate: ExpandableSelectDelegate(
               selectionMode: SelectionMode.single,
               entriesLoader: () async => {
-                SelectCategoryEntry.children(
+                SelectCategoryEntry(
                   id: 'cate1',
                   name: 'Cate 1',
                   children: {
                     SelectRangeEntry.custom(),
-                    SelectTextEntry.name(id: 'a', name: 'A'),
+                    SelectTextEntry(id: 'a', name: 'A'),
                   },
                 ),
-                SelectCategoryEntry.children(
+                SelectCategoryEntry(
                   id: 'cate3',
                   name: 'Cate 3',
                   children: {
-                    SelectTextEntry.name(id: 'a', name: 'A'),
+                    SelectTextEntry(id: 'a', name: 'A'),
                     SelectRangeEntry.custom(),
                   },
                 ),
-                SelectCategoryEntry.children(
+                SelectCategoryEntry(
                   id: 'cate4',
                   name: 'Cate 4',
                   children: {
@@ -560,17 +558,17 @@ void main() {
           body: SelectView(
             delegate: ExpandableSelectDelegate(
               entries: {
-                SelectCategoryEntry.children(
+                SelectCategoryEntry(
                   id: 'cate2',
                   name: 'Cate 2',
                   children: {
-                    SelectTextEntry.name(id: 'a', name: 'Tiger'),
-                    SelectTextEntry.name(id: 'b', name: 'Lion'),
+                    SelectTextEntry(id: 'a', name: 'Tiger'),
+                    SelectTextEntry(id: 'b', name: 'Lion'),
                   },
                   selectionMode: SelectionMode.multiple,
                   layout: const SelectWrapLayout(),
                 ),
-                SelectCategoryEntry.children(
+                SelectCategoryEntry(
                   id: 'cate5',
                   name: 'Cate 5',
                   children: {
@@ -585,12 +583,12 @@ void main() {
                   },
                   layout: const SelectRangeLayout(),
                 ),
-                SelectCategoryEntry.children(
+                SelectCategoryEntry(
                   id: 'cate6',
                   name: 'Cate 6',
                   children: {
-                    SelectTextEntry.name(id: 'a', name: '1'),
-                    SelectTextEntry.name(id: 'b', name: '2'),
+                    SelectTextEntry(id: 'a', name: '1'),
+                    SelectTextEntry(id: 'b', name: '2'),
                   },
                   layout: const SelectCounterLayout(),
                 ),
@@ -661,36 +659,36 @@ void main() {
 
   group('ExpandableSelect tile badge', () {
     Set<SelectEntry<dynamic>> badgeCategoryEntries() => {
-      SelectCategoryEntry<dynamic>.children(
+      SelectCategoryEntry<dynamic>(
         id: 'cate1',
         name: 'Cate 1',
         children: {
-          SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
-          SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
+          SelectTextEntry<dynamic>(id: 'a1', name: 'A 1'),
+          SelectTextEntry<dynamic>(id: 'a2', name: 'A 2'),
         },
       ),
-      SelectCategoryEntry<dynamic>.children(
+      SelectCategoryEntry<dynamic>(
         id: 'cate2',
         name: 'Cate 2',
-        children: {SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1')},
+        children: {SelectTextEntry<dynamic>(id: 'b1', name: 'B 1')},
       ),
     };
 
     /// Same as [badgeCategoryEntries], but the first category starts with an
     /// "Any" placeholder child, which must never badge its tile on its own.
     Set<SelectEntry<dynamic>> badgeCategoryEntriesWithAny() => {
-      SelectCategoryEntry<dynamic>.children(
+      SelectCategoryEntry<dynamic>(
         id: 'cate1',
         name: 'Cate 1',
         children: {
-          SelectTextEntry<dynamic>.any(parentId: 'cate1', name: 'Any'),
-          SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
+          SelectTextEntry<dynamic>.any(name: 'Any'),
+          SelectTextEntry<dynamic>(id: 'a1', name: 'A 1'),
         },
       ),
-      SelectCategoryEntry<dynamic>.children(
+      SelectCategoryEntry<dynamic>(
         id: 'cate2',
         name: 'Cate 2',
-        children: {SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1')},
+        children: {SelectTextEntry<dynamic>(id: 'b1', name: 'B 1')},
       ),
     };
 
@@ -828,13 +826,13 @@ void main() {
             ExpandableSelectDelegate(
               selectionMode: SelectionMode.single,
               entries: {
-                SelectCategoryEntry<dynamic>.children(
+                SelectCategoryEntry<dynamic>(
                   id: 'cat',
                   name: 'Category',
                   selectionMode: SelectionMode.multiple,
                   children: {
-                    SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
-                    SelectTextEntry<dynamic>.name(id: 'b', name: 'Item B'),
+                    SelectTextEntry<dynamic>(id: 'a', name: 'Item A'),
+                    SelectTextEntry<dynamic>(id: 'b', name: 'Item B'),
                   },
                 ),
               },
@@ -853,12 +851,10 @@ void main() {
           ExpandableSelectDelegate(
             selectionMode: SelectionMode.single,
             entries: {
-              SelectCategoryEntry<dynamic>.children(
+              SelectCategoryEntry<dynamic>(
                 id: 'cat',
                 name: 'Category',
-                children: {
-                  SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
-                },
+                children: {SelectTextEntry<dynamic>(id: 'a', name: 'Item A')},
               ),
             },
           ),
@@ -879,13 +875,11 @@ void main() {
             ExpandableSelectDelegate(
               selectionMode: SelectionMode.single,
               entries: {
-                SelectCategoryEntry<dynamic>.children(
+                SelectCategoryEntry<dynamic>(
                   id: 'cat',
                   name: 'Category',
                   selectionMode: SelectionMode.multiple,
-                  children: {
-                    SelectTextEntry<dynamic>.name(id: 'a', name: 'Item A'),
-                  },
+                  children: {SelectTextEntry<dynamic>(id: 'a', name: 'Item A')},
                 ),
               },
             ),
@@ -911,39 +905,22 @@ void main() {
           id: 'c1',
           name: 'C1',
           header: SelectTextEntry<dynamic>(
-            parentId: 'c1',
             id: 'header',
             name: 'Header',
             children: {
-              SelectTextEntry<dynamic>(
-                parentId: 'header',
-                id: 'h1',
-                name: 'H1',
-                immediate: true,
-              ),
-              SelectTextEntry<dynamic>(
-                parentId: 'header',
-                id: 'h2',
-                name: 'H2',
-                immediate: true,
-              ),
+              SelectTextEntry<dynamic>(id: 'h1', name: 'H1', immediate: true),
+              SelectTextEntry<dynamic>(id: 'h2', name: 'H2', immediate: true),
             },
           ),
           children: {
-            SelectTextEntry<dynamic>(parentId: 'c1', id: 'any', name: 'Any'),
-            SelectTextEntry<dynamic>(parentId: 'c1', id: 'c1-1', name: 'One'),
+            SelectTextEntry<dynamic>(id: 'any', name: 'Any'),
+            SelectTextEntry<dynamic>(id: 'c1-1', name: 'One'),
           },
           footer: SelectTextEntry<dynamic>(
-            parentId: 'c1',
             id: 'footer',
             name: 'Footer',
             children: {
-              SelectTextEntry<dynamic>(
-                parentId: 'footer',
-                id: 'f1',
-                name: 'F1',
-                immediate: true,
-              ),
+              SelectTextEntry<dynamic>(id: 'f1', name: 'F1', immediate: true),
             },
           ),
         );

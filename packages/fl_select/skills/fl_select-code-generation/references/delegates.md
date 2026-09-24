@@ -124,8 +124,8 @@ SelectCategoryEntry(
   layout: const SelectWrapLayout(spacing: 8, runSpacing: 8),
   selectionMode: SelectionMode.multiple,
   children: {
-    SelectTextEntry(parentId: 'brand', id: 'a', name: 'Apple'),
-    SelectTextEntry(parentId: 'brand', id: 'b', name: 'Google'),
+    SelectTextEntry(id: 'a', name: 'Apple'),
+    SelectTextEntry(id: 'b', name: 'Google'),
   },
 );
 ```

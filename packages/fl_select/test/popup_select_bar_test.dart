@@ -18,7 +18,7 @@ void main() {
               selectDelegates: [
                 ListSelectDelegate(
                   entriesLoader: () async => <SelectEntry<dynamic>>{
-                    SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                    SelectTextEntry<dynamic>(id: 'a', name: 'A'),
                   },
                 ),
               ],
@@ -82,8 +82,8 @@ void main() {
               selectDelegates: [
                 ListSelectDelegate(
                   entriesLoader: () async => <SelectEntry<dynamic>>{
-                    SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-                    SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+                    SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+                    SelectTextEntry<dynamic>(id: 'b', name: 'B'),
                   },
                 ),
               ],
@@ -127,7 +127,7 @@ void main() {
               selectDelegates: [
                 ListSelectDelegate(
                   entriesLoader: () async => <SelectEntry<dynamic>>{
-                    SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                    SelectTextEntry<dynamic>(id: 'a', name: 'A'),
                   },
                 ),
               ],
@@ -170,8 +170,8 @@ void main() {
                 ListSelectDelegate(
                   selectionMode: SelectionMode.multiple,
                   entriesLoader: () async => <SelectEntry<dynamic>>{
-                    SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-                    SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+                    SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+                    SelectTextEntry<dynamic>(id: 'b', name: 'B'),
                   },
                 ),
               ],
@@ -219,7 +219,7 @@ void main() {
               for (var i = 0; i < 12; i++)
                 ListSelectDelegate(
                   entriesLoader: () async => <SelectEntry<dynamic>>{
-                    SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                    SelectTextEntry<dynamic>(id: 'a', name: 'A'),
                   },
                 ),
             ],
@@ -285,7 +285,7 @@ void main() {
               for (var i = 0; i < 12; i++)
                 ListSelectDelegate(
                   entriesLoader: () async => <SelectEntry<dynamic>>{
-                    SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                    SelectTextEntry<dynamic>(id: 'a', name: 'A'),
                   },
                 ),
             ],
@@ -336,7 +336,7 @@ void main() {
               selectDelegates: [
                 ListSelectDelegate(
                   entriesLoader: () async => <SelectEntry<dynamic>>{
-                    SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                    SelectTextEntry<dynamic>(id: 'a', name: 'A'),
                   },
                 ),
               ],
@@ -372,14 +372,14 @@ void main() {
                   ListSelectDelegate(
                     searchEnabled: true,
                     entriesLoader: () async => <SelectEntry<dynamic>>{
-                      SelectTextEntry<dynamic>.name(id: 'a', name: 'Apple'),
-                      SelectTextEntry<dynamic>.name(id: 'b', name: 'Banana'),
+                      SelectTextEntry<dynamic>(id: 'a', name: 'Apple'),
+                      SelectTextEntry<dynamic>(id: 'b', name: 'Banana'),
                     },
                   ),
                   ListSelectDelegate(
                     searchEnabled: true,
                     entriesLoader: () async => <SelectEntry<dynamic>>{
-                      SelectTextEntry<dynamic>.name(id: 'c', name: 'Cherry'),
+                      SelectTextEntry<dynamic>(id: 'c', name: 'Cherry'),
                     },
                   ),
                 ],
@@ -451,7 +451,7 @@ void main() {
       selectDelegates: [
         ListSelectDelegate(
           entriesLoader: () async => <SelectEntry<dynamic>>{
-            SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+            SelectTextEntry<dynamic>(id: 'a', name: 'A'),
           },
         ),
       ],
@@ -459,7 +459,9 @@ void main() {
       onApplied: (_, _) {},
     );
 
-    testWidgets('the bar selectTheme reaches the overlay panel', (tester) async {
+    testWidgets('the bar selectTheme reaches the overlay panel', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(

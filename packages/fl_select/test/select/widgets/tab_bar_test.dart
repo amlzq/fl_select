@@ -8,10 +8,10 @@ import 'package:flutter_test/flutter_test.dart';
 /// bar has real scroll extents.
 final List<SelectEntry> _categories = [
   for (var i = 0; i < 16; i++)
-    SelectCategoryEntry<dynamic>.children(
+    SelectCategoryEntry<dynamic>(
       id: 'cate$i',
       name: 'Category $i',
-      children: {SelectTextEntry<dynamic>.name(id: 'a$i', name: 'A $i')},
+      children: {SelectTextEntry<dynamic>(id: 'a$i', name: 'A $i')},
     ),
 ];
 

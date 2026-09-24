@@ -51,7 +51,7 @@ import 'package:fl_select/fl_select.dart';
 
 #### Delegates
 
-A delegate controls both data loading and how the body is rendered, and works with every entry point above. Flat delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) render parentless leaves created with `.name(...)`; `CascadingSelectDelegate` renders a multi-level cascade of unlimited depth (`category -> child -> grandchild -> ...`) and ignores `category.layout`; the three two-level category delegates (`TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) render a tree of `SelectCategoryEntry` roots whose children follow `category.layout` (list / grid / wrap / range slider / counter):
+A delegate controls both data loading and how the body is rendered, and works with every entry point above. Flat delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) render flat leaves created with `SelectTextEntry(...)` / `SelectRangeEntry(...)`; `CascadingSelectDelegate` renders a multi-level cascade of unlimited depth (`category -> child -> grandchild -> ...`) and ignores `category.layout`; the three two-level category delegates (`TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) render a tree of `SelectCategoryEntry` roots whose children follow `category.layout` (list / grid / wrap / range slider / counter):
 
 | `ListSelectDelegate`        | `GridSelectDelegate`        | `WrapSelectDelegate`        | `CascadingSelectDelegate`   | `TabNavSelectDelegate`      | `SideNavSelectDelegate`     | `ExpandableSelectDelegate`  |
 | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- |
@@ -59,37 +59,37 @@ A delegate controls both data loading and how the body is rendered, and works wi
 
 #### SelectEntry
 
-Entries form a tree. `SelectCategoryEntry` is the root (a category) and `SelectChildEntry` is any non-root node, identified by its `parentId`. Prefer the `SelectCategoryEntry.children(...)` factory: it auto-injects `parentId` on every child (recursively), so you never write it by hand, and it also takes `header` / `footer` entries and the category's `layout`.
+Entries form a tree. `SelectCategoryEntry` is the root (a category) and `SelectChildEntry` is any non-root node. Nesting is the only wiring: an entry's parent is the entry that holds it, so you nest entries with `children` (plus `header` / `footer` and `layout` on a category).
 
 | Entry                    | Purpose                                                                                                                                                                       |
 | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SelectCategoryEntry`    | Root node. `.children(...)` auto-injects `parentId` on `children`; also takes `selectionMode`, `header`/`footer`, and `layout`.                                                |
-| `SelectTextEntry`        | A plain text leaf. Use `.any(...)` for the "Any" (clear) entry. `.name(...)` creates a parentless leaf for flat lists.                                                        |
+| `SelectCategoryEntry`    | Root node. Takes `children`, `selectionMode`, `header`/`footer` and `layout`.                                                                                                 |
+| `SelectTextEntry`        | A plain text leaf, flat or nested (pass `children`). Use `.any(...)` for the "Any" (clear) entry.                                                                             |
 | `SelectRangeEntry<N, E>` | A numeric range leaf (`min`/`max`, snapped by `divisions`). Use `.any(...)` for "Any" and `.custom(...)` for a user-input range. `SelectIntEntry<E>` is a handy alias for `SelectRangeEntry<int, E>`. |
 
 Selection is controlled by `SelectionMode` (`single` by default, or `multiple`), set on a `SelectCategoryEntry` (per category) or on the delegate (fallback). In multiple-selection mode, an entry with `immediate: true` applies on tap and skips the action bar.
 
 Entries load asynchronously via `entriesLoader`, which returns a `Future<SelectEntries>` where `SelectEntries` is `Set<SelectEntry>`.
 
-Flat data for `ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate` — `SelectTextEntry.name(...)` creates a parentless leaf, and `SelectRangeEntry.custom()` adds a user-input range:
+Flat data for `ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate` — `SelectTextEntry(...)` creates a flat leaf, and `SelectRangeEntry.custom()` adds a user-input range:
 
 ```dart
 SelectEntries get listData => {
-      SelectTextEntry.name(id: 'a', name: 'Kiwi'),
-      SelectTextEntry.name(id: 'b', name: 'Grape'),
+      SelectTextEntry(id: 'a', name: 'Kiwi'),
+      SelectTextEntry(id: 'b', name: 'Grape'),
       // ...
     };
 
 SelectEntries get gridData => {
-      SelectRangeEntry.custom(), // user-input min/max
-      SelectTextEntry.name(id: 'a', name: '0-100'),
-      SelectTextEntry.name(id: 'b', name: '100-500'),
+      SelectIntEntry.custom(), // user-input min/max
+      SelectIntEntry(id: 'a', name: '\$0-\$25', min: 0, max: 25),
+      SelectIntEntry(id: 'b', name: '\$25-\$50', min: 25, max: 50),
       // ...
     };
 
 SelectEntries get wrapData => {
-      SelectTextEntry.name(id: 'a', name: 'Tiger'),
-      SelectTextEntry.name(id: 'b', name: 'Lion'),
+      SelectTextEntry(id: 'a', name: 'Tiger'),
+      SelectTextEntry(id: 'b', name: 'Lion'),
       // ...
     };
 ```
@@ -98,28 +98,28 @@ Two-level (category) data for `TabNavSelectDelegate` / `SideNavSelectDelegate` /
 
 ```dart
 SelectEntries get multiCategoryData => {
-      SelectCategoryEntry.children(
+      SelectCategoryEntry(
         id: 'cate1',
-        name: 'Cate 1',
+        name: 'Sport',
         children: {
-          SelectTextEntry.name(id: 'a', name: 'Football'),
-          SelectTextEntry.name(id: 'b', name: 'Basketball'),
+          SelectTextEntry(id: 'a', name: 'Football'),
+          SelectTextEntry(id: 'b', name: 'Basketball'),
           // ...
         },
         selectionMode: SelectionMode.single,
-        footer: SelectTextEntry.children(
+        footer: SelectTextEntry(
           id: 'c1-f',
           name: 'Letter Grade',
           children: {
-            SelectTextEntry.name(id: 'f-a', name: 'A'),
+            SelectTextEntry(id: 'f-a', name: 'A'),
             // ...
           },
         ),
         footerSelectionMode: SelectionMode.single, // header: ... works the same
       ),
-      SelectCategoryEntry.children(
+      SelectCategoryEntry(
         id: 'cate5',
-        name: 'Cate 5',
+        name: 'Price (Dollar)',
         children: {
           SelectRangeEntry(
             id: 'a',
@@ -133,7 +133,7 @@ SelectEntries get multiCategoryData => {
         selectionMode: SelectionMode.single,
         layout: const SelectRangeLayout(), // range slider
       ),
-      // cate6 uses `layout: const SelectCounterLayout()` (stepper), etc.
+      // cate6 ('Counter') uses `layout: const SelectCounterLayout()` (stepper), etc.
     };
 ```
 
@@ -141,43 +141,43 @@ Multi-level (cascading) data for `CascadingSelectDelegate` (the shape of `exampl
 
 ```dart
 SelectEntries get cascadingData => {
-      SelectCategoryEntry.children(
+      SelectCategoryEntry(
         id: 'residential',
         name: 'Residential',
         children: {
-          SelectTextEntry.children(
+          SelectTextEntry(
             id: '11',
             name: 'Single-Family',
             children: {
-              SelectTextEntry.children(
+              SelectTextEntry(
                 id: '111',
                 name: 'Rural',
                 children: {
-                  SelectTextEntry.name(id: '1111', name: 'RR'),
-                  SelectTextEntry.name(id: '1112', name: 'SF-1'),
+                  SelectTextEntry(id: '1111', name: 'RR'),
+                  SelectTextEntry(id: '1112', name: 'SF-1'),
                 },
               ),
-              SelectTextEntry.children(
+              SelectTextEntry(
                 id: '112',
                 name: 'Urban',
                 children: {
-                  SelectTextEntry.name(id: '1121', name: 'SF-2'),
-                  SelectTextEntry.name(id: '1122', name: 'SF-3'),
+                  SelectTextEntry(id: '1121', name: 'SF-2'),
+                  SelectTextEntry(id: '1122', name: 'SF-3'),
                   // ...
                 },
               ),
             },
           ),
-          SelectTextEntry.children(
+          SelectTextEntry(
             id: '12',
             name: 'Multi-Family',
             children: {
-              SelectTextEntry.children(
+              SelectTextEntry(
                 id: '121',
                 name: 'Low',
                 children: {
-                  SelectTextEntry.name(id: '1211', name: 'MF-1'),
-                  SelectTextEntry.name(id: '1212', name: 'MF-2'),
+                  SelectTextEntry(id: '1211', name: 'MF-1'),
+                  SelectTextEntry(id: '1212', name: 'MF-2'),
                 },
               ),
               // Medium / High ...
@@ -185,17 +185,17 @@ SelectEntries get cascadingData => {
           ),
         },
       ),
-      SelectCategoryEntry.children(
+      SelectCategoryEntry(
         id: 'commercial',
         name: 'Commercial',
         children: {
-          SelectTextEntry.children(
+          SelectTextEntry(
             id: '21',
             name: 'Downtown',
             children: {
-              SelectTextEntry.name(id: '211', name: 'CBD'),
-              SelectTextEntry.name(id: '212', name: 'DMU'),
-              SelectTextEntry.name(id: '213', name: 'CBD-R'),
+              SelectTextEntry(id: '211', name: 'CBD'),
+              SelectTextEntry(id: '212', name: 'DMU'),
+              SelectTextEntry(id: '213', name: 'CBD-R'),
             },
           ),
           // Retail & Office ...
@@ -205,34 +205,53 @@ SelectEntries get cascadingData => {
     };
 ```
 
-`SelectTextEntry.children(...)` / `SelectCategoryEntry.children(...)` inject each child's `parentId` recursively, so a tree can be nested as deep as needed (`category -> child -> grandchild -> ...`) without wiring `parentId` by hand.
+Nesting is the only wiring, so a tree can be nested as deep as needed (`category -> child -> grandchild -> ...`) — just keep adding `children`.
 
-An async loader (`entriesLoader`) — any `Future<SelectEntries>`, e.g. decoded from JSON:
+An async loader (`entriesLoader`) — any `Future<SelectEntries>`; this one maps the decoded `example/assets/cascading.json` onto the tree shape above:
 
 ```dart
 Future<SelectEntries> fetchCascadingData() async {
-  await Future.delayed(const Duration(milliseconds: 350)); // simulate a network delay
-  return {
-    SelectCategoryEntry.children(
-      id: 'residential',
-      name: 'Residential',
-      children: {
-        SelectTextEntry.any(parentId: '', name: 'Any', immediate: true), // parentId auto-injected
-        SelectTextEntry.children(
-          id: '11',
-          name: 'Single-Family',
-          children: {
-            SelectTextEntry.name(id: '111', name: 'Rural'),
-            SelectTextEntry.name(id: '112', name: 'Urban'),
-          },
+  // simulate a network delay
+  await Future.delayed(const Duration(milliseconds: 350));
+  final data = cascadingFromJson(await loadJsonData('cascading.json'));
+
+  final SelectEntries entries = data
+      .map(
+        (category) => SelectCategoryEntry(
+          id: category.id!,
+          name: category.name!,
+          selectionMode: SelectionMode.multiple,
+          children: category.data
+              ?.map(
+                (child) => SelectTextEntry(
+                  id: child.id!,
+                  name: child.name!,
+                  enabled: child.enabled ?? true,
+                  children: child.data
+                      ?.map(
+                        (leaf) =>
+                            SelectTextEntry(id: leaf.id!, name: leaf.name!),
+                      )
+                      .toSet(),
+                ),
+              )
+              .toSet(),
         ),
-        SelectTextEntry.name(id: '12', name: 'Multi-Family'),
-      },
-      selectionMode: SelectionMode.multiple,
-    ),
-  };
+      )
+      .toSet();
+
+  // One "Any" (clear) entry on top of every category
+  for (final SelectEntry category in entries) {
+    category.children?.insert(
+      0,
+      SelectTextEntry.any(name: 'Any', immediate: true),
+    );
+  }
+  return entries;
 }
 ```
+
+`loadJsonData` reads the asset and `cascadingFromJson` decodes it into a small `fromJson` model — both from `example/lib/entry_repository.dart`. Every JSON level maps onto one `children` level (`.map` + `children:`), so the loader keeps matching the tree shape above.
 
 For static data, skip the loader and pass the values directly — `entries` / `selectedEntries` / `resetEntries` are mutually exclusive with the loaders:
 
@@ -240,8 +259,8 @@ For static data, skip the loader and pass the values directly — `entries` / `s
 // Static data: no loader, no async — renders on the first frame
 ListSelectDelegate(
   entries: listData,
-  selectedEntries: {SelectTextEntry.name(id: 'a', name: 'Kiwi')},
-  resetEntries: {SelectTextEntry.name(id: 'a', name: 'Kiwi')},
+  selectedEntries: {SelectTextEntry(id: 'a', name: 'Kiwi')},
+  resetEntries: {SelectTextEntry(id: 'a', name: 'Kiwi')},
 );
 ```
 

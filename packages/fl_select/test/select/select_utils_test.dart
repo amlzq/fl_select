@@ -887,4 +887,90 @@ void main() {
       expect(SelectUtils().treeDepth(c), 4);
     });
   });
+
+  group('SelectUtils.deriveParentIds', () {
+    test('fills in an omitted parentId for direct children', () {
+      final parent = _category(
+        'c1',
+        'C1',
+        children: {_text('', 'a', 'A'), _text('', 'b', 'B')},
+      );
+
+      final derived = SelectUtils.deriveParentIds([parent]);
+      final derivedParent = derived.single as SelectCategoryEntry<dynamic>;
+      expect(
+        derivedParent.children!.map((e) => (e as SelectChildEntry).parentId),
+        everyElement('c1'),
+      );
+    });
+
+    test('derives each level from its direct parent', () {
+      final parent = _category(
+        'c1',
+        'C1',
+        children: {
+          _text('', 'l1', 'L1', children: {_text('', 'l2', 'L2')}),
+        },
+      );
+
+      final derived = SelectUtils.deriveParentIds([parent]);
+      final l1 =
+          (derived.single as SelectCategoryEntry<dynamic>).children!.single
+              as SelectChildEntry;
+      final l2 = l1.children!.single as SelectChildEntry;
+      expect(l1.parentId, 'c1');
+      expect(l2.parentId, 'l1');
+    });
+
+    test('preserves an explicitly authored parentId', () {
+      final parent = _category(
+        'c1',
+        'C1',
+        children: {_text('elsewhere', 'a', 'A')},
+      );
+
+      final derived = SelectUtils.deriveParentIds([parent]);
+      final child =
+          (derived.single as SelectCategoryEntry<dynamic>).children!.single
+              as SelectChildEntry;
+      expect(child.parentId, 'elsewhere');
+    });
+
+    test('derives into header and footer children', () {
+      final parent = _category(
+        'c1',
+        'C1',
+        children: {_text('', 'a', 'A')},
+        header: _text('', 'h', 'H'),
+        footer: _text('', 'f', 'F'),
+      );
+
+      final derived =
+          SelectUtils.deriveParentIds([parent]).single
+              as SelectCategoryEntry<dynamic>;
+      expect((derived.header! as SelectChildEntry).parentId, 'c1');
+      expect((derived.footer! as SelectChildEntry).parentId, 'c1');
+    });
+
+    test('returns the very same list when nothing needs deriving', () {
+      final parent = _category('c1', 'C1', children: {_text('c1', 'a', 'A')});
+      final entries = <SelectEntry<dynamic>>[parent];
+
+      expect(identical(SelectUtils.deriveParentIds(entries), entries), isTrue);
+    });
+
+    test('leaves a flat structure untouched', () {
+      final entries = <SelectEntry<dynamic>>[
+        _text('', 'a', 'A'),
+        _text('', 'b', 'B'),
+      ];
+
+      final derived = SelectUtils.deriveParentIds(entries);
+      expect(identical(derived, entries), isTrue);
+      expect(
+        derived.map((e) => (e as SelectChildEntry).parentId),
+        everyElement(''),
+      );
+    });
+  });
 }

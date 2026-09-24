@@ -26,10 +26,10 @@ class _BottomSheetExampleState extends State<BottomSheetExample> {
                       context: context,
                       delegate: ListSelectDelegate(
                         entries: {
-                          SelectTextEntry.name(id: 'a', name: 'A'),
-                          SelectTextEntry.name(id: 'b', name: 'B'),
-                          SelectTextEntry.name(id: 'c', name: 'C'),
-                          SelectTextEntry.name(id: 'd', name: 'D'),
+                          SelectTextEntry(id: 'a', name: 'A'),
+                          SelectTextEntry(id: 'b', name: 'B'),
+                          SelectTextEntry(id: 'c', name: 'C'),
+                          SelectTextEntry(id: 'd', name: 'D'),
                         },
                       ),
                       leading: Icon(Icons.list),

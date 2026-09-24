@@ -3,30 +3,30 @@
 Selections and data are a tree of `SelectEntry` nodes:
 
 - `SelectCategoryEntry` — root node; a category. Holds `children` and the `selectionMode` for them.
-- `SelectChildEntry` — any non-root node, identified by its `parentId`.
+- `SelectChildEntry` — any non-root node; it lives in its parent's `children` set, so nesting alone wires the tree.
 - `SelectEntries` — the selection/result type: `Set<SelectEntry>` (the deepest selected nodes, not the whole tree).
 
 ## Entry types
 
 | Entry | Purpose |
 | --- | --- |
-| `SelectTextEntry` | Plain text leaf. `.any(...)` builds the "Any" (clear) entry; `.name(...)` builds a parentless leaf for flat lists. |
+| `SelectTextEntry` | Plain text leaf, flat or nested (pass `children`). `.any(...)` builds the "Any" (clear) entry. |
 | `SelectRangeEntry<N, E>` | Range leaf (`min` / `max`). `.any(...)` for "Any"; `.custom(...)` for a user-input range. `SelectIntEntry<E>` = `SelectRangeEntry<int, E>`. |
 
-Common fields on every entry: `id`, `name`, `extra` (free-form payload, any type — attach your domain object here), `enabled` (defaults `true`; `false` renders the entry disabled), and `children` (nesting — see below). `parentId` is on the non-root `SelectChildEntry` (and its subclasses) only — the root `SelectCategoryEntry` has none.
+Common fields on every entry: `id`, `name`, `extra` (free-form payload, any type — attach your domain object here), `enabled` (defaults `true`; `false` renders the entry disabled), and `children` (nesting — see below).
 
 ## Building a tree
 
 ```dart
 Future<SelectEntries> fetch() async => {
-      // Single-selection category. The factory injects parentId into children.
+      // Single-selection category — children are wired by nesting alone.
       SelectCategoryEntry(
         id: 'price',
         name: 'Price',
         children: {
-          SelectIntEntry.any(parentId: 'price', name: 'Any'),
-          SelectIntEntry(parentId: 'price', id: '0-100', name: '0-100', min: 0, max: 100),
-          SelectIntEntry.custom(parentId: 'price', name: 'Custom'),
+          SelectIntEntry.any(name: 'Any'),
+          SelectIntEntry(id: '0-100', name: '0-100', min: 0, max: 100),
+          SelectIntEntry.custom(name: 'Custom'),
         },
       ),
       // Multi-selection category
@@ -35,17 +35,17 @@ Future<SelectEntries> fetch() async => {
         name: 'More',
         selectionMode: SelectionMode.multiple,
         children: {
-          SelectTextEntry.any(parentId: 'more', name: 'Any'),
-          SelectTextEntry(parentId: 'more', id: 'near_subway', name: 'Near subway'),
+          SelectTextEntry.any(name: 'Any'),
+          SelectTextEntry(id: 'near_subway', name: 'Near subway'),
         },
       ),
-      // Parentless leaves — flat single-level list (e.g. for ListSelectDelegate sort)
-      SelectTextEntry.name(id: 'default', name: 'Default'),
-      SelectTextEntry.name(id: 'newest', name: 'Newest'),
+      // Top-level leaves — flat single-level list (e.g. for ListSelectDelegate sort)
+      SelectTextEntry(id: 'default', name: 'Default'),
+      SelectTextEntry(id: 'newest', name: 'Newest'),
     };
 ```
 
-Prefer the `SelectCategoryEntry(children: {...})` factory — it injects `parentId` automatically, so children can't be wired to the wrong parent.
+Nest entries with `children` and let binding derive the links — a child can never be wired to the wrong parent, because you never name a parent at all.
 
 Cascading menus: `children` lives on the `SelectEntry` base class, so any entry — not just categories — can nest its own `children` set, and `CascadingSelectDelegate` walks these nested levels:
 
@@ -55,12 +55,11 @@ SelectCategoryEntry(
   name: 'Region',
   children: {
     SelectTextEntry(
-      parentId: 'region',
       id: 'jp',
       name: 'Japan',
       children: {
-        SelectTextEntry(parentId: 'jp', id: 'tokyo', name: 'Tokyo'),
-        SelectTextEntry(parentId: 'jp', id: 'osaka', name: 'Osaka'),
+        SelectTextEntry(id: 'tokyo', name: 'Tokyo'),
+        SelectTextEntry(id: 'osaka', name: 'Osaka'),
       },
     ),
   },
@@ -91,9 +90,9 @@ A `SelectCategoryEntry` can pin extra rows to the top/bottom of its children:
 SelectCategoryEntry(
   id: 'more',
   name: 'More',
-  header: SelectTextEntry(parentId: 'more', id: 'select_all', name: 'Select all'),
+  header: SelectTextEntry(id: 'select_all', name: 'Select all'),
   headerSelectionMode: SelectionMode.multiple, // how the header itself selects
-  footer: SelectTextEntry(parentId: 'more', id: 'clear', name: 'Clear', immediate: true),
+  footer: SelectTextEntry(id: 'clear', name: 'Clear', immediate: true),
   footerSelectionMode: SelectionMode.multiple,
   children: { ... },
 );

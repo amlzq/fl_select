@@ -7,11 +7,11 @@
 ```dart
 ListSelectDelegate(
   entries: {
-    SelectTextEntry.name(id: 'any', name: 'Any'),
-    SelectTextEntry.name(id: 'a', name: 'A'),
+    SelectTextEntry(id: 'any', name: 'Any'),
+    SelectTextEntry(id: 'a', name: 'A'),
   },
-  selectedEntries: {SelectTextEntry.name(id: 'a', name: 'A')}, // optional
-  resetEntries: {SelectTextEntry.name(id: 'a', name: 'A')},    // optional
+  selectedEntries: {SelectTextEntry(id: 'a', name: 'A')}, // optional
+  resetEntries: {SelectTextEntry(id: 'a', name: 'A')},    // optional
 );
 ```
 
@@ -28,7 +28,7 @@ Future<SelectEntries> _fetchNeighborhood() async {
       name: dto.regionName,
       children: {
         for (final n in dto.neighborhoods)
-          SelectTextEntry(parentId: 'region', id: n.id, name: n.name, extra: n),
+          SelectTextEntry(id: n.id, name: n.name, extra: n),
       },
     ),
   };
@@ -102,7 +102,7 @@ selected?.toQueryParameters(
 
 Values are percent-encoded by default; pass `encode: false` when the caller handles encoding.
 
-Flat (single-level, category-less) panels — e.g. a sort-order list built from `SelectTextEntry.name(...)` — serialize with `toIdList()` instead. It applies the same value rules (leaf ids, `min-max` for custom ranges, "Any" → parent id) and returns them in selection order:
+Flat (single-level, category-less) panels — e.g. a sort-order list built from `SelectTextEntry(...)` — serialize with `toIdList()` instead. It applies the same value rules (leaf ids, `min-max` for custom ranges, "Any" → parent id) and returns them in selection order:
 
 ```dart
 selected?.toIdList(); // [recent, cheapest]

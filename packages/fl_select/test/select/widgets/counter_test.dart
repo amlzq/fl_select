@@ -26,12 +26,12 @@ void main() {
         selectionMode: SelectionMode.single,
         layout: const SelectCounterLayout(),
         children: {
-          SelectTextEntry<dynamic>.any(parentId: 'bedrooms', name: 'Any'),
-          SelectTextEntry<dynamic>(parentId: 'bedrooms', id: 'b1', name: '1'),
-          SelectTextEntry<dynamic>(parentId: 'bedrooms', id: 'b1p', name: '1+'),
-          SelectTextEntry<dynamic>(parentId: 'bedrooms', id: 'b2', name: '2'),
-          SelectTextEntry<dynamic>(parentId: 'bedrooms', id: 'b2p', name: '2+'),
-          SelectTextEntry<dynamic>(parentId: 'bedrooms', id: 'b3', name: '3'),
+          SelectTextEntry<dynamic>.any(name: 'Any'),
+          SelectTextEntry<dynamic>(id: 'b1', name: '1'),
+          SelectTextEntry<dynamic>(id: 'b1p', name: '1+'),
+          SelectTextEntry<dynamic>(id: 'b2', name: '2'),
+          SelectTextEntry<dynamic>(id: 'b2p', name: '2+'),
+          SelectTextEntry<dynamic>(id: 'b3', name: '3'),
         },
       );
     }
@@ -128,11 +128,7 @@ void main() {
       final indices = <int>[];
       final entries = <SelectTextEntry>[];
       // Start from a selected "2" so the "-" button is active.
-      final two = SelectTextEntry<dynamic>(
-        parentId: 'bedrooms',
-        id: 'b2',
-        name: '2',
-      );
+      final two = SelectTextEntry<dynamic>(id: 'b2', name: '2');
       await pumpCounter(
         tester,
         selectedEntries: {two},
@@ -169,11 +165,7 @@ void main() {
     testWidgets('restores the position from selectedEntries on first build', (
       tester,
     ) async {
-      final twoPlus = SelectTextEntry<dynamic>(
-        parentId: 'bedrooms',
-        id: 'b2p',
-        name: '2+',
-      );
+      final twoPlus = SelectTextEntry<dynamic>(id: 'b2p', name: '2+');
       await pumpCounter(tester, selectedEntries: {twoPlus});
       expect(find.text('2+'), findsOneWidget);
     });
@@ -184,15 +176,8 @@ void main() {
       // The Any entry appears last in the passed list but must be rendered
       // at the left-most (zero) position.
       final cat = buildCategory();
-      final any = SelectTextEntry<dynamic>.any(
-        parentId: 'bedrooms',
-        name: 'Any',
-      );
-      final first = SelectTextEntry<dynamic>(
-        parentId: 'bedrooms',
-        id: 'b1',
-        name: '1',
-      );
+      final any = SelectTextEntry<dynamic>.any(name: 'Any');
+      final first = SelectTextEntry<dynamic>(id: 'b1', name: '1');
       await pumpCounter(tester, category: cat, entries: [first, any]);
       // The Any entry is shown as the current value and "-" is disabled.
       expect(find.text('Any'), findsOneWidget);
@@ -210,11 +195,7 @@ void main() {
       tester,
     ) async {
       final cat = buildCategory();
-      final onePlus = SelectTextEntry<dynamic>(
-        parentId: 'bedrooms',
-        id: 'b1p',
-        name: '1+',
-      );
+      final onePlus = SelectTextEntry<dynamic>(id: 'b1p', name: '1+');
       final base = SelectCounter(
         category: cat,
         entries: cat.children!.toList(),

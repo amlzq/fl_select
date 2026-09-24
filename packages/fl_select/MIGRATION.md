@@ -2,6 +2,116 @@
 
 ## MIGRATE TO Next
 
+### `parentId` is derived from the tree structure
+
+`SelectChildEntry.parentId` no longer has to be written by hand. Every
+`parentId` parameter is now optional, and a child left with an empty
+`parentId` is filled in with the id of its direct parent when the entries are
+bound — or validated, since `SelectController.validateEntries` derives before
+checking.
+
+You can drop the parameter and let the plain constructors build a
+two-level-or-deeper tree:
+
+```diff
+  SelectCategoryEntry(
+    id: 'c1',
+    name: 'Category 1',
+    children: {
+-     SelectTextEntry(parentId: 'c1', id: 'a', name: 'A'),
+-     SelectTextEntry(parentId: 'c1', id: 'b', name: 'B'),
++     SelectTextEntry(id: 'a', name: 'A'),
++     SelectTextEntry(id: 'b', name: 'B'),
+    },
+  );
+```
+
+Derivation recurses with each node's own id, so a nested entry gets the id of
+its **direct** parent, not of the category it ultimately belongs to.
+
+What does **not** change:
+
+- Existing code that passes a correct `parentId` keeps working unchanged; the
+  parameter is only deprecated, not removed.
+- The `.children` factory constructors (deprecated, see below) still inject the
+  parent link themselves. For them the tree shape is authoritative, so a
+  `parentId` set on a child inside `.children` is still replaced by the factory.
+- Derivation covers every path the entries take into the library: binding the
+  state tree, the entries the panel hands to the body widgets (so a tap
+  resolves its category through the derived link), and `SelectEntryCodec`.
+- An explicitly authored `parentId` is never relocated by derivation. It is
+  validated against the tree instead, so a stale link still throws instead of
+  being silently corrected:
+
+```diff
+  SelectCategoryEntry(
+    id: 'c1',
+    name: 'Category 1',
+    children: {
+-     // Stale, non-empty parentId: an ArgumentError on bind.
+      SelectTextEntry(parentId: 'c2', id: 'a', name: 'A'),
+    },
+  );
+```
+
+Note that a child built with `SelectTextEntry(id: 'a', name: 'A')` and placed
+under a category used to raise an `ArgumentError` (`parentId: ''` did not match
+`'c1'`). Its `parentId` is now derived, so such a tree simply works; to keep
+asserting an invalid tree, set a wrong non-empty `parentId` explicitly.
+
+Passing `parentId` explicitly is **deprecated** in favour of the derived form
+and will be removed in a future minor version, at which point the tree
+structure becomes the only source of the parent link.
+
+### Named constructors converge on the plain constructors
+
+The named constructors that only existed to spare the (now derived) parent link
+are **deprecated** and will be removed in a future minor version. They keep
+working unchanged — nothing has to be updated to compile — but new code should
+use the plain constructors:
+
+| Deprecated                            | Use instead                                                       |
+| ------------------------------------- | ----------------------------------------------------------------- |
+| `SelectTextEntry.id(id: 'a')`         | `SelectTextEntry(id: 'a', name: '')`                              |
+| `SelectTextEntry.name(id: 'a', name: 'A')` | `SelectTextEntry(id: 'a', name: 'A')`                        |
+| `SelectTextEntry.children(...)`       | `SelectTextEntry(...)` with `children:`                           |
+| `SelectChildEntry.empty()`            | `SelectChildEntry(id: '')`                                        |
+| `SelectChildEntry.children(...)`      | `SelectChildEntry(...)` with `children:`                          |
+| `SelectCategoryEntry.children(...)`   | `SelectCategoryEntry(...)` with `children:` / `header:` / `footer:` |
+
+```diff
+  SelectCategoryEntry(
+    id: 'c1',
+    name: 'Category 1',
+    children: {
+-     SelectTextEntry.name(id: 'a', name: 'A'),
+-     SelectTextEntry.children(
++     SelectTextEntry(id: 'a', name: 'A'),
++     SelectTextEntry(
+        id: 'b',
+        name: 'B',
+        children: {
+-         SelectTextEntry.name(id: 'b1', name: 'B1'),
++         SelectTextEntry(id: 'b1', name: 'B1'),
+        },
+      ),
+    },
+  );
+```
+
+What does **not** change:
+
+- The deprecated constructors keep their exact behaviour. In particular the
+  `.children` factories still inject the parent link eagerly, and they still
+  overwrite a `parentId` set on a child, because the tree shape is authoritative
+  for them — the plain constructors never touch it.
+- The special-purpose constructors stay: `.any(...)` on the entry types,
+  `SelectRangeEntry.custom(...)` and `SelectChildEntry.any(...)`. They express
+  the `kAnyEntryId` / `kCustomEntryId` domain semantics rather than boilerplate.
+- `SelectEntryCodec.fromJson` keeps returning fully wired entries: decoding
+  derives the parent links itself, so a decoded tree reaches a delegate exactly
+  like a hand-built one.
+
 ## MIGRATE TO 0.14.0
 
 ### `SelectThemeData.chipBarThemeData` renamed to `chipBarTheme`

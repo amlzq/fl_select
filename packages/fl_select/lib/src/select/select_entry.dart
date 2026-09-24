@@ -354,9 +354,9 @@ typedef SelectIntEntry<E> = SelectRangeEntry<int, E>;
 class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
   /// Creates a range entry.
   ///
-  /// When used inside [SelectCategoryEntry.children], the `parentId` is
-  /// automatically injected — prefer using [SelectCategoryEntry.children] for
-  /// two-level-or-deeper trees so you never need to write `parentId` by hand.
+  /// [SelectChildEntry.parentId] is optional and derived from the tree
+  /// structure when the entries are bound, so it does not have to be written
+  /// by hand.
   SelectRangeEntry({
     this.min,
     this.max,
@@ -401,8 +401,8 @@ class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
   /// Custom range entry
   /// This entry is usually rendered as an input field or a slider/progress bar in the UI.
   ///
-  /// When used inside [SelectCategoryEntry.children], the `parentId` is
-  /// automatically injected.
+  /// [SelectChildEntry.parentId] is optional and derived from the tree
+  /// structure when the entries are bound.
   SelectRangeEntry.custom({
     this.min,
     this.max,
@@ -418,8 +418,8 @@ class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
 
   /// "Any" entry
   ///
-  /// When used inside [SelectCategoryEntry.children], the `parentId` is
-  /// automatically injected.
+  /// [SelectChildEntry.parentId] is optional and derived from the tree
+  /// structure when the entries are bound.
   SelectRangeEntry.any({
     this.min,
     this.max,
@@ -511,14 +511,23 @@ extension SelectRangeEntryExt on SelectRangeEntry {
 }
 
 /// A plain text entry.
+///
+/// The default constructor is the way to build a text entry, whether it ends up
+/// as a flat top-level item or as a child of a [SelectCategoryEntry] or of
+/// another child: [SelectChildEntry.parentId] is derived from the tree
+/// structure when the entries are bound.
 class SelectTextEntry<E> extends SelectChildEntry<E> {
   /// Creates a text entry.
   ///
-  /// When used inside [SelectCategoryEntry.children], the `parentId` is
-  /// automatically injected — prefer using [SelectCategoryEntry.children] for
-  /// two-level-or-deeper trees so you never need to write `parentId` by hand.
+  /// Pass [children] to make it a branch; the children need no `parentId` of
+  /// their own, it is derived from the tree structure when the entries are
+  /// bound — recursively, and for headers/footers as well.
+  ///
+  /// The `.id`, `.name` and `.children` constructors are deprecated aliases:
+  /// each of them only spared a bit of boilerplate that derivation now
+  /// removes, so they are scheduled for removal in a future minor version.
   SelectTextEntry({
-    required super.parentId,
+    super.parentId = '',
     required super.id,
     required super.name,
     super.children,
@@ -527,52 +536,33 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
     super.extra,
   });
 
-  /// Creates a text entry from only an [id], leaving [SelectChildEntry.parentId]
-  /// empty and the name blank.
+  /// Creates a text entry from only an [id], with a blank name.
   ///
-  /// This is a placeholder-style constructor for building an entry where the
-  /// parent relationship is not (yet) known. When used inside
-  /// [SelectCategoryEntry.children], the `parentId` is automatically injected
-  /// by the category, making this constructor safe for both flat and two-level-or-deeper trees:
-  ///
-  /// ```dart
-  /// SelectCategoryEntry.children(
-  ///   id: 'c1',
-  ///   name: 'Category 1',
-  ///   children: {
-  ///     SelectTextEntry.id(id: 'a'),       // parentId auto-injected
-  ///     SelectTextEntry.name(id: 'b', name: 'B'),
-  ///   },
-  /// )
-  /// ```
-  ///
-  /// If you use the plain [SelectCategoryEntry] constructor (without
-  /// auto-injection), the `parentId` must be set explicitly on every child.
+  /// Deprecated: use the default [SelectTextEntry] constructor with
+  /// `name: ''` instead. There is no longer a separate parentless form to
+  /// distinguish — [SelectChildEntry.parentId] is derived from the tree
+  /// structure when the entries are bound, whether the entry is a flat
+  /// top-level item or a child.
+  @Deprecated(
+    'Use the default SelectTextEntry constructor with name: \'\' instead; '
+    'parentId is derived from the tree structure when the entries are bound, '
+    'so there is no parentless form left to distinguish. Scheduled for '
+    'removal in a future minor version.',
+  )
   SelectTextEntry.id({required super.id}) : super(parentId: '', name: '');
 
   /// Creates a leaf entry without a parent id.
   ///
-  /// This convenience constructor hard-codes [SelectChildEntry.parentId] to an
-  /// empty string, so it is only suitable for a flat structure where the
-  /// top level contains no [SelectCategoryEntry] (e.g. sort order).
-  ///
-  /// When used inside [SelectCategoryEntry.children], the `parentId` is
-  /// automatically injected by the category — you do **not** need to set it
-  /// manually. This is the recommended approach for two-level-or-deeper trees:
-  ///
-  /// ```dart
-  /// SelectCategoryEntry.children(
-  ///   id: 'c3',
-  ///   name: 'Category 3',
-  ///   children: {
-  ///     SelectTextEntry.name(id: 'a', name: 'A'), // parentId auto-injected
-  ///     SelectTextEntry.name(id: 'b', name: 'B'),
-  ///   },
-  /// )
-  /// ```
-  ///
-  /// If you use the plain [SelectCategoryEntry] constructor, you must set
-  /// `parentId` explicitly via the full [SelectTextEntry] constructor.
+  /// Deprecated: use the default [SelectTextEntry] constructor instead. It
+  /// builds the same entry — [SelectChildEntry.parentId] is derived from the
+  /// tree structure when the entries are bound, so the only thing this
+  /// constructor offered over the default one was sparing you a `parentId`
+  /// that is optional anyway.
+  @Deprecated(
+    'Use the default SelectTextEntry constructor instead; it builds the same '
+    'parentless leaf, and parentId is derived from the tree structure when '
+    'the entries are bound. Scheduled for removal in a future minor version.',
+  )
   SelectTextEntry.name({
     required super.id,
     required super.name,
@@ -580,40 +570,35 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
     super.immediate,
   }) : super(parentId: '');
 
-  /// Creates a text entry and automatically injects [id] as the
+  /// Creates a text entry and eagerly injects [id] as the
   /// [SelectChildEntry.parentId] of every child in [children], recursively.
   ///
-  /// This is a convenience counterpart of [SelectChildEntry.children] that
-  /// preserves the concrete [SelectTextEntry] type. Use it for multi-level
-  /// structures where the node itself is a plain text entry that also carries
-  /// children:
+  /// Deprecated: use the default [SelectTextEntry] constructor with
+  /// `children:` instead. The parent link no longer has to be injected up
+  /// front — it is derived from the tree structure when the entries are bound,
+  /// recursively and for headers/footers too — so this factory only adds its
+  /// eager, overriding injection.
+  ///
+  /// Kept for backward compatibility:
   ///
   /// ```dart
-  /// SelectChildEntry.children(
+  /// SelectTextEntry.children(
   ///   id: 'p',
   ///   name: 'Parent',
   ///   children: {
-  ///     SelectTextEntry.children(
-  ///       id: 'a',
-  ///       name: 'A',
-  ///       children: {
-  ///         SelectTextEntry.name(id: 'a1', name: 'A1'),
-  ///       },
-  ///     ),
+  ///     SelectTextEntry(id: 'a', name: 'A'), // parentId injected as 'p'
   ///   },
   /// )
   /// ```
   ///
-  /// This entry's own [SelectChildEntry.parentId] is left empty (`''`) here —
-  /// it is meant to be injected by the parent it is later placed into, so it
-  /// is not requested from you.
-  ///
-  /// If you use this constructor, children should **not** set their own
-  /// `parentId` — the injected value always wins.
-  ///
-  /// For fine-grained control (e.g. when children are pre-built and already
-  /// carry the correct `parentId`), use the default [SelectTextEntry]
-  /// constructor directly.
+  /// Its own [SelectChildEntry.parentId] stays empty (`''`): it belongs to the
+  /// parent it is later placed into. A child that sets its own `parentId` has
+  /// it overwritten, because for this factory the tree shape is authoritative.
+  @Deprecated(
+    'Use the default SelectTextEntry constructor with children: instead; the '
+    'children\'s parentId is derived from the tree structure when the entries '
+    'are bound. Scheduled for removal in a future minor version.',
+  )
   factory SelectTextEntry.children({
     required String id,
     required String name,
@@ -623,7 +608,7 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
     E? extra,
   }) {
     final injectedChildren = children
-        .map((e) => _injectParentId(e, id))
+        .map((e) => SelectUtils.injectParentIds(e, parentId: id))
         .toSet();
     return SelectTextEntry<E>(
       parentId: '',
@@ -638,10 +623,10 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
 
   /// "Any" entry
   ///
-  /// When used inside [SelectCategoryEntry.children], the `parentId` is
-  /// automatically injected.
+  /// [SelectChildEntry.parentId] is optional and derived from the tree
+  /// structure when the entries are bound.
   SelectTextEntry.any({
-    required super.parentId,
+    super.parentId = '',
     required super.name,
     super.enabled,
     super.immediate,
@@ -650,12 +635,11 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
   /// Returns a copy of this entry with the given fields replaced, preserving
   /// the concrete [SelectTextEntry] type.
   ///
-  /// Overriding [SelectChildEntry.copyWith] here is important: when
-  /// [SelectCategoryEntry.children] auto-injects the [SelectChildEntry.parentId],
-  /// it calls `copyWith` on each child. The base implementation returns a
-  /// plain [SelectChildEntry], which would lose the `SelectTextEntry` type and
-  /// break callers that filter by concrete type (e.g. the counter using
-  /// `whereType<SelectTextEntry>()`).
+  /// Overriding [SelectChildEntry.copyWith] here is important: injecting or
+  /// deriving the [SelectChildEntry.parentId] calls `copyWith` on each child.
+  /// The base implementation returns a plain [SelectChildEntry], which would
+  /// lose the `SelectTextEntry` type and break callers that filter by concrete
+  /// type (e.g. the counter using `whereType<SelectTextEntry>()`).
   @override
   SelectTextEntry<E> copyWith({
     String? parentId,
@@ -684,8 +668,23 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
 
 /// A child entry (i.e. a non-root node).
 class SelectChildEntry<E> extends SelectEntry<E> {
+  /// Creates a child entry.
+  ///
+  /// [parentId] is optional and normally left out: it is derived from the tree
+  /// structure the entries are bound into (see `SelectUtils.deriveParentIds`),
+  /// so a child placed under a [SelectCategoryEntry] or under another child
+  /// picks up the id of its direct parent automatically, so the tree is
+  /// assembled by nesting plain constructors.
+  ///
+  /// Passing it explicitly is still supported for backward compatibility. An
+  /// explicitly authored value is not relocated by derivation — it is validated
+  /// against the tree instead, so a stale link is reported rather than silently
+  /// corrected. The `.children` factory constructors are the exception: for
+  /// them the tree shape is authoritative and they always inject their own id.
+  /// Those factories, and passing `parentId` itself, are deprecated in favour of
+  /// derivation and are scheduled for removal in a future minor version.
   SelectChildEntry({
-    required this.parentId,
+    this.parentId = '',
     required super.id,
     super.name,
     super.children,
@@ -694,22 +693,31 @@ class SelectChildEntry<E> extends SelectEntry<E> {
     super.extra,
   });
 
-  /// The id of this entry's parent category.
+  /// The id of this entry's direct parent.
   ///
-  /// When the entry is created inside [SelectCategoryEntry.children], this
-  /// value is automatically injected by the category — there is no need to
-  /// set it manually.
+  /// Normally derived from the tree structure rather than authored by hand: an
+  /// entry left with an empty `parentId` has it derived from its direct parent
+  /// when the entries are bound (see `SelectUtils.deriveParentIds`). Only the
+  /// deprecated `.children` factories still inject it up front.
   final String parentId;
 
   /// "Any" entry
   SelectChildEntry.any({
-    required this.parentId,
+    this.parentId = '',
     required super.name,
     super.enabled,
     super.immediate,
     super.extra,
   }) : super(id: kAnyEntryId);
 
+  /// Creates a placeholder entry with an empty [id] and a null name.
+  ///
+  /// Deprecated: use the default [SelectChildEntry] constructor with
+  /// `id: ''` instead — it already leaves every other field at its default.
+  @Deprecated(
+    'Use the default SelectChildEntry constructor with id: \'\' instead. '
+    'Scheduled for removal in a future minor version.',
+  )
   SelectChildEntry.empty({this.parentId = ''})
     : super(
         id: '',
@@ -720,36 +728,34 @@ class SelectChildEntry<E> extends SelectEntry<E> {
         extra: null,
       );
 
-  /// Creates a child entry and automatically injects [id] as the
+  /// Creates a child entry and eagerly injects [id] as the
   /// [SelectChildEntry.parentId] of every child in [children], recursively.
   ///
-  /// This is the recommended constructor for multi-level structures. Because
-  /// `parentId` is filled in by the entry itself, you never need to manually
-  /// set it on the children — eliminating copy-paste mistakes and
-  /// forgetting-to-set errors:
+  /// Deprecated: use the default [SelectChildEntry] constructor with
+  /// `children:` instead. The parent link is derived from the tree structure
+  /// when the entries are bound, so the factory only adds its eager,
+  /// overriding injection.
+  ///
+  /// Kept for backward compatibility:
   ///
   /// ```dart
   /// SelectChildEntry.children(
   ///   id: 'p',
   ///   name: 'Parent',
   ///   children: {
-  ///     SelectTextEntry.name(id: 'a', name: 'A'),
-  ///     SelectTextEntry.name(id: 'b', name: 'B'),
+  ///     SelectTextEntry(id: 'a', name: 'A'), // parentId injected as 'p'
   ///   },
   /// )
   /// ```
   ///
-  /// This entry's own [SelectChildEntry.parentId] is left empty (`''`) here —
-  /// it is meant to be injected by the parent it is later placed into (via
-  /// `SelectCategoryEntry.children` / `SelectChildEntry.children` / a
-  /// `SelectTextEntry.children`), so it is not requested from you.
-  ///
-  /// If you use this constructor, children should **not** set their own
-  /// `parentId` — the injected value always wins.
-  ///
-  /// For fine-grained control (e.g. when children are pre-built and already
-  /// carry the correct `parentId`), use the default [SelectChildEntry]
-  /// constructor directly.
+  /// Its own [SelectChildEntry.parentId] stays empty (`''`): it belongs to the
+  /// parent it is later placed into. A child that sets its own `parentId` has
+  /// it overwritten, because for this factory the tree shape is authoritative.
+  @Deprecated(
+    'Use the default SelectChildEntry constructor with children: instead; the '
+    'children\'s parentId is derived from the tree structure when the entries '
+    'are bound. Scheduled for removal in a future minor version.',
+  )
   factory SelectChildEntry.children({
     required String id,
     String? name,
@@ -759,7 +765,7 @@ class SelectChildEntry<E> extends SelectEntry<E> {
     E? extra,
   }) {
     final injectedChildren = children
-        .map((e) => _injectParentId(e, id))
+        .map((e) => SelectUtils.injectParentIds(e, parentId: id))
         .toSet();
     return SelectChildEntry<E>(
       parentId: '',
@@ -827,60 +833,15 @@ extension SelectChildEntryExt on SelectChildEntry {
   bool get isNotEmpty => id.isNotEmpty;
 }
 
-/// Recursively injects [parentId] into [entry] and all of its descendants,
-/// setting each `SelectChildEntry.parentId` to the id of its **direct**
-/// parent node (and rewriting generic [SelectEntry] instances into child
-/// entries so they can carry a parent).
-///
-/// Shared by the [SelectChildEntry.children], [SelectTextEntry.children] and
-/// [SelectCategoryEntry.children] factory constructors, which all use their
-/// own `id` as the [parentId] of their children so callers never have to write
-/// `parentId` by hand. Because injection recurses with each node's own id, the
-/// resulting `parentId` always matches the node's direct parent — which
-/// `SelectController.validateEntries` requires for two-level-or-deeper trees.
-SelectEntry<E> _injectParentId<E>(SelectEntry<E> entry, String parentId) {
-  if (entry is SelectChildEntry<E>) {
-    final injected = entry.copyWith(parentId: parentId);
-    // The direct parent of injected's children is injected itself, so their
-    // parentId is injected's own id — not the parentId passed in above.
-    final injectedChildren = injected.children
-        ?.map((e) => _injectParentId(e, injected.id))
-        .toSet();
-    return injected.copyWith(children: injectedChildren);
-  }
-  // For a non-child entry (a SelectCategoryEntry or a generic SelectEntry),
-  // its children's direct parent is the entry itself, so recurse with entry.id.
-  final injectedChildren = entry.children
-      ?.map((e) => _injectParentId(e, entry.id))
-      .toSet();
-  if (entry is SelectCategoryEntry<E>) {
-    final injectedHeader = entry.header != null
-        ? _injectParentId(entry.header!, entry.id)
-        : null;
-    final injectedFooter = entry.footer != null
-        ? _injectParentId(entry.footer!, entry.id)
-        : null;
-    return entry.copyWith(
-      children: injectedChildren,
-      header: injectedHeader,
-      footer: injectedFooter,
-    );
-  }
-  // For generic SelectEntry subclasses, children is the only child
-  // relationship we can inject.
-  return SelectChildEntry<E>(
-    parentId: parentId,
-    id: entry.id,
-    name: entry.name,
-    children: injectedChildren,
-    enabled: entry.enabled,
-    immediate: entry.immediate,
-    extra: entry.extra,
-  );
-}
-
 /// A category entry (i.e. a root node).
 class SelectCategoryEntry<E> extends SelectEntry<E> {
+  /// Creates a category entry.
+  ///
+  /// The [children], and any [header]/[footer], need no `parentId` of their
+  /// own: it is derived from the tree structure when the entries are bound
+  /// (recursively, each node taking the id of its direct parent). The
+  /// `.children` factory is a deprecated alias that injected those links up
+  /// front instead.
   SelectCategoryEntry({
     this.selectionMode,
     this.header,
@@ -895,33 +856,36 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
     super.immediate,
   });
 
-  /// Creates a category entry and automatically injects [id] as the
-  /// [SelectChildEntry.parentId] of every child in [children], as well as
-  /// any [header]/[footer] and their recursive children.
+  /// Creates a category entry and eagerly injects [id] as the
+  /// [SelectChildEntry.parentId] of every child in [children], as well as any
+  /// [header]/[footer] and their recursive children.
   ///
-  /// This is the recommended constructor for two-level-or-deeper structures.
-  /// Because `parentId` is filled in by the category itself, you never need to
-  /// manually set it on the children — eliminating copy-paste mistakes and
-  /// forgetting-to-set errors:
+  /// Deprecated: use the default [SelectCategoryEntry] constructor and pass
+  /// [children], [header] and [footer] directly — their parent links are
+  /// derived from the tree structure when the entries are bound. The factory
+  /// only adds its eager, overriding injection.
+  ///
+  /// Kept for backward compatibility:
   ///
   /// ```dart
   /// SelectCategoryEntry.children(
   ///   id: 'c3',
   ///   name: 'Category 3',
   ///   children: {
-  ///     SelectTextEntry.name(id: 'a', name: 'A'),
-  ///     SelectTextEntry.name(id: 'b', name: 'B'),
+  ///     SelectTextEntry(id: 'a', name: 'A'), // parentId injected as 'c3'
   ///   },
   ///   layout: const SelectListLayout(),
   /// )
   /// ```
   ///
-  /// If you use this constructor, children, header, and footer entries should
-  /// **not** set their own `parentId` — the injected value always wins.
-  ///
-  /// For fine-grained control (e.g. when children are pre-built and already
-  /// carry the correct `parentId`), use the default [SelectCategoryEntry]
-  /// constructor directly.
+  /// Children, header and footer that set their own `parentId` have it
+  /// overwritten, because for this factory the tree shape is authoritative.
+  @Deprecated(
+    'Use the default SelectCategoryEntry constructor instead and pass '
+    'children:, header: and footer: directly; their parentId is derived from '
+    'the tree structure when the entries are bound. Scheduled for removal in '
+    'a future minor version.',
+  )
   factory SelectCategoryEntry.children({
     SelectionMode? selectionMode,
     SelectEntry<E>? header,
@@ -936,10 +900,14 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
     bool immediate = false,
   }) {
     final injectedChildren = children
-        .map((e) => _injectParentId(e, id))
+        .map((e) => SelectUtils.injectParentIds(e, parentId: id))
         .toSet();
-    final injectedHeader = header != null ? _injectParentId(header, id) : null;
-    final injectedFooter = footer != null ? _injectParentId(footer, id) : null;
+    final injectedHeader = header != null
+        ? SelectUtils.injectParentIds(header, parentId: id)
+        : null;
+    final injectedFooter = footer != null
+        ? SelectUtils.injectParentIds(footer, parentId: id)
+        : null;
 
     return SelectCategoryEntry<E>(
       selectionMode: selectionMode,

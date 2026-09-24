@@ -4,6 +4,12 @@
 
 - **IMPROVEMENT** the select panel now resolves its base theme from the ambient `SelectTheme` (falling back to one derived from `ThemeData` when absent), so wrapping a select in `SelectTheme` styles it instead of being ignored. The popup triggers inject their resolved `selectTheme` the same way.
 
+- **FEATURE** `SelectChildEntry.parentId` is now derived from the tree structure. The `parentId` parameters are optional, and a child left with an empty `parentId` picks up the id of its direct parent when the entries are bound — and when they are validated, since `SelectController.validateEntries` now derives before checking. Two-level-or-deeper trees no longer need the `.children` factory constructors just to get the parent links right, and a mismatched `parentId` error now suggests omitting it ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+
+- **DEPRECATION** passing `parentId` explicitly is deprecated in favour of the derived form and will be removed in a future minor version. An explicitly authored value keeps being honoured rather than relocated, so it is still validated against the tree ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+
+- **DEPRECATION** the named constructors that only spared the `parentId` boilerplate converge on the plain constructors and will be removed in a future minor version: `SelectTextEntry.id()`, `SelectTextEntry.name()`, `SelectChildEntry.empty()`, and the `.children` factories of `SelectTextEntry`, `SelectChildEntry` and `SelectCategoryEntry`. They keep working unchanged, eager injection of the `.children` factories included ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
+
 ## 0.14.0
 
 - **BREAKING** remove the deprecated `SelectController.badgedCategories` getter ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0120)).

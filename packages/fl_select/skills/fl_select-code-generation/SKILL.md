@@ -32,9 +32,9 @@ Future<SelectEntries> _fetchPrice() async => {
         id: 'price',
         name: 'Price',
         children: {
-          SelectIntEntry.any(parentId: 'price', name: 'Any'),
-          SelectIntEntry(parentId: 'price', id: '0-100', name: '0-100', min: 0, max: 100),
-          SelectIntEntry.custom(parentId: 'price', name: 'Custom'),
+          SelectIntEntry.any(name: 'Any'),
+          SelectIntEntry(id: '0-100', name: '0-100', min: 0, max: 100),
+          SelectIntEntry.custom(name: 'Custom'),
         },
       ),
     };
@@ -62,8 +62,8 @@ final SelectEntries? selected = await showSelect(
 - `SelectController.realSelectedCategories` (`SelectEntries`) returns the categories holding at least one non-"Any" selection and drives category badges and TabNavSelect's initial tab focus.
 - Every delegate is single-purpose: `ListSelectDelegate` / `GridSelectDelegate` accept flat data only and assert on two-level data (use `ExpandableSelectDelegate` / `TabNavSelectDelegate` for categories, or `WrapSelectDelegate` for flat chips).
 - Only `CascadingSelectDelegate` navigates a multi-level tree; the three two-level category delegates lay out each category's `children` according to `category.layout` (list / grid / chips / range slider / counter).
-- `SelectChildEntry` is identified by its `parentId`. Prefer the `SelectCategoryEntry(children: {...})` factory, which injects `parentId` automatically.
-- Use `SelectTextEntry.name(...)` (parentless leaf) for flat single-level lists.
+- Build the tree with `children` alone: an entry's parent is simply the entry holding it, so nesting is the whole wiring — there is no link to name by hand.
+- Use `SelectTextEntry(...)` (parentless leaf) for flat single-level lists.
 - An "Any" entry (`.any(...)`) clears its category; in `toQueryMap()` it resolves to the parent id.
 - Serialize results with `selected.toQueryMap()` / `selected.toQueryParameters(arrayFormat: ...)` for category trees, or `selected.toIdList()` for flat single-level panels — each throws `StateError` on the wrong structure, so misuse surfaces immediately; do not hand-walk the tree.
 

@@ -35,7 +35,7 @@ void main() {
             body: SelectView(
               delegate: _TestDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{
-                  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                  SelectTextEntry<dynamic>(id: 'a', name: 'A'),
                 },
                 bodyBuilder: (context, entries, _) =>
                     Text('entries:${entries.length}'),

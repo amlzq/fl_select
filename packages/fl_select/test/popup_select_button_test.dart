@@ -16,7 +16,7 @@ void main() {
               label: 'Filter',
               selectDelegate: ListSelectDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{
-                  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                  SelectTextEntry<dynamic>(id: 'a', name: 'A'),
                 },
               ),
               onApplied: (_) {},
@@ -63,8 +63,8 @@ void main() {
               label: 'Sort',
               selectDelegate: ListSelectDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{
-                  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-                  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+                  SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+                  SelectTextEntry<dynamic>(id: 'b', name: 'B'),
                 },
               ),
               onApplied: (selected) => applied = selected,
@@ -99,8 +99,8 @@ void main() {
               labelLoader: (selected) => '${selected.length} selected',
               selectDelegate: ListSelectDelegate(
                 entriesLoader: () async => <SelectEntry<dynamic>>{
-                  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-                  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+                  SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+                  SelectTextEntry<dynamic>(id: 'b', name: 'B'),
                 },
               ),
               onApplied: (_) {},
@@ -130,8 +130,8 @@ void main() {
               selectDelegate: ListSelectDelegate(
                 selectionMode: SelectionMode.multiple,
                 entries: <SelectEntry<dynamic>>{
-                  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-                  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+                  SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+                  SelectTextEntry<dynamic>(id: 'b', name: 'B'),
                 },
               ),
               onApplied: (_) {},
@@ -258,35 +258,36 @@ void main() {
       label: 'Filter',
       selectDelegate: ListSelectDelegate(
         entriesLoader: () async => <SelectEntry<dynamic>>{
-          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+          SelectTextEntry<dynamic>(id: 'a', name: 'A'),
         },
       ),
       onApplied: (_) {},
     );
 
-    testWidgets('PopupSelectButtonTheme.selectTheme reaches the overlay panel', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        MaterialApp(
-          theme: ThemeData(
-            extensions: [
-              PopupSelectButtonTheme(
-                selectTheme: SelectThemeData(
-                  ThemeData.light(),
-                  selectedColor: teal,
+    testWidgets(
+      'PopupSelectButtonTheme.selectTheme reaches the overlay panel',
+      (tester) async {
+        await tester.pumpWidget(
+          MaterialApp(
+            theme: ThemeData(
+              extensions: [
+                PopupSelectButtonTheme(
+                  selectTheme: SelectThemeData(
+                    ThemeData.light(),
+                    selectedColor: teal,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
+            home: Scaffold(body: button()),
           ),
-          home: Scaffold(body: button()),
-        ),
-      );
+        );
 
-      await tester.tap(find.text('Filter'));
-      await tester.pumpAndSettle();
+        await tester.tap(find.text('Filter'));
+        await tester.pumpAndSettle();
 
-      expect(injectedPanelTheme(tester).selectedColor, teal);
-    });
+        expect(injectedPanelTheme(tester).selectedColor, teal);
+      },
+    );
   });
 }

@@ -165,23 +165,13 @@ void main() {
       expect(any.name, 'Any');
     });
 
-    test('empty constructor creates empty placeholder', () {
-      final empty = SelectChildEntry<dynamic>.empty(parentId: 'p');
-
-      expect(empty.id, '');
-      expect(empty.parentId, 'p');
-      expect(empty.name, isNull);
-      expect(empty.enabled, isTrue);
-      expect(empty.immediate, isFalse);
-    });
-
-    test('children constructor injects parentId into direct children', () {
-      final parent = SelectChildEntry<dynamic>.children(
+    test('leaves parentId to derivation', () {
+      final parent = SelectChildEntry<dynamic>(
         id: 'p',
         name: 'Parent',
         children: {
-          SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-          SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+          SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+          SelectTextEntry<dynamic>(id: 'b', name: 'B'),
         },
       );
 
@@ -189,105 +179,55 @@ void main() {
       expect(parent.parentId, '');
       expect(parent.name, 'Parent');
       expect(parent.children!.length, 2);
+      // Nothing is injected at construction time any more: the parent links are
+      // derived from the tree structure when the entries are bound.
       for (final child in parent.children!) {
-        expect((child as SelectChildEntry).parentId, 'p');
+        expect((child as SelectChildEntry).parentId, '');
       }
     });
 
-    test(
-      'children constructor injects parentId recursively into descendants',
-      () {
-        final parent = SelectChildEntry<dynamic>.children(
-          id: 'p',
-          name: 'Parent',
-          children: {
-            SelectTextEntry<dynamic>.name(id: 'a', name: 'A').copyWith(
-              children: {SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1')},
-            ),
-          },
-        );
-
-        final child = parent.children!.single as SelectChildEntry;
-        expect(child.parentId, 'p');
-        final grandchild = child.children!.single as SelectChildEntry;
-        // Each node's parentId matches its direct parent: the grandchild's direct
-        // parent is the child (id 'a'), not the root (id 'p').
-        expect(grandchild.parentId, 'a');
-      },
-    );
-
-    test(
-      'children constructor leaves own parentId empty, preserves fields',
-      () {
-        final parent = SelectChildEntry<dynamic>.children(
-          id: 'p',
-          name: 'Parent',
-          enabled: false,
-          immediate: true,
-          extra: 42,
-          children: {SelectTextEntry<dynamic>.name(id: 'a', name: 'A')},
-        );
-
-        expect(parent.parentId, '');
-        expect(parent.id, 'p');
-        expect(parent.enabled, false);
-        expect(parent.immediate, true);
-        expect(parent.extra, 42);
-      },
-    );
-
-    test('children constructor supports nested SelectChildEntry.children', () {
-      final root = SelectChildEntry<dynamic>.children(
+    test('preserves enabled, immediate and extra', () {
+      final parent = SelectChildEntry<dynamic>(
         id: 'p',
         name: 'Parent',
-        children: {
-          SelectChildEntry<dynamic>.children(
-            id: 'g',
-            name: 'Grandparent',
-            children: {SelectTextEntry<dynamic>.name(id: 'gg', name: 'GG')},
-          ),
-        },
+        enabled: false,
+        immediate: true,
+        extra: 42,
+        children: {SelectTextEntry<dynamic>(id: 'a', name: 'A')},
       );
 
-      final inner = root.children!.single as SelectChildEntry;
-      expect(inner.parentId, 'p');
-      expect(inner.children!.single.id, 'gg');
-      final grandchild = inner.children!.single as SelectChildEntry;
-      // The grandchild's direct parent is the inner node (id 'g'), so its
-      // parentId is 'g', not the root's id 'p'.
-      expect(grandchild.parentId, 'g');
+      expect(parent.parentId, '');
+      expect(parent.id, 'p');
+      expect(parent.enabled, false);
+      expect(parent.immediate, true);
+      expect(parent.extra, 42);
     });
 
     test(
       'multi-level category tree passes SelectController.validateEntries',
       () {
-        final category = SelectCategoryEntry<dynamic>.children(
+        final category = SelectCategoryEntry<dynamic>(
           id: 'c1',
           name: 'Cate 1',
           children: {
-            SelectTextEntry<dynamic>.children(
+            SelectTextEntry<dynamic>(
               id: 'a',
               name: 'A',
               children: {
-                SelectTextEntry<dynamic>.name(id: 'a1', name: 'A1'),
-                SelectTextEntry<dynamic>.name(id: 'a2', name: 'A2'),
+                SelectTextEntry<dynamic>(id: 'a1', name: 'A1'),
+                SelectTextEntry<dynamic>(id: 'a2', name: 'A2'),
               },
             ),
-            SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-            SelectTextEntry<dynamic>.name(id: 'c', name: 'C'),
+            SelectTextEntry<dynamic>(id: 'b', name: 'B'),
+            SelectTextEntry<dynamic>(id: 'c', name: 'C'),
           },
         );
 
-        // Direct children of the category carry the category's id.
+        // Plain constructors leave every parentId empty; the links are derived
+        // from the tree structure on binding, each node taking the id of its
+        // direct parent ('a1' -> 'a' -> 'c1').
         for (final child in category.children!) {
-          expect((child as SelectChildEntry).parentId, 'c1');
-        }
-        // The 'a' branch's own children carry 'a' as their parentId.
-        final branchA =
-            category.children!.firstWhere((e) => e.id == 'a')
-                as SelectChildEntry;
-        for (final grandchild in branchA.children!) {
-          expect((grandchild as SelectChildEntry).parentId, 'a');
+          expect((child as SelectChildEntry).parentId, '');
         }
 
         // A multi-level tree must not fail parentId validation.
@@ -315,7 +255,7 @@ void main() {
     });
 
     test('isEmpty returns true for empty id', () {
-      final empty = SelectChildEntry<dynamic>.empty();
+      final empty = SelectChildEntry<dynamic>(id: '');
       expect(empty.isEmpty, isTrue);
       expect(empty.isNotEmpty, isFalse);
     });
@@ -339,16 +279,8 @@ void main() {
       expect(any.isAny, isTrue);
     });
 
-    test('id constructor creates entry with only id', () {
-      final entry = SelectTextEntry<dynamic>.id(id: 'e');
-
-      expect(entry.id, 'e');
-      expect(entry.parentId, '');
-      expect(entry.name, '');
-    });
-
-    test('name constructor creates entry without parentId', () {
-      final entry = SelectTextEntry<dynamic>.name(
+    test('default constructor creates entry without parentId', () {
+      final entry = SelectTextEntry<dynamic>(
         id: 'e',
         name: 'Entry',
         enabled: false,
@@ -369,34 +301,31 @@ void main() {
       expect(a, equals(b));
     });
 
-    test(
-      'children constructor returns a SelectTextEntry and injects parentId',
-      () {
-        final entry = SelectTextEntry<dynamic>.children(
-          id: 'p',
-          name: 'Parent',
-          children: {SelectTextEntry<dynamic>.name(id: 'a', name: 'A')},
-        );
+    test('carries children without injecting their parentId', () {
+      final entry = SelectTextEntry<dynamic>(
+        id: 'p',
+        name: 'Parent',
+        children: {SelectTextEntry<dynamic>(id: 'a', name: 'A')},
+      );
 
-        expect(entry, isA<SelectTextEntry<dynamic>>());
-        expect(entry.id, 'p');
-        expect(entry.parentId, '');
-        expect(entry.name, 'Parent');
-        final child = entry.children!.single as SelectChildEntry;
-        expect(child.parentId, 'p');
-      },
-    );
+      expect(entry, isA<SelectTextEntry<dynamic>>());
+      expect(entry.id, 'p');
+      expect(entry.parentId, '');
+      expect(entry.name, 'Parent');
+      final child = entry.children!.single as SelectChildEntry;
+      expect(child.parentId, '');
+    });
 
     test(
-      'children constructor leaves own parentId empty, preserves fields',
+      'leaves own parentId empty, preserves fields',
       () {
-        final entry = SelectTextEntry<dynamic>.children(
+        final entry = SelectTextEntry<dynamic>(
           id: 'p',
           name: 'Parent',
           enabled: false,
           immediate: true,
           extra: 'x',
-          children: {SelectTextEntry<dynamic>.name(id: 'a', name: 'A')},
+          children: {SelectTextEntry<dynamic>(id: 'a', name: 'A')},
         );
 
         expect(entry.parentId, '');
@@ -1597,5 +1526,148 @@ void main() {
         expect(testSameParentAnyOrCustomElement(any, 'other'), isFalse);
       },
     );
+  });
+
+  group('deprecated named constructors', () {
+    // These constructors remain for backward compatibility and are scheduled
+    // for removal in a future minor version: parentId is derived from the tree
+    // structure now, so all they still contribute is the eager injection they
+    // used to perform.
+
+    test('SelectChildEntry.empty still creates an empty placeholder', () {
+      // ignore: deprecated_member_use_from_same_package
+      final empty = SelectChildEntry<dynamic>.empty(parentId: 'p');
+
+      expect(empty.id, '');
+      expect(empty.parentId, 'p');
+      expect(empty.name, isNull);
+      expect(empty.enabled, isTrue);
+      expect(empty.immediate, isFalse);
+    });
+
+    test('SelectTextEntry.id still creates an entry with a blank name', () {
+      // ignore: deprecated_member_use_from_same_package
+      final entry = SelectTextEntry<dynamic>.id(id: 'e');
+
+      expect(entry.id, 'e');
+      expect(entry.parentId, '');
+      expect(entry.name, '');
+    });
+
+    test('SelectTextEntry.name matches the default constructor', () {
+      // ignore: deprecated_member_use_from_same_package
+      final legacy = SelectTextEntry<dynamic>.name(id: 'e', name: 'Entry');
+      final current = SelectTextEntry<dynamic>(id: 'e', name: 'Entry');
+
+      expect(legacy, equals(current));
+    });
+
+    test('SelectChildEntry.children still injects parentId into children', () {
+      // ignore: deprecated_member_use_from_same_package
+      final parent = SelectChildEntry<dynamic>.children(
+        id: 'p',
+        name: 'Parent',
+        children: {
+          SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+          SelectTextEntry<dynamic>(id: 'b', name: 'B'),
+        },
+      );
+
+      expect(parent.parentId, '');
+      for (final child in parent.children!) {
+        expect((child as SelectChildEntry).parentId, 'p');
+      }
+    });
+
+    test('SelectChildEntry.children injects recursively', () {
+      // ignore: deprecated_member_use_from_same_package
+      final parent = SelectChildEntry<dynamic>.children(
+        id: 'p',
+        name: 'Parent',
+        children: {
+          SelectTextEntry<dynamic>(id: 'a', name: 'A').copyWith(
+            children: {SelectTextEntry<dynamic>(id: 'a1', name: 'A1')},
+          ),
+        },
+      );
+
+      final child = parent.children!.single as SelectChildEntry;
+      expect(child.parentId, 'p');
+      final grandchild = child.children!.single as SelectChildEntry;
+      // Each node's parentId matches its direct parent: the grandchild's direct
+      // parent is the child (id 'a'), not the root (id 'p').
+      expect(grandchild.parentId, 'a');
+    });
+
+    test('SelectChildEntry.children overwrites explicit child parentIds', () {
+      // ignore: deprecated_member_use_from_same_package
+      final parent = SelectChildEntry<dynamic>.children(
+        id: 'p',
+        name: 'Parent',
+        children: {
+          SelectTextEntry<dynamic>(parentId: 'stale', id: 'a', name: 'A'),
+        },
+      );
+
+      // The tree shape stays authoritative for this factory.
+      expect((parent.children!.single as SelectChildEntry).parentId, 'p');
+    });
+
+    test('SelectTextEntry.children keeps the concrete type and injects', () {
+      // ignore: deprecated_member_use_from_same_package
+      final entry = SelectTextEntry<dynamic>.children(
+        id: 'p',
+        name: 'Parent',
+        children: {SelectTextEntry<dynamic>(id: 'a', name: 'A')},
+      );
+
+      expect(entry, isA<SelectTextEntry<dynamic>>());
+      expect(entry.parentId, '');
+      expect((entry.children!.single as SelectChildEntry).parentId, 'p');
+    });
+
+    test('SelectCategoryEntry.children injects parentId into every branch', () {
+      // ignore: deprecated_member_use_from_same_package
+      final category = SelectCategoryEntry<dynamic>.children(
+        id: 'c1',
+        name: 'Cate 1',
+        children: {
+          SelectTextEntry<dynamic>(
+            id: 'a',
+            name: 'A',
+            children: {
+              SelectTextEntry<dynamic>(id: 'a1', name: 'A1'),
+              SelectTextEntry<dynamic>(id: 'a2', name: 'A2'),
+            },
+          ),
+          SelectTextEntry<dynamic>(id: 'b', name: 'B'),
+        },
+        header: SelectTextEntry<dynamic>(id: 'h', name: 'H'),
+        footer: SelectTextEntry<dynamic>(
+          id: 'f',
+          name: 'F',
+          children: {SelectTextEntry<dynamic>(id: 'f1', name: 'F1')},
+        ),
+      );
+
+      for (final child in category.children!) {
+        expect((child as SelectChildEntry).parentId, 'c1');
+      }
+      final branchA =
+          category.children!.firstWhere((e) => e.id == 'a')
+              as SelectChildEntry;
+      for (final grandchild in branchA.children!) {
+        expect((grandchild as SelectChildEntry).parentId, 'a');
+      }
+      expect((category.header! as SelectChildEntry).parentId, 'c1');
+      final footer = category.footer! as SelectChildEntry;
+      expect(footer.parentId, 'c1');
+      expect((footer.children!.single as SelectChildEntry).parentId, 'f');
+
+      expect(
+        () => SelectController.validateEntries([category]),
+        returnsNormally,
+      );
+    });
   });
 }

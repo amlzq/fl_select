@@ -61,6 +61,48 @@ void main() {
       expect(notified, isFalse);
     });
 
+    test('bindState derives an omitted parentId from the tree', () {
+      final controller = SelectController(selectionMode: SelectionMode.single);
+      final c = _category('c', 'C', children: {_text('', 'a', 'A')});
+      controller.bindState([c], initializeAnyIfEmpty: false);
+
+      final bound =
+          controller.tree.entries.single as SelectCategoryEntry<dynamic>;
+      expect((bound.children!.single as SelectChildEntry).parentId, 'c');
+      expect(controller.select('a', parentId: 'c'), isTrue);
+    });
+
+    test('bindState derives every level from its direct parent', () {
+      final controller = SelectController(selectionMode: SelectionMode.single);
+      final c = _category(
+        'c',
+        'C',
+        children: {
+          _text('', 'p', 'P', children: {_text('', 'l', 'L')}),
+        },
+      );
+      controller.bindState([c], initializeAnyIfEmpty: false);
+
+      final bound =
+          controller.tree.entries.single as SelectCategoryEntry<dynamic>;
+      final parent = bound.children!.single as SelectChildEntry;
+      expect(parent.parentId, 'c');
+      expect((parent.children!.single as SelectChildEntry).parentId, 'p');
+      expect(controller.select('l', parentId: 'p'), isTrue);
+    });
+
+    test('bindState does not notify again when a derived tree is rebound', () {
+      final controller = SelectController(selectionMode: SelectionMode.single);
+      var notified = false;
+      controller.addListener(() => notified = true);
+
+      final c = _category('c', 'C', children: {_text('', 'a', 'A')});
+      controller.bindState([c], initializeAnyIfEmpty: false);
+      notified = false;
+      controller.bindState([c], initializeAnyIfEmpty: false);
+      expect(notified, isFalse);
+    });
+
     test('bindState with initializeAnyIfEmpty initializes Any entries', () {
       final controller = SelectController(selectionMode: SelectionMode.single);
       final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');

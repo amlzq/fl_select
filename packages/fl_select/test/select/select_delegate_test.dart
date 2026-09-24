@@ -9,23 +9,23 @@ import 'package:flutter_test/flutter_test.dart';
 /// and [ExpandableSelectDelegate]. Every delegate accepts exactly one data
 /// shape and asserts on the other.
 Set<SelectEntry> get _flatEntries => {
-  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+  SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+  SelectTextEntry<dynamic>(id: 'b', name: 'B'),
 };
 
 Set<SelectEntry> get _categoryEntries => {
-  SelectCategoryEntry<dynamic>.children(
+  SelectCategoryEntry<dynamic>(
     id: 'cate1',
     name: 'Cate 1',
     children: {
-      SelectTextEntry<dynamic>.name(id: 'a1', name: 'A 1'),
-      SelectTextEntry<dynamic>.name(id: 'a2', name: 'A 2'),
+      SelectTextEntry<dynamic>(id: 'a1', name: 'A 1'),
+      SelectTextEntry<dynamic>(id: 'a2', name: 'A 2'),
     },
   ),
-  SelectCategoryEntry<dynamic>.children(
+  SelectCategoryEntry<dynamic>(
     id: 'cate2',
     name: 'Cate 2',
-    children: {SelectTextEntry<dynamic>.name(id: 'b1', name: 'B 1')},
+    children: {SelectTextEntry<dynamic>(id: 'b1', name: 'B 1')},
   ),
 };
 
@@ -122,33 +122,33 @@ SelectItemBuilder get _partialItemBuilder =>
 /// auto-selected when the selection starts empty, which would make the
 /// initial `selected` assertions non-deterministic.
 Set<SelectEntry> _ibFlatEntries() => {
-  SelectTextEntry<dynamic>.name(id: 'all', name: 'All'),
-  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-  SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
+  SelectTextEntry<dynamic>(id: 'all', name: 'All'),
+  SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+  SelectTextEntry<dynamic>(id: 'b', name: 'B'),
   SelectRangeEntry.custom(name: 'Custom'),
 };
 
 /// Two-level entries: two list-layout categories, so category-based
 /// delegates have two switchable groups of children.
 Set<SelectEntry> _ibCategoryEntries() => {
-  SelectCategoryEntry<dynamic>.children(
+  SelectCategoryEntry<dynamic>(
     id: 'catA',
     name: 'Tab A',
     layout: const SelectListLayout(),
     children: {
-      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-      SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-      SelectTextEntry<dynamic>.name(id: 'c', name: 'C'),
+      SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+      SelectTextEntry<dynamic>(id: 'b', name: 'B'),
+      SelectTextEntry<dynamic>(id: 'c', name: 'C'),
     },
   ),
-  SelectCategoryEntry<dynamic>.children(
+  SelectCategoryEntry<dynamic>(
     id: 'catB',
     name: 'Tab B',
     layout: const SelectListLayout(),
     children: {
-      SelectTextEntry<dynamic>.name(id: 'd', name: 'D'),
-      SelectTextEntry<dynamic>.name(id: 'e', name: 'E'),
-      SelectTextEntry<dynamic>.name(id: 'f', name: 'F'),
+      SelectTextEntry<dynamic>(id: 'd', name: 'D'),
+      SelectTextEntry<dynamic>(id: 'e', name: 'E'),
+      SelectTextEntry<dynamic>(id: 'f', name: 'F'),
     },
   ),
 };
@@ -156,14 +156,14 @@ Set<SelectEntry> _ibCategoryEntries() => {
 /// Two-level entries whose categories render as wrapped chips, exercising
 /// the chip-host path of the item builder.
 Set<SelectEntry> _wrapCategoryEntries() => {
-  SelectCategoryEntry<dynamic>.children(
+  SelectCategoryEntry<dynamic>(
     id: 'catA',
     name: 'Group A',
     layout: const SelectWrapLayout(),
     children: {
-      SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
-      SelectTextEntry<dynamic>.name(id: 'b', name: 'B'),
-      SelectTextEntry<dynamic>.name(id: 'c', name: 'C'),
+      SelectTextEntry<dynamic>(id: 'a', name: 'A'),
+      SelectTextEntry<dynamic>(id: 'b', name: 'B'),
+      SelectTextEntry<dynamic>(id: 'c', name: 'C'),
     },
   ),
 };
@@ -460,7 +460,7 @@ void main() {
   group('sync data', () {
     test('entries can be supplied without a loader', () {
       final entries = <SelectEntry<dynamic>>{
-        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+        SelectTextEntry<dynamic>(id: 'a', name: 'A'),
       };
       final delegate = ListSelectDelegate(entries: entries);
 
@@ -470,7 +470,7 @@ void main() {
 
     test('asyncEntries wraps sync entries in a future', () async {
       final entries = <SelectEntry<dynamic>>{
-        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+        SelectTextEntry<dynamic>(id: 'a', name: 'A'),
       };
       final delegate = ListSelectDelegate(entries: entries);
 
@@ -514,7 +514,7 @@ void main() {
 
     test('selectedEntries supplied via the constructor is returned as-is', () {
       final selected = <SelectEntry<dynamic>>{
-        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+        SelectTextEntry<dynamic>(id: 'a', name: 'A'),
       };
       final delegate = ListSelectDelegate(
         entries: const <SelectEntry<dynamic>>{},
@@ -526,7 +526,7 @@ void main() {
 
     test('resetEntries supplied via the constructor is returned as-is', () {
       final reset = <SelectEntry<dynamic>>{
-        SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+        SelectTextEntry<dynamic>(id: 'a', name: 'A'),
       };
       final delegate = ListSelectDelegate(
         entries: const <SelectEntry<dynamic>>{},
@@ -545,7 +545,7 @@ void main() {
             body: SelectView(
               delegate: ListSelectDelegate(
                 entries: <SelectEntry<dynamic>>{
-                  SelectTextEntry<dynamic>.name(id: 'a', name: 'A'),
+                  SelectTextEntry<dynamic>(id: 'a', name: 'A'),
                 },
               ),
               onChanged: (_) {},

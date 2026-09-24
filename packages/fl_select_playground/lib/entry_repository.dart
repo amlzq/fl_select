@@ -53,12 +53,12 @@ class EntryRepository {
   Future<SelectEntries> fetchListData() async {
     await _simulateNetworkDelay(250);
     final entries = <SelectEntry>{
-      SelectTextEntry.name(id: 'newest', name: 'Newest'),
-      SelectTextEntry.name(id: 'oldest', name: 'Oldest'),
-      SelectTextEntry.name(id: 'name_asc', name: 'Name (A to Z)'),
-      SelectTextEntry.name(id: 'name_desc', name: 'Name (Z to A)'),
-      SelectTextEntry.name(id: 'popular', name: 'Most Popular'),
-      SelectTextEntry.name(id: 'rating', name: 'Top Rated'),
+      SelectTextEntry(id: 'newest', name: 'Newest'),
+      SelectTextEntry(id: 'oldest', name: 'Oldest'),
+      SelectTextEntry(id: 'name_asc', name: 'Name (A to Z)'),
+      SelectTextEntry(id: 'name_desc', name: 'Name (Z to A)'),
+      SelectTextEntry(id: 'popular', name: 'Most Popular'),
+      SelectTextEntry(id: 'rating', name: 'Top Rated'),
     };
     debugPrint('list length: ${entries.length}');
     return entries;
@@ -86,10 +86,10 @@ class EntryRepository {
         minHintText: noMinHintText,
         maxHintText: noMaxHintText,
       ),
-      SelectTextEntry.name(id: 'a', name: '0-100'),
-      SelectTextEntry.name(id: 'b', name: '100-500'),
-      SelectTextEntry.name(id: 'c', name: '500-1000'),
-      SelectTextEntry.name(id: 'd', name: '1000-2000'),
+      SelectTextEntry(id: 'a', name: '0-100'),
+      SelectTextEntry(id: 'b', name: '100-500'),
+      SelectTextEntry(id: 'c', name: '500-1000'),
+      SelectTextEntry(id: 'd', name: '1000-2000'),
     };
     debugPrint('grid length: ${entries.length}');
     return entries;
@@ -113,20 +113,20 @@ class EntryRepository {
   Future<SelectEntries> fetchWrapData() async {
     await _simulateNetworkDelay(250);
     final entries = <SelectEntry>{
-      SelectTextEntry.name(id: 'a', name: 'Tiger'),
-      SelectTextEntry.name(id: 'b', name: 'Lion'),
-      SelectTextEntry.name(id: 'c', name: 'Bear'),
-      SelectTextEntry.name(id: 'd', name: 'Dog'),
-      SelectTextEntry.name(id: 'e', name: 'Cat'),
-      SelectTextEntry.name(id: 'f', name: 'Elephant'),
-      SelectTextEntry.name(id: 'g', name: 'Monkey'),
-      SelectTextEntry.name(id: 'h', name: 'Pig'),
-      SelectTextEntry.name(id: 'i', name: 'Horse'),
-      SelectTextEntry.name(id: 'j', name: 'Sheep'),
-      SelectTextEntry.name(id: 'k', name: 'Cow'),
-      SelectTextEntry.name(id: 'l', name: 'Chicken'),
-      SelectTextEntry.name(id: 'm', name: 'Duck'),
-      SelectTextEntry.name(id: 'n', name: 'Penguin'),
+      SelectTextEntry(id: 'a', name: 'Tiger'),
+      SelectTextEntry(id: 'b', name: 'Lion'),
+      SelectTextEntry(id: 'c', name: 'Bear'),
+      SelectTextEntry(id: 'd', name: 'Dog'),
+      SelectTextEntry(id: 'e', name: 'Cat'),
+      SelectTextEntry(id: 'f', name: 'Elephant'),
+      SelectTextEntry(id: 'g', name: 'Monkey'),
+      SelectTextEntry(id: 'h', name: 'Pig'),
+      SelectTextEntry(id: 'i', name: 'Horse'),
+      SelectTextEntry(id: 'j', name: 'Sheep'),
+      SelectTextEntry(id: 'k', name: 'Cow'),
+      SelectTextEntry(id: 'l', name: 'Chicken'),
+      SelectTextEntry(id: 'm', name: 'Duck'),
+      SelectTextEntry(id: 'n', name: 'Penguin'),
     };
     debugPrint('wrap length: ${entries.length}');
     return entries;
@@ -144,7 +144,7 @@ class EntryRepository {
       id: 'residential',
       name: '',
       children: {
-        SelectTextEntry.any(parentId: 'residential', name: anyEntryText),
+        SelectTextEntry.any(name: anyEntryText),
       },
     ),
   };
@@ -161,15 +161,13 @@ class EntryRepository {
     final jsonString = await rootBundle.loadString('assets/cascading.json');
     final entries = cascadingFromJson(jsonString)
         .map(
-          (category) => SelectCategoryEntry.children(
+          (category) => SelectCategoryEntry(
             id: category.id!,
             name: category.name!,
             selectionMode: SelectionMode.multiple,
             children: {
-              SelectTextEntry.any(parentId: '', name: anyEntryText),
-              ...?category.data?.map(
-                (node) => _cascadingTextEntry(node, category.id!),
-              ),
+              SelectTextEntry.any(name: anyEntryText),
+              ...?category.data?.map(_cascadingTextEntry),
             },
           ),
         )
@@ -181,17 +179,15 @@ class EntryRepository {
   /// Recursively turns a [CascadingData] node into a [SelectTextEntry].
   ///
   /// The cascading delegate renders one column per level, so every nested
-  /// `data` array becomes another level of children.
-  SelectTextEntry _cascadingTextEntry(CascadingData node, String parentId) =>
-      SelectTextEntry(
-        parentId: parentId,
-        id: node.id!,
-        name: node.name!,
-        enabled: node.enabled ?? true,
-        children: node.data
-            ?.map((child) => _cascadingTextEntry(child, node.id!))
-            .toSet(),
-      );
+  /// `data` array becomes another level of children. No `parentId` is written
+  /// by hand: each node picks up the id of its direct parent when the entries
+  /// are bound.
+  SelectTextEntry _cascadingTextEntry(CascadingData node) => SelectTextEntry(
+    id: node.id!,
+    name: node.name!,
+    enabled: node.enabled ?? true,
+    children: node.data?.map(_cascadingTextEntry).toSet(),
+  );
 
   // -------------------------------------------------------------------------
   // Two-level — categories for the TabNav / SideNav / Expandable delegates.
@@ -213,53 +209,53 @@ class EntryRepository {
   Future<SelectEntries> fetchTwoLevelData() async {
     await _simulateNetworkDelay(850);
     final entries = <SelectCategoryEntry>{
-      SelectCategoryEntry.children(
+      SelectCategoryEntry(
         id: 'cate1',
         name: 'Sport',
         children: {
-          SelectTextEntry.name(id: 'a', name: 'Football'),
-          SelectTextEntry.name(id: 'b', name: 'Basketball'),
-          SelectTextEntry.name(id: 'c', name: 'Baseball'),
-          SelectTextEntry.name(id: 'd', name: 'Tennis'),
+          SelectTextEntry(id: 'a', name: 'Football'),
+          SelectTextEntry(id: 'b', name: 'Basketball'),
+          SelectTextEntry(id: 'c', name: 'Baseball'),
+          SelectTextEntry(id: 'd', name: 'Tennis'),
         },
         selectionMode: SelectionMode.single,
-        footer: SelectTextEntry.children(
+        footer: SelectTextEntry(
           id: 'c1-f',
           name: 'Letter Grade',
           children: {
-            SelectTextEntry.name(id: 'f-a', name: 'A'),
-            SelectTextEntry.name(id: 'f-b', name: 'B'),
-            SelectTextEntry.name(id: 'f-c', name: 'C'),
-            SelectTextEntry.name(id: 'f-d', name: 'D'),
-            SelectTextEntry.name(id: 'f-d', name: 'E'),
+            SelectTextEntry(id: 'f-a', name: 'A'),
+            SelectTextEntry(id: 'f-b', name: 'B'),
+            SelectTextEntry(id: 'f-c', name: 'C'),
+            SelectTextEntry(id: 'f-d', name: 'D'),
+            SelectTextEntry(id: 'f-d', name: 'E'),
           },
         ),
         footerSelectionMode: SelectionMode.single,
       ),
-      SelectCategoryEntry.children(
+      SelectCategoryEntry(
         id: 'cate2',
         name: 'Cuisine',
-        header: SelectTextEntry.children(
+        header: SelectTextEntry(
           id: 'c2-h',
           name: 'Letter Grade',
           children: {
-            SelectTextEntry.name(id: 'h-a', name: '1'),
-            SelectTextEntry.name(id: 'h-b', name: '2'),
-            SelectTextEntry.name(id: 'h-c', name: '3'),
-            SelectTextEntry.name(id: 'h-d', name: '4'),
-            SelectTextEntry.name(id: 'h-d', name: '5'),
+            SelectTextEntry(id: 'h-a', name: '1'),
+            SelectTextEntry(id: 'h-b', name: '2'),
+            SelectTextEntry(id: 'h-c', name: '3'),
+            SelectTextEntry(id: 'h-d', name: '4'),
+            SelectTextEntry(id: 'h-d', name: '5'),
           },
         ),
         headerSelectionMode: SelectionMode.single,
         children: {
-          SelectTextEntry.name(id: 'a', name: 'Chinese'),
-          SelectTextEntry.name(id: 'b', name: 'French'),
-          SelectTextEntry.name(id: 'c', name: 'Indian'),
-          SelectTextEntry.name(id: 'd', name: 'Turkish'),
+          SelectTextEntry(id: 'a', name: 'Chinese'),
+          SelectTextEntry(id: 'b', name: 'French'),
+          SelectTextEntry(id: 'c', name: 'Indian'),
+          SelectTextEntry(id: 'd', name: 'Turkish'),
         },
         selectionMode: SelectionMode.single,
       ),
-      SelectCategoryEntry.children(
+      SelectCategoryEntry(
         id: 'cate3',
         name: 'Storage (GB)',
         children: {
@@ -286,27 +282,27 @@ class EntryRepository {
         },
         selectionMode: SelectionMode.single,
       ),
-      SelectCategoryEntry.children(
+      SelectCategoryEntry(
         id: 'cate4',
         name: 'Animal',
         children: {
-          SelectTextEntry.name(id: 'a', name: 'Tiger'),
-          SelectTextEntry.name(id: 'b', name: 'Lion'),
-          SelectTextEntry.name(id: 'c', name: 'Bear'),
-          SelectTextEntry.name(id: 'd', name: 'Elephant'),
-          SelectTextEntry.name(id: 'e', name: 'Monkey'),
-          SelectTextEntry.name(id: 'f', name: 'Dog'),
-          SelectTextEntry.name(id: 'g', name: 'Cat'),
-          SelectTextEntry.name(id: 'h', name: 'Pig'),
-          SelectTextEntry.name(id: 'i', name: 'Horse'),
-          SelectTextEntry.name(id: 'j', name: 'Sheep'),
-          SelectTextEntry.name(id: 'k', name: 'Cow'),
-          SelectTextEntry.name(id: 'l', name: 'Chicken'),
-          SelectTextEntry.name(id: 'm', name: 'Duck'),
-          SelectTextEntry.name(id: 'n', name: 'Pig'),
+          SelectTextEntry(id: 'a', name: 'Tiger'),
+          SelectTextEntry(id: 'b', name: 'Lion'),
+          SelectTextEntry(id: 'c', name: 'Bear'),
+          SelectTextEntry(id: 'd', name: 'Elephant'),
+          SelectTextEntry(id: 'e', name: 'Monkey'),
+          SelectTextEntry(id: 'f', name: 'Dog'),
+          SelectTextEntry(id: 'g', name: 'Cat'),
+          SelectTextEntry(id: 'h', name: 'Pig'),
+          SelectTextEntry(id: 'i', name: 'Horse'),
+          SelectTextEntry(id: 'j', name: 'Sheep'),
+          SelectTextEntry(id: 'k', name: 'Cow'),
+          SelectTextEntry(id: 'l', name: 'Chicken'),
+          SelectTextEntry(id: 'm', name: 'Duck'),
+          SelectTextEntry(id: 'n', name: 'Pig'),
         },
       ),
-      SelectCategoryEntry.children(
+      SelectCategoryEntry(
         id: 'cate5',
         name: 'Price (Dollar)',
         children: {
@@ -325,17 +321,17 @@ class EntryRepository {
         selectionMode: SelectionMode.single,
         layout: const SelectRangeLayout(),
       ),
-      SelectCategoryEntry.children(
+      SelectCategoryEntry(
         id: 'cate6',
         name: 'Counter',
         children: {
-          SelectTextEntry.any(parentId: 'cate6', name: anyEntryText),
-          SelectTextEntry.name(id: 'a', name: '1'),
-          SelectTextEntry.name(id: 'b', name: '2'),
-          SelectTextEntry.name(id: 'c', name: '3'),
-          SelectTextEntry.name(id: 'd', name: '4'),
-          SelectTextEntry.name(id: 'e', name: '5'),
-          SelectTextEntry.name(id: 'e', name: '5+'),
+          SelectTextEntry.any(name: anyEntryText),
+          SelectTextEntry(id: 'a', name: '1'),
+          SelectTextEntry(id: 'b', name: '2'),
+          SelectTextEntry(id: 'c', name: '3'),
+          SelectTextEntry(id: 'd', name: '4'),
+          SelectTextEntry(id: 'e', name: '5'),
+          SelectTextEntry(id: 'e', name: '5+'),
         },
         selectionMode: SelectionMode.single,
         layout: const SelectCounterLayout(),
