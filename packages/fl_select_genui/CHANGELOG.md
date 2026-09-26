@@ -1,8 +1,8 @@
-## Next
+## 0.5.0
 
-- **IMPROVEMENT** Bump fl_select to `^0.15.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-next)).
+- **IMPROVEMENT** Bump fl_select to `^0.15.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-050)).
 
-- **IMPROVEMENT** Validate the decoded entry tree so that an invalid payload renders the schema error card ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-next)).
+- **IMPROVEMENT** Validate the decoded entry tree so that an invalid payload renders the schema error card ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-050)).
 
 ## 0.4.0
 
@@ -18,9 +18,9 @@
 
 ## 0.3.0
 
-- **FEATURE** Ship a Dart Skills CLI agent skill inside the package ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-next)).
+- **FEATURE** Ship a Dart Skills CLI agent skill inside the package ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-030)).
 
-- **IMPROVEMENT** Bump fl_select to `^0.13.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-next)).
+- **IMPROVEMENT** Bump fl_select to `^0.13.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-030)).
 
 ## 0.2.1
 
