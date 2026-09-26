@@ -67,6 +67,8 @@ Entries form a tree. `SelectCategoryEntry` is the root (a category) and `SelectC
 | `SelectTextEntry`        | A plain text leaf, flat or nested (pass `children`). Use `.any(...)` for the "Any" (clear) entry.                                                                             |
 | `SelectRangeEntry<N, E>` | A numeric range leaf (`min`/`max`, snapped by `divisions`). Use `.any(...)` for "Any" and `.custom(...)` for a user-input range. `SelectIntEntry<E>` is a handy alias for `SelectRangeEntry<int, E>`. |
 
+Sibling ids must be distinct — within the top level, the `children` of one node, and the children of a `header` / `footer`. Binding reports a duplicate id as an `ArgumentError`, so keep them apart; the same id may still be reused under different parents (the built-in "Any" and "custom" entries rely on that).
+
 Selection is controlled by `SelectionMode` (`single` by default, or `multiple`), set on a `SelectCategoryEntry` (per category) or on the delegate (fallback). In multiple-selection mode, an entry with `immediate: true` applies on tap and skips the action bar.
 
 Entries load asynchronously via `entriesLoader`, which returns a `Future<SelectEntries>` where `SelectEntries` is `Set<SelectEntry>`.
@@ -76,20 +78,17 @@ Flat data for `ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate`
 ```dart
 SelectEntries get listData => {
       SelectTextEntry(id: 'a', name: 'Kiwi'),
-      SelectTextEntry(id: 'b', name: 'Grape'),
       // ...
     };
 
 SelectEntries get gridData => {
       SelectIntEntry.custom(), // user-input min/max
       SelectIntEntry(id: 'a', name: '\$0-\$25', min: 0, max: 25),
-      SelectIntEntry(id: 'b', name: '\$25-\$50', min: 25, max: 50),
       // ...
     };
 
 SelectEntries get wrapData => {
       SelectTextEntry(id: 'a', name: 'Tiger'),
-      SelectTextEntry(id: 'b', name: 'Lion'),
       // ...
     };
 ```
@@ -103,7 +102,6 @@ SelectEntries get multiCategoryData => {
         name: 'Sport',
         children: {
           SelectTextEntry(id: 'a', name: 'Football'),
-          SelectTextEntry(id: 'b', name: 'Basketball'),
           // ...
         },
         selectionMode: SelectionMode.single,
@@ -154,7 +152,7 @@ SelectEntries get cascadingData => {
                 name: 'Rural',
                 children: {
                   SelectTextEntry(id: '1111', name: 'RR'),
-                  SelectTextEntry(id: '1112', name: 'SF-1'),
+                  // ...
                 },
               ),
               SelectTextEntry(
@@ -162,50 +160,17 @@ SelectEntries get cascadingData => {
                 name: 'Urban',
                 children: {
                   SelectTextEntry(id: '1121', name: 'SF-2'),
-                  SelectTextEntry(id: '1122', name: 'SF-3'),
                   // ...
                 },
               ),
             },
           ),
-          SelectTextEntry(
-            id: '12',
-            name: 'Multi-Family',
-            children: {
-              SelectTextEntry(
-                id: '121',
-                name: 'Low',
-                children: {
-                  SelectTextEntry(id: '1211', name: 'MF-1'),
-                  SelectTextEntry(id: '1212', name: 'MF-2'),
-                },
-              ),
-              // Medium / High ...
-            },
-          ),
+          // ...
         },
       ),
-      SelectCategoryEntry(
-        id: 'commercial',
-        name: 'Commercial',
-        children: {
-          SelectTextEntry(
-            id: '21',
-            name: 'Downtown',
-            children: {
-              SelectTextEntry(id: '211', name: 'CBD'),
-              SelectTextEntry(id: '212', name: 'DMU'),
-              SelectTextEntry(id: '213', name: 'CBD-R'),
-            },
-          ),
-          // Retail & Office ...
-        },
-      ),
-      // Industrial / Special / Overlay ...
+      // Commercial / Industrial / Special / Overlay ...
     };
 ```
-
-Nesting is the only wiring, so a tree can be nested as deep as needed (`category -> child -> grandchild -> ...`) — just keep adding `children`.
 
 An async loader (`entriesLoader`) — any `Future<SelectEntries>`; this one maps the decoded `example/assets/cascading.json` onto the tree shape above:
 
@@ -251,7 +216,7 @@ Future<SelectEntries> fetchCascadingData() async {
 }
 ```
 
-`loadJsonData` reads the asset and `cascadingFromJson` decodes it into a small `fromJson` model — both from `example/lib/entry_repository.dart`. Every JSON level maps onto one `children` level (`.map` + `children:`), so the loader keeps matching the tree shape above.
+`loadJsonData` reads the asset and `cascadingFromJson` decodes it into a small `fromJson` model — both from `example/lib/entry_repository.dart`. Every JSON level maps onto one `children` level (`.map` + `children:`).
 
 For static data, skip the loader and pass the values directly — `entries` / `selectedEntries` / `resetEntries` are mutually exclusive with the loaders:
 
@@ -438,7 +403,7 @@ CascadingSelectDelegate(
 );
 ```
 
-The default predicate (`defaultSelectSearchPredicate`) matches `SelectEntry.name` case-insensitively; provide a custom `searchPredicate` to match `id`, `extra`, or any other field. Style the bar via `searchBarTheme` (`SelectSearchBarTheme`) on the delegate, or globally through `SelectThemeData`.
+The default predicate (`defaultSelectSearchPredicate`) matches `SelectEntry.name` case-insensitively; provide a custom `searchPredicate` to match `id`, `extra`, or any other field. Style the bar via `searchBarTheme` (`SelectSearchBarTheme`) on the delegate, or globally on `SelectThemeData.searchBarTheme` (see [Theming](#theming)).
 
 ![search](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/search.gif)
 
@@ -468,7 +433,7 @@ ListSelectDelegate(
 );
 ```
 
-Returning `null` falls back to the default item widget, so you can customize only some entries or categories while keeping the built-in visuals elsewhere. Custom range entries (`SelectRangeEntry.custom`) are not passed to the builder — they keep rendering as the built-in min/max input field — and range-slider / counter category layouts keep their built-in controls. The builder does not cover a category's header/footer chips; the deprecated two-level fallback paths (list → expandable, grid → tab-nav) do not forward it.
+Returning `null` falls back to the default item widget, so you can customize only some entries or categories while keeping the built-in visuals elsewhere. Custom range entries (`SelectRangeEntry.custom`) are not passed to the builder — they keep rendering as the built-in min/max input field — and range-slider / counter category layouts keep their built-in controls. The builder does not cover a category's header/footer chips.
 
 #### Serializing selections
 
@@ -515,7 +480,19 @@ PopupSelectBar(
 );
 ```
 
-**Globally** — register `PopupSelectBarTheme` and `PopupSelectButtonTheme` as `ThemeData` extensions so every bar/button picks them up automatically:
+**Globally** — wrap `SelectTheme` above the `Navigator` so inline views, dialogs, sheets and popup overlays are all covered. Delegate-level theme fields merge field-wise on top of it; use `SelectTheme.merge` to layer a partial `SelectThemeData` over the ambient one:
+
+```dart
+MaterialApp(
+  builder: (context, child) => SelectTheme.merge(
+    data: SelectThemeData(Theme.of(context), selectedColor: Colors.teal),
+    child: child!,
+  ),
+  home: const HomePage(),
+);
+```
+
+`PopupSelectBar` / `PopupSelectButton` are themed through `ThemeData` extensions instead — register `PopupSelectBarTheme` and `PopupSelectButtonTheme` so every bar/button picks them up automatically:
 
 ```dart
 MaterialApp(
