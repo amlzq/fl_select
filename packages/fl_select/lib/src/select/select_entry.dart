@@ -2,7 +2,14 @@ import 'constants.dart';
 import 'select_layout.dart';
 import 'select_utils.dart';
 
-/// A set of selected [SelectEntry] values.
+/// A set of [SelectEntry] values, in iteration order: the shape the library uses
+/// wherever it holds a collection of entries — selected entries, cloned trees,
+/// and an entry's own [SelectEntry.children].
+///
+/// Write it bare — `SelectEntries` is `Set<SelectEntry>`. The type parameter is
+/// kept for compatibility with callers that spelled the set out; like every
+/// collection of entries it is not parameterized by an entry's own type argument
+/// (see [SelectEntry.children] for the runtime reason).
 typedef SelectEntries<E> = Set<SelectEntry<E>>;
 
 extension SelectEntriesExtension on SelectEntries {
@@ -121,11 +128,11 @@ extension SelectEntriesExtension on SelectEntries {
   Set<String> findIdsAtLevel(SelectEntry entry, int level) =>
       SelectUtils.findIdsAtLevel(entry, level);
 
-  /// Returns the extra ids of the children of [entry] located at the given tree
-  /// [level].
+  /// Returns the extra values of the children of [entry] located at the given
+  /// tree [level].
   ///
   /// See [findChildrenAtLevel] for the level semantics.
-  List<String> findExtrasAtLevel(SelectEntry entry, int level) =>
+  List<String?> findExtrasAtLevel(SelectEntry entry, int level) =>
       SelectUtils.findExtrasAtLevel(entry, level);
 
   /// Returns the id of the first selected entry, or `null` when nothing is
@@ -438,7 +445,7 @@ class SelectRangeEntry<N, E> extends SelectChildEntry<E> {
     String? parentId,
     String? id,
     String? name,
-    Set<SelectEntry<E>>? children,
+    Set<SelectEntry>? children,
     bool? enabled,
     bool? immediate,
     E? extra,
@@ -602,7 +609,7 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
   factory SelectTextEntry.children({
     required String id,
     required String name,
-    required Set<SelectEntry<E>> children,
+    required Set<SelectEntry> children,
     bool enabled = true,
     bool immediate = false,
     E? extra,
@@ -645,7 +652,7 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
     String? parentId,
     String? id,
     String? name,
-    Set<SelectEntry<E>>? children,
+    Set<SelectEntry>? children,
     bool? enabled,
     bool? immediate,
     E? extra,
@@ -759,7 +766,7 @@ class SelectChildEntry<E> extends SelectEntry<E> {
   factory SelectChildEntry.children({
     required String id,
     String? name,
-    required Set<SelectEntry<E>> children,
+    required Set<SelectEntry> children,
     bool enabled = true,
     bool immediate = false,
     E? extra,
@@ -782,7 +789,7 @@ class SelectChildEntry<E> extends SelectEntry<E> {
     String? parentId,
     String? id,
     String? name,
-    Set<SelectEntry<E>>? children,
+    Set<SelectEntry>? children,
     bool? enabled,
     bool? immediate,
     E? extra,
@@ -854,6 +861,7 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
     required super.children,
     super.enabled,
     super.immediate,
+    super.extra,
   });
 
   /// Creates a category entry and eagerly injects [id] as the
@@ -888,16 +896,17 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
   )
   factory SelectCategoryEntry.children({
     SelectionMode? selectionMode,
-    SelectEntry<E>? header,
+    SelectEntry? header,
     SelectionMode? headerSelectionMode,
-    SelectEntry<E>? footer,
+    SelectEntry? footer,
     SelectionMode? footerSelectionMode,
     SelectLayout? layout,
     required String id,
     required String name,
-    required Set<SelectEntry<E>> children,
+    required Set<SelectEntry> children,
     bool enabled = true,
     bool immediate = false,
+    E? extra,
   }) {
     final injectedChildren = children
         .map((e) => SelectUtils.injectParentIds(e, parentId: id))
@@ -921,6 +930,7 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
       footer: injectedFooter,
       enabled: enabled,
       immediate: immediate,
+      extra: extra,
     );
   }
 
@@ -951,7 +961,12 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
   /// an input field: a custom range entry (see
   /// [SelectRangeEntryExt.isCustom]) among them is not supported and makes the
   /// chip bar throw a [FlutterError] while building.
-  SelectEntry<E>? header;
+  ///
+  /// Not parameterized by [E], for the same reason as [SelectEntry.children]: a
+  /// header is an ordinary entry that may carry a type argument of its own, so
+  /// the slot cannot turn a mismatch into a `TypeError`, and reading it back
+  /// yields the type argument it was built with.
+  SelectEntry? header;
 
   /// The selection mode applied to [header].
   ///
@@ -971,7 +986,9 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
   /// an input field: a custom range entry (see
   /// [SelectRangeEntryExt.isCustom]) among them is not supported and makes the
   /// chip bar throw a [FlutterError] while building.
-  SelectEntry<E>? footer;
+  ///
+  /// Not parameterized by [E], for the same reason as [header].
+  SelectEntry? footer;
 
   /// The selection mode applied to [footer].
   ///
@@ -998,13 +1015,14 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
   SelectCategoryEntry<E> copyWith({
     String? id,
     String? name,
-    Set<SelectEntry<E>>? children,
+    Set<SelectEntry>? children,
     bool? enabled,
     bool? immediate,
+    E? extra,
     SelectionMode? selectionMode,
-    SelectEntry<E>? header,
+    SelectEntry? header,
     SelectionMode? headerSelectionMode,
-    SelectEntry<E>? footer,
+    SelectEntry? footer,
     SelectionMode? footerSelectionMode,
     SelectLayout? layout,
   }) {
@@ -1014,6 +1032,7 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
       children: children ?? this.children,
       enabled: enabled ?? this.enabled,
       immediate: immediate ?? this.immediate,
+      extra: extra ?? this.extra,
       selectionMode: selectionMode ?? this.selectionMode,
       header: header ?? this.header,
       headerSelectionMode: headerSelectionMode ?? this.headerSelectionMode,
@@ -1116,6 +1135,13 @@ extension SelectCategoryEntryExtension on SelectCategoryEntry {
 ///
 /// Entries form a tree: [SelectCategoryEntry] is typically the root and
 /// [SelectChildEntry] represents non-root nodes.
+///
+/// [E] types an entry's own [extra] payload and says nothing about the tree
+/// below the entry. No collection of entries is parameterized by it — a
+/// container is checked as one value, so a type argument there would become a
+/// requirement on *every* element — and [SelectCategoryEntry.header] and
+/// [SelectCategoryEntry.footer] are left untyped to match, so a header or footer
+/// may carry a type argument of its own without constraining its category.
 abstract class SelectEntry<E> {
   SelectEntry({
     required this.id,
@@ -1133,7 +1159,16 @@ abstract class SelectEntry<E> {
   String? name;
 
   /// The child entries of this entry, or null if it is a leaf.
-  final Set<SelectEntry<E>>? children;
+  ///
+  /// Deliberately not parameterized by [E]. A `Set<SelectEntry<E>>` is
+  /// covariant in [E], and a container is checked as a single value, so the
+  /// `Set<SelectEntry<dynamic>>` that derivation rebuilds was rejected by a
+  /// typed `children` even though every child was an `int` entry — binding a
+  /// tree whose entries use a non-`dynamic` type argument threw a `TypeError`.
+  /// As `Set<SelectEntry>` — the [SelectEntries] shape — the container is
+  /// checked per element instead, so the children may carry any type argument
+  /// and [E] is left to type an entry's [extra] alone (see [SelectEntry]).
+  final Set<SelectEntry>? children;
 
   /// Whether this entry can be selected or interacted with.
   ///
@@ -1148,6 +1183,10 @@ abstract class SelectEntry<E> {
   final bool immediate;
 
   /// Optional arbitrary data attached to this entry.
+  ///
+  /// Typing this payload is what [E] is for: the tree itself is not
+  /// parameterized by it (see [children]), so a descendant may carry a different
+  /// payload type.
   final E? extra;
 
   @override

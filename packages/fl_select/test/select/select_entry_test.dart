@@ -1,4 +1,5 @@
 import 'package:fl_select/fl_select.dart';
+import 'package:fl_select/src/select/select_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 SelectTextEntry<dynamic> _text(
@@ -540,6 +541,42 @@ void main() {
       expect(set.contains(a), isTrue);
       expect(set.remove(a), isTrue);
       expect(set, isEmpty);
+    });
+
+    test('extra is exposed by the constructor and survives copyWith', () {
+      // `extra` is part of the inherited SelectEntry contract: every entry can
+      // carry a runtime-only payload, and an entry rebuilt around it must not
+      // drop that payload.
+      final category = SelectCategoryEntry<Map<String, Object?>>(
+        id: 'c',
+        name: 'C',
+        children: {SelectTextEntry<Map<String, Object?>>(id: 'a', name: 'A')},
+        extra: const {'icon': 'home'},
+      );
+
+      expect(category.extra, const {'icon': 'home'});
+      expect(category.copyWith(name: 'C renamed').extra, const {
+        'icon': 'home',
+      });
+      expect(category.copyWith(extra: const {'icon': 'work'}).extra, const {
+        'icon': 'work',
+      });
+    });
+
+    test('extra survives the derivation rebuild of a bound tree', () {
+      // Deriving the parent links rebuilds a category through copyWith, so the
+      // payload must not be dropped on the way through the tree.
+      final category = SelectCategoryEntry<dynamic>(
+        id: 'c',
+        name: 'C',
+        children: {SelectTextEntry<dynamic>(id: 'a', name: 'A')},
+        extra: 'payload',
+      );
+
+      final derived = SelectUtils.deriveParentIds([category]).single;
+
+      expect(derived, isNot(same(category)));
+      expect(derived.extra, 'payload');
     });
 
     test('selection modes default to null (inherit the delegate mode)', () {
@@ -1660,6 +1697,7 @@ void main() {
           name: 'F',
           children: {SelectTextEntry<dynamic>(id: 'f1', name: 'F1')},
         ),
+        extra: 'c1 payload',
       );
 
       for (final child in category.children!) {
@@ -1674,6 +1712,7 @@ void main() {
       final footer = category.footer! as SelectChildEntry;
       expect(footer.parentId, 'c1');
       expect((footer.children!.single as SelectChildEntry).parentId, 'f');
+      expect(category.extra, 'c1 payload');
 
       expect(
         () => SelectController.validateEntries([category]),

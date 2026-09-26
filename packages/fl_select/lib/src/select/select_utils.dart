@@ -29,6 +29,12 @@ class SelectUtils {
   /// [entry] itself is returned when nothing needed to change, so callers that
   /// rely on instance identity (e.g. the change detection in `StateTree.bind`)
   /// keep working.
+  ///
+  /// The recursion never carries [E] into the descendants: no collection of
+  /// entries is parameterized by it (see [SelectEntry.children]), so children,
+  /// header and footer are all handled as plain [SelectEntry] values. Each
+  /// entry still keeps the type argument it was built with, because a copy runs
+  /// on the entry's runtime type (`copyWith`).
   static SelectEntry<E> injectParentIds<E>(
     SelectEntry<E> entry, {
     required String parentId,
@@ -36,14 +42,17 @@ class SelectUtils {
     bool wrapGenerics = true,
   }) {
     // Recurse first: a descendant that had to be rebuilt forces this entry to
-    // be rebuilt as well, because it has to own the new child set.
+    // be rebuilt as well, because it has to own the new child set. The child
+    // container is untyped, so this recursion is too: passing [E] on would
+    // rebuild a `Set<SelectEntry<E>>` and hit the container check the shape
+    // avoids (see [SelectEntry.children]).
     final children = entry.children;
-    Set<SelectEntry<E>>? filledChildren;
+    Set<SelectEntry>? filledChildren;
     if (children != null && children.isNotEmpty) {
       var childrenChanged = false;
-      final buffer = <SelectEntry<E>>{};
+      final buffer = <SelectEntry>{};
       for (final child in children) {
-        final filled = injectParentIds<E>(
+        final filled = injectParentIds(
           child,
           parentId: entry.id,
           overwrite: overwrite,
@@ -70,10 +79,10 @@ class SelectUtils {
     }
 
     if (entry is SelectCategoryEntry<E>) {
-      SelectEntry<E>? filledHeader;
+      SelectEntry? filledHeader;
       final header = entry.header;
       if (header != null) {
-        final filled = injectParentIds<E>(
+        final filled = injectParentIds(
           header,
           parentId: entry.id,
           overwrite: overwrite,
@@ -82,10 +91,10 @@ class SelectUtils {
         if (!identical(filled, header)) filledHeader = filled;
       }
 
-      SelectEntry<E>? filledFooter;
+      SelectEntry? filledFooter;
       final footer = entry.footer;
       if (footer != null) {
-        final filled = injectParentIds<E>(
+        final filled = injectParentIds(
           footer,
           parentId: entry.id,
           overwrite: overwrite,
@@ -188,18 +197,22 @@ class SelectUtils {
   /// Returns the `extra` payload values at the given tree [level] starting from
   /// [entry].
   ///
-  /// The result contains values in traversal order, and each value is cast to
-  /// [E]. If a node's `extra` is not assignable to [E], a runtime error may be
-  /// thrown.
-  static List<E> findExtrasAtLevel<E>(SelectEntry entry, int level) {
+  /// The result contains values in traversal order. An entry that carries no
+  /// payload contributes `null`, so the element type is nullable: passing a
+  /// non-nullable [E] must not make a plain `null` payload throw. A non-null
+  /// value that is not assignable to [E] still throws a runtime error.
+  static List<E?> findExtrasAtLevel<E>(SelectEntry entry, int level) {
     // If level == 0, the current node is the target.
-    if (level == 0) return [entry.extra as E];
+    if (level == 0) {
+      final extra = entry.extra;
+      return [extra == null ? null : extra as E];
+    }
 
     // If there are no children, any level > 0 cannot be found.
     if (entry.children == null || entry.children!.isEmpty) return [];
 
     // Recurse into the next level
-    List<E> result = [];
+    List<E?> result = [];
     for (var child in entry.children ?? {}) {
       result.addAll(findExtrasAtLevel(child, level - 1));
     }
@@ -305,6 +318,7 @@ class SelectUtils {
         children: clonedChildren,
         enabled: entry.enabled,
         immediate: entry.immediate,
+        extra: entry.extra,
       );
     }
 
@@ -373,6 +387,7 @@ class SelectUtils {
         layout: entry.layout,
         enabled: entry.enabled,
         immediate: entry.immediate,
+        extra: entry.extra,
       );
     }
 
@@ -395,6 +410,7 @@ class SelectUtils {
         children: children,
         enabled: entry.enabled,
         immediate: entry.immediate,
+        extra: entry.extra,
       );
     }
 
@@ -459,6 +475,7 @@ class SelectUtils {
         layout: entry.layout,
         enabled: entry.enabled,
         immediate: entry.immediate,
+        extra: entry.extra,
       );
     }
 

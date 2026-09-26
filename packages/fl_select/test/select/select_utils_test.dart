@@ -2,6 +2,13 @@ import 'package:fl_select/fl_select.dart';
 import 'package:fl_select/src/select/select_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+/// A [SelectEntry] subclass outside the built-in family, used to check that a
+/// header/footer slot accepts an entry whose type argument does not match its
+/// category's.
+class _ForeignEntry extends SelectEntry<dynamic> {
+  _ForeignEntry({required super.id, super.name});
+}
+
 SelectTextEntry<dynamic> _text(
   String parentId,
   String id,
@@ -106,6 +113,14 @@ void main() {
         containsAll(<String>['ea1', 'ea2']),
       );
     });
+
+    test('findExtrasAtLevel yields null for an entry without a payload', () {
+      final root = _text('', 'root', 'Root');
+
+      // A non-nullable [E] must not turn a plain `null` payload into a cast
+      // error: an entry that carries nothing is a legal node in the traversal.
+      expect(SelectUtils.findExtrasAtLevel<String>(root, 0), <String?>[null]);
+    });
   });
 
   group('SelectUtils.flattenTree/treeDepth', () {
@@ -178,6 +193,61 @@ void main() {
         identical(originalLeaf.children!.first, clonedLeaf.children!.first),
         isFalse,
       );
+    });
+
+    test('deepCloneEntries/cloneTree preserve extra on every entry type', () {
+      final leaf = SelectTextEntry<dynamic>(
+        parentId: 'a',
+        id: 'x',
+        name: 'X',
+        extra: 'leaf-extra',
+      );
+      final branch = SelectTextEntry<dynamic>(
+        parentId: 'r',
+        id: 'a',
+        name: 'A',
+        extra: 'branch-extra',
+        children: {leaf},
+      );
+      final root = SelectCategoryEntry<dynamic>(
+        id: 'r',
+        name: 'R',
+        extra: 42,
+        children: {branch},
+      );
+
+      // `deepCloneEntries` → `_cloneEntry`.
+      final clonedRoot =
+          SelectUtils.deepCloneEntries({root}).single as SelectCategoryEntry;
+      expect(clonedRoot.extra, 42);
+      expect(
+        (clonedRoot.children!.single as SelectTextEntry).extra,
+        'branch-extra',
+      );
+
+      // `cloneTree` → `_cloneEntryWithChildren` (category branch).
+      final clonedTree =
+          SelectUtils.cloneTree(
+                {root},
+                [
+                  <SelectEntry<dynamic>>{root},
+                ],
+              ).single
+              as SelectCategoryEntry;
+      expect(clonedTree.extra, 42);
+      expect(
+        (clonedTree.children!.single as SelectTextEntry).extra,
+        'branch-extra',
+      );
+
+      // A flat tree reaches the entry branch of `_cloneEntryWithChildren`.
+      final clonedFlat = SelectUtils.cloneTree(
+        {branch},
+        [
+          <SelectEntry<dynamic>>{branch},
+        ],
+      ).single;
+      expect(clonedFlat.extra, 'branch-extra');
     });
   });
 
@@ -950,6 +1020,80 @@ void main() {
               as SelectCategoryEntry<dynamic>;
       expect((derived.header! as SelectChildEntry).parentId, 'c1');
       expect((derived.footer! as SelectChildEntry).parentId, 'c1');
+    });
+
+    test('derives a tree whose entries carry a typed extra', () {
+      // Regression: `children` is not parameterized by E, so a typed tree
+      // derives. With a `Set<SelectEntry<E>>` container the rebuilt set was a
+      // `Set<SelectEntry<dynamic>>`, and handing it back to a
+      // `SelectCategoryEntry<int>.copyWith` threw
+      // `type '_Set<SelectEntry<dynamic>>' is not a subtype of
+      // 'Set<SelectEntry<int>>?'`.
+      final parent = SelectCategoryEntry<int>(
+        id: 'c1',
+        name: 'C1',
+        extra: 1,
+        header: SelectTextEntry<int>(id: 'h', name: 'H', extra: 2),
+        footer: SelectTextEntry<int>(id: 'f', name: 'F', extra: 3),
+        children: {
+          SelectTextEntry<int>(
+            id: 'l1',
+            name: 'L1',
+            extra: 4,
+            children: {SelectTextEntry<int>(id: 'l2', name: 'L2', extra: 5)},
+          ),
+        },
+      );
+
+      final derived =
+          SelectUtils.deriveParentIds([parent]).single
+              as SelectCategoryEntry<int>;
+
+      expect(derived, isNot(same(parent)));
+      expect(derived.extra, 1);
+      expect((derived.header! as SelectChildEntry).parentId, 'c1');
+      expect((derived.footer! as SelectChildEntry).parentId, 'c1');
+      // The untyped slots do not erase what the header is: a rebuilt header
+      // keeps both its class and its type argument.
+      expect(derived.header, isA<SelectTextEntry<int>>());
+      expect((derived.header! as SelectTextEntry<int>).extra, 2);
+      final l1 = derived.children!.single as SelectChildEntry;
+      expect(l1.parentId, 'c1');
+      final l2 = l1.children!.single as SelectChildEntry;
+      expect(l2.parentId, 'l1');
+      expect(l2.extra, 5);
+    });
+
+    test('accepts a header and footer typed differently from their category', () {
+      // `header`/`footer` are not parameterized by E either, so a category may
+      // carry a header built for another payload type, or a custom `SelectEntry`
+      // subclass that has no type argument to match.
+      final parent = SelectCategoryEntry<int>(
+        id: 'c1',
+        name: 'C1',
+        extra: 1,
+        header: SelectTextEntry<String>(id: 'h', name: 'H', extra: 'x'),
+        footer: _ForeignEntry(id: 'f', name: 'F'),
+        children: {SelectTextEntry<int>(id: 'l', name: 'L', extra: 2)},
+      );
+
+      expect(parent.header, isA<SelectTextEntry<String>>());
+      expect((parent.header! as SelectTextEntry<String>).extra, 'x');
+
+      // Widening the category makes derivation recurse with `dynamic`, which
+      // rewrites the custom footer entry into a `SelectChildEntry<dynamic>`.
+      // Handing that back to the category's own `copyWith` is what a
+      // `SelectEntry<E>` slot used to reject.
+      final SelectCategoryEntry<dynamic> widened = parent;
+      final derived =
+          SelectUtils.injectParentIds(widened, parentId: '')
+              as SelectCategoryEntry;
+
+      expect(derived.header, isA<SelectTextEntry<String>>());
+      expect((derived.header! as SelectChildEntry).parentId, 'c1');
+      expect(derived.footer, isA<SelectChildEntry>());
+      expect((derived.footer! as SelectChildEntry).parentId, 'c1');
+      expect(derived.extra, 1);
     });
 
     test('returns the very same list when nothing needs deriving', () {

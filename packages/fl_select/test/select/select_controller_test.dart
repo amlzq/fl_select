@@ -92,6 +92,36 @@ void main() {
       expect(controller.select('l', parentId: 'p'), isTrue);
     });
 
+    test('bindState derives a tree whose entries carry a typed extra', () {
+      // Regression: the derived child set used to be handed to a typed
+      // `copyWith` as a `Set<SelectEntry<dynamic>>` and threw a `TypeError`,
+      // so any entry using the typed `extra` broke on bind.
+      final controller = SelectController(selectionMode: SelectionMode.single);
+      final c = SelectCategoryEntry<int>(
+        id: 'c',
+        name: 'C',
+        extra: 1,
+        children: {
+          SelectTextEntry<int>(
+            id: 'p',
+            name: 'P',
+            extra: 2,
+            children: {SelectTextEntry<int>(id: 'l', name: 'L', extra: 3)},
+          ),
+        },
+      );
+
+      controller.bindState([c], initializeAnyIfEmpty: false);
+
+      final bound = controller.tree.entries.single as SelectCategoryEntry<int>;
+      expect(bound.extra, 1);
+      final parent = bound.children!.single as SelectChildEntry;
+      expect(parent.parentId, 'c');
+      expect(parent.extra, 2);
+      expect((parent.children!.single as SelectChildEntry).parentId, 'p');
+      expect(controller.select('l', parentId: 'p'), isTrue);
+    });
+
     test('bindState does not notify again when a derived tree is rebound', () {
       final controller = SelectController(selectionMode: SelectionMode.single);
       var notified = false;

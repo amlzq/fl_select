@@ -409,6 +409,59 @@ void main() {
       expect((json['footer'] as Map)['id'], 'f');
     });
 
+    test('round-trips header and footer selection modes', () {
+      final entries = {
+        SelectCategoryEntry(
+          id: 'c',
+          name: 'C',
+          header: SelectTextEntry(
+            id: 'h',
+            name: 'Header',
+            children: {SelectTextEntry(id: 'h-a', name: 'A')},
+          ),
+          headerSelectionMode: SelectionMode.multiple,
+          footer: SelectTextEntry(
+            id: 'f',
+            name: 'Footer',
+            children: {SelectTextEntry(id: 'f-a', name: 'A')},
+          ),
+          footerSelectionMode: SelectionMode.single,
+          children: {SelectTextEntry(id: 'a', name: 'A')},
+        ),
+      };
+
+      final json = SelectEntryCodec.toJson(entries).single;
+      expect(json['headerSelectionMode'], 'multiple');
+      expect(json['footerSelectionMode'], 'single');
+
+      final decoded =
+          SelectEntryCodec.fromJson([json]).single as SelectCategoryEntry;
+      expect(decoded.headerSelectionMode, SelectionMode.multiple);
+      expect(decoded.footerSelectionMode, SelectionMode.single);
+    });
+
+    test('keeps an inherited (null) header/footer selection mode null', () {
+      final entries = {
+        SelectCategoryEntry(
+          id: 'c',
+          name: 'C',
+          header: SelectTextEntry(id: 'h', name: 'Header'),
+          children: {SelectTextEntry(id: 'a', name: 'A')},
+        ),
+      };
+
+      // `null` means "inherit the category's effective mode", which must stay
+      // distinct from an explicit `SelectionMode.single`.
+      final json = SelectEntryCodec.toJson(entries).single;
+      expect(json.containsKey('headerSelectionMode'), isFalse);
+      expect(json.containsKey('footerSelectionMode'), isFalse);
+
+      final decoded =
+          SelectEntryCodec.fromJson([json]).single as SelectCategoryEntry;
+      expect(decoded.headerSelectionMode, isNull);
+      expect(decoded.footerSelectionMode, isNull);
+    });
+
     test('throws UnsupportedError on custom subclasses', () {
       final rogue = _RogueEntry();
       expect(() => SelectEntryCodec.toJson({rogue}), throwsUnsupportedError);

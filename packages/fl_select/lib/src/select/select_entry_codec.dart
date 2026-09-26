@@ -74,8 +74,10 @@ abstract final class SelectEntryCodec {
   /// Encodes an entry set into a JSON-compatible list of node maps.
   ///
   /// `extra` payloads and `parentId` are not emitted; `enabled: false` and
-  /// `immediate: true` are emitted only when they differ from the defaults,
-  /// keeping the output compact.
+  /// `immediate: true` are emitted only when they differ from the defaults, and
+  /// a category's header/footer selection mode only when it is set (`null`
+  /// means "inherit the category's effective mode"), keeping the output
+  /// compact.
   ///
   /// Throws [UnsupportedError] for entry subclasses outside the built-in
   /// family.
@@ -126,7 +128,9 @@ abstract final class SelectEntryCodec {
       children: {for (final child in childrenJson) _decodeEntry(_asMap(child))},
       selectionMode: _decodeSelectionMode(node['selectionMode']),
       header: _decodeOptionalEntry(node['header']),
+      headerSelectionMode: _decodeSelectionMode(node['headerSelectionMode']),
       footer: _decodeOptionalEntry(node['footer']),
+      footerSelectionMode: _decodeSelectionMode(node['footerSelectionMode']),
       layout: _decodeLayout(node['layout']),
       enabled: node['enabled'] != false,
       immediate: node['immediate'] == true,
@@ -283,7 +287,13 @@ abstract final class SelectEntryCodec {
         'selectionMode': entry.selectionMode!.name,
       if (entry.layout != null) 'layout': _encodeLayout(entry.layout!),
       if (entry.header != null) 'header': _encodeHeaderFooter(entry.header!),
+      // Only an explicit mode is emitted: `null` means "inherit the category's
+      // effective mode", which is not the same as an explicit `single`.
+      if (entry.headerSelectionMode != null)
+        'headerSelectionMode': entry.headerSelectionMode!.name,
       if (entry.footer != null) 'footer': _encodeHeaderFooter(entry.footer!),
+      if (entry.footerSelectionMode != null)
+        'footerSelectionMode': entry.footerSelectionMode!.name,
       if (!entry.enabled) 'enabled': false,
       if (entry.immediate) 'immediate': true,
       'children': [
