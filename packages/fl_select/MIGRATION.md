@@ -1,6 +1,6 @@
 # Migration Guide
 
-## MIGRATE TO Next
+## MIGRATE TO 0.15.0
 
 ### `parentId` is derived from the tree structure
 
