@@ -1,4 +1,4 @@
-## Next
+## 0.15.0
 
 - **FEATURE** `SelectChildEntry.parentId` is now derived from the tree structure.
 
