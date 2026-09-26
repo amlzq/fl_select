@@ -63,6 +63,92 @@ Passing `parentId` explicitly is **deprecated** in favour of the derived form
 and will be removed in a future minor version, at which point the tree
 structure becomes the only source of the parent link.
 
+### The entry tree is no longer parameterized by `E`
+
+A `SelectEntry<E>`'s `E` now types its `extra` payload alone. `children`,
+`copyWith(children:)` and every `children:` parameter take a plain
+`Set<SelectEntry>` — the `SelectEntries` shape — instead of
+`Set<SelectEntry<E>>`, and `header`, `footer` and their `copyWith` parameters
+take a plain `SelectEntry` instead of `SelectEntry<E>`.
+
+This fixes a crash, not just a signature. A `Set<SelectEntry<E>>` is covariant
+in `E`, and a container is checked as a whole, so the derived child set that
+`SelectUtils` rebuilds on every bind was rejected by the typed `copyWith` it was
+handed to:
+
+```dart
+// Threw on bind before:
+// type '_Set<SelectEntry<dynamic>>' is not a subtype of type
+// 'Set<SelectEntry<int>>?'
+SelectCategoryEntry<int>(
+  id: 'c1',
+  name: 'Category 1',
+  extra: 1,
+  children: {
+    SelectTextEntry<int>(id: 'a', name: 'A'), // parentId is derived
+  },
+);
+```
+
+The same widening happened for a `header`/`footer` that derivation rewrote into
+a `SelectChildEntry`: recursed with `dynamic`, the rewritten entry was rejected
+by the `SelectEntry<E>` slot of a typed category.
+
+What does **not** change:
+
+- Passing a typed set, header or footer still compiles exactly as before:
+  `children: {SelectTextEntry<int>(id: 'a', name: 'A')}` and
+  `header: SelectTextEntry<int>(id: 'h', name: 'H')` are accepted, because
+  `Set<SelectTextEntry<int>>` is a subtype of `Set<SelectEntry>` and
+  `SelectTextEntry<int>` is a subtype of `SelectEntry`.
+- A header or footer is still the entry you put in: it is rebuilt through its own
+  `copyWith`, so `category.header` reads back as the `SelectTextEntry<int>` it was
+  built with, `extra` included.
+- `extra` stays `E?`, so `SelectCategoryEntry<int>(extra: 1)` still reads back an
+  `int`.
+
+What needs updating is code that spelled those types out, or that leaned on them:
+
+```diff
+  class MyEntry<E> extends SelectTextEntry<E> {
+    @override
+    MyEntry<E> copyWith({
+-     Set<SelectEntry<E>>? children,
++     Set<SelectEntry>? children,
+      bool? enabled,
+    }) => ...;
+  }
+
+  class MyCategoryEntry<E> extends SelectCategoryEntry<E> {
+    @override
+    MyCategoryEntry<E> copyWith({
+-     SelectEntry<E>? header,
++     SelectEntry? header,
+-     SelectEntry<E>? footer,
++     SelectEntry? footer,
+      ...
+    }) => ...;
+  }
+```
+
+Reading `children`, `header` or `footer` off a typed entry now yields
+`SelectEntry<dynamic>`, so the `extra` it carries is no longer part of the
+inferred type — add the cast back where a target type needs it:
+
+```diff
+  final category = SelectCategoryEntry<int>(...);
+- final List<int?> extras = category.children!.map((e) => e.extra).toList();
+- final int? headerExtra = category.header!.extra;
++ final List<int?> extras = category.children!
++     .map((e) => (e as SelectEntry<int>).extra)
++     .toList();
++ final int? headerExtra = (category.header! as SelectEntry<int>).extra;
+```
+
+Unparameterized entries — `SelectEntry<dynamic>`, the shape of the library's own
+`SelectEntries` and of every entry built without an explicit type argument — see
+no difference at all.
+
 ### Named constructors converge on the plain constructors
 
 The named constructors that only existed to spare the (now derived) parent link
@@ -156,6 +242,111 @@ presentation state, so relabelling a category no longer makes it unfindable in
 the sets it is stored in, and two categories that differ only in name count as
 the same entry instead of sitting side by side with the same id.
 
+### `SelectCategoryEntry` exposes its `extra` payload
+
+A category could not carry a payload of its own: the plain constructor and the
+deprecated `.children` factory had no `extra` parameter, so only the entries
+below a category could carry one, and `copyWith` dropped it. Both constructors
+now pass it through to the inherited `SelectEntry.extra`, and `copyWith` keeps
+it:
+
+```dart
+SelectCategoryEntry<int>(
+  id: 'c1',
+  name: 'Category 1',
+  extra: 1,
+  children: {SelectTextEntry<int>(id: 'a', name: 'A')},
+);
+```
+
+The payload survives a rebuild — including the one the parent-link derivation
+performs — and the clones the changed/applied entry sets are built from (see
+"Cloning and JSON round trips stop dropping entry data").
+
+Like `name`, `extra` stays out of the category's identity (`(id,
+selectionMode, layout)` is the whole of `==`/`hashCode`), and
+`SelectEntryCodec` still does not serialize it.
+
+### `findExtrasAtLevel` returns nullable payloads
+
+`SelectEntriesExtension.findExtrasAtLevel` — and the
+`SelectUtils.findExtrasAtLevel` behind it — now returns `List<String?>` /
+`List<E?>` instead of `List<String>` / `List<E>`. An entry without an `extra`
+payload is an ordinary node of the tree, but the old signature assumed every
+node on the target level carried one, so asking for the payloads of a level that
+holds a payload-less entry threw:
+
+```dart
+// Threw before: type 'Null' is not a subtype of type 'String'
+SelectUtils.findExtrasAtLevel<String>(entry, 2);
+```
+
+A node that carries nothing now contributes `null`, which keeps the traversal
+total and the position of every payload intact:
+
+```diff
+- final List<String> extras = entries.findExtrasAtLevel(entry, 2);
++ final List<String?> extras = entries.findExtrasAtLevel(entry, 2);
++ // Drop the payload-less nodes when the holes are not welcome:
++ final List<String> payloads = extras.whereType<String>().toList();
+```
+
+What does **not** change:
+
+- Payloads keep their traversal order, holes included, so a payload keeps the
+  index it had when every node on the level carried one.
+- A non-`null` payload that is not assignable to `E` still throws; only `null`
+  is tolerated now.
+- A call site that already asked for a nullable or `dynamic` element type reads
+  back exactly the same list.
+
+### Cloning and JSON round trips stop dropping entry data
+
+Two paths that rebuild entries no longer discard data:
+
+- The cloning helpers behind the changed/applied entry sets — `SelectUtils`
+  `deepCloneEntries` and `cloneTree`, which
+  `StateTree.buildChangedEntries` / `buildAppliedEntries` call, along with the
+  header/footer and without-children variants they delegate to — carried `extra`
+  over for range and child entries but dropped it for text and category entries,
+  whose clones came back with `extra: null`. Every built-in node now keeps its
+  payload through a clone.
+- `SelectEntryCodec` round-trips the `headerSelectionMode` and
+  `footerSelectionMode` of a `SelectCategoryEntry`, which were neither emitted
+  nor read back before. An explicit mode is emitted
+  (`"headerSelectionMode": "multiple"`); a `null` one stays absent from the JSON,
+  because `null` means *inherit the category's effective mode*, and flattening it
+  into an explicit `SelectionMode.single` would change what the decoded tree
+  selects.
+
+What does **not** change:
+
+- `SelectEntryCodec` still does not serialize `extra` or `parentId`, by design
+  (see the "Limitations" section of the codec's own documentation).
+- The two new keys are additive: a document written by an earlier version
+  decodes unchanged, and a consumer that ignores the keys keeps working.
+- Nothing moved in the signature of the cloning helpers or of the codec, so
+  existing calls compile as they are.
+
+### The ambient `SelectTheme` now styles a select
+
+The panel resolves its base theme from the ambient `SelectTheme`, falling back
+to a `SelectThemeData.fallback` derived from the Material `ThemeData` when none
+is in scope, instead of receiving a resolved theme as an argument.
+Delegate-level theme fields keep being merged field-wise on top of it.
+
+What this changes:
+
+- A `SelectTheme` wrapped around a select now styles it instead of being
+  ignored.
+- The popup triggers (`PopupSelectBar`, `PopupSelectButton`) inject the
+  `selectTheme` they resolved around the overlay panel, because the overlay sits
+  outside the trigger's subtree and cannot inherit the theme from there. A
+  trigger-level `selectTheme` keeps reaching the panel.
+
+No call site changes: the removed argument belonged to the internal
+`SelectPanel` widget rather than to a public entry point.
+
 ## MIGRATE TO 0.14.0
 
 ### `SelectThemeData.chipBarThemeData` renamed to `chipBarTheme`
@@ -246,8 +437,8 @@ Every other symbol that used to leak through the barrel — the views
 the panel host (`SelectPanel`), the chip host symbols (`SelectChip`,
 `SelectChipBarStyle`, `resolveSelectChipBarStyle`),
 `ChainingClampingScrollPhysics`, the
-`OnChanged` typedef and the `kSelect*` constants — keeps compiling through
-a deprecated alias and **will be removed in a future minor version**.
+`OnChanged` typedef and the `kSelect*` constants — kept compiling through
+a deprecated alias and **is removed in the Next release**.
 
 Migration: build the UI through the public entry points (`SelectView`,
 `showModalBottomSelect`, `showSelect`, `PopupSelectBar`,
