@@ -67,8 +67,9 @@ render → write-back loop.
 ]}
 ```
 
-Node `type`s: `category` (group, optional `selectionMode` / `layout`),
-`text` (option or sub-branch), `range` (slider), `any` (reset sentinel),
-`custom` (user-typed range). See `SelectEntrySchema` for the generated
-JSON Schema and `FlSelectCatalogItems.systemPromptFragment` for the
-agent-facing documentation.
+Node `type`s: `category` (group, optional `selectionMode` / `layout` and
+`header`/`footer` chip rows with their own `headerSelectionMode` /
+`footerSelectionMode`), `text` (option or sub-branch), `range` (slider),
+`any` (reset sentinel), `custom` (user-typed range). See `SelectEntrySchema`
+for the generated JSON Schema and `FlSelectCatalogItems.systemPromptFragment`
+for the agent-facing documentation.

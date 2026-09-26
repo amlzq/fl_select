@@ -85,14 +85,12 @@ abstract final class FlSelectCatalogItems {
           '{"type":"text","id":"parking","name":"Parking"},'
           '{"type":"text","id":"pool","name":"Pool"}]}]}',
     ],
-    widgetBuilder: (itemContext) {
-      final data = itemContext.data;
-      final path = data is JsonMap && data['path'] is String
-          ? data['path']! as String
-          : '${itemContext.id}.value';
-
-      return _SelectWidget(itemContext: itemContext, dataPath: path);
-    },
+    // Selections always land at `<id>.value`; that binding is the catalog's
+    // documented contract, so the payload cannot retarget it.
+    widgetBuilder: (itemContext) => _SelectWidget(
+      itemContext: itemContext,
+      dataPath: '${itemContext.id}.value',
+    ),
   );
 
   /// System-prompt fragment documenting the entry-tree JSON format for
@@ -109,9 +107,11 @@ When the user needs to pick values from a structured option set, render a `Selec
     `selectionMode` ("single"/"multiple"), `layout`
     (`{"kind":"grid","crossAxisCount":3}` etc.), and `header`/`footer`
     (branch nodes whose `children` render as chip rows pinned above/below
-    the category children). A `header`/`footer` row renders chips only, so
-    its `children` must not contain a `custom` entry — put `custom` under the
-    category's own `children` instead.
+    the category children). `headerSelectionMode`/`footerSelectionMode`
+    ("single"/"multiple") override `selectionMode` for one row; without them
+    a row inherits the category's mode. A `header`/`footer` row renders chips
+    only, so its `children` must not contain a `custom` entry — put `custom`
+    under the category's own `children` instead.
   - `text`: option (leaf) or sub-branch (with `children`); requires `id`,`name`.
   - `range`: slider option with `min`/`max`; requires `id`,`name`.
   - `any`: resets the category to "any" (no bounds) — omit `id`.

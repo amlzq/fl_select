@@ -56,12 +56,24 @@ abstract final class SelectEntrySchema {
             '`custom` entry.',
         additionalProperties: true,
       ),
+      'headerSelectionMode': S.string(
+        description:
+            'category only: selection mode of the `header` row, overriding '
+            '`selectionMode` (and the delegate default).',
+        enumValues: ['single', 'multiple'],
+      ),
       'footer': S.object(
         description:
             'category only: a branch node whose `children` render as a chip '
             'row pinned below the category children. The row is chips only, '
             'so it must not contain a `custom` entry.',
         additionalProperties: true,
+      ),
+      'footerSelectionMode': S.string(
+        description:
+            'category only: selection mode of the `footer` row, overriding '
+            '`selectionMode` (and the delegate default).',
+        enumValues: ['single', 'multiple'],
       ),
       'immediate': S.boolean(
         description: 'Apply the pick without waiting for the apply button.',

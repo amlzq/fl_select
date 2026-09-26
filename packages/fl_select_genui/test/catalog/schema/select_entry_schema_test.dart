@@ -23,7 +23,9 @@ const List<String> _nodeFields = [
   'selectionMode',
   'layout',
   'header',
+  'headerSelectionMode',
   'footer',
+  'footerSelectionMode',
   'immediate',
   'enabled',
   'children',
@@ -78,6 +80,14 @@ void main() {
       expect(properties['header']!.type, 'object');
       expect(properties['footer']!.type, 'object');
       expect(properties['selectionMode']!.enumValues, ['single', 'multiple']);
+      expect(properties['headerSelectionMode']!.enumValues, [
+        'single',
+        'multiple',
+      ]);
+      expect(properties['footerSelectionMode']!.enumValues, [
+        'single',
+        'multiple',
+      ]);
     });
 
     test('rules out custom range entries in the header/footer chip rows', () {
