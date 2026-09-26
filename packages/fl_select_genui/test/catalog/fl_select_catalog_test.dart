@@ -172,6 +172,52 @@ void main() {
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
   });
 
+  testWidgets('duplicate sibling ids show an error card', (tester) async {
+    // fl_select 0.15.0 rejects duplicate sibling ids when the panel binds the
+    // tree; the catalog reports the payload through its own error card instead
+    // of letting the panel raise a FlutterError mid-build.
+    await pumpSelect(tester, {
+      'delegate': 'tabNav',
+      'entries': [
+        {
+          'type': 'category',
+          'id': 'c',
+          'name': 'C',
+          'children': [
+            {'type': 'text', 'id': 'dup', 'name': 'A'},
+            {'type': 'range', 'id': 'dup', 'name': 'B', 'min': 0, 'max': 10},
+          ],
+        },
+      ],
+    });
+    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+
+    // A category's header/footer is a sibling scope of its own.
+    await pumpSelect(tester, {
+      'delegate': 'sideNav',
+      'entries': [
+        {
+          'type': 'category',
+          'id': 'c',
+          'name': 'C',
+          'header': {
+            'type': 'text',
+            'id': 'h',
+            'name': 'H',
+            'children': [
+              {'type': 'text', 'id': 'dup', 'name': 'A'},
+              {'type': 'range', 'id': 'dup', 'name': 'B', 'min': 0, 'max': 10},
+            ],
+          },
+          'children': [
+            {'type': 'text', 'id': 'a', 'name': 'A'},
+          ],
+        },
+      ],
+    });
+    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+  });
+
   testWidgets('delegate tokens map to the expected delegate', (tester) async {
     // Driven by the schema enum, so a newly documented token cannot ship
     // without an expected delegate (and a stale table entry cannot linger).

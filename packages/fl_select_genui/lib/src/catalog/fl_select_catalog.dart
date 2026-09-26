@@ -116,6 +116,9 @@ When the user needs to pick values from a structured option set, render a `Selec
   - `range`: slider option with `min`/`max`; requires `id`,`name`.
   - `any`: resets the category to "any" (no bounds) — omit `id`.
   - `custom`: user-typed range with optional `minHintText`/`maxHintText`.
+  - Siblings — the top-level entries, one node's `children`, and a `header`/
+    `footer` row — must carry distinct `id`s; a duplicate sibling id is
+    rejected with the error card.
 - User selections are returned as `Map<String, List<String>>`
   (e.g. `{"price": ["0-100"], "amenities": ["wifi", "pool"]}`); a selected
   category without leaf picks maps to its own id.
@@ -150,6 +153,18 @@ class _SelectWidget extends StatelessWidget {
       return _SchemaError('Invalid entries: ${e.message}');
     } on UnsupportedError catch (e) {
       return _SchemaError('Unsupported entries: ${e.message}');
+    }
+
+    // fl_select 0.15.0 validates the entry tree when the panel binds it and
+    // rejects duplicate sibling ids (and, before that, a stale `parentId` or a
+    // non-category entry beside a category). Validate the decoded tree here as
+    // well, so a bad payload is reported through this catalog's error card
+    // instead of reaching the panel and surfacing as its own error UI — which
+    // would also log a `FlutterError` and hang the frame's build phase.
+    try {
+      SelectController.validateEntries(entries.toList());
+    } on ArgumentError catch (e) {
+      return _SchemaError('Invalid entries: ${e.message}');
     }
 
     // A category's header/footer renders as a single-row chip bar, which has

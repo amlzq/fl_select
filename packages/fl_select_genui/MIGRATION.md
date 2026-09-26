@@ -1,5 +1,49 @@
 # Migration Guide
 
+## MIGRATE TO Next
+
+### fl_select bumped to `^0.15.0`
+
+fl_select 0.15.0 reshapes the entry model, derives the parent links and adds a
+validation pass; none of it leaks into this package's API, so no source changes
+were needed for the model itself:
+
+| fl_select 0.15.0 change | Why fl_select_genui is unaffected |
+| --- | --- |
+| `SelectChildEntry.parentId` is derived from the tree (passing it is deprecated) | the catalog never authors `parentId`: entries come from `SelectEntryCodec.fromJson`, which derives the links itself |
+| the entry tree is no longer parameterized by `E` (`Set<SelectEntry>`, plain `SelectEntry` headers/footers) | the catalog already spells `Set<SelectEntry>`; no entry built here carries an `extra` payload |
+| the named constructors that spared the `parentId` boilerplate converged on the plain constructors | agent payloads are built by the codec, not by these constructors |
+| `SelectCategoryEntry` exposes its `extra` payload; `name` dropped from its identity | the catalog carries no `extra` payload on categories and matches a category by `id` |
+| `findExtrasAtLevel` returns nullable payloads | not referenced |
+| cloning no longer drops entry data; the codec round-trips `headerSelectionMode`/`footerSelectionMode` | additive; a payload written by an earlier version decodes unchanged |
+| the panel resolves its base theme from the ambient `SelectTheme` | the catalog renders `SelectView` directly; panel theming stays with the host app |
+
+### Invalid entry trees now surface through the error card
+
+fl_select 0.15.0 makes `SelectController.validateEntries` — and therefore
+binding — reject entries that share an id under the same parent. The panel
+already reports a failed validation through its own error UI, but that error
+escapes as a `FlutterError` mid-build and renders as fl_select's plain error
+text rather than this catalog's error card.
+
+`Select` therefore validates the decoded tree itself, right after decoding, and
+reports the failure through the schema error card — keeping the package's
+contract that an invalid agent payload renders an inline error card instead of
+crashing. No payload change is required: a payload that was valid before is
+still valid.
+
+Invalid here means:
+
+- duplicate sibling ids — the top level, one node's `children`, and a
+  `header`/`footer` row are each a sibling scope;
+- a top-level entry that is not a `category` while other categories are
+  present;
+- an explicit `parentId` that does not match the entry's direct parent
+  (payloads never carry one — `parentId` is not part of the codec format).
+
+Agent payloads are otherwise unaffected: existing JSON keeps rendering
+identically.
+
 ## MIGRATE TO 0.3.0
 
 ### Agent skill shipped inside the package

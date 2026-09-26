@@ -59,7 +59,7 @@ Required: `delegate` + a non-empty `entries` array.
 - `selectionMode`: `single` / `multiple` (default `multiple`). `search`: boolean.
 - `flatKey`: required when the top-level entries are not categories (flat panel) — the key the selection is written back under, e.g. `"sort"`; ignored for category trees.
 - `path`: optional write-back path for the selection map, overriding the default `<id>.value` binding when the host app keeps it elsewhere.
-- `entries`: an entry tree in the `SelectEntryCodec` JSON format. Node `type`s: `category` (optional `selectionMode`, `layout` such as `{"kind":"grid","crossAxisCount":3}`, and `header`/`footer` — branch nodes whose `children` render as a single-row chip bar pinned above/below the category children), `text` (option or sub-branch), `range` (`min`/`max`/`divisions`), `any` (reset sentinel — omit `id`), `custom` (user-typed range, `minHintText`/`maxHintText`). A `header`/`footer` row renders chips only, so its `children` must not contain a `custom` entry — a custom range entry is rejected with the error card; put it under the category's own `children` instead.
+- `entries`: an entry tree in the `SelectEntryCodec` JSON format. Node `type`s: `category` (optional `selectionMode`, `layout` such as `{"kind":"grid","crossAxisCount":3}`, and `header`/`footer` — branch nodes whose `children` render as a single-row chip bar pinned above/below the category children), `text` (option or sub-branch), `range` (`min`/`max`/`divisions`), `any` (reset sentinel — omit `id`), `custom` (user-typed range, `minHintText`/`maxHintText`). A `header`/`footer` row renders chips only, so its `children` must not contain a `custom` entry — a custom range entry is rejected with the error card; put it under the category's own `children` instead. Siblings — the top-level entries, one node's `children`, and a `header`/`footer` row — must carry distinct `id`s; the same `id` may still be reused under a different parent (the built-in `any`/`custom` entries rely on that). Do not author `parentId`: it is derived from the tree, and is not part of the payload format.
 
 ## Selection write-back
 
@@ -69,6 +69,6 @@ Selections are written to the GenUI data model at `<id>.value` (or the payload's
 - Flat panels — `{flatKey: [ids]}` (fl_select's `toIdList()`).
 - An empty selection writes `{}`.
 
-Invalid payloads (malformed JSON, empty `entries`, a flat panel missing `flatKey`, or a `custom` entry inside a `header`/`footer`) render an inline error card instead of crashing.
+Invalid payloads (malformed JSON, empty `entries`, a flat panel missing `flatKey`, a `custom` entry inside a `header`/`footer`, or an entry tree fl_select rejects — duplicate sibling ids, a non-category entry beside a category) render an inline error card instead of crashing.
 
 Package: <https://pub.dev/packages/fl_select_genui> · fl_select: <https://pub.dev/packages/fl_select>
