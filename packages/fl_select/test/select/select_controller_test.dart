@@ -1,4 +1,5 @@
 import 'package:fl_select/fl_select.dart';
+import 'package:fl_select/src/select/select_utils.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 SelectTextEntry<dynamic> _text(
@@ -112,6 +113,153 @@ void main() {
 
       expect(controller.selectedEntriesAtLevel(0).contains(c), isTrue);
       expect(controller.selectedEntriesAtLevel(1).contains(any), isTrue);
+    });
+  });
+
+  group('SelectController - duplicate sibling ids', () {
+    test('two flat entries sharing an id are rejected', () {
+      final entries = <SelectEntry<dynamic>>[
+        _text('', 'e', 'E1'),
+        _text('', 'e', 'E2'),
+      ];
+
+      expect(
+        () => SelectController.validateEntries(entries),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            allOf(contains('Duplicate id "e"'), contains('at the top level')),
+          ),
+        ),
+      );
+    });
+
+    test('two siblings that only collide after derivation are rejected', () {
+      // As authored these differ by parentId, so both survive the Set literal.
+      // Deriving the empty parentId makes them equal, so they would collapse
+      // into one — which is why the ids are checked before derivation.
+      final category = _category(
+        'c',
+        'C',
+        children: {_text('', 'e', 'E'), _text('c', 'e', 'E')},
+      );
+
+      expect(
+        () => SelectController.validateEntries([category]),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('Duplicate id "e" under parent "c"'),
+          ),
+        ),
+      );
+
+      // Without the check the duplicate is unreachable: the derived tree keeps
+      // only one of the two entries.
+      final derived = SelectUtils.deriveParentIds([category]);
+      expect(derived.single.children, hasLength(1));
+    });
+
+    test('two entries of different types sharing an id are rejected', () {
+      final category = _category(
+        'c',
+        'C',
+        children: {
+          _text('c', 'a', 'A'),
+          SelectRangeEntry<int, dynamic>(
+            parentId: 'c',
+            id: 'a',
+            name: 'A range',
+          ),
+        },
+      );
+      final controller = SelectController(selectionMode: SelectionMode.single);
+
+      // Both survive the Set (different runtimeType) and would render side by
+      // side, but a tap could no longer be resolved to one of them.
+      expect(category.children, hasLength(2));
+      expect(
+        () => controller.bindState([category], initializeAnyIfEmpty: false),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('Duplicate id "a" under parent "c"'),
+          ),
+        ),
+      );
+    });
+
+    test('two categories sharing an id are rejected', () {
+      expect(
+        () => SelectController.validateEntries([
+          _category('c', 'C', children: {_text('c', 'a', 'A')}),
+          _category(
+            'c',
+            'C',
+            children: {_text('c', 'b', 'B')},
+            selectionMode: SelectionMode.multiple,
+          ),
+        ]),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('Duplicate id "c" at the top level'),
+          ),
+        ),
+      );
+    });
+
+    test('two custom entries sharing an id are rejected', () {
+      final category = _category(
+        'c',
+        'C',
+        children: {_CustomEntry('e'), _CustomEntry('e')},
+      );
+
+      // A custom subclass keeps the default identity-based `==`, so nothing
+      // collapses the two; the validator is the only guard.
+      expect(category.children, hasLength(2));
+      expect(
+        () => SelectController.validateEntries([category]),
+        throwsA(
+          isA<ArgumentError>().having(
+            (error) => error.message,
+            'message',
+            contains('Duplicate id "e" under parent "c"'),
+          ),
+        ),
+      );
+    });
+
+    test('the same id under different parents is not a duplicate', () {
+      // Header and footer children are sibling groups of their own, so ids may
+      // repeat across them (the built-in "Any"/"custom" entries rely on this).
+      final category = _category(
+        'c',
+        'C',
+        children: {_text('c', 'a', 'A')},
+        header: _text('c', 'h', 'H', children: {_text('h', 'x', 'X')}),
+        footer: _text('c', 'f', 'F', children: {_text('f', 'x', 'X')}),
+      );
+
+      expect(
+        () => SelectController.validateEntries([category]),
+        returnsNormally,
+      );
+    });
+
+    test('the same instance listed twice is not a duplicate', () {
+      final category = _category('c', 'C', children: {_text('c', 'a', 'A')});
+
+      // One entry, listed twice: the id still resolves to it.
+      expect(
+        () => SelectController.validateEntries([category, category]),
+        returnsNormally,
+      );
     });
   });
 
@@ -786,4 +934,13 @@ void main() {
       );
     });
   });
+}
+
+/// A [SelectEntry] subclass outside the built-in family.
+///
+/// It inherits the default identity-based `==`, so two instances carrying the
+/// same id stay side by side in a `Set` instead of collapsing into one — the
+/// duplicate has to be caught by the validator rather than by the container.
+class _CustomEntry extends SelectEntry<dynamic> {
+  _CustomEntry(String id) : super(id: id, name: id);
 }

@@ -316,25 +316,22 @@ void main() {
       expect(child.parentId, '');
     });
 
-    test(
-      'leaves own parentId empty, preserves fields',
-      () {
-        final entry = SelectTextEntry<dynamic>(
-          id: 'p',
-          name: 'Parent',
-          enabled: false,
-          immediate: true,
-          extra: 'x',
-          children: {SelectTextEntry<dynamic>(id: 'a', name: 'A')},
-        );
+    test('leaves own parentId empty, preserves fields', () {
+      final entry = SelectTextEntry<dynamic>(
+        id: 'p',
+        name: 'Parent',
+        enabled: false,
+        immediate: true,
+        extra: 'x',
+        children: {SelectTextEntry<dynamic>(id: 'a', name: 'A')},
+      );
 
-        expect(entry.parentId, '');
-        expect(entry.id, 'p');
-        expect(entry.enabled, false);
-        expect(entry.immediate, true);
-        expect(entry.extra, 'x');
-      },
-    );
+      expect(entry.parentId, '');
+      expect(entry.id, 'p');
+      expect(entry.enabled, false);
+      expect(entry.immediate, true);
+      expect(entry.extra, 'x');
+    });
   });
 
   group('SelectRangeEntry', () {
@@ -476,7 +473,7 @@ void main() {
 
   group('SelectCategoryEntry', () {
     test(
-      '== and hashCode: equal categories with same id, name, selectionMode, layout',
+      '== and hashCode: equal categories with same id, selectionMode, layout',
       () {
         final a = _category('c', 'C', children: {_text('c', 'a', 'A')});
         final b = _category('c', 'C', children: {_text('c', 'a', 'A')});
@@ -523,11 +520,26 @@ void main() {
       expect(a, isNot(equals(b)));
     });
 
-    test('== and hashCode: different name makes categories unequal', () {
+    test('== and hashCode: name does not participate in identity', () {
+      // `name` is mutable presentation state (relabelling or localization
+      // rewrites it), so it must not be part of equality — otherwise a category
+      // renamed while sitting in a Set can no longer be found by
+      // contains/remove, and a category rebuilt with a new name stops matching
+      // the selected one (e.g. SelectSideBar highlighting a category through
+      // `selectedCategories.contains(entry)`).
       final a = _category('c', 'C1', children: {_text('c', 'a', 'A')});
       final b = _category('c', 'C2', children: {_text('c', 'a', 'A')});
 
-      expect(a, isNot(equals(b)));
+      expect(a, equals(b));
+      expect(a.hashCode, equals(b.hashCode));
+
+      // Renaming a category already inside a set keeps it addressable.
+      final set = <SelectCategoryEntry<dynamic>>{a};
+      a.name = 'C1 renamed';
+
+      expect(set.contains(a), isTrue);
+      expect(set.remove(a), isTrue);
+      expect(set, isEmpty);
     });
 
     test('selection modes default to null (inherit the delegate mode)', () {
@@ -1654,8 +1666,7 @@ void main() {
         expect((child as SelectChildEntry).parentId, 'c1');
       }
       final branchA =
-          category.children!.firstWhere((e) => e.id == 'a')
-              as SelectChildEntry;
+          category.children!.firstWhere((e) => e.id == 'a') as SelectChildEntry;
       for (final grandchild in branchA.children!) {
         expect((grandchild as SelectChildEntry).parentId, 'a');
       }

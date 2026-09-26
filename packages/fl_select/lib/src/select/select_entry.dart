@@ -1029,13 +1029,24 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
         other is SelectCategoryEntry<E> &&
             runtimeType == other.runtimeType &&
             other.id == id &&
-            other.name == name &&
             other.selectionMode == selectionMode &&
             other.layout == layout;
   }
 
+  /// Identity is defined by `(id, selectionMode, layout)` — deliberately not
+  /// [name].
+  ///
+  /// [name] is mutable presentation state (relabelling or localization rewrites
+  /// it), and a participating field of `hashCode` must never change while the
+  /// entry sits in a `Set`: hash-bucket lookups (contains/remove) would silently
+  /// fail afterwards. It also has to stay out of identity so a category rebuilt
+  /// with a new name still matches the selected one (e.g. `SelectSideBar`
+  /// highlighting a category through `selectedCategories.contains(entry)`), and
+  /// so two categories that differ only in name cannot end up side by side with
+  /// the same id. This mirrors [SelectChildEntry], whose identity is the
+  /// `(id, parentId)` pair.
   @override
-  int get hashCode => Object.hash(id, name, selectionMode, layout);
+  int get hashCode => Object.hash(id, selectionMode, layout);
 
   @override
   String toString() =>

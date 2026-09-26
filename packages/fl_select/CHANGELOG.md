@@ -10,6 +10,10 @@
 
 - **DEPRECATION** the named constructors that only spared the `parentId` boilerplate converge on the plain constructors and will be removed in a future minor version: `SelectTextEntry.id()`, `SelectTextEntry.name()`, `SelectChildEntry.empty()`, and the `.children` factories of `SelectTextEntry`, `SelectChildEntry` and `SelectCategoryEntry`. They keep working unchanged, eager injection of the `.children` factories included ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-next)).
 
+- **FEATURE** `SelectController.validateEntries` — and therefore binding — now rejects duplicate sibling ids: two top-level entries, or two children of the same node, sharing an id throw an `ArgumentError` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#sibling-ids-must-be-unique)). A duplicate used to fail silently in one of two ways: siblings that compared equal collapsed into one in the `Set`-backed containers, so the second entry was dropped without a word, while siblings that did not compare equal (a text entry next to a range entry, or two categories whose `selectionMode`/`layout` differ) both stayed and made every id-based lookup ambiguous, so a tap on them was ignored. The ids are checked on the entries as authored, before the parent links are derived, so a duplicate that derivation would have collapsed is reported too; the panel surfaces the error through its error UI like the other validation failures.
+
+- **IMPROVEMENT** `SelectCategoryEntry` no longer includes `name` in its identity (`==`/`hashCode`): it is mutable presentation state, exactly like the `name` of a `SelectChildEntry`, so renaming a category that sits in a `Set` no longer breaks `contains`/`remove` — the hash bucket it was filed under would no longer match — and a category rebuilt with a new label still matches the selected one (e.g. the side nav highlighting its tile).
+
 ## 0.14.0
 
 - **BREAKING** remove the deprecated `SelectController.badgedCategories` getter ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0120)).

@@ -112,6 +112,50 @@ What does **not** change:
   derives the parent links itself, so a decoded tree reaches a delegate exactly
   like a hand-built one.
 
+### Sibling ids must be unique
+
+Entries that share a parent — top-level entries, the children of one node, and
+the children of a header/footer — must carry distinct ids. A duplicate was
+always a bug, but it used to fail silently in one of two ways, so
+`SelectController.validateEntries` (and therefore binding) now reports it as an
+`ArgumentError`:
+
+- Siblings that compare equal — same runtime type, id and `parentId`, since
+  `name` is deliberately not part of identity — collapse into one wherever they
+  are held in a `Set`: the second entry was dropped without a word.
+- Siblings that do **not** compare equal but still share an id — a
+  `SelectTextEntry` next to a `SelectRangeEntry`, or two categories whose
+  `selectionMode`/`layout` differ — both stayed, and then the lookup that
+  resolves an entry from its id alone (`singleWhereOrNull((e) => e.id == ...)`,
+  `StateTree.findEntry`) could no longer tell them apart: a tap on them was
+  ignored.
+
+Give one of the two a distinct id:
+
+```diff
+  SelectCategoryEntry(
+    id: 'c1',
+    name: 'Category 1',
+    children: {
+      SelectTextEntry(id: 'a', name: 'A'),
+-     SelectTextEntry(id: 'a', name: 'A'),  // Duplicate id "a" under parent "c1"
++     SelectTextEntry(id: 'b', name: 'B'),
+    },
+  );
+```
+
+Only siblings are compared, so the same id may still be reused under
+**different** parents; the built-in "Any" and "custom" entries rely on that. The
+check runs on the entries as you authored them, before the parent links are
+derived, so two siblings that would only become equal once an empty `parentId`
+is filled in are reported as well.
+
+Relatedly, `SelectCategoryEntry` no longer includes `name` in its identity
+(`==`/`hashCode`). Like the name of a `SelectChildEntry` it is mutable
+presentation state, so relabelling a category no longer makes it unfindable in
+the sets it is stored in, and two categories that differ only in name count as
+the same entry instead of sitting side by side with the same id.
+
 ## MIGRATE TO 0.14.0
 
 ### `SelectThemeData.chipBarThemeData` renamed to `chipBarTheme`

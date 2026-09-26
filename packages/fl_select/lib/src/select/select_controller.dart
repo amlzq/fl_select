@@ -111,6 +111,13 @@ class SelectController extends ChangeNotifier {
     SelectEntries? selectedEntriesOverride,
     SelectEntries? resetEntriesOverride,
   }) {
+    // Sibling ids are checked before the parent links are derived: derivation
+    // fills in a missing `parentId`, and a custom subclass is rewritten into a
+    // `SelectChildEntry` where wrapping is enabled. Either can turn two siblings
+    // that were distinguishable as authored into equal ones, and the rebuilt
+    // child set then keeps only the first of them — hiding the duplicate from
+    // validation.
+    _validateSiblingIds(entries);
     // Derive the parent links from the tree structure before validating and
     // binding, so an omitted `SelectChildEntry.parentId` is filled in from the
     // position of the entry instead of being rejected. The list is returned
@@ -147,10 +154,20 @@ class SelectController extends ChangeNotifier {
   /// wrong node is not corrected, and throws an [ArgumentError] during
   /// development instead of failing silently in release builds.
   ///
+  /// Two sibling entries may not share an id either — top-level entries just as
+  /// much as the children of one node. An entry is resolved from its id alone
+  /// by the widgets (`singleWhereOrNull((e) => e.id == ...)`) and by
+  /// `StateTree.findEntry`, so a duplicate makes that lookup ambiguous, and for
+  /// a sibling group held in a `Set` it silently drops one of the two entries
+  /// before anything can report it. Those ids are checked on the tree as
+  /// authored, before the parent links are derived — see
+  /// [_validateSiblingIds].
+  ///
   /// This is public so hosts (e.g. the panel) can validate loaded entries
   /// up front and surface the error through their error UI instead of letting
   /// it escape mid-build and hang the frame.
   static void validateEntries(List<SelectEntry> entries) {
+    _validateSiblingIds(entries);
     _validateDerivedEntries(SelectUtils.deriveParentIds(entries));
   }
 
@@ -222,6 +239,88 @@ class SelectController extends ChangeNotifier {
       if (entry.children != null && entry.children!.isNotEmpty) {
         walk(entry, entry.children!);
       }
+    }
+  }
+
+  /// Validates the sibling ids of the tree as authored, recursing through
+  /// [SelectEntry.children] and through a category's header/footer.
+  ///
+  /// Called before [SelectUtils.deriveParentIds], because derivation fills in a
+  /// missing [SelectChildEntry.parentId] — and rewrites a custom [SelectEntry]
+  /// subclass into a [SelectChildEntry] where wrapping is enabled. Two siblings
+  /// that were distinguishable as authored can compare equal afterwards, and
+  /// the rebuilt child `Set` then keeps only the first of them, so the
+  /// duplicate could no longer be reported. The top level is a `List` either
+  /// way, so its duplicates stay visible even when the entries themselves were
+  /// built from a `Set`.
+  static void _validateSiblingIds(List<SelectEntry> entries) {
+    _validateUniqueIds(entries, scope: 'at the top level');
+
+    void walk(SelectEntry node) {
+      final children = node.children;
+      if (children != null && children.isNotEmpty) {
+        _validateUniqueIds(children, scope: 'under parent "${node.id}"');
+        for (final child in children) {
+          walk(child);
+        }
+      }
+      if (node is SelectCategoryEntry) {
+        final header = node.header;
+        if (header != null) walk(header);
+        final footer = node.footer;
+        if (footer != null) walk(footer);
+      }
+    }
+
+    for (final entry in entries) {
+      walk(entry);
+    }
+  }
+
+  /// Validates that no two *distinct* entries in the same sibling group share an
+  /// [SelectEntry.id].
+  ///
+  /// A sibling group is the top-level `entries` list, or the
+  /// [SelectEntry.children] of one node (the `children` of a category's header
+  /// and footer are groups of their own). [scope] names the group in the error
+  /// message.
+  ///
+  /// This guards the half of the duplicate-id problem that the `Set`-based
+  /// container cannot report on its own. [SelectEntries] is a `Set`, so two
+  /// siblings that compare equal (same runtimeType, id and parentId — `name` is
+  /// deliberately not part of identity) collapse into one **before** anything
+  /// gets to look at them, and the second entry is silently dropped. Two
+  /// siblings that do *not* compare equal while still sharing an id — a
+  /// [SelectChildEntry] next to a [SelectRangeEntry], or two categories whose
+  /// `selectionMode`/`layout` differ — survive instead, and then every lookup
+  /// that resolves an entry from its id alone (`singleWhereOrNull((e) => e.id
+  /// == ...)`, `StateTree.findEntry`) becomes ambiguous, so the tap on them is
+  /// silently ignored. Both halves are host-visible bugs, so both fail fast
+  /// here instead.
+  ///
+  /// Identical entries are not reported: they are the same entry, so the id
+  /// still resolves to exactly one of them.
+  static void _validateUniqueIds(
+    Iterable<SelectEntry> siblings, {
+    required String scope,
+  }) {
+    final seen = <String, SelectEntry>{};
+    for (final entry in siblings) {
+      final previous = seen[entry.id];
+      if (previous != null && !identical(previous, entry)) {
+        throw ArgumentError(
+          'Duplicate id "${entry.id}" $scope: "${previous.runtimeType}" and '
+          '"${entry.runtimeType}" both use it. Sibling entries must have '
+          'distinct ids, because an entry is resolved from its id alone: '
+          'siblings that compare equal (same runtimeType, id and parentId — '
+          'name is not part of identity) collapse into one wherever they are '
+          'held in a Set, so one of them is silently dropped, while siblings '
+          'that differ (entry type, or a category\'s selectionMode/layout) both '
+          'survive and make that lookup ambiguous. Either way the tap on the '
+          'duplicate is ignored. Give each sibling a distinct id.',
+        );
+      }
+      seen.putIfAbsent(entry.id, () => entry);
     }
   }
 

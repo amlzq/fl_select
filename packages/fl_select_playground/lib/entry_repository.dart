@@ -143,9 +143,7 @@ class EntryRepository {
     SelectCategoryEntry(
       id: 'residential',
       name: '',
-      children: {
-        SelectTextEntry.any(name: anyEntryText),
-      },
+      children: {SelectTextEntry.any(name: anyEntryText)},
     ),
   };
 
@@ -179,9 +177,7 @@ class EntryRepository {
   /// Recursively turns a [CascadingData] node into a [SelectTextEntry].
   ///
   /// The cascading delegate renders one column per level, so every nested
-  /// `data` array becomes another level of children. No `parentId` is written
-  /// by hand: each node picks up the id of its direct parent when the entries
-  /// are bound.
+  /// `data` array becomes another level of children.
   SelectTextEntry _cascadingTextEntry(CascadingData node) => SelectTextEntry(
     id: node.id!,
     name: node.name!,
