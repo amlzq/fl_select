@@ -42,6 +42,18 @@ PopupSelectBar(
 
 ## Globally
 
+Every select resolves its base theme from the ambient `SelectTheme` — an `InheritedTheme` carrying a `SelectThemeData` (read back via `SelectTheme.of(context)`), which falls back to a `SelectThemeData` derived from the Material `ThemeData` when none is in scope. Delegate-level theme fields merge field-wise on top of it. Wrap it above the `Navigator` so inline views, dialogs, sheets and popup overlays are all covered, and use `SelectTheme.merge` to layer a partial `SelectThemeData` over the ambient one:
+
+```dart
+MaterialApp(
+  builder: (context, child) => SelectTheme.merge(
+    data: SelectThemeData(Theme.of(context), selectedColor: Colors.teal),
+    child: child!,
+  ),
+  home: const HomePage(),
+);
+```
+
 Register `PopupSelectBarTheme` and `PopupSelectButtonTheme` as `ThemeData` extensions so every bar/button picks them up automatically:
 
 ```dart
@@ -64,9 +76,11 @@ MaterialApp(
 
 `PopupSelectBarTheme` fields include `height`, `labelColor`, `unselectedLabelColor`, `labelStyle`, `unselectedLabelStyle`, `indicator`, `unselectedIndicator`, `overlayStyle`, `selectTheme`. `PopupSelectButtonTheme` fields include `backgroundColor`, `foregroundColor`, `iconColor`, `elevation`, `side`, `shape`, `textStyle`, `padding`, `overlayStyle`, `selectTheme`.
 
-Precedence: widget parameter → `selectTheme` on the widget → theme extension → defaults.
+Precedence: widget parameter → `selectTheme` on the widget → theme extension → ambient `SelectTheme` → `SelectThemeData` derived from the Material `ThemeData`.
 
-Chip styling: the wrapping chip view resolves `wrapViewTheme` (`SelectWrapViewTheme`: `variant` (filled/outlined), `chipColor`, `selectedChipColor`, `labelStyle`, `selectedLabelStyle`, `backgroundColor`, `padding`) — set it on the delegate or globally on `SelectThemeData`; a delegate's own value wins over the one on `SelectThemeData`. `SelectThemeData.chipBarTheme` is the shared chip-bar theme: `chipBarThemeData` is a deprecated alias that still reads, but the `SelectThemeData(...)` factory and `SelectThemeData.raw(...)` only accept `chipBarTheme`. It no longer styles the wrap view directly — it is folded into `wrapViewTheme` as a lowest-priority fallback (a field set on both resolves from `wrapViewTheme`), so prefer `wrapViewTheme`.
+A `PopupSelectBar` / `PopupSelectButton` overlay sits above the trigger's route, so a `SelectTheme` wrapped around the trigger alone does not reach it — the trigger injects the `selectTheme` it resolved around the panel instead. Set the theme above the `Navigator`, or through those two extensions.
+
+Chip styling: the wrapping chip view resolves `wrapViewTheme` (`SelectWrapViewTheme`: `variant` (filled/outlined), `chipColor`, `selectedChipColor`, `labelStyle`, `selectedLabelStyle`, `backgroundColor`, `padding`) — set it on the delegate or globally on `SelectThemeData`; a delegate's own value wins over the one on `SelectThemeData`. `SelectThemeData.chipBarTheme` is the shared chip-bar theme — the `SelectThemeData(...)` factory and `SelectThemeData.raw(...)` accept it by that name. It no longer styles the wrap view directly — it is folded into `wrapViewTheme` as a lowest-priority fallback (a field set on both resolves from `wrapViewTheme`), so prefer `wrapViewTheme`.
 
 ## Internationalization
 

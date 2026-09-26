@@ -10,7 +10,7 @@ Selections and data are a tree of `SelectEntry` nodes:
 
 | Entry | Purpose |
 | --- | --- |
-| `SelectTextEntry` | Plain text leaf, flat or nested (pass `children`). `.any(...)` builds the "Any" (clear) entry. |
+| `SelectTextEntry` | Plain text leaf — flat, or nested via the default constructor's `children:`. `.any(...)` builds the "Any" (clear) entry. |
 | `SelectRangeEntry<N, E>` | Range leaf (`min` / `max`). `.any(...)` for "Any"; `.custom(...)` for a user-input range. `SelectIntEntry<E>` = `SelectRangeEntry<int, E>`. |
 
 Common fields on every entry: `id`, `name`, `extra` (free-form payload, any type — attach your domain object here), `enabled` (defaults `true`; `false` renders the entry disabled), and `children` (nesting — see below).
@@ -65,6 +65,14 @@ SelectCategoryEntry(
   },
 );
 ```
+
+## Validation
+
+Binding a tree validates it — sync `entries` and loaded `entriesLoader` data alike. An invalid tree throws `ArgumentError` instead of rendering taps that are silently dropped; when entries come through an entry point the failure is routed to the delegate's `errorBuilder` (and logged to the console). `SelectController.validateEntries(entries)` is public, so a host can validate loaded data up front and render its own error UI:
+
+- **Duplicate sibling ids** — no two *distinct* entries in the same sibling group may share an `id`: the top level, one node's `children`, and a category's `header` / `footer` children (each a group of its own). An entry is resolved from its id alone, and entry identity is `runtimeType` + `id` + `parentId` — `name` is deliberately **not** part of it, so two siblings that differ only by name or type still collide. Siblings that compare equal collapse into one in the `Set` (silently dropping one); siblings that differ (another entry type, or a category's `selectionMode` / `layout`) both survive and make that lookup ambiguous. Give each sibling a distinct id.
+- **Top-level shape** — once any `SelectCategoryEntry` is present, every top-level entry must be a `SelectCategoryEntry`; a flat leaf next to a category is rejected, because the widgets resolve the rendered category from the top level.
+- **Parent links** — an omitted `parentId` is derived from the tree structure; an explicitly wrong one is not corrected and is rejected. Nesting with `children` is the whole wiring, so this only affects hand-wired data.
 
 ## Selection mode
 

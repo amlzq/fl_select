@@ -2,7 +2,7 @@
 
 A `SelectDelegate` controls both data loading (`entries` directly or `entriesLoader` async) and how the body is rendered. It is passed to every entry point. The seven built-ins are single-purpose by data shape — each asserts on the data shape it does not support, so a mis-migration surfaces immediately.
 
-**Flat data** — parentless `.name(...)` leaves:
+**Flat data** — top-level `SelectTextEntry` leaves:
 
 | Delegate | Body |
 | --- | --- |
