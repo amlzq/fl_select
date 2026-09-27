@@ -10,6 +10,8 @@ import 'package:flutter/foundation.dart';
 /// * [SelectWrapLayout] → the chip bar (handles all [SelectEntry] subtypes)
 /// * [SelectCounterLayout] → the counter (handles [SelectTextEntry])
 /// * [SelectRangeLayout] → the range view (handles [SelectRangeEntry])
+/// * [SelectCascadingLayout] → the cascading view (handles [SelectChildEntry]
+///   trees, drilling down one column per level)
 ///
 /// Because the class is `sealed`, the compiler can exhaustively check `switch`
 /// statements over [SelectLayout], so adding a new layout later is a
@@ -127,6 +129,41 @@ class SelectCounterLayout extends SelectLayout {
 
   @override
   int get hashCode => runtimeType.hashCode;
+}
+
+/// Cascading (multi-column) layout for the children of a
+/// [SelectCategoryEntry].
+///
+/// Rendered by the cascading view, which starts with the category's children as
+/// the first column and appends a column to the right every time a branch entry
+/// is tapped, so the user can drill down (child → grandchild → …). The columns
+/// read and write the selection through
+/// [SelectController.selectedEntriesAtLevel] /
+/// [SelectController.toggleCascadingEntry], which means the same cascade
+/// semantics as [CascadingSelect] apply — including the `Any` level-skip and the
+/// per-column selected-count badges.
+///
+/// Unlike the other layouts this one owns its own navigation state, so the
+/// category's content view passes the entries and reads the result back.
+class SelectCascadingLayout extends SelectLayout {
+  const SelectCascadingLayout({this.isScrollable = false});
+
+  /// Whether the cascade scrolls horizontally when the columns overflow the
+  /// available width.
+  ///
+  /// When true every column keeps its natural (measured) width, the row is
+  /// wrapped in a horizontal scroll view and revealing a new column sweeps to
+  /// its end — the same behaviour as `CascadingSelectDelegate.isScrollable`.
+  /// When false (the default) the columns divide the available width equally.
+  final bool isScrollable;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is SelectCascadingLayout && isScrollable == other.isScrollable;
+
+  @override
+  int get hashCode => isScrollable.hashCode;
 }
 
 /// Range-slider layout for the children of a [SelectCategoryEntry].

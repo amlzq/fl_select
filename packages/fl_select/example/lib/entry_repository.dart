@@ -594,5 +594,45 @@ SelectEntries get multiCategoryData {
       selectionMode: SelectionMode.single,
       layout: const SelectCounterLayout(),
     ),
+    SelectCategoryEntry(
+      id: 'cate7',
+      name: 'Cascading',
+      children: {
+        SelectTextEntry.any(name: 'Any'),
+        SelectTextEntry(
+          id: 'a',
+          name: 'A',
+          children: {
+            SelectTextEntry(id: 'aa', name: 'AA'),
+            SelectTextEntry(id: 'ab', name: 'AB'),
+            SelectTextEntry(id: 'ac', name: 'AC'),
+            SelectTextEntry(id: 'ad', name: 'AD'),
+          },
+        ),
+        SelectTextEntry(
+          id: 'b',
+          name: 'B',
+          children: {
+            SelectTextEntry(
+              id: 'ba',
+              name: 'BA',
+              children: {
+                SelectTextEntry(id: 'baa', name: 'BAA'),
+                SelectTextEntry(id: 'bab', name: 'BAB'),
+              },
+            ),
+            SelectTextEntry(id: 'bb', name: 'BB'),
+            SelectTextEntry(id: 'bc', name: 'BC'),
+            SelectTextEntry(id: 'bd', name: 'BD'),
+          },
+        ),
+        SelectTextEntry(id: 'c', name: 'C'),
+        SelectTextEntry(id: 'd', name: 'D'),
+        SelectTextEntry(id: 'e', name: 'E'),
+        SelectTextEntry(id: 'f', name: 'F'),
+      },
+      selectionMode: SelectionMode.multiple,
+      layout: const SelectCascadingLayout(isScrollable: true),
+    ),
   };
 }

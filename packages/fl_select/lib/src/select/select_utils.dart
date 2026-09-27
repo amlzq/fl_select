@@ -1,4 +1,5 @@
 import 'dart:collection';
+import 'dart:ui' show Color;
 
 import 'package:collection/collection.dart';
 
@@ -159,6 +160,61 @@ class SelectUtils {
     return changed ? derived : entries;
   }
 
+  /// Picks the entry a cascading selection should focus at [level].
+  ///
+  /// [selectedAtLevel] returns the entries selected at a given depth, level 0
+  /// being the categories themselves. [parent] scopes levels greater than 0 to
+  /// the children of one entry; pass `null` for level 0.
+  ///
+  /// Entries leading to deeper non-`Any` selections win over shallow ones, so a
+  /// restored cascade re-expands the deepest connected path. Returns null when
+  /// nothing is selected at that level, so the caller can fall back to its
+  /// default.
+  static SelectEntry? pickFocusedEntry(
+    SelectEntries Function(int level) selectedAtLevel,
+    SelectEntry? parent,
+    int level,
+  ) {
+    final selectedEntries = selectedAtLevel(level);
+    if (selectedEntries.isEmpty) return null;
+
+    final Iterable<SelectEntry> candidates;
+    if (level == 0) {
+      candidates = selectedEntries.whereType<SelectCategoryEntry>();
+    } else {
+      if (parent == null) return null;
+      candidates = selectedEntries.whereType<SelectChildEntry>().where(
+        (entry) => entry.parentId == parent.id,
+      );
+    }
+
+    if (candidates.isEmpty) return null;
+
+    int score(SelectEntry entry, int currentLevel) {
+      final nextSelected = selectedAtLevel(currentLevel + 1);
+      final nextChildren = nextSelected.whereType<SelectChildEntry>().where(
+        (child) => child.parentId == entry.id,
+      );
+      final descendantScore = nextChildren
+          .map((child) => score(child, currentLevel + 1))
+          .maxOrNull;
+      final selfScore = entry is SelectChildEntry && entry.isAny ? 0 : 1;
+      if (descendantScore == null) return selfScore;
+      return 10 + descendantScore + selfScore;
+    }
+
+    SelectEntry? bestEntry;
+    var bestScore = -1;
+    for (final entry in candidates) {
+      final entryScore = score(entry, level);
+      if (entryScore > bestScore) {
+        bestEntry = entry;
+        bestScore = entryScore;
+      }
+    }
+    return bestEntry;
+  }
+
   /// Returns the entries at the given tree [level] starting from [entry].
   ///
   /// - If [level] is 0, returns a set containing [entry].
@@ -257,6 +313,40 @@ class SelectUtils {
   int treeDepth(SelectEntry? root) {
     if (root?.children == null || root?.children?.isEmpty == true) return 1;
     return 1 + root!.children!.map(treeDepth).fold(0, (a, b) => a > b ? a : b);
+  }
+
+  /// Returns the maximum depth of the entry trees in [entries].
+  ///
+  /// [entries] themselves sit at [currentDepth] (defaults to the first level),
+  /// so a set of leaf entries resolves to [currentDepth] and every nested child
+  /// level adds one. Used to size the depth-based background gradient of the
+  /// cascading columns.
+  static int maxDepth(Set<SelectEntry>? entries, [int currentDepth = 1]) {
+    var maxDepth = currentDepth;
+    for (final entry in entries ?? const <SelectEntry>{}) {
+      if (!entry.hasChildren) continue;
+      final childDepth = SelectUtils.maxDepth(entry.children, currentDepth + 1);
+      if (childDepth > maxDepth) maxDepth = childDepth;
+    }
+    return maxDepth;
+  }
+
+  /// Interpolates a gradient of [depth] colors from [beginColor] to
+  /// [endColor].
+  ///
+  /// Index 0 is the background of the category level and every next index moves
+  /// one level closer to the terminal color. A single-color gradient is
+  /// returned when [depth] is 1 or less.
+  static List<Color> gradientColors(
+    int depth,
+    Color beginColor,
+    Color endColor,
+  ) {
+    if (depth <= 1) return [beginColor];
+    return [
+      for (var i = 0; i < depth; i++)
+        Color.lerp(beginColor, endColor, i / (depth - 1))!,
+    ];
   }
 
   static SelectEntries removeAnyEntries(Iterable<SelectEntry> entries) {

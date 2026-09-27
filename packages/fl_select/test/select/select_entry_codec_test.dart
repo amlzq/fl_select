@@ -194,6 +194,11 @@ void main() {
       );
       expect(layoutFor({'kind': 'counter'}), isA<SelectCounterLayout>());
       expect(layoutFor({'kind': 'range'}), isA<SelectRangeLayout>());
+      expect(layoutFor({'kind': 'cascading'}), isA<SelectCascadingLayout>());
+      expect(
+        layoutFor({'kind': 'cascading', 'isScrollable': true}),
+        const SelectCascadingLayout(isScrollable: true),
+      );
     });
 
     test('throws on malformed input', () {
@@ -331,6 +336,55 @@ void main() {
               as SelectRangeEntry;
       expect(custom.min, 0);
       expect(custom.max, 1000);
+    });
+
+    test('round-trips a cascading layout', () {
+      final original = {
+        SelectCategoryEntry(
+          id: 'region',
+          name: 'region',
+          layout: const SelectCascadingLayout(),
+          children: {
+            SelectTextEntry(
+              id: 'east',
+              name: 'East',
+              children: {SelectTextEntry(id: 'sh', name: 'Shanghai')},
+            ),
+          },
+        ),
+      };
+
+      final json = SelectEntryCodec.toJson(original);
+      expect((json.single['layout'] as Map)['kind'], 'cascading');
+      // The false default is omitted from the payload.
+      expect(
+        (json.single['layout'] as Map).containsKey('isScrollable'),
+        isFalse,
+      );
+
+      final decoded =
+          SelectEntryCodec.fromJson(json.map((e) => e).toList()).single
+              as SelectCategoryEntry;
+      expect(decoded.layout, const SelectCascadingLayout());
+    });
+
+    test('round-trips a scrollable cascading layout', () {
+      final original = {
+        SelectCategoryEntry(
+          id: 'region',
+          name: 'region',
+          layout: const SelectCascadingLayout(isScrollable: true),
+          children: {SelectTextEntry(id: 'east', name: 'East')},
+        ),
+      };
+
+      final json = SelectEntryCodec.toJson(original);
+      expect((json.single['layout'] as Map)['isScrollable'], isTrue);
+
+      final decoded =
+          SelectEntryCodec.fromJson(json.map((e) => e).toList()).single
+              as SelectCategoryEntry;
+      expect(decoded.layout, const SelectCascadingLayout(isScrollable: true));
     });
 
     test('emits a compact JSON shape', () {

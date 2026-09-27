@@ -9,7 +9,7 @@ import 'widgets.dart';
 /// (`category.layout ?? fallbackLayout`) to the matching select widget.
 ///
 /// This is an internal building block shared by the two-level select bodies
-/// (tab-nav, side-nav and expandable) so the five layout flavors are mapped
+/// (tab-nav, side-nav and expandable) so the six layout flavors are mapped
 /// to widgets in exactly one place.
 class SelectCategoryContentView extends StatelessWidget {
   /// Creates the content view for [category].
@@ -54,8 +54,8 @@ class SelectCategoryContentView extends StatelessWidget {
   /// Forwarded to the list, grid and wrap branches, where the builder
   /// receives the owning [category]'s id via its `categoryId` parameter and
   /// may return null to fall back to the default item widget. Not forwarded
-  /// to the range-slider and counter layouts, which keep their built-in
-  /// controls.
+  /// to the range-slider, counter and cascading layouts, which keep their
+  /// built-in items.
   final SelectItemBuilder? itemBuilder;
 
   @override
@@ -72,9 +72,6 @@ class SelectCategoryContentView extends StatelessWidget {
         selectedEntries: selectedEntries,
         onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
         toText: toText,
-        // Mirror [SelectionRules.toggleFlatLeaf]: a category without an
-        // explicit selectionMode inherits the delegate-level mode, while
-        // counter/range layouts stay pinned to single.
         selectionMode: category.effectiveSelectionMode(delegate.selectionMode),
         radioBuilder: radioBuilder,
         checkboxBuilder: checkboxBuilder,
@@ -128,6 +125,24 @@ class SelectCategoryContentView extends StatelessWidget {
         entries: entries,
         selectedEntries: selectedEntries,
         onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
+      ),
+      // The cascading view keeps its own navigation state and writes the
+      // selection straight to the [SelectController], so [onTerminalItemTap]
+      // (which follows the two-level `toggleFlatLeaf` semantics) is not used
+      // here.
+      SelectCascadingLayout(:final isScrollable) => CascadingView(
+        key: ValueKey('category_$index'),
+        category: category,
+        showTitle: false,
+        entries: entries,
+        selectionMode: category.effectiveSelectionMode(delegate.selectionMode),
+        isScrollable: isScrollable,
+        // Every host renders a category's content in an unbounded height
+        // context (single child scroll view, list view or expansion tile), so
+        // the columns size themselves to their content.
+        shrinkWrap: true,
+        radioBuilder: radioBuilder,
+        checkboxBuilder: checkboxBuilder,
       ),
     };
   }

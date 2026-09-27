@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'select_panel_theme.dart';
 import 'widgets/action_bar_theme.dart';
+import 'widgets/cascading_view_theme.dart';
 import 'widgets/chip_bar_theme.dart';
 import 'widgets/expansion_tile_theme.dart';
 import 'widgets/field_tile_theme.dart';
@@ -45,6 +46,7 @@ class SelectThemeData with Diagnosticable {
     SelectPanelTheme? panelTheme,
     SelectSearchBarTheme? searchBarTheme,
     SelectWrapViewTheme? wrapViewTheme,
+    SelectCascadingViewTheme? cascadingViewTheme,
   }) {
     return SelectThemeData.raw(
       selectedColor: selectedColor ?? theme.colorScheme.primary,
@@ -72,6 +74,8 @@ class SelectThemeData with Diagnosticable {
       panelTheme: panelTheme ?? const SelectPanelTheme(),
       searchBarTheme: searchBarTheme ?? const SelectSearchBarTheme(),
       wrapViewTheme: wrapViewTheme ?? const SelectWrapViewTheme(),
+      cascadingViewTheme:
+          cascadingViewTheme ?? const SelectCascadingViewTheme(),
     );
   }
 
@@ -98,6 +102,7 @@ class SelectThemeData with Diagnosticable {
     required this.panelTheme,
     required this.searchBarTheme,
     required this.wrapViewTheme,
+    required this.cascadingViewTheme,
   });
 
   /// Convenience factory that uses [theme] defaults without any overrides.
@@ -172,6 +177,9 @@ class SelectThemeData with Diagnosticable {
   /// Theme overrides for the wrap view.
   final SelectWrapViewTheme wrapViewTheme;
 
+  /// Theme overrides for the cascading view (multi-column item area).
+  final SelectCascadingViewTheme cascadingViewTheme;
+
   /// Creates a copy of this theme data with the given fields replaced.
   SelectThemeData copyWith({
     Color? selectedColor,
@@ -195,6 +203,7 @@ class SelectThemeData with Diagnosticable {
     SelectPanelTheme? panelTheme,
     SelectSearchBarTheme? searchBarTheme,
     SelectWrapViewTheme? wrapViewTheme,
+    SelectCascadingViewTheme? cascadingViewTheme,
   }) {
     return SelectThemeData.raw(
       selectedColor: selectedColor ?? this.selectedColor,
@@ -220,6 +229,7 @@ class SelectThemeData with Diagnosticable {
       panelTheme: panelTheme ?? this.panelTheme,
       searchBarTheme: searchBarTheme ?? this.searchBarTheme,
       wrapViewTheme: wrapViewTheme ?? this.wrapViewTheme,
+      cascadingViewTheme: cascadingViewTheme ?? this.cascadingViewTheme,
     );
   }
 
@@ -314,6 +324,11 @@ class SelectThemeData with Diagnosticable {
         b?.wrapViewTheme,
         t,
       ),
+      cascadingViewTheme: SelectCascadingViewTheme.lerp(
+        a?.cascadingViewTheme,
+        b?.cascadingViewTheme,
+        t,
+      ),
     );
   }
 
@@ -340,6 +355,7 @@ class SelectThemeData with Diagnosticable {
     panelTheme,
     searchBarTheme,
     wrapViewTheme,
+    cascadingViewTheme,
   ]);
 
   @override
@@ -371,6 +387,7 @@ class SelectThemeData with Diagnosticable {
         other.chipBarTheme == chipBarTheme &&
         other.panelTheme == panelTheme &&
         other.searchBarTheme == searchBarTheme &&
-        other.wrapViewTheme == wrapViewTheme;
+        other.wrapViewTheme == wrapViewTheme &&
+        other.cascadingViewTheme == cascadingViewTheme;
   }
 }

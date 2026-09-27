@@ -51,6 +51,7 @@ class SelectTheme extends InheritedTheme {
           chipBarTheme: data.chipBarTheme,
           searchBarTheme: data.searchBarTheme,
           wrapViewTheme: data.wrapViewTheme,
+          cascadingViewTheme: data.cascadingViewTheme,
         );
         return SelectTheme(
           key: key,

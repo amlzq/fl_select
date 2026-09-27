@@ -235,6 +235,9 @@ abstract final class SelectEntryCodec {
       ),
       'counter' => const SelectCounterLayout(),
       'range' => SelectRangeLayout(toText: map['toText'] as String? ?? '-'),
+      'cascading' => SelectCascadingLayout(
+        isScrollable: map['isScrollable'] == true,
+      ),
       null => throw const FormatException('layout is missing "kind"'),
       final v => throw FormatException('unknown layout kind: $v'),
     };
@@ -394,6 +397,11 @@ abstract final class SelectEntryCodec {
       },
       SelectCounterLayout() => {'kind': 'counter'},
       SelectRangeLayout(:final toText) => {'kind': 'range', 'toText': toText},
+      SelectCascadingLayout(:final isScrollable) => {
+        'kind': 'cascading',
+        // Omitted when false so existing payloads stay unchanged.
+        if (isScrollable) 'isScrollable': true,
+      },
     };
   }
 }

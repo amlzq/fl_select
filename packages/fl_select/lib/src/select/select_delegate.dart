@@ -102,6 +102,7 @@ abstract class SelectDelegate {
     this.expansionTileTheme,
     this.chipBarTheme,
     this.wrapViewTheme,
+    this.cascadingViewTheme,
     this.rangeSliderTheme,
     this.panelTheme,
     this.skeletonBuilder,
@@ -278,6 +279,13 @@ abstract class SelectDelegate {
   /// stays as the shared fallback so existing code keeps working.
   final SelectWrapViewTheme? wrapViewTheme;
 
+  /// Theme overrides for the cascading view.
+  ///
+  /// Applies to every cascading item area: the right-hand columns of
+  /// [CascadingSelect] and the columns rendered by a category whose layout is
+  /// [SelectCascadingLayout] in the tab-nav, side-nav and expandable selects.
+  final SelectCascadingViewTheme? cascadingViewTheme;
+
   /// Theme overrides for range sliders in range fields.
   final SelectRangeSliderTheme? rangeSliderTheme;
 
@@ -376,6 +384,7 @@ class ListSelectDelegate extends SelectDelegate {
     super.expansionTileTheme,
     super.chipBarTheme,
     super.wrapViewTheme,
+    super.cascadingViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -482,6 +491,7 @@ class GridSelectDelegate extends SelectDelegate {
     super.expansionTileTheme,
     super.chipBarTheme,
     super.wrapViewTheme,
+    super.cascadingViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -602,6 +612,7 @@ class WrapSelectDelegate extends SelectDelegate {
     super.expansionTileTheme,
     super.chipBarTheme,
     super.wrapViewTheme,
+    super.cascadingViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -711,6 +722,7 @@ class CascadingSelectDelegate extends SelectDelegate {
     super.expansionTileTheme,
     super.chipBarTheme,
     super.wrapViewTheme,
+    super.cascadingViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -808,6 +820,7 @@ class TabNavSelectDelegate extends SelectDelegate {
     super.expansionTileTheme,
     super.chipBarTheme,
     super.wrapViewTheme,
+    super.cascadingViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -928,6 +941,7 @@ class SideNavSelectDelegate extends SelectDelegate {
     super.expansionTileTheme,
     super.chipBarTheme,
     super.wrapViewTheme,
+    super.cascadingViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -1043,6 +1057,7 @@ class ExpandableSelectDelegate extends SelectDelegate {
     super.expansionTileTheme,
     super.chipBarTheme,
     super.wrapViewTheme,
+    super.cascadingViewTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,

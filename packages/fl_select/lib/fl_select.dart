@@ -27,6 +27,7 @@ export 'src/select/select_theme.dart';
 export 'src/select/select_theme_data.dart';
 export 'src/select/widgets/action_bar.dart' show SelectActionBar;
 export 'src/select/widgets/action_bar_theme.dart';
+export 'src/select/widgets/cascading_view_theme.dart';
 export 'src/select/widgets/chip.dart' show SelectChipVariant;
 export 'src/select/widgets/chip_bar_theme.dart';
 export 'src/select/widgets/constants.dart' show ToggleWidgetBuilder;

@@ -206,6 +206,7 @@ class _SelectPanelState extends State<SelectPanel> {
     final delegateSideBarTheme = widget.delegate.sideBarTheme;
     final delegateRangeSliderTheme = widget.delegate.rangeSliderTheme;
     final delegateWrapViewTheme = widget.delegate.wrapViewTheme;
+    final delegateCascadingViewTheme = widget.delegate.cascadingViewTheme;
     // Deprecated bridge: `chipBarTheme` used to style the wrap view as well.
     // Mapping it into the wrap view's own theme here — as the lowest-priority
     // layer — keeps that styling working while letting the wrap view resolve
@@ -257,6 +258,9 @@ class _SelectPanelState extends State<SelectPanel> {
           ? null
           : baseTheme.rangeSliderTheme.merge(delegateRangeSliderTheme),
       wrapViewTheme: effectiveWrapViewTheme,
+      cascadingViewTheme: delegateCascadingViewTheme == null
+          ? null
+          : baseTheme.cascadingViewTheme.merge(delegateCascadingViewTheme),
     );
 
     return SelectTheme(

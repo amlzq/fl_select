@@ -8,6 +8,7 @@ void main() {
       expect(const SelectGridLayout(crossAxisCount: 2), isA<SelectLayout>());
       expect(const SelectWrapLayout(), isA<SelectLayout>());
       expect(const SelectRangeLayout(), isA<SelectLayout>());
+      expect(const SelectCascadingLayout(), isA<SelectLayout>());
     });
   });
 
@@ -98,6 +99,44 @@ void main() {
 
     test('toText defaults to "-"', () {
       expect(const SelectRangeLayout().toText, '-');
+    });
+  });
+
+  group('SelectCascadingLayout', () {
+    test('== and hashCode: equal layouts are identical', () {
+      const a = SelectCascadingLayout();
+      const b = SelectCascadingLayout();
+      expect(a, equals(b));
+      expect(a.hashCode, equals(b.hashCode));
+    });
+
+    test('== and hashCode: is not equal to other layouts', () {
+      expect(
+        const SelectCascadingLayout(),
+        isNot(equals(const SelectListLayout())),
+      );
+      expect(
+        const SelectCascadingLayout(),
+        isNot(equals(const SelectWrapLayout())),
+      );
+    });
+
+    test('isScrollable defaults to false', () {
+      expect(const SelectCascadingLayout().isScrollable, isFalse);
+    });
+
+    test('== and hashCode: different isScrollable makes layouts unequal', () {
+      const a = SelectCascadingLayout();
+      const b = SelectCascadingLayout(isScrollable: true);
+      expect(a, isNot(equals(b)));
+      expect(
+        const SelectCascadingLayout(isScrollable: true),
+        equals(const SelectCascadingLayout(isScrollable: true)),
+      );
+      expect(
+        const SelectCascadingLayout(isScrollable: true).hashCode,
+        equals(const SelectCascadingLayout(isScrollable: true).hashCode),
+      );
     });
   });
 }
