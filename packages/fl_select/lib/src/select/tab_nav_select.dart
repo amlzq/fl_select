@@ -310,6 +310,7 @@ class TabNavSelectState extends State<TabNavSelect> {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (_displayEntries.length > 1)
           SelectTabBar(

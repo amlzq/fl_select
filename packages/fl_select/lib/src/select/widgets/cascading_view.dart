@@ -523,6 +523,35 @@ class _CascadingViewState extends State<CascadingView> {
     }
   }
 
+  /// Wraps [content] (the cascade columns) with [CascadingView.category]'s name,
+  /// mirroring [SelectListView]'s title header.
+  Widget _buildWithTitle(BuildContext context, Widget content) {
+    final title = widget.category.name;
+    if (!widget.showTitle || title == null) return content;
+
+    final header = Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: DefaultTextStyle.merge(
+        style:
+            Theme.of(context).textTheme.titleSmall ??
+            const TextStyle(fontSize: 16),
+        child: Text(title),
+      ),
+    );
+
+    // Under an unbounded host the columns size themselves, so the title simply
+    // stacks above them. A bounded host hands the columns the remaining height
+    // through [Expanded], which keeps their independent scrolling intact.
+    return Column(
+      mainAxisSize: widget.shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        header,
+        if (widget.shrinkWrap) content else Expanded(child: content),
+      ],
+    );
+  }
+
   Widget _buildColumn(int cascadeIndex, double? width) {
     final entries = _cascadingList[cascadeIndex];
     final level = cascadeIndex + 1;
@@ -598,41 +627,6 @@ class _CascadingViewState extends State<CascadingView> {
     return SizedBox(width: width, child: child);
   }
 
-  /// Wraps [content] (the cascade columns) with [CascadingView.category]'s name,
-  /// mirroring [SelectListView]'s title header.
-  Widget _buildWithTitle(BuildContext context, Widget content) {
-    final title = widget.category.name;
-    if (!widget.showTitle || title == null) return content;
-
-    final header = Padding(
-      padding: const EdgeInsets.only(bottom: 10),
-      child: DefaultTextStyle.merge(
-        style:
-            Theme.of(context).textTheme.titleSmall ??
-            const TextStyle(fontSize: 16),
-        child: Text(title),
-      ),
-    );
-
-    // Under an unbounded host the columns size themselves, so the title simply
-    // stacks above them. A bounded host hands the columns the remaining height
-    // through [Expanded], which keeps their independent scrolling intact.
-    return Column(
-      mainAxisSize: widget.shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        header,
-        if (widget.shrinkWrap) content else Expanded(child: content),
-      ],
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (_cascadingList.isEmpty) return const SizedBox.shrink();
-    return _buildWithTitle(context, _buildColumns(context));
-  }
-
   Widget _buildColumns(BuildContext context) {
     if (widget.isScrollable) {
       return LayoutBuilder(
@@ -670,5 +664,11 @@ class _CascadingViewState extends State<CascadingView> {
         (cascadeIndex) => _buildColumn(cascadeIndex, null),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_cascadingList.isEmpty) return const SizedBox.shrink();
+    return _buildWithTitle(context, _buildColumns(context));
   }
 }

@@ -423,15 +423,11 @@ class CascadingSelectState extends State<CascadingSelect> {
                       ),
                     Expanded(
                       child: CascadingView(
-                        // A new token (category switch, reset, search change)
-                        // gives the view a clean state instead of trying to
-                        // patch its focused path.
                         key: ValueKey(
                           'cascade_${focusedCategory.id}_$_cascadeRebuildToken',
                         ),
                         entries: focusedCategory.children?.toList() ?? [],
                         category: focusedCategory,
-                        // The sidebar already names the focused category.
                         showTitle: false,
                         selectionMode: childrenSelectionMode,
                         isScrollable: isScrollable,

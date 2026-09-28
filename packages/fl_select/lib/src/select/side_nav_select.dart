@@ -512,8 +512,8 @@ class SideNavSelectState extends State<SideNavSelect> {
         padding: EdgeInsets.only(top: 18, bottom: isLast ? 18 : 0),
         child: (categoryTitle != null || hasHeader || hasFooter)
             ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   ?categoryTitle,
                   if (hasHeader)

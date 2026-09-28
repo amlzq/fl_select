@@ -283,7 +283,7 @@ class _SelectExpansionTileState extends State<SelectExpansionTile>
         ? const SizedBox.shrink()
         : ClipRect(
             child: Align(
-              alignment: Alignment.topCenter,
+              alignment: Alignment.topLeft,
               heightFactor: _heightFactor.value,
               child: child,
             ),
@@ -291,6 +291,7 @@ class _SelectExpansionTileState extends State<SelectExpansionTile>
 
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Semantics(
           button: true,

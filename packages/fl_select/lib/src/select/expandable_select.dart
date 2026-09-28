@@ -204,6 +204,7 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
 
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Flexible(
           child: Scrollbar(
@@ -212,9 +213,11 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
               padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: List.generate(_displayEntries.length, (index) {
                   final category =
                       _displayEntries[index] as SelectCategoryEntry;
+
                   final content = SelectCategoryContentView(
                     category: category,
                     index: index,
@@ -246,8 +249,8 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                     initiallyExpanded: true,
                     child: hasHeader || hasFooter
                         ? Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               if (hasHeader)
                                 Padding(
@@ -327,6 +330,7 @@ class ExpandableSelectSkeleton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Flexible(child: SelectListSkeleton(itemCount: 6)),
         if (SelectionMode.multiple == selectionMode)
