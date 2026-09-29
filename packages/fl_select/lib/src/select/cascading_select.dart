@@ -80,7 +80,13 @@ class CascadingSelectState extends State<CascadingSelect> {
 
   SelectController? controller;
 
-  /// Gradient colors for each level
+  /// The ends of the background ramp, shared by the category sidebar (level 0)
+  /// and the cascading columns.
+  late Color _startBackgroundColor;
+  late Color _endBackgroundColor;
+
+  /// The background ramp the sidebar samples: index 0 is the category level and
+  /// index 1 the first children column.
   late List<Color> _backgroundColors;
 
   bool get _isSearching => widget.searchQuery.isNotEmpty;
@@ -156,24 +162,30 @@ class CascadingSelectState extends State<CascadingSelect> {
     // Gradient colors depend on the ambient theme, so they must be recomputed
     // whenever the theme changes (e.g. light/dark switch), not only on first init.
     final theme = SelectTheme.of(context);
-    final categoryBackgroundColor =
-        delegate.categoryBackgroundColor ?? theme.backgroundColor;
-    final terminalBackgroundColor =
-        delegate.terminalBackgroundColor ?? theme.backgroundColorHighest;
+    // The sidebar is flush against the first column, so the sidebar paints the
+    // level-0 surface the cascade starts from: both sides read one resolved
+    // color, which is why it is handed to the view as its ramp start.
+    _startBackgroundColor = SelectSideBarTheme.resolveBackgroundColor(
+      context,
+      // ignore: deprecated_member_use_from_same_package
+      fallback: delegate.categoryBackgroundColor,
+    );
+    _endBackgroundColor =
+        theme.cascadingViewTheme.endBackgroundColor ??
+        // ignore: deprecated_member_use_from_same_package
+        delegate.terminalBackgroundColor ??
+        theme.backgroundColorHighest;
     // The cascading UI always renders at least two levels (the category
-    // sidebar plus one children column), so the gradient must span at least
+    // sidebar plus one children column), so the ramp must span at least
     // two steps even for depth-1 trees (categories without children).
     final maxDepth = max(2, SelectUtils.maxDepth(widget.entries.toSet(), 1));
-    // A theme-level palette replaces the derived gradient for the sidebar
-    // (level 0) as well as the columns, so the two stay in sync.
-    final themeColors = theme.cascadingViewTheme.backgroundColors;
-    _backgroundColors = themeColors != null && themeColors.isNotEmpty
-        ? themeColors
-        : SelectUtils.gradientColors(
-            maxDepth,
-            categoryBackgroundColor,
-            terminalBackgroundColor,
-          );
+    // The sidebar shares the category level (0) with the columns, so it ramps
+    // over the same ends and both stay in sync.
+    _backgroundColors = SelectUtils.gradientColors(
+      maxDepth,
+      _startBackgroundColor,
+      _endBackgroundColor,
+    );
 
     controller?.bindState(
       widget.entries,
@@ -366,12 +378,12 @@ class CascadingSelectState extends State<CascadingSelect> {
     final headerSelected = _headerSelectedFor(focusedCategory.id);
     final footerSelected = _footerSelectedFor(focusedCategory.id);
 
-    final categoryBackgroundColor =
-        _backgroundColors.firstOrNull ?? theme.backgroundColor;
-    // Get selected item color (background color of next level)
-    final selectedTileColor = 0 + 1 < _backgroundColors.length
-        ? _backgroundColors[0 + 1]
-        : _backgroundColors.last;
+    // The sidebar paints the level-0 surface of the ramp it shares with the
+    // columns, so it takes the ramp's start.
+    final categoryBackgroundColor = _startBackgroundColor;
+    // Get selected item color (background color of next level); the ramp always
+    // spans at least the category level plus one column.
+    final selectedTileColor = _backgroundColors[1];
 
     final effectiveSelectedColor = theme.selectedColor;
 
@@ -433,7 +445,8 @@ class CascadingSelectState extends State<CascadingSelect> {
                         isScrollable: isScrollable,
                         restoreSelectionPath: _restoreCascadePath,
                         autoExpandFirstBranch: _isSearching,
-                        backgroundColors: _backgroundColors,
+                        startBackgroundColor: _startBackgroundColor,
+                        endBackgroundColor: _endBackgroundColor,
                         radioBuilder: delegate.radioBuilder,
                         checkboxBuilder: delegate.checkboxBuilder,
                       ),

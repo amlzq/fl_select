@@ -730,9 +730,29 @@ class CascadingSelectDelegate extends SelectDelegate {
   });
 
   /// Background color used for the category column.
+  ///
+  /// Deprecated: the sidebar paints the category level, so it is styled through
+  /// [SelectSideBarTheme.backgroundColor] instead — set it on the ambient
+  /// `SelectTheme`, on this delegate's `sideBarTheme`, or on the sidebar widget
+  /// itself.
+  @Deprecated(
+    'Use SelectSideBarTheme.backgroundColor instead, set through the ambient '
+    'SelectTheme or this delegate\'s sideBarTheme. Scheduled for removal in a '
+    'future minor version.',
+  )
   final Color? categoryBackgroundColor;
 
   /// Background color used for the terminal (deepest) column.
+  ///
+  /// Deprecated: the deepest level is the end of the cascading background ramp,
+  /// so it is styled through [SelectCascadingViewTheme.endBackgroundColor]
+  /// instead — set it on the ambient `SelectTheme` or on this delegate's
+  /// `cascadingViewTheme`.
+  @Deprecated(
+    'Use SelectCascadingViewTheme.endBackgroundColor instead, set through the '
+    'ambient SelectTheme or this delegate\'s cascadingViewTheme. Scheduled for '
+    'removal in a future minor version.',
+  )
   final Color? terminalBackgroundColor;
 
   /// Optional custom radio widget builder.

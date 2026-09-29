@@ -6,29 +6,34 @@ import '../select_theme.dart';
 /// Theme configuration for the cascading view (the multi-column item area
 /// shared by `CascadingSelect` and the `SelectCascadingLayout` branch of the
 /// category containers).
+///
+/// The theme owns the **end** of the background ramp only. Its start is the
+/// surface the host already painted behind the first column — the panel
+/// background by default, the sidebar in `CascadingSelect` — so it is not a
+/// style knob: the host that paints that surface passes it through
+/// `CascadingView.startBackgroundColor`.
 @immutable
 class SelectCascadingViewTheme with Diagnosticable {
-  const SelectCascadingViewTheme({this.backgroundColors});
+  const SelectCascadingViewTheme({this.endBackgroundColor});
 
-  /// Overrides the background colors of the cascading columns, indexed by
-  /// depth level: index 0 is the category level, index 1 the first children
-  /// column, index 2 the next column, and so on.
+  /// The background color of the deepest level, i.e. the end of the cascading
+  /// background ramp.
   ///
-  /// Only levels >= 1 are painted. A column whose level is beyond the end of
-  /// the list clamps to the last color, and the selected item of a column is
-  /// painted with the next level's color.
+  /// Only levels >= 1 are painted, and the levels in between are interpolated
+  /// over the depth of the tree being rendered: the ramp spans the category
+  /// level plus the deepest descendant level. A column deeper than the ramp
+  /// clamps to this color, and the selected item of a column is painted with
+  /// the next level's color.
   ///
-  /// When null (or empty) the gradient is derived from the ambient
-  /// [SelectThemeData]: [SelectThemeData.backgroundColor] at the category level
-  /// interpolated towards [SelectThemeData.backgroundColorHighest] at the
-  /// deepest level. `backgroundColors` passed explicitly to the cascading view
-  /// wins over this theme.
-  final List<Color>? backgroundColors;
+  /// When null, [SelectThemeData.backgroundColorHighest] is used; an
+  /// `endBackgroundColor` passed explicitly to the cascading view wins over
+  /// this theme.
+  final Color? endBackgroundColor;
 
   /// Returns a copy of this theme with the given fields replaced.
-  SelectCascadingViewTheme copyWith({List<Color>? backgroundColors}) {
+  SelectCascadingViewTheme copyWith({Color? endBackgroundColor}) {
     return SelectCascadingViewTheme(
-      backgroundColors: backgroundColors ?? this.backgroundColors,
+      endBackgroundColor: endBackgroundColor ?? this.endBackgroundColor,
     );
   }
 
@@ -39,7 +44,7 @@ class SelectCascadingViewTheme with Diagnosticable {
       return this;
     }
     return SelectCascadingViewTheme(
-      backgroundColors: other.backgroundColors ?? backgroundColors,
+      endBackgroundColor: other.endBackgroundColor ?? endBackgroundColor,
     );
   }
 
@@ -58,28 +63,16 @@ class SelectCascadingViewTheme with Diagnosticable {
       return a;
     }
     return SelectCascadingViewTheme(
-      backgroundColors: _lerpColors(
-        a?.backgroundColors,
-        b?.backgroundColors,
+      endBackgroundColor: Color.lerp(
+        a?.endBackgroundColor,
+        b?.endBackgroundColor,
         t,
       ),
     );
   }
 
-  /// Element-wise lerp of two color lists; falls back to a hard switch when
-  /// only one side is provided or the lengths differ (each level is an
-  /// independent step of the same depth-based gradient).
-  static List<Color>? _lerpColors(List<Color>? a, List<Color>? b, double t) {
-    if (a == null || b == null || a.length != b.length) {
-      return t < 0.5 ? a ?? b : b ?? a;
-    }
-    return List<Color>.generate(a.length, (index) {
-      return Color.lerp(a[index], b[index], t)!;
-    });
-  }
-
   @override
-  int get hashCode => Object.hashAll(backgroundColors ?? const <Color>[]);
+  int get hashCode => endBackgroundColor.hashCode;
 
   @override
   bool operator ==(Object other) {
@@ -90,6 +83,6 @@ class SelectCascadingViewTheme with Diagnosticable {
       return false;
     }
     return other is SelectCascadingViewTheme &&
-        listEquals(other.backgroundColors, backgroundColors);
+        other.endBackgroundColor == endBackgroundColor;
   }
 }

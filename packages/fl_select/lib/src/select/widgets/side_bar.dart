@@ -191,8 +191,7 @@ class _SelectSideBarState extends State<SelectSideBar> {
 
     final effectiveBackgroundColor =
         widget.backgroundColor ??
-        theme.backgroundColor ??
-        defaults.backgroundColor!;
+        SelectSideBarTheme.resolveBackgroundColor(context);
 
     final effectivePadding =
         widget.padding ?? theme.padding ?? defaults.padding!;
@@ -307,7 +306,7 @@ class SelectSideBarSkeleton extends StatelessWidget {
     final effectivePadding = padding ?? theme.padding ?? defaults.padding!;
 
     final effectiveBackgroundColor =
-        backgroundColor ?? theme.backgroundColor ?? defaults.backgroundColor!;
+        backgroundColor ?? SelectSideBarTheme.resolveBackgroundColor(context);
 
     return Container(
       width: effctiveWidth,
@@ -356,9 +355,6 @@ class _SelectSideBarDefaults extends SelectSideBarTheme {
   final BuildContext context;
   late final SelectThemeData _theme = SelectTheme.of(context);
   late final TextTheme _textTheme = Theme.of(context).textTheme;
-
-  @override
-  Color? get backgroundColor => _theme.backgroundColor;
 
   @override
   double? get width => kSelectSideBarWidth;

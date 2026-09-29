@@ -2,6 +2,10 @@
 
 - **FEATURE** add the `SelectCascadingLayout` backed by a themeable `SelectCascadingViewTheme`.
 
+- **DEPRECATION** `CascadingSelectDelegate.categoryBackgroundColor` is deprecated in favour of `SelectSideBarTheme.backgroundColor` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#cascading-delegate-background-colors)).
+
+- **DEPRECATION** `CascadingSelectDelegate.terminalBackgroundColor` is deprecated in favour of `SelectCascadingViewTheme.endBackgroundColor` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#cascading-delegate-background-colors)).
+
 ## 0.15.0
 
 - **FEATURE** `SelectChildEntry.parentId` is now derived from the tree structure.

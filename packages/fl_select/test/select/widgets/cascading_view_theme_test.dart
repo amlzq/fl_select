@@ -2,85 +2,82 @@ import 'package:fl_select/fl_select.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-const _a = [Color(0xFF111111), Color(0xFF222222)];
-const _b = [Color(0xFF333333), Color(0xFF444444)];
+const _e1 = Color(0xFF222222);
+const _e2 = Color(0xFF444444);
 
 void main() {
   group('SelectCascadingViewTheme', () {
-    test('is value-equal by list content', () {
+    test('is value-equal by color content', () {
       expect(
-        const SelectCascadingViewTheme(backgroundColors: _a),
-        const SelectCascadingViewTheme(backgroundColors: _a),
+        const SelectCascadingViewTheme(endBackgroundColor: _e1),
+        const SelectCascadingViewTheme(endBackgroundColor: _e1),
       );
       expect(
-        const SelectCascadingViewTheme(backgroundColors: _a),
-        isNot(const SelectCascadingViewTheme(backgroundColors: _b)),
+        const SelectCascadingViewTheme(endBackgroundColor: _e1),
+        isNot(const SelectCascadingViewTheme(endBackgroundColor: _e2)),
       );
       expect(
-        const SelectCascadingViewTheme(backgroundColors: _a).hashCode,
-        const SelectCascadingViewTheme(backgroundColors: _a).hashCode,
+        const SelectCascadingViewTheme(endBackgroundColor: _e1).hashCode,
+        const SelectCascadingViewTheme(endBackgroundColor: _e1).hashCode,
       );
     });
 
     test('copyWith replaces only the provided fields', () {
-      const theme = SelectCascadingViewTheme(backgroundColors: _a);
+      const theme = SelectCascadingViewTheme(endBackgroundColor: _e1);
 
-      expect(theme.copyWith().backgroundColors, _a);
-      expect(theme.copyWith(backgroundColors: _b).backgroundColors, _b);
+      expect(theme.copyWith().endBackgroundColor, _e1);
+      expect(theme.copyWith(endBackgroundColor: _e2).endBackgroundColor, _e2);
       expect(
-        const SelectCascadingViewTheme().copyWith().backgroundColors,
+        const SelectCascadingViewTheme().copyWith().endBackgroundColor,
         null,
       );
     });
 
     test('merge keeps the base when other is null and overrides otherwise', () {
-      const base = SelectCascadingViewTheme(backgroundColors: _a);
+      const base = SelectCascadingViewTheme(endBackgroundColor: _e1);
+      const other = SelectCascadingViewTheme(endBackgroundColor: _e2);
 
-      expect(base.merge(null).backgroundColors, _a);
-      expect(
-        base
-            .merge(const SelectCascadingViewTheme(backgroundColors: _b))
-            .backgroundColors,
-        _b,
-      );
-      expect(base.merge(const SelectCascadingViewTheme()).backgroundColors, _a);
-      expect(
-        const SelectCascadingViewTheme()
-            .merge(const SelectCascadingViewTheme(backgroundColors: _b))
-            .backgroundColors,
-        _b,
-      );
+      expect(base.merge(null), base);
+      expect(base.merge(other), other);
+      expect(base.merge(const SelectCascadingViewTheme()), base);
+      expect(const SelectCascadingViewTheme().merge(base), base);
     });
 
-    test('lerp interpolates element-wise for equally long palettes', () {
+    test('lerp interpolates the end', () {
       final lerped = SelectCascadingViewTheme.lerp(
-        const SelectCascadingViewTheme(backgroundColors: _a),
-        const SelectCascadingViewTheme(backgroundColors: _b),
+        const SelectCascadingViewTheme(endBackgroundColor: _e1),
+        const SelectCascadingViewTheme(endBackgroundColor: _e2),
         0.5,
       );
 
-      expect(lerped.backgroundColors, [
-        Color.lerp(_a[0], _b[0], 0.5),
-        Color.lerp(_a[1], _b[1], 0.5),
-      ]);
+      expect(lerped.endBackgroundColor, Color.lerp(_e1, _e2, 0.5));
     });
 
-    test('lerp switches when only one side is set', () {
+    test('lerp returns the same instance when both sides are identical', () {
+      const theme = SelectCascadingViewTheme(endBackgroundColor: _e1);
+
+      expect(
+        identical(SelectCascadingViewTheme.lerp(theme, theme, 0.5), theme),
+        isTrue,
+      );
+    });
+
+    test('lerp keeps a resolved end at the boundary', () {
       expect(
         SelectCascadingViewTheme.lerp(
-          const SelectCascadingViewTheme(backgroundColors: _a),
+          const SelectCascadingViewTheme(endBackgroundColor: _e1),
           const SelectCascadingViewTheme(),
-          0.25,
-        ).backgroundColors,
-        _a,
+          0,
+        ).endBackgroundColor,
+        _e1,
       );
       expect(
         SelectCascadingViewTheme.lerp(
           const SelectCascadingViewTheme(),
-          const SelectCascadingViewTheme(backgroundColors: _b),
-          0.75,
-        ).backgroundColors,
-        _b,
+          const SelectCascadingViewTheme(endBackgroundColor: _e2),
+          1,
+        ).endBackgroundColor,
+        _e2,
       );
     });
 
@@ -91,7 +88,7 @@ void main() {
           home: SelectTheme(
             data: SelectThemeData(ThemeData.light()).copyWith(
               cascadingViewTheme: const SelectCascadingViewTheme(
-                backgroundColors: _a,
+                endBackgroundColor: _e1,
               ),
             ),
             child: Builder(
@@ -104,7 +101,7 @@ void main() {
         ),
       );
 
-      expect(seen.backgroundColors, _a);
+      expect(seen.endBackgroundColor, _e1);
     });
   });
 
@@ -113,25 +110,25 @@ void main() {
       final data = SelectThemeData(ThemeData.light());
 
       expect(data.cascadingViewTheme, const SelectCascadingViewTheme());
-      expect(data.cascadingViewTheme.backgroundColors, null);
+      expect(data.cascadingViewTheme.endBackgroundColor, null);
     });
 
     test('participates in equality and interpolation', () {
-      final withPalette = SelectThemeData(
+      final withColor = SelectThemeData(
         ThemeData.light(),
         cascadingViewTheme: const SelectCascadingViewTheme(
-          backgroundColors: _a,
+          endBackgroundColor: _e1,
         ),
       );
 
-      expect(withPalette, isNot(SelectThemeData(ThemeData.light())));
+      expect(withColor, isNot(SelectThemeData(ThemeData.light())));
       expect(
         SelectThemeData.lerp(
-          withPalette,
+          withColor,
           SelectThemeData(ThemeData.light()),
           0,
-        )!.cascadingViewTheme.backgroundColors,
-        _a,
+        )!.cascadingViewTheme.endBackgroundColor,
+        _e1,
       );
     });
   });

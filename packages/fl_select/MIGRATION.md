@@ -1,5 +1,57 @@
 # Migration Guide
 
+## MIGRATE TO Next
+
+### Cascading delegate background colors
+
+`CascadingSelectDelegate.categoryBackgroundColor` and
+`CascadingSelectDelegate.terminalBackgroundColor` are deprecated: both levels
+they paint already have an owner, so the two fields were a second knob for the
+same pixel.
+
+- The category level is what the sidebar paints, so it is styled through
+  `SelectSideBarTheme.backgroundColor`.
+- The deepest level is the end of the background ramp of the cascading view, so
+  it is styled through `SelectCascadingViewTheme.endBackgroundColor`.
+
+```diff
+  CascadingSelectDelegate(
+-   categoryBackgroundColor: Colors.blueGrey.shade50,
+-   terminalBackgroundColor: Colors.blueGrey.shade900,
++   sideBarTheme: SelectSideBarTheme(backgroundColor: Colors.blueGrey.shade50),
++   cascadingViewTheme: SelectCascadingViewTheme(
++     endBackgroundColor: Colors.blueGrey.shade900,
++   ),
+    entriesLoader: ...,
+  );
+```
+
+Both are also styleable once for every select through the ambient `SelectTheme`,
+which the panel merges below the delegate:
+
+```dart
+SelectTheme(
+  data: SelectThemeData(theme).copyWith(
+    sideBarTheme: const SelectSideBarTheme(backgroundColor: ...),
+    cascadingViewTheme: const SelectCascadingViewTheme(endBackgroundColor: ...),
+  ),
+  child: ...,
+);
+```
+
+The deprecated fields keep working: they are still read, as the lowest-priority
+layer below the themes, so existing code holds its colors until they are removed.
+
+#### The ramp start is not themeable
+
+`SelectCascadingViewTheme` has no start color. The start describes the surface
+the host already painted behind the first column, rather than restyling it: the
+panel background (`SelectThemeData.backgroundColor`) by default, and the sidebar
+in `CascadingSelect`, which is flush against the first column and therefore
+shares the color. A host that paints something else passes
+`CascadingView.startBackgroundColor` — the view ramps from that color without
+painting it, which is what keeps the first column seamless with its surroundings.
+
 ## MIGRATE TO 0.15.0
 
 ### `parentId` is derived from the tree structure

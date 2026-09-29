@@ -92,6 +92,23 @@ class SelectSideBarTheme with Diagnosticable {
     return SelectTheme.of(context).sideBarTheme;
   }
 
+  /// Resolves the background color the sidebar paints under [context].
+  ///
+  /// The ambient [SelectThemeData.sideBarTheme] wins (a delegate-level
+  /// `sideBarTheme` is already merged into it by the select panel), then
+  /// [fallback], then [SelectThemeData.backgroundColor]. A widget-level
+  /// `backgroundColor` is applied by the widget on top of this.
+  ///
+  /// [fallback] serves hosts that still honour a deprecated color field; keeping
+  /// that value on this one resolution path is what makes the sidebar and the
+  /// surface painted next to it agree.
+  static Color resolveBackgroundColor(BuildContext context, {Color? fallback}) {
+    final theme = SelectTheme.of(context);
+    return theme.sideBarTheme.backgroundColor ??
+        fallback ??
+        theme.backgroundColor;
+  }
+
   /// Returns a new theme where non-null fields from [other] override the
   /// corresponding fields of this theme.
   SelectSideBarTheme merge(SelectSideBarTheme? other) {

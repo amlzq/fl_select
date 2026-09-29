@@ -101,12 +101,14 @@ SingleChildScrollView? _cascadeScrollView(WidgetTester tester) {
   return tester.widget<SingleChildScrollView>(finder);
 }
 
-/// A bare [CascadingView] (no panel) so the view's own options — the title and
-/// the theme fallback — can be exercised directly.
+/// A bare [CascadingView] (no panel) so the view's own options — the title, the
+/// background ends and the theme fallback — can be exercised directly.
 Widget _viewHarness({
   bool showTitle = true,
   bool shrinkWrap = true,
   SelectCascadingViewTheme? theme,
+  Color? startBackgroundColor,
+  Color? endBackgroundColor,
 }) {
   final category = _region();
   return MaterialApp(
@@ -119,18 +121,35 @@ Widget _viewHarness({
           selectionMode: SelectionMode.multiple,
           showTitle: showTitle,
           shrinkWrap: shrinkWrap,
+          startBackgroundColor: startBackgroundColor,
+          endBackgroundColor: endBackgroundColor,
         ),
       ),
     ),
   );
 }
 
-/// The three-step palette used by the theme tests: index 0 is the category
-/// level, index 1 the first children column, index 2 the next column.
-const _c0 = Color(0xFF102030);
-const _c1 = Color(0xFF304050);
-const _c2 = Color(0xFF506070);
-const _palette = [_c0, _c1, _c2];
+/// The colors of the background ramp used by the color tests.
+///
+/// `_region` is three levels deep (category -> children -> grandchildren), so
+/// the ramp is a three-step one and the first children column (level 1) takes
+/// its midpoint.
+///
+/// The start is not themeable: it is the surface the host painted behind the
+/// first column, so a bare [CascadingView] starts from the panel background
+/// ([_panelStartColor]).
+const _endColor = Color(0xFF506070);
+const _overrideStartColor = Color(0xFF607080);
+const _overrideEndColor = Color(0xFFA0B0C0);
+
+/// The panel background a bare view falls back to as the ramp start.
+final _panelStartColor = SelectThemeData(ThemeData.light()).backgroundColor;
+final _firstColumnColor = Color.lerp(_panelStartColor, _endColor, 0.5)!;
+final _overrideFirstColumnColor = Color.lerp(
+  _overrideStartColor,
+  _overrideEndColor,
+  0.5,
+)!;
 
 /// The background colors painted by the cascade columns.
 List<Color> _columnColors(WidgetTester tester) => tester
@@ -164,18 +183,51 @@ void main() {
       expect(find.text('East'), findsOneWidget);
     });
 
-    testWidgets('paints the columns with the theme background colors', (
+    testWidgets('paints the columns with the theme background ramp', (
       tester,
     ) async {
       await tester.pumpWidget(
         _viewHarness(
-          theme: const SelectCascadingViewTheme(backgroundColors: _palette),
+          theme: const SelectCascadingViewTheme(endBackgroundColor: _endColor),
         ),
       );
       await tester.pumpAndSettle();
 
-      expect(_columnColors(tester), contains(_c1));
-      expect(_columnColors(tester), isNot(contains(_c0)));
+      // The ramp starts from the panel background the host renders on, and the
+      // start itself is never painted: only the columns are.
+      expect(_columnColors(tester), contains(_firstColumnColor));
+      expect(_columnColors(tester), isNot(contains(_panelStartColor)));
+    });
+
+    testWidgets('an end passed to the view wins over the theme', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _viewHarness(
+          theme: const SelectCascadingViewTheme(endBackgroundColor: _endColor),
+          startBackgroundColor: _overrideStartColor,
+          endBackgroundColor: _overrideEndColor,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(_columnColors(tester), contains(_overrideFirstColumnColor));
+      expect(_columnColors(tester), isNot(contains(_firstColumnColor)));
+    });
+
+    testWidgets('a start passed to the view anchors the ramp', (tester) async {
+      await tester.pumpWidget(
+        _viewHarness(
+          startBackgroundColor: _overrideStartColor,
+          endBackgroundColor: _endColor,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(
+        _columnColors(tester),
+        contains(Color.lerp(_overrideStartColor, _endColor, 0.5)),
+      );
     });
   });
 
@@ -245,7 +297,9 @@ void main() {
   });
 
   group('SelectCascadingLayout theme', () {
-    testWidgets('picks the palette up from the delegate', (tester) async {
+    testWidgets('ramps from the panel background up to the theme end', (
+      tester,
+    ) async {
       final controller = SelectController(
         selectionMode: SelectionMode.multiple,
       );
@@ -253,14 +307,15 @@ void main() {
         _harness(
           controller,
           cascadingViewTheme: const SelectCascadingViewTheme(
-            backgroundColors: _palette,
+            endBackgroundColor: _endColor,
           ),
         ),
       );
       await tester.pumpAndSettle();
 
-      // Level 1 (the first children column) takes index 1 of the palette.
-      expect(_columnColors(tester), contains(_c1));
+      // Level 1 (the first children column) takes the middle of the ramp, which
+      // starts from the panel background the layout renders on.
+      expect(_columnColors(tester), contains(_firstColumnColor));
     });
   });
 
