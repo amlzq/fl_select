@@ -450,6 +450,7 @@ class CascadingSelectState extends State<CascadingSelect> {
                         isScrollable: isScrollable,
                         restoreSelectionPath: _restoreCascadePath,
                         autoExpandFirstBranch: _isSearching,
+                        backgroundColorOffset: 1,
                         startBackgroundColor: _startBackgroundColor,
                         endBackgroundColor: _endBackgroundColor,
                         radioBuilder: delegate.radioBuilder,

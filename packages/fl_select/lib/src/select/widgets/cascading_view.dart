@@ -40,6 +40,7 @@ class CascadingView extends StatefulWidget {
     this.shrinkWrap = false,
     this.showTitle = true,
     this.startBackgroundColor,
+    this.backgroundColorOffset = 0,
     this.endBackgroundColor,
     this.autoExpandFirstBranch = false,
     this.restoreSelectionPath = true,
@@ -86,18 +87,41 @@ class CascadingView extends StatefulWidget {
   /// The background color of the surface the cascade is rendered on, i.e. the
   /// start of the cascading background ramp.
   ///
-  /// This color is **not painted by the view**: it describes the level-0
-  /// surface the host already painted behind the first column, and the view
-  /// ramps from there towards [endBackgroundColor]. Leaving it null accepts
-  /// [SelectThemeData.backgroundColor] — the panel background the category
-  /// containers render on — and a host only passes it when it paints a
-  /// different surface, such as `CascadingSelect`, whose sidebar is flush
-  /// against the first column and therefore shares this color.
+  /// This color describes the level-0 surface behind the first column, and the
+  /// view ramps from there towards [endBackgroundColor]. Whether the view
+  /// paints it depends on [backgroundColorOffset]: the first column paints it
+  /// when the host painted nothing (the default `0`), while a host that paints
+  /// the level-0 surface itself — such as `CascadingSelect`, whose sidebar is
+  /// flush against the first column and therefore shares this color — passes
+  /// `1` and the view only ramps from it.
+  ///
+  /// Leaving it null accepts [SelectThemeData.backgroundColor] — the panel
+  /// background the category containers render on.
   ///
   /// The levels in between are interpolated from the depth of [category]: the
   /// ramp spans the category level plus the deepest descendant level, and a
   /// level beyond it clamps to [endBackgroundColor].
   final Color? startBackgroundColor;
+
+  /// How many background colors the host itself painted in front of the first
+  /// column, i.e. the step of the ramp the first column takes.
+  ///
+  /// This counts steps of the ramp — it does not shift the colors: the ramp is
+  /// untouched and only the sampling moves along it.
+  ///
+  /// `0` (the default) means the host painted nothing: the first column is the
+  /// leftmost surface of the ramp, so it takes step 0 — [startBackgroundColor]
+  /// — and stays seamless with its surroundings, while only the deeper columns
+  /// darken towards [endBackgroundColor]. This is the case of the category
+  /// containers without a sidebar (`TabNavSelect`, `ExpandableSelect`).
+  ///
+  /// `1` means the host painted one step itself: `CascadingSelect` and
+  /// `SideNavSelect` put their sidebar — ramp step 0 — flush against the first
+  /// column, so the column starts one step in.
+  ///
+  /// The ramp length follows the offset, so the deepest column keeps reaching
+  /// [endBackgroundColor].
+  final int backgroundColorOffset;
 
   /// The background color of the deepest level, i.e. the end of the cascading
   /// background ramp.
@@ -163,6 +187,9 @@ class _CascadingViewState extends State<CascadingView> {
   int _alignmentSession = 0;
 
   /// The background ramp of the columns, index 0 being the category level.
+  ///
+  /// Column `n` samples step `n + [CascadingView.backgroundColorOffset]` and its
+  /// selection the step after it.
   late List<Color> _backgroundColors;
 
   @override
@@ -223,9 +250,16 @@ class _CascadingViewState extends State<CascadingView> {
         widget.endBackgroundColor ??
         theme.cascadingViewTheme.endBackgroundColor ??
         defaults.endBackgroundColor!;
+    // The ramp spans one step per level the cascade paints — the category level
+    // plus the deepest column — of which the host painted
+    // [CascadingView.backgroundColorOffset] steps itself, so the ramp holds one
+    // extra step per host-painted level and keeps its end where it was.
+    //
     // The cascade always renders at least the category level plus one children
-    // column, so the ramp must span two steps even for a childless category.
-    final depth = max(2, SelectUtils.maxDepth({widget.category}, 1));
+    // column, and a one-step ramp would paint that column and its selection in
+    // the same color, so the ramp never spans fewer than two steps.
+    final levels = max(2, SelectUtils.maxDepth({widget.category}, 1));
+    final depth = max(2, levels + widget.backgroundColorOffset - 1);
     return SelectUtils.gradientColors(depth, startColor, endColor);
   }
 
@@ -568,13 +602,18 @@ class _CascadingViewState extends State<CascadingView> {
     final entries = _cascadingList[cascadeIndex];
     final level = cascadeIndex + 1;
     final selectedEntries = controller?.selectedEntriesAtLevel(level) ?? {};
+    // The host may have painted the levels before the first column — a sidebar
+    // — in which case every column samples the ramp one step further in. Only
+    // the sampling shifts: [level] still names the selection level of the
+    // column.
+    final rampIndex = cascadeIndex + widget.backgroundColorOffset;
     // Clamp to the gradient's last color instead of a hard-coded white so
     // out-of-range levels still match the theme.
-    final bgColor = level < _backgroundColors.length
-        ? _backgroundColors[level]
+    final bgColor = rampIndex < _backgroundColors.length
+        ? _backgroundColors[rampIndex]
         : _backgroundColors.last;
-    final selectedColor = level + 1 < _backgroundColors.length
-        ? _backgroundColors[level + 1]
+    final selectedColor = rampIndex + 1 < _backgroundColors.length
+        ? _backgroundColors[rampIndex + 1]
         : _backgroundColors.last;
 
     final child = ColoredBox(

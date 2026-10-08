@@ -38,6 +38,34 @@ Set<SelectEntry<dynamic>> get _categoryEntriesWithAny => {
   ),
 };
 
+/// A cascading category, so the tab body renders the multi-column view.
+Set<SelectEntry<dynamic>> get _cascadingEntries => {
+  SelectCategoryEntry<dynamic>(
+    id: 'cate1',
+    name: 'Cate 1',
+    layout: const SelectCascadingLayout(),
+    children: {
+      SelectTextEntry<dynamic>(
+        id: 'east',
+        name: 'East',
+        children: {SelectTextEntry<dynamic>(id: 'sh', name: 'Shanghai')},
+      ),
+      SelectTextEntry<dynamic>(id: 'west', name: 'West'),
+    },
+  ),
+};
+
+/// The color painted by the cascade's first column.
+Color? _firstCascadeColumnColor(WidgetTester tester) => tester
+    .widgetList<ColoredBox>(
+      find.descendant(
+        of: find.byType(CascadingView),
+        matching: find.byType(ColoredBox),
+      ),
+    )
+    .first
+    .color;
+
 Widget _harness(
   SelectController controller, {
   Set<SelectEntry<dynamic>>? entries,
@@ -378,6 +406,26 @@ void main() {
       final root2 = applied.last.cast<SelectCategoryEntry<dynamic>>().single;
       expect(root2.header?.children?.map((e) => e.id), contains('h1'));
       expect(root2.footer?.children?.map((e) => e.id), contains('f1'));
+    });
+  });
+
+  group('TabNavSelect cascading background', () {
+    testWidgets('keeps the panel background in the cascade first column', (
+      tester,
+    ) async {
+      final controller = SelectController(
+        selectionMode: SelectionMode.multiple,
+      );
+      await tester.pumpWidget(_harness(controller, entries: _cascadingEntries));
+      await tester.pumpAndSettle();
+
+      // Tab-nav paints no sidebar in front of the cascade, so the first column
+      // is the leftmost surface of the background ramp: it keeps the panel
+      // background instead of starting one step darker.
+      expect(
+        _firstCascadeColumnColor(tester),
+        SelectThemeData(ThemeData.light()).backgroundColor,
+      );
     });
   });
 }

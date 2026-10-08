@@ -109,6 +109,7 @@ Widget _viewHarness({
   SelectCascadingViewTheme? theme,
   Color? startBackgroundColor,
   Color? endBackgroundColor,
+  int backgroundColorOffset = 0,
 }) {
   final category = _region();
   return MaterialApp(
@@ -122,6 +123,7 @@ Widget _viewHarness({
           showTitle: showTitle,
           shrinkWrap: shrinkWrap,
           startBackgroundColor: startBackgroundColor,
+          backgroundColorOffset: backgroundColorOffset,
           endBackgroundColor: endBackgroundColor,
         ),
       ),
@@ -132,18 +134,23 @@ Widget _viewHarness({
 /// The colors of the background ramp used by the color tests.
 ///
 /// `_region` is three levels deep (category -> children -> grandchildren), so
-/// the ramp is a three-step one and the first children column (level 1) takes
-/// its midpoint.
+/// the ramp holds one step per painted level and its last step — the deepest
+/// column — is always [_endColor].
 ///
-/// The start is not themeable: it is the surface the host painted behind the
-/// first column, so a bare [CascadingView] starts from the panel background
-/// ([_panelStartColor]).
+/// Which step a column takes depends on `backgroundColorOffset`: the default `0`
+/// puts the first column on the leftmost surface — the ramp start, which is not
+/// themeable, so a bare [CascadingView] starts from the panel background
+/// ([_panelStartColor]) — while `1` puts it one step in, as the sidebar hosts
+/// do.
 const _endColor = Color(0xFF506070);
 const _overrideStartColor = Color(0xFF607080);
 const _overrideEndColor = Color(0xFFA0B0C0);
 
 /// The panel background a bare view falls back to as the ramp start.
 final _panelStartColor = SelectThemeData(ThemeData.light()).backgroundColor;
+
+/// The step a column takes with `backgroundColorOffset: 1` on a three-level
+/// category.
 final _firstColumnColor = Color.lerp(_panelStartColor, _endColor, 0.5)!;
 final _overrideFirstColumnColor = Color.lerp(
   _overrideStartColor,
@@ -183,7 +190,7 @@ void main() {
       expect(find.text('East'), findsOneWidget);
     });
 
-    testWidgets('paints the columns with the theme background ramp', (
+    testWidgets('makes the first column the leftmost surface of the theme ramp', (
       tester,
     ) async {
       await tester.pumpWidget(
@@ -193,10 +200,41 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // The ramp starts from the panel background the host renders on, and the
-      // start itself is never painted: only the columns are.
+      // Without an offset the first column is the leftmost surface of the ramp,
+      // so it is seamless with the panel background the host renders on and
+      // only the deeper columns darken.
+      expect(_columnColors(tester), [_panelStartColor]);
+    });
+
+    testWidgets('starts the first column one step in at an offset of 1', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _viewHarness(
+          theme: const SelectCascadingViewTheme(endBackgroundColor: _endColor),
+          backgroundColorOffset: 1,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      // The host painted the category level itself, so the first column takes
+      // the middle step of the three-step ramp and the start is not painted.
       expect(_columnColors(tester), contains(_firstColumnColor));
       expect(_columnColors(tester), isNot(contains(_panelStartColor)));
+    });
+
+    testWidgets('shifts a custom ramp by the offset as well', (tester) async {
+      await tester.pumpWidget(
+        _viewHarness(
+          startBackgroundColor: _overrideStartColor,
+          endBackgroundColor: _overrideEndColor,
+          backgroundColorOffset: 1,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(_columnColors(tester), contains(_overrideFirstColumnColor));
+      expect(_columnColors(tester), isNot(contains(_overrideStartColor)));
     });
 
     testWidgets('an end passed to the view wins over the theme', (
@@ -211,8 +249,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(_columnColors(tester), contains(_overrideFirstColumnColor));
-      expect(_columnColors(tester), isNot(contains(_firstColumnColor)));
+      // Drilling down reveals the deepest column, which is where the ramp ends.
+      await tester.tap(find.text('East'));
+      await tester.pumpAndSettle();
+
+      expect(_columnColors(tester), contains(_overrideEndColor));
+      expect(_columnColors(tester), isNot(contains(_endColor)));
     });
 
     testWidgets('a start passed to the view anchors the ramp', (tester) async {
@@ -224,10 +266,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(
-        _columnColors(tester),
-        contains(Color.lerp(_overrideStartColor, _endColor, 0.5)),
-      );
+      // The first column is the ramp start, so a passed start is painted by it.
+      expect(_columnColors(tester), contains(_overrideStartColor));
+      expect(_columnColors(tester), isNot(contains(_panelStartColor)));
     });
   });
 
@@ -297,9 +338,7 @@ void main() {
   });
 
   group('SelectCascadingLayout theme', () {
-    testWidgets('ramps from the panel background up to the theme end', (
-      tester,
-    ) async {
+    testWidgets('starts the ramp at the panel background', (tester) async {
       final controller = SelectController(
         selectionMode: SelectionMode.multiple,
       );
@@ -313,9 +352,18 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Level 1 (the first children column) takes the middle of the ramp, which
-      // starts from the panel background the layout renders on.
-      expect(_columnColors(tester), contains(_firstColumnColor));
+      // The container has no sidebar, so its cascade's first column is the
+      // leftmost surface of the ramp and takes the panel background the layout
+      // renders on.
+      expect(_columnColors(tester), contains(_panelStartColor));
+      expect(_columnColors(tester), isNot(contains(_firstColumnColor)));
+
+      // Drilling down reveals the deepest column, which carries the end of the
+      // ramp: the offset shifts the sampling without shortening the ramp.
+      await tester.tap(find.text('East'));
+      await tester.pumpAndSettle();
+
+      expect(_columnColors(tester), contains(_endColor));
     });
   });
 

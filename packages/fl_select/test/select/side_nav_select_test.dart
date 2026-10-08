@@ -31,6 +31,33 @@ SelectCategoryEntry<dynamic> _category(
   );
 }
 
+/// A cascading category whose tree is two levels deep below it, so the
+/// background ramp of its cascade holds three steps.
+SelectCategoryEntry<dynamic> _cascadingRegion() => SelectCategoryEntry<dynamic>(
+  id: 'region',
+  name: 'Region',
+  layout: const SelectCascadingLayout(),
+  children: {
+    SelectTextEntry<dynamic>(
+      id: 'east',
+      name: 'East',
+      children: {SelectTextEntry<dynamic>(id: 'sh', name: 'Shanghai')},
+    ),
+    SelectTextEntry<dynamic>(id: 'west', name: 'West'),
+  },
+);
+
+/// The color painted by the cascade's first column.
+Color? _firstCascadeColumnColor(WidgetTester tester) => tester
+    .widgetList<ColoredBox>(
+      find.descendant(
+        of: find.byType(CascadingView),
+        matching: find.byType(ColoredBox),
+      ),
+    )
+    .first
+    .color;
+
 void main() {
   group('SideNavSelect scroll chaining', () {
     /// Two categories with two chips each: far shorter than the panel cap, so
@@ -727,5 +754,20 @@ void main() {
       expect(root2.header?.children?.map((e) => e.id), contains('h1'));
       expect(root2.footer?.children?.map((e) => e.id), contains('f1'));
     });
+  });
+
+  testWidgets('starts the cascade one step into the ramp beside the sidebar', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_sideNavHarness({_cascadingRegion()}));
+    await tester.pumpAndSettle();
+
+    final background = SelectThemeData(ThemeData.light()).backgroundColor;
+    final end = SelectThemeData(ThemeData.light()).backgroundColorHighest;
+
+    // The sidebar paints the ramp start flush against the cascade, so the first
+    // column takes the next step of the same ramp rather than repeating the
+    // sidebar's color.
+    expect(_firstCascadeColumnColor(tester), Color.lerp(background, end, 0.5));
   });
 }

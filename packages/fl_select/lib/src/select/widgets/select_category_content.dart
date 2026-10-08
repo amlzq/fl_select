@@ -21,6 +21,7 @@ class SelectCategoryContentView extends StatelessWidget {
     required this.fallbackLayout,
     required this.delegate,
     required this.onTerminalItemTap,
+    this.backgroundColorOffset = 0,
     this.radioBuilder,
     this.checkboxBuilder,
     this.itemBuilder,
@@ -44,6 +45,15 @@ class SelectCategoryContentView extends StatelessWidget {
 
   /// Invoked when a child entry is tapped.
   final ValueChanged<SelectChildEntry> onTerminalItemTap;
+
+  /// How many ramp steps the host painted itself before the cascade's first
+  /// column; forwarded to `CascadingView.backgroundColorOffset`.
+  ///
+  /// Tab-nav and expandable have no sidebar, so their cascade's first column is
+  /// the leftmost surface of the ramp and keeps the color a sidebar would paint
+  /// (`0`). Side-nav renders the cascade on a panel next to its sidebar, so it
+  /// passes `1` and the first column starts one step in.
+  final int backgroundColorOffset;
 
   /// Optional custom radio/checkbox builders forwarded to the list branch.
   final ToggleWidgetBuilder? radioBuilder;
@@ -126,10 +136,6 @@ class SelectCategoryContentView extends StatelessWidget {
         selectedEntries: selectedEntries,
         onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
       ),
-      // The cascading view keeps its own navigation state and writes the
-      // selection straight to the [SelectController], so [onTerminalItemTap]
-      // (which follows the `toggleFlatLeaf` semantics of a category
-      // tree) is not used here.
       SelectCascadingLayout(:final isScrollable) => CascadingView(
         key: ValueKey('category_$index'),
         category: category,
@@ -137,10 +143,8 @@ class SelectCategoryContentView extends StatelessWidget {
         entries: entries,
         selectionMode: category.effectiveSelectionMode(delegate.selectionMode),
         isScrollable: isScrollable,
-        // Every host renders a category's content in an unbounded height
-        // context (single child scroll view, list view or expansion tile), so
-        // the columns size themselves to their content.
         shrinkWrap: true,
+        backgroundColorOffset: backgroundColorOffset,
         radioBuilder: radioBuilder,
         checkboxBuilder: checkboxBuilder,
       ),

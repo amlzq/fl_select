@@ -25,6 +25,34 @@ Widget _expandableHarness(
   );
 }
 
+/// A cascading category, so the expansion body renders the multi-column view.
+Set<SelectEntry> get _cascadingEntries => {
+  SelectCategoryEntry<dynamic>(
+    id: 'cate1',
+    name: 'Cate 1',
+    layout: const SelectCascadingLayout(),
+    children: {
+      SelectTextEntry<dynamic>(
+        id: 'east',
+        name: 'East',
+        children: {SelectTextEntry<dynamic>(id: 'sh', name: 'Shanghai')},
+      ),
+      SelectTextEntry<dynamic>(id: 'west', name: 'West'),
+    },
+  ),
+};
+
+/// The color painted by the cascade's first column.
+Color? _firstCascadeColumnColor(WidgetTester tester) => tester
+    .widgetList<ColoredBox>(
+      find.descendant(
+        of: find.byType(CascadingView),
+        matching: find.byType(ColoredBox),
+      ),
+    )
+    .first
+    .color;
+
 void main() {
   group('ExpandableSelect scroll chaining', () {
     /// Six expandable categories with twelve items each: far taller than the
@@ -996,5 +1024,20 @@ void main() {
       expect(find.text('One'), findsNothing);
       expect(find.text('F1'), findsNothing);
     });
+  });
+
+  testWidgets('keeps the panel background in the cascade first column', (
+    tester,
+  ) async {
+    await tester.pumpWidget(_expandableHarness(_cascadingEntries));
+    await tester.pumpAndSettle();
+
+    // Expandable paints no sidebar in front of the cascade either, so the first
+    // column is the leftmost surface of the background ramp: it keeps the panel
+    // background instead of starting one step darker.
+    expect(
+      _firstCascadeColumnColor(tester),
+      SelectThemeData(ThemeData.light()).backgroundColor,
+    );
   });
 }
