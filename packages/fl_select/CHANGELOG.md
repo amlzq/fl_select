@@ -2,6 +2,10 @@
 
 - **FEATURE** add the `SelectCascadingLayout` backed by a themeable `SelectCascadingViewTheme`.
 
+- **BUGFIX** `CascadingSelectDelegate` now pre-selects the focused category's "Any" when the panel is opened without any applied selection, like every other layout; previously its first column rendered every entry unchecked.
+
+- **BUGFIX** deselecting the last selected leaf of a branch in `CascadingSelectDelegate` now restores the nearest ancestor's own "Any" and keeps that branch, instead of dropping the whole branch.
+
 - **DEPRECATION** `CascadingSelectDelegate.categoryBackgroundColor` is deprecated in favour of `SelectSideBarTheme.backgroundColor` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#cascading-delegate-background-colors)).
 
 - **DEPRECATION** `CascadingSelectDelegate.terminalBackgroundColor` is deprecated in favour of `SelectCascadingViewTheme.endBackgroundColor` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#cascading-delegate-background-colors)).

@@ -327,6 +327,47 @@ void main() {
   });
 
   group('CascadingSelect', () {
+    testWidgets('selects the category Any by default when nothing applied', (
+      tester,
+    ) async {
+      final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
+      final leaf = _text('c', 'l', 'Leaf');
+      final category = _category('c', 'Category', children: {any, leaf});
+
+      final selector = CascadingSelectDelegate(
+        entriesLoader: () async => <SelectEntry<dynamic>>{},
+      );
+      final controller = SelectController(selectionMode: SelectionMode.single);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: SelectTheme(
+              data: SelectThemeData.fallback(ThemeData()),
+              child: SelectControllerProvider(
+                controller: controller,
+                child: Builder(
+                  builder: (context) =>
+                      selector.buildBody(context, [category], null),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+
+      await tester.pumpAndSettle();
+
+      final anyTile = tester.widget<SelectRadioListTile>(
+        find.widgetWithText(SelectRadioListTile, 'Any'),
+      );
+      expect(anyTile.selected, isTrue);
+      final leafTile = tester.widget<SelectRadioListTile>(
+        find.widgetWithText(SelectRadioListTile, 'Leaf'),
+      );
+      expect(leafTile.selected, isFalse);
+    });
+
     testWidgets('restores a connected deepest focused path', (tester) async {
       final branchALeaf = _text('a', 'a_leaf', 'BranchALeaf');
       final branchA = _text('c', 'a', 'BranchA', children: {branchALeaf});

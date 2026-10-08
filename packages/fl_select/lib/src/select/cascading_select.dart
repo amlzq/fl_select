@@ -194,7 +194,7 @@ class CascadingSelectState extends State<CascadingSelect> {
 
     controller?.bindState(
       widget.entries,
-      initializeAnyIfEmpty: false,
+      initializeAnyIfEmpty: true,
       selectedEntriesOverride: widget.selectedEntries,
     );
     _rebuildSelectionState();

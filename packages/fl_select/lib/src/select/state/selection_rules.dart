@@ -301,22 +301,37 @@ class SelectionRules {
       return;
     }
 
+    // The deselected entry left its parent without any selected child. Walk up
+    // towards the category and, at the first ancestor that has no selected child
+    // left, restore that ancestor's own "Any" — the sibling placeholder of the
+    // deselected branch — instead of dropping the whole branch. This mirrors the
+    // single-mode unselect, which re-selects the deselected leaf's parent's
+    // "Any". Only when an ancestor owns no "Any" is it dropped, so the walk
+    // continues one level higher.
     for (var i = level - 1; i >= 0; i--) {
       final parent = focusedPath[i];
-      final sameParentSelected = tree
-          .mutableSelectedEntriesAtLevel(i + 1)
-          .where((e) => e is SelectChildEntry && e.parentId == parent.id);
-      if (sameParentSelected.isEmpty) {
-        tree.mutableSelectedEntriesAtLevel(i).remove(parent);
-      }
-    }
+      final childLevel = i + 1;
+      final selectedChildren = tree.mutableSelectedEntriesAtLevel(childLevel);
+      final hasSelectedChild = selectedChildren.any(
+        (e) => e is SelectChildEntry && e.parentId == parent.id,
+      );
+      // A sibling (or a deeper pick under the same parent) still covers this
+      // level, so there is nothing to restore.
+      if (hasSelectedChild) break;
 
-    if (tree.selectedEntriesAtLevel(1).isEmpty) {
-      tree.mutableSelectedEntriesAtLevel(0).add(category);
-      final anyItem = category.children?.singleWhereOrNull(testAnyElement);
-      if (anyItem != null) {
-        tree.mutableSelectedEntriesAtLevel(1).add(anyItem);
+      final anyItem = parent.children?.singleWhereOrNull(testAnyElement);
+      // Do not resurrect the "Any" the user just deselected: mirror the
+      // single-mode unselect guard (`any != leaf`).
+      if (anyItem != null && anyItem != entry) {
+        // Keep [parent] selected on the focused path and restore its "Any" so
+        // the branch reads as an explicit "no narrowing" pick.
+        selectedChildren.add(anyItem);
+        tree.mutableSelectedEntriesAtLevel(i).add(parent);
+        break;
       }
+
+      // No "Any" to fall back to at this level: drop [parent] and keep climbing.
+      tree.mutableSelectedEntriesAtLevel(i).remove(parent);
     }
 
     tree.trimTrailingEmptyLevels();

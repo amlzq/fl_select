@@ -986,6 +986,37 @@ void main() {
       expect(tree.selectedEntriesAtLevel(1).contains(any), isTrue);
     });
 
+    test("cascading: deselecting last leaf restores the parent's own Any", () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      // The category has no "Any" of its own; only the leaf's parent does.
+      final any = SelectTextEntry<dynamic>.any(parentId: 'p', name: 'Any');
+      final leaf = _text('p', 'l', 'L');
+      final parent = _text('c', 'p', 'P', children: {any, leaf});
+      final c = _category('c', 'C', children: {parent});
+      tree.bind([c], initializeAnyIfEmpty: false);
+
+      tree.ensureLevels(3);
+      tree.mutableSelectedEntriesAtLevel(0).add(c);
+      tree.mutableSelectedEntriesAtLevel(1).add(parent);
+      tree.mutableSelectedEntriesAtLevel(2).add(leaf);
+
+      rules.toggleCascadingLeaf(
+        tree,
+        leaf,
+        selectionMode: SelectionMode.multiple,
+        childrenSelectionMode: SelectionMode.multiple,
+        focusedPath: [c, parent],
+        category: c,
+      );
+
+      // The parent stays on the focused path and its own "Any" is restored,
+      // rather than the whole branch being dropped.
+      expect(tree.selectedEntriesAtLevel(1).contains(parent), isTrue);
+      expect(tree.selectedEntriesAtLevel(2).contains(any), isTrue);
+      expect(tree.selectedEntriesAtLevel(2).contains(leaf), isFalse);
+    });
+
     test('cascading: ensures enough levels for the focused path', () {
       const rules = SelectionRules();
       final tree = StateTree();
