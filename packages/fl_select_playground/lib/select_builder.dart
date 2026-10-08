@@ -71,8 +71,8 @@ class PlaygroundDataSource {
 
   /// Builds the demo data set from [repo].
   factory PlaygroundDataSource.fromRepository(EntryRepository repo) {
-    // the two-level delegates (tabNav / sideNav / expandable)
-    // share the two-level sample.
+    // the category delegates (tabNav / sideNav / expandable)
+    // share the category sample.
     final twoLevel = DelegateLoaders(
       entriesLoader: repo.fetchTwoLevelData,
       selected: repo.twoLevelSelectedData,
@@ -485,9 +485,10 @@ class _EntryPointScreenState extends State<EntryPointScreen> {
                 child: SelectView(
                   // Key the view by every param that affects its rendered output.
                   // Geometry MUST be included: changing it yields a new delegate
-                  // object, but the two-level delegates' selects are stateful
-                  // widgets and their [ListView] children (each [SelectGridView]
-                  // has [AutomaticKeepAliveClientMixin]) can cache the old layout
+                  // object, but the category delegates' selects are
+                  // stateful widgets and their [ListView] children (each
+                  // [SelectGridView] has [AutomaticKeepAliveClientMixin]) can
+                  // cache the old layout
                   // when only the delegate object changes live.
                   // Re-keying the view forces a clean rebuild so Columns / Aspect
                   // Ratio actually take effect. The in-progress selection is not

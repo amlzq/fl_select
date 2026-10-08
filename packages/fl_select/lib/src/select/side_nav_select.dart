@@ -14,25 +14,30 @@ import 'widgets/widgets.dart';
 
 /// Prefetch extent (in logical pixels) for the right column's ListView.
 ///
-/// Large enough to inflate every section of a typical two-level filter
+/// Large enough to inflate every section of a typical category filter
 /// panel up front, so any category can be scrolled to with one continuous
 /// animation and the scroll-linked highlight can observe every section.
 /// Kept finite because an infinite cache extent produces non-finite
 /// semantics rects when accessibility services are active.
 const double _kRightColumnCacheExtent = 10000.0;
 
-/// Two-level layout: category navigation on the left and a flattened item
-/// list on the right.
-/// Tapping the left side drives scrolling on the right; scrolling the right side highlights the left side.
-/// Only two-level (category -> children) structured data is supported.
+/// Category layout: category navigation on the left and a flattened item list
+/// on the right. Tapping the left side drives scrolling on the right; scrolling
+/// the right side highlights the left side.
+///
+/// Requires a category structure: the top level must be [SelectCategoryEntry]
+/// roots.
 ///
 /// Behavior notes:
 /// - The sidebar drives which category's children
 ///   are shown; each category's children are laid out by the category's
 ///   `layout` (defaulting to [SideNavSelectDelegate.defaultLayout], then
 ///   to a wrapped chip group, [SelectWrapView]).
-/// - At most two levels are rendered; levels nested deeper than the second
-///   are not rendered.
+/// - The sidebar represents the top category level only; how deep a category's
+///   content goes is decided by its `layout` — [SelectListLayout] /
+///   [SelectGridLayout] / [SelectWrapLayout] / [SelectCounterLayout] /
+///   [SelectRangeLayout] render one level, while [SelectCascadingLayout]
+///   drills down into nested children.
 /// - A category's `header`/`footer` entries (if any) are rendered as chip
 ///   bars above/below that category's content, mirroring [CascadingSelect].
 /// - Each category's name is rendered as a single title above its content by
@@ -364,7 +369,7 @@ class SideNavSelectState extends State<SideNavSelect> {
           'SideNavSelect: child entry "${item.id}" has a parentId of '
           '"${item.parentId}" that does not match any category; the tap was '
           'ignored. Check that the child\'s parentId points to its owning '
-          'category id (a two-level-or-deeper structure).',
+          'category.',
         );
         return true;
       }());
@@ -621,7 +626,7 @@ class SideNavSelectState extends State<SideNavSelect> {
                       // never chain to ancestor page-level scroll views.
                       controller: _scrollController,
                       // Eagerly inflate every section of the (bounded)
-                      // two-level filter so any category can be scrolled to
+                      // category filter so any category can be scrolled to
                       // with one continuous animation instead of an
                       // estimate-then-correct jump; it also lets the
                       // scroll-linked highlight observe every section.

@@ -21,10 +21,9 @@ bool defaultSelectSearchPredicate(SelectEntry entry, String query) {
 ///
 /// - For a flat structure (no [SelectCategoryEntry] at the top level), the
 ///   top-level entries are filtered directly.
-/// - For a two-level-or-deeper structure, the category tree is filtered
-///   recursively: a category
-///   is kept when any of its descendants match, and only the matching branches
-///   are retained.
+/// - For a category structure, the tree is filtered
+///   recursively: a category is kept when any of its descendants match, and
+///   only the matching branches are retained.
 ///
 /// [predicate] defaults to [defaultSelectSearchPredicate].
 ///

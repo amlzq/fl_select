@@ -67,6 +67,35 @@ typedef SelectItemBuilder =
 /// - Defining UI/theme overrides (colors and per-widget themes).
 /// - Building the select body widget, a loading skeleton and an error widget.
 ///
+/// Each delegate subclass renders a specific data shape:
+///
+/// * [ListSelectDelegate] → a list of flat entries
+/// * [GridSelectDelegate] → a grid of flat entries
+/// * [WrapSelectDelegate] → a wrapped chip group of flat entries
+/// * [TabNavSelectDelegate] → category tabs over the focused category's
+///   children
+/// * [SideNavSelectDelegate] → a category rail driving a flattened item list
+/// * [ExpandableSelectDelegate] → expandable category tiles over their
+///   children
+/// * [CascadingSelectDelegate] → a category rail plus one cascade column per
+///   level
+///
+/// Data shape: the flat delegates ([ListSelectDelegate], [GridSelectDelegate]
+/// and [WrapSelectDelegate]) take plain (non-category) entries only — a
+/// [SelectCategoryEntry] beside them is rejected. The other four require
+/// [SelectCategoryEntry] roots.
+///
+/// Depth: the flat delegates render exactly one level, and so does each
+/// category's own content: [TabNavSelectDelegate] / [SideNavSelectDelegate] /
+/// [ExpandableSelectDelegate] hand each category to its `layout`, which stops
+/// after one level unless it is [SelectCascadingLayout].
+/// [CascadingSelectDelegate] is the only unlimited one: it appends a column per
+/// level and ignores `category.layout`, while the focused category's
+/// `selectionMode` governs its children.
+///
+/// Each implementation's own documentation describes its layout and any
+/// layout-specific parameters.
+///
 /// The actual selection state is managed by [SelectController] and widgets
 /// under `src/select/`.
 abstract class SelectDelegate {
@@ -343,11 +372,11 @@ abstract class SelectDelegate {
 
 /// A list select for flat (parentless) data.
 ///
-/// The top-level entries render directly in a single selectable list; no
-/// category grouping is shown.
+/// The top-level entries render directly in a single selectable list, and only
+/// one level is rendered — a child's own `children` are not expanded.
 ///
-/// Two-level (category) structures are not supported; use
-/// [ExpandableSelectDelegate] for two-level data.
+/// The top level may only hold plain (non-category) entries: a
+/// [SelectCategoryEntry] beside them is rejected.
 class ListSelectDelegate extends SelectDelegate {
   ListSelectDelegate({
     this.checkboxBuilder,
@@ -394,7 +423,7 @@ class ListSelectDelegate extends SelectDelegate {
              entries.isEmpty ||
              entries.first is! SelectCategoryEntry,
          'ListSelectDelegate only supports flat (parentless) data. '
-         'Use ExpandableSelectDelegate for two-level (category) data.',
+         'Use ExpandableSelectDelegate for category data.',
        );
 
   /// Optional custom radio widget builder.
@@ -426,7 +455,7 @@ class ListSelectDelegate extends SelectDelegate {
     assert(
       entries.isEmpty || entries.first is! SelectCategoryEntry,
       'ListSelectDelegate only supports flat (parentless) data. '
-      'Use ExpandableSelectDelegate for two-level (category) data.',
+      'Use ExpandableSelectDelegate for category data.',
     );
     return ListSelect(
       delegate: this,
@@ -446,11 +475,11 @@ class ListSelectDelegate extends SelectDelegate {
 
 /// A grid select for flat (parentless) data.
 ///
-/// The top-level entries render directly in a grid; no category tabs are
-/// shown.
+/// The top-level entries render directly in a grid, and only one level is
+/// rendered — a child's own `children` are not expanded.
 ///
-/// Two-level (category) structures are not supported; use
-/// [TabNavSelectDelegate] for two-level data.
+/// The top level may only hold plain (non-category) entries: a
+/// [SelectCategoryEntry] beside them is rejected.
 class GridSelectDelegate extends SelectDelegate {
   GridSelectDelegate({
     required this.crossAxisCount,
@@ -501,7 +530,7 @@ class GridSelectDelegate extends SelectDelegate {
              entries.isEmpty ||
              entries.first is! SelectCategoryEntry,
          'GridSelectDelegate only supports flat (parentless) data. '
-         'Use TabNavSelectDelegate for two-level (category) data.',
+         'Use TabNavSelectDelegate for category data.',
        );
 
   /// Number of columns in the grid.
@@ -545,7 +574,7 @@ class GridSelectDelegate extends SelectDelegate {
     assert(
       entries.isEmpty || entries.first is! SelectCategoryEntry,
       'GridSelectDelegate only supports flat (parentless) data. '
-      'Use TabNavSelectDelegate for two-level (category) data.',
+      'Use TabNavSelectDelegate for category data.',
     );
     return GridSelect(
       delegate: this,
@@ -572,10 +601,11 @@ class GridSelectDelegate extends SelectDelegate {
 /// A wrap select for flat (parentless) data.
 ///
 /// The top-level entries render directly as a wrapped chip group
-/// (the wrap view); no category navigation is shown.
+/// (the wrap view), and only one level is rendered — a child's own `children`
+/// are not expanded.
 ///
-/// Two-level (category) structures are not supported; use
-/// [SideNavSelectDelegate] for two-level data.
+/// The top level may only hold plain (non-category) entries: a
+/// [SelectCategoryEntry] beside them is rejected.
 class WrapSelectDelegate extends SelectDelegate {
   WrapSelectDelegate({
     this.spacing = 0.0,
@@ -622,7 +652,7 @@ class WrapSelectDelegate extends SelectDelegate {
              entries.isEmpty ||
              entries.first is! SelectCategoryEntry,
          'WrapSelectDelegate only supports flat (parentless) data. '
-         'Use SideNavSelectDelegate for two-level (category) data.',
+         'Use SideNavSelectDelegate for category data.',
        );
 
   /// Horizontal spacing between chips in a wrapped row.
@@ -657,7 +687,7 @@ class WrapSelectDelegate extends SelectDelegate {
     assert(
       entries.isEmpty || entries.first is! SelectCategoryEntry,
       'WrapSelectDelegate only supports flat (parentless) data. '
-      'Use SideNavSelectDelegate for two-level (category) data.',
+      'Use SideNavSelectDelegate for category data.',
     );
     return WrapSelect(
       delegate: this,
@@ -675,15 +705,17 @@ class WrapSelectDelegate extends SelectDelegate {
   }
 }
 
-/// A cascading select for two-level-or-deeper (category) tree data.
+/// A cascading select for category tree data.
 ///
 /// This layout shows categories on the left and cascading item columns to
 /// the right, expanding one column per level with unlimited depth
-/// (category -> child -> grandchild -> ...).
+/// (category -> child -> grandchild -> ...). A column's entries may be plain
+/// leaves or branch entries carrying `children`.
 ///
-/// Flat (parentless) structures are not supported; use
-/// [ListSelectDelegate], [GridSelectDelegate] or [WrapSelectDelegate]
-/// for flat data.
+/// The top level must be [SelectCategoryEntry] roots — the categories of the
+/// left column. The focused category decides the selection mode of its
+/// children (falling back to the delegate's), and its `layout` is ignored: the
+/// cascade always renders columns.
 class CascadingSelectDelegate extends SelectDelegate {
   CascadingSelectDelegate({
     this.categoryBackgroundColor,
@@ -789,19 +821,19 @@ class CascadingSelectDelegate extends SelectDelegate {
   }
 }
 
-/// A tab-nav (top-navigation) select for two-level (category) data.
+/// A tab-nav (top-navigation) select for category data.
 ///
 /// Category tabs on top drive which category's children are shown below,
 /// laid out by the category's `layout` (defaulting to [defaultLayout], then
 /// to a 3-column grid). When only one category is available, the tab bar is
 /// hidden.
 ///
-/// Flat (parentless) structures are not supported; use
-/// [GridSelectDelegate] or [ListSelectDelegate] for flat data.
-///
-/// At most two levels are rendered; levels nested deeper than the second
-/// are not rendered. Use [CascadingSelectDelegate] for multi-level
-/// (cascading) data.
+/// The tabs represent the top category level only, so the top level must be
+/// [SelectCategoryEntry] roots; how deep a category's content goes is decided
+/// by its `layout` — [SelectListLayout] /
+/// [SelectGridLayout] / [SelectWrapLayout] / [SelectCounterLayout] /
+/// [SelectRangeLayout] render one level, while [SelectCascadingLayout]
+/// drills down into nested children.
 class TabNavSelectDelegate extends SelectDelegate {
   TabNavSelectDelegate({
     this.defaultLayout,
@@ -849,7 +881,7 @@ class TabNavSelectDelegate extends SelectDelegate {
          entries == null ||
              entries.isEmpty ||
              entries.first is SelectCategoryEntry,
-         'TabNavSelectDelegate only supports two-level (category) data. '
+         'TabNavSelectDelegate only supports category data. '
          'Use ListSelectDelegate, GridSelectDelegate or '
          'WrapSelectDelegate for flat data.',
        );
@@ -868,10 +900,12 @@ class TabNavSelectDelegate extends SelectDelegate {
   /// Optional builder that fully replaces each child item's widget.
   ///
   /// Applies to categories laid out as a list, grid or wrapped chips; the
-  /// range-slider and counter layouts keep their built-in controls. The
-  /// builder receives the owning category's id through its `categoryId`
-  /// parameter and may return null to fall back to the default item widget.
-  /// Custom range entries still render as the built-in min/max input field.
+  /// range-slider and counter layouts keep their built-in controls, and a
+  /// category laid out as `SelectCascadingLayout` renders its own per-level
+  /// nodes so the builder does not reach them either. The builder receives
+  /// the owning category's id through its `categoryId` parameter and may
+  /// return null to fall back to the default item widget. Custom range
+  /// entries still render as the built-in min/max input field.
   ///
   /// Does not apply to the category tab bar or a category's header/footer
   /// chips.
@@ -893,7 +927,7 @@ class TabNavSelectDelegate extends SelectDelegate {
   }) {
     assert(
       entries.isEmpty || entries.first is SelectCategoryEntry,
-      'TabNavSelectDelegate only supports two-level (category) data. '
+      'TabNavSelectDelegate only supports category data. '
       'Use GridSelectDelegate or ListSelectDelegate for flat data.',
     );
     return TabNavSelect(
@@ -912,19 +946,19 @@ class TabNavSelectDelegate extends SelectDelegate {
   }
 }
 
-/// A side-navigation select for two-level (category) data.
+/// A side-navigation select for category data.
 ///
 /// Category navigation sits on the left; tapping it scrolls the single
 /// right column to that category's children, laid out by the category's
 /// `layout` (defaulting to [defaultLayout], then to a wrapped chip
 /// layout). Scrolling the right column highlights the left side.
 ///
-/// Flat (parentless) structures are not supported; use
-/// [WrapSelectDelegate] for flat data.
-///
-/// At most two levels are rendered; levels nested deeper than the second
-/// are not rendered. Use [CascadingSelectDelegate] for multi-level
-/// (cascading) data.
+/// The sidebar represents the top category level only, so the top level must be
+/// [SelectCategoryEntry] roots; how deep a category's content goes is decided
+/// by its `layout` — [SelectListLayout] /
+/// [SelectGridLayout] / [SelectWrapLayout] / [SelectCounterLayout] /
+/// [SelectRangeLayout] render one level, while [SelectCascadingLayout]
+/// drills down into nested children.
 class SideNavSelectDelegate extends SelectDelegate {
   SideNavSelectDelegate({
     this.defaultLayout,
@@ -970,7 +1004,7 @@ class SideNavSelectDelegate extends SelectDelegate {
          entries == null ||
              entries.isEmpty ||
              entries.first is SelectCategoryEntry,
-         'SideNavSelectDelegate only supports two-level (category) data. '
+         'SideNavSelectDelegate only supports category data. '
          'Use WrapSelectDelegate for flat data.',
        );
 
@@ -979,10 +1013,12 @@ class SideNavSelectDelegate extends SelectDelegate {
   /// Optional builder that fully replaces each child item's widget.
   ///
   /// Applies to categories laid out as a list, grid or wrapped chips; the
-  /// range-slider and counter layouts keep their built-in controls. The
-  /// builder receives the owning category's id through its `categoryId`
-  /// parameter and may return null to fall back to the default item widget.
-  /// Custom range entries still render as the built-in min/max input field.
+  /// range-slider and counter layouts keep their built-in controls, and a
+  /// category laid out as `SelectCascadingLayout` renders its own per-level
+  /// nodes so the builder does not reach them either. The builder receives
+  /// the owning category's id through its `categoryId` parameter and may
+  /// return null to fall back to the default item widget. Custom range
+  /// entries still render as the built-in min/max input field.
   ///
   /// Does not apply to the left category sidebar or a category's
   /// header/footer chips.
@@ -1008,7 +1044,7 @@ class SideNavSelectDelegate extends SelectDelegate {
   }) {
     assert(
       entries.isEmpty || entries.first is SelectCategoryEntry,
-      'SideNavSelectDelegate only supports two-level (category) data. '
+      'SideNavSelectDelegate only supports category data. '
       'Use WrapSelectDelegate for flat data.',
     );
     return SideNavSelect(
@@ -1027,19 +1063,19 @@ class SideNavSelectDelegate extends SelectDelegate {
   }
 }
 
-/// An expandable-group select for two-level (category) data.
+/// An expandable-group select for category data.
 ///
 /// Each category renders as an expandable tile whose children are laid
 /// out by the category's `layout` (defaulting to [defaultLayout], then to
 /// a list layout). A category's `header`/`footer` entries (if any) render
 /// as chip bars above/below that category's expanded content.
 ///
-/// Flat (parentless) structures are not supported; use
-/// [ListSelectDelegate] for flat data.
-///
-/// At most two levels are rendered; levels nested deeper than the second
-/// are not rendered. Use [CascadingSelectDelegate] for multi-level
-/// (cascading) data.
+/// The expansion tiles represent the top category level only, so the top level
+/// must be [SelectCategoryEntry] roots; the depth of each category's content
+/// follows its `layout` — [SelectListLayout] /
+/// [SelectGridLayout] / [SelectWrapLayout] / [SelectCounterLayout] /
+/// [SelectRangeLayout] render one level, while [SelectCascadingLayout]
+/// drills down into nested children.
 class ExpandableSelectDelegate extends SelectDelegate {
   ExpandableSelectDelegate({
     this.defaultLayout,
@@ -1086,7 +1122,7 @@ class ExpandableSelectDelegate extends SelectDelegate {
          entries == null ||
              entries.isEmpty ||
              entries.first is SelectCategoryEntry,
-         'ExpandableSelectDelegate only supports two-level (category) '
+         'ExpandableSelectDelegate only supports category '
          'data. Use ListSelectDelegate for flat data.',
        );
 
@@ -1104,10 +1140,12 @@ class ExpandableSelectDelegate extends SelectDelegate {
   /// Optional builder that fully replaces each child item's widget.
   ///
   /// Applies to categories laid out as a list, grid or wrapped chips; the
-  /// range-slider and counter layouts keep their built-in controls. The
-  /// builder receives the owning category's id through its `categoryId`
-  /// parameter and may return null to fall back to the default item widget.
-  /// Custom range entries still render as the built-in min/max input field.
+  /// range-slider and counter layouts keep their built-in controls, and a
+  /// category laid out as `SelectCascadingLayout` renders its own per-level
+  /// nodes so the builder does not reach them either. The builder receives
+  /// the owning category's id through its `categoryId` parameter and may
+  /// return null to fall back to the default item widget. Custom range
+  /// entries still render as the built-in min/max input field.
   ///
   /// Does not apply to the expansion tiles' headers or a category's
   /// header/footer chips.
@@ -1122,7 +1160,7 @@ class ExpandableSelectDelegate extends SelectDelegate {
   }) {
     assert(
       entries.isEmpty || entries.first is SelectCategoryEntry,
-      'ExpandableSelectDelegate only supports two-level (category) data. '
+      'ExpandableSelectDelegate only supports category data. '
       'Use ListSelectDelegate for flat data.',
     );
     return ExpandableSelect(

@@ -7,15 +7,13 @@ import 'select_entry.dart';
 import 'select_search_filter.dart';
 import 'widgets/widgets.dart';
 
-/// Flat grid layout: the top-level entries render directly as a grid, with
-/// no category tabs.
+/// Flat grid layout: the top-level entries render directly as a grid.
 ///
-/// For two-level (category) data with tabs on top, use [TabNavSelect] via
-/// [TabNavSelectDelegate].
+/// Only flat (parentless) entries are supported: the top level may only hold
+/// plain (non-category) entries.
 ///
 /// Behavior notes:
-/// - At most one level is rendered; use [TabNavSelect] for two-level data
-///   and [CascadingSelect] for multi-level (cascading) data.
+/// - At most one level is rendered.
 /// - If the data contains a custom range entry ([SelectRangeEntry.custom]),
 ///   two numeric fields are shown for min/max input.
 /// - When an entry's `immediate` is true, selection is applied immediately

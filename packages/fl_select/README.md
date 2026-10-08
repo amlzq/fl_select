@@ -22,7 +22,7 @@ A composable architecture of **entry points, delegates, and layouts** — any de
 
 - **5 entry points**: inline, button, bar, dialog, bottom sheet — `SelectView`, `PopupSelectButton`, `PopupSelectBar`, `showSelect`, `showModalBottomSelect`.
 - **7 delegates**: `ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`, `CascadingSelectDelegate`, `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`.
-- **5 category layouts**: list, grid, wrap, range slider, counter.
+- **6 category layouts**: list, grid, wrap, range slider, counter, cascading — the first five are fixed to one level, `cascading` has no depth limit.
 - Sync & async data loading.
 - Single & multiple selection.
 - Text, Range, Category, "Any", and custom entries.
@@ -51,7 +51,13 @@ import 'package:fl_select/fl_select.dart';
 
 #### Delegates
 
-A delegate controls both data loading and how the body is rendered, and works with every entry point above. Flat delegates (`ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`) render flat leaves created with `SelectTextEntry(...)` / `SelectRangeEntry(...)`; `CascadingSelectDelegate` renders a multi-level cascade of unlimited depth (`category -> child -> grandchild -> ...`) and ignores `category.layout`; the three two-level category delegates (`TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`) render a tree of `SelectCategoryEntry` roots whose children follow `category.layout` (list / grid / wrap / range slider / counter):
+A delegate controls both data loading and how the body is rendered, and works with every entry point above. The seven built-ins are single-purpose by data shape:
+
+- **Flat data** — `ListSelectDelegate`, `GridSelectDelegate`, `WrapSelectDelegate`: simple selects whose top level may only hold plain (non-category) entries, created with `SelectTextEntry(...)` / `SelectRangeEntry(...)`. Exactly one level is rendered.
+- **Category data** — `TabNavSelectDelegate`, `SideNavSelectDelegate`, `ExpandableSelectDelegate`: the top level must be `SelectCategoryEntry` roots, and each category's children follow its `category.layout` (list / grid / wrap / range slider / counter / cascading).
+- **Multi-level (cascading) data** — `CascadingSelectDelegate`: `SelectCategoryEntry` roots on the left, one cascade column per level below, at unlimited depth (`category -> child -> grandchild -> ...`); `category.layout` is ignored, and the category's `selectionMode` governs its children.
+
+The seven delegates, rendered:
 
 | `ListSelectDelegate`        | `GridSelectDelegate`        | `WrapSelectDelegate`        | `CascadingSelectDelegate`   | `TabNavSelectDelegate`      | `SideNavSelectDelegate`     | `ExpandableSelectDelegate`  |
 | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- | --------------------------- |
@@ -93,7 +99,7 @@ SelectEntries get wrapData => {
     };
 ```
 
-Two-level (category) data for `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` — every category picks its own `selectionMode`, `layout`, and optional `header` / `footer`:
+Category data for `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` — every category picks its own `selectionMode`, `layout`, and optional `header` / `footer`:
 
 ```dart
 SelectEntries get multiCategoryData => {
@@ -135,7 +141,7 @@ SelectEntries get multiCategoryData => {
     };
 ```
 
-Multi-level (cascading) data for `CascadingSelectDelegate` (the shape of `example/assets/cascading.json`, a housing-transaction taxonomy) — nested `children` open one cascade column per level, at unlimited depth, and `category.layout` is ignored:
+Multi-level (cascading) data for `CascadingSelectDelegate` (the shape of `example/assets/cascading.json`, a housing-transaction taxonomy) — the top level is `SelectCategoryEntry` roots, and nested `children` open one cascade column per level, at unlimited depth; `category.layout` is ignored:
 
 ```dart
 SelectEntries get cascadingData => {
@@ -433,7 +439,7 @@ ListSelectDelegate(
 );
 ```
 
-Returning `null` falls back to the default item widget, so you can customize only some entries or categories while keeping the built-in visuals elsewhere. Custom range entries (`SelectRangeEntry.custom`) are not passed to the builder — they keep rendering as the built-in min/max input field — and range-slider / counter category layouts keep their built-in controls. The builder does not cover a category's header/footer chips.
+Returning `null` falls back to the default item widget, so you can customize only some entries or categories while keeping the built-in visuals elsewhere. Custom range entries (`SelectRangeEntry.custom`) are not passed to the builder — they keep rendering as the built-in min/max input field — and range-slider / counter category layouts keep their built-in controls. A category laid out as `SelectCascadingLayout` renders its own per-level nodes, so the builder does not reach them either. The builder does not cover a category's header/footer chips.
 
 #### Serializing selections
 

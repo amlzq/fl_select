@@ -14,11 +14,16 @@ import 'select_theme.dart';
 import 'select_utils.dart';
 import 'widgets/widgets.dart';
 
-/// Horizontal layout: category list on the left and cascading item lists on the right.
+/// Horizontal layout: category list on the left and cascading item lists on
+/// the right.
 ///
-/// Requires a two-level-or-deeper (category) structure; flat (parentless)
-/// entries are not supported. Renders one column per level, supporting
-/// arbitrary depth (category -> child -> grandchild -> ...).
+/// Requires a category structure: the top level must be [SelectCategoryEntry]
+/// roots. Renders one column per level, supporting arbitrary depth
+/// (category -> child -> grandchild -> ...); a column's entries may be plain
+/// leaves or branch entries carrying `children`.
+///
+/// The focused category decides the selection mode of its children (falling
+/// back to the delegate's), and its `layout` is ignored.
 ///
 /// Behavior notes:
 /// - Maintains a focused item per level to drive the cascade columns.

@@ -10,12 +10,11 @@ import 'widgets/widgets.dart';
 /// Flat layout: the top-level (parentless) entries render directly as a
 /// wrapped chip group ([SelectWrapView]).
 ///
-/// Only flat (single-level) structured data is supported; use
-/// [SideNavSelectDelegate] for two-level (category) data.
+/// Only flat (parentless) entries are supported: the top level may only hold
+/// plain (non-category) entries.
 ///
 /// Behavior notes:
-/// - At most one level is rendered; use [SideNavSelect] for two-level data
-///   and [CascadingSelect] for multi-level (cascading) data.
+/// - At most one level is rendered.
 /// - If the data contains a custom range entry ([SelectRangeEntry.custom]),
 ///   two numeric fields are shown for min/max input.
 /// - When an entry's `immediate` is true, selection is applied immediately

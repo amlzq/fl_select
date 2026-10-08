@@ -128,7 +128,7 @@ Set<SelectEntry> _ibFlatEntries() => {
   SelectRangeEntry.custom(name: 'Custom'),
 };
 
-/// Two-level entries: two list-layout categories, so category-based
+/// Category entries: two list-layout categories, so category-based
 /// delegates have two switchable groups of children.
 Set<SelectEntry> _ibCategoryEntries() => {
   SelectCategoryEntry<dynamic>(
@@ -153,8 +153,8 @@ Set<SelectEntry> _ibCategoryEntries() => {
   ),
 };
 
-/// Two-level entries whose categories render as wrapped chips, exercising
-/// the chip-host path of the item builder.
+/// Category entries whose categories render as wrapped chips,
+/// exercising the chip-host path of the item builder.
 Set<SelectEntry> _wrapCategoryEntries() => {
   SelectCategoryEntry<dynamic>(
     id: 'catA',

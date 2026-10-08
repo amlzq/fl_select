@@ -1,8 +1,8 @@
 # Delegates
 
-A `SelectDelegate` controls both data loading (`entries` directly or `entriesLoader` async) and how the body is rendered. It is passed to every entry point. The seven built-ins are single-purpose by data shape — each asserts on the data shape it does not support, so a mis-migration surfaces immediately.
+A `SelectDelegate` controls both data loading (`entries` directly or `entriesLoader` async) and how the body is rendered. It is passed to every entry point. The seven built-ins are single-purpose by data shape — the delegate and the binding reject the shape they do not support, so a mis-migration surfaces immediately.
 
-**Flat data** — top-level `SelectTextEntry` leaves:
+**Flat data** — plain top-level entries (`SelectTextEntry` leaf / `SelectRangeEntry`, one level only, no `SelectCategoryEntry`):
 
 | Delegate | Body |
 | --- | --- |
@@ -36,11 +36,11 @@ GridSelectDelegate(
 
 Rules: the builder renders its own selected-state visuals from `selected` and wires `onTap` (e.g. via `InkWell`) to its own gesture handler; custom range entries are not passed to the builder and keep rendering as the built-in min/max input field. `categoryId` carries the owning `SelectCategoryEntry.id` on category delegates and is null on flat delegates, so one builder can branch per category (e.g. render price tiles only for the price category and return null elsewhere). Returning **null** falls back to the default item widget — customize only some entries or categories while keeping the built-in visuals elsewhere. Because the builder replaces the built-in widget, its semantics go with it: wrap the returned widget in `Semantics` (`button: true`, `selected: selected`, `label: entry.name`) so screen readers still describe it.
 
-Scope on category delegates: applies to categories laid out as list, grid or wrap (via `category.layout`); the range-slider and counter layouts keep their built-in controls, and a category's header/footer chips are never passed to the builder. `CascadingSelectDelegate` ignores `itemBuilder` (its nodes render per level; a node builder may arrive later). Builders render their own chip visuals; matching the built-in look is a matter of the exported chip themes (`SelectChipBarTheme` for the single-row bar, `SelectWrapViewTheme` for the wrapping form).
+Scope on category delegates: applies to categories laid out as list, grid or wrap (via `category.layout`); the range-slider and counter layouts keep their built-in controls, a category laid out as `SelectCascadingLayout` renders its own per-level nodes so the builder does not reach them either, and a category's header/footer chips are never passed to the builder. `CascadingSelectDelegate` ignores `itemBuilder` (its nodes render per level; a node builder may arrive later). Builders render their own chip visuals; matching the built-in look is a matter of the exported chip themes (`SelectChipBarTheme` for the single-row bar, `SelectWrapViewTheme` for the wrapping form).
 
 Chip views: the built-in chip widgets (the single-row bar, the wrapping view, their skeletons and the chip style helpers) are internal and not part of the public API — do not construct them; build chips through the delegates/layouts instead. The wrapping form is what `WrapSelectDelegate` and `SelectWrapLayout` render. Style a `WrapSelectDelegate`'s chips via its `wrapViewTheme` (`SelectWrapViewTheme`: `variant` (filled/outlined), `chipColor`, `selectedChipColor`, `labelStyle`, `selectedLabelStyle`, `backgroundColor`, `padding`). The legacy `chipBarTheme` (`SelectChipBarTheme`) is folded into the wrap view theme as a lowest-priority fallback, so it only fills in the fields `wrapViewTheme` leaves unset — deprecated, prefer `wrapViewTheme`. Custom `itemBuilder`s render their own chips, resolving visuals from `SelectWrapViewTheme` on the wrap form and from `SelectChipBarTheme` on the single-row bar. In widget tests, assert on the visible chip text instead of the internal widget types.
 
-**Two-level (category) data** — a tree of `SelectCategoryEntry` roots; at most two levels are rendered:
+**Category data** — a tree of `SelectCategoryEntry` roots; the tabs / sidebar / tiles represent the top level only, and each category's content depth follows its `layout`:
 
 | Delegate | Body |
 | --- | --- |
@@ -50,7 +50,7 @@ Chip views: the built-in chip widgets (the single-row bar, the wrapping view, th
 
 These three badge a category (tab / sidebar item / expansion tile) that holds a real selection — driven by `SelectController.realSelectedCategories` (see [entry-points.md](entry-points.md)).
 
-**Multi-level (cascading) data** — nested `children` at unlimited depth (`category -> child -> grandchild -> ...`):
+**Multi-level (cascading) data** — `SelectCategoryEntry` roots whose nested `children` go to unlimited depth (`category -> child -> grandchild -> ...`):
 
 | Delegate | Body |
 | --- | --- |
@@ -107,7 +107,7 @@ ListSelectDelegate(
 
 ## Category layouts (`category.layout`)
 
-In every delegate except `CascadingSelectDelegate`, each `SelectCategoryEntry.layout` decides how that category's children are rendered:
+In every delegate except `CascadingSelectDelegate`, each `SelectCategoryEntry.layout` decides how that category's children are rendered — a category using `SelectCascadingLayout` keeps drilling down into nested children instead of stopping after one level:
 
 | Layout | Renders | Notable params |
 | --- | --- | --- |
@@ -116,6 +116,9 @@ In every delegate except `CascadingSelectDelegate`, each `SelectCategoryEntry.la
 | `SelectWrapLayout` | Wrapping row of chips | `spacing`, `runSpacing` |
 | `SelectCounterLayout` | Spin-box (`-` value `+`) stepping through `SelectTextEntry` children ("Any", "1", "1+", "2", ...) | — |
 | `SelectRangeLayout` | "Price-range" control: range slider over two synced text fields; the category must expose exactly one custom `SelectRangeEntry` | `toText` |
+| `SelectCascadingLayout` | Multi-column cascade: the category's children form column 1, and tapping a branch opens the next column, with no depth limit — the per-category equivalent of `CascadingSelectDelegate` | `isScrollable` |
+
+Depth: list / grid / wrap / counter / range are fixed to one level — they render only the category's direct children. `SelectCascadingLayout` is the only layout without a depth limit.
 
 ```dart
 SelectCategoryEntry(
@@ -130,7 +133,7 @@ SelectCategoryEntry(
 );
 ```
 
-Resolution order: the category's `layout` → the two-level delegate's `defaultLayout` (`TabNavSelectDelegate` → 3-column grid, `SideNavSelectDelegate` → chips, `ExpandableSelectDelegate` → list). A category can override with any layout, mixing layouts within one select.
+Resolution order: the category's `layout` → the category delegate's `defaultLayout` (`TabNavSelectDelegate` → 3-column grid, `SideNavSelectDelegate` → chips, `ExpandableSelectDelegate` → list). A category can override with any layout, mixing layouts within one select — including `SelectCascadingLayout`, which lets a single category drill down past one level.
 
 ## Custom delegates
 

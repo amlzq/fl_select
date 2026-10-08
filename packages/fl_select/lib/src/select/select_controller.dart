@@ -137,7 +137,7 @@ class SelectController extends ChangeNotifier {
   }
 
   /// Validates that every child entry's [SelectChildEntry.parentId] points to
-  /// its direct parent in a two-level-or-deeper tree.
+  /// its direct parent in a category tree.
   ///
   /// An empty `parentId` is not an error: it is derived from the tree structure
   /// first (see `SelectUtils.deriveParentIds`), exactly as [bindState] does
@@ -179,7 +179,7 @@ class SelectController extends ChangeNotifier {
     final hasCategory = entries.any((e) => e is SelectCategoryEntry);
     if (!hasCategory) return;
 
-    // A two-level-or-deeper structure requires every top-level entry to be a
+    // A category structure requires every top-level entry to be a
     // [SelectCategoryEntry]. The select widgets assume this invariant when they
     // resolve the focused/rendered category (e.g. via `entries.first` or by
     // indexing into the list), so violating it would crash during the build
@@ -188,7 +188,7 @@ class SelectController extends ChangeNotifier {
     for (final entry in entries) {
       if (entry is! SelectCategoryEntry) {
         throw ArgumentError(
-          'In a two-level-or-deeper structure, every top-level entry must be a '
+          'In a category structure, every top-level entry must be a '
           'SelectCategoryEntry, but found "${entry.runtimeType}" '
           '(id: "${entry.id}") at the top level. A flat list is only '
           'supported when there is no SelectCategoryEntry at all.',
@@ -201,7 +201,7 @@ class SelectController extends ChangeNotifier {
         throw ArgumentError(
           'SelectChildEntry(parentId: "${child.parentId}", id: "${child.id}") '
           'has a parentId that does not match its parent node (id: "${parent.id}"). '
-          'In a two-level-or-deeper structure, a child entry\'s parentId must equal its '
+          'In a category structure, a child entry\'s parentId must equal its '
           'direct parent\'s id, otherwise it cannot be selected. Omit parentId '
           'to have it derived from the tree structure, or set it to the id of '
           'the direct parent. If this is a flat list, make sure there is no '

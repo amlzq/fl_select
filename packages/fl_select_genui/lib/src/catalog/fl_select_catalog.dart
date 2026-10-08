@@ -229,8 +229,8 @@ class _SelectWidget extends StatelessWidget {
         entries: entries,
       ),
 
-      // Grid — flat grid; two-level data renders as tabNav with a grid
-      // layout.
+      // Grid — flat grid; category data renders as tabNav with a
+      // grid layout.
       'grid' when isCategoryData => TabNavSelectDelegate(
         defaultLayout: SelectGridLayout(
           crossAxisCount: data['crossAxisCount'] as int? ?? 3,
@@ -246,8 +246,8 @@ class _SelectWidget extends StatelessWidget {
         entries: entries,
       ),
 
-      // Wrap — flat chip cloud; two-level data (including the legacy
-      // sideNav share below) renders as sideNav.
+      // Wrap — flat chip cloud; category data (including the
+      // legacy sideNav share below) renders as sideNav.
       'sideNav' ||
       'wrap' ||
       'chips' ||

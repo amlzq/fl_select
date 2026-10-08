@@ -10,9 +10,9 @@ import 'widgets/widgets.dart';
 
 /// Standard list view.
 ///
-/// Renders flat entries in a single list. For two-level (category) data
-/// with expandable groups, use [ExpandableSelect] via
-/// [ExpandableSelectDelegate].
+/// Renders flat (parentless) entries in a single list: the top level may only
+/// hold plain (non-category) entries, and only one level is rendered — a
+/// child's own `children` are not expanded.
 class ListSelect extends StatefulWidget {
   final ListSelectDelegate delegate;
   final List<SelectEntry> entries;

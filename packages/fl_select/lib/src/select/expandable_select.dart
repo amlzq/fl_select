@@ -11,17 +11,20 @@ import 'select_search_filter.dart';
 import 'widgets/select_category_content.dart';
 import 'widgets/widgets.dart';
 
-/// Expandable grouped layout for two-level (category) data: each category
+/// Expandable grouped layout for category data: each category
 /// renders as an expandable tile whose children are laid out by the
 /// category's `layout` (defaulting to the delegate's [defaultLayout], then
 /// to a list layout).
 ///
-/// Flat (parentless) structures are not supported; use [ListSelect] via
-/// [ListSelectDelegate] for flat data.
+/// Requires a category structure: the top level must be [SelectCategoryEntry]
+/// roots.
 ///
 /// Behavior notes:
-/// - At most two levels are rendered; use [CascadingSelect] for multi-level
-///   (cascading) data.
+/// - Tiles represent the top category level only; the depth of each
+///   category's content follows its `layout` — [SelectListLayout] /
+///   [SelectGridLayout] / [SelectWrapLayout] / [SelectCounterLayout] /
+///   [SelectRangeLayout] render one level, while [SelectCascadingLayout]
+///   drills down into nested children.
 /// - When an entry's `immediate` is true, selection is applied immediately
 ///   without requiring the action bar.
 /// - A category tile renders a small badge dot in the top-right corner of its
@@ -129,7 +132,7 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
           'ExpandableSelect: child entry "${item.id}" has a parentId of '
           '"${item.parentId}" that does not match any category; the tap was '
           'ignored. Check that the child\'s parentId points to its owning '
-          'category id (a two-level-or-deeper structure).',
+          'category.',
         );
         return true;
       }());

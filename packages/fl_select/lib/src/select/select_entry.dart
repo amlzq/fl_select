@@ -674,6 +674,10 @@ class SelectTextEntry<E> extends SelectChildEntry<E> {
 }
 
 /// A child entry (i.e. a non-root node).
+///
+/// Any entry below the top level: a plain leaf, or a branch when it carries
+/// `children` (which is what [SelectCascadingLayout] and
+/// [CascadingSelectDelegate] drill into).
 class SelectChildEntry<E> extends SelectEntry<E> {
   /// Creates a child entry.
   ///
@@ -841,6 +845,13 @@ extension SelectChildEntryExt on SelectChildEntry {
 }
 
 /// A category entry (i.e. a root node).
+///
+/// The top level of a category structure is made of these: the category
+/// delegates ([TabNavSelectDelegate], [SideNavSelectDelegate] and
+/// [ExpandableSelectDelegate]) and [CascadingSelectDelegate] require category
+/// roots, while the flat delegates ([ListSelectDelegate],
+/// [GridSelectDelegate] and [WrapSelectDelegate]) reject them. A category owns
+/// its group's [selectionMode], [layout], [header] and [footer].
 class SelectCategoryEntry<E> extends SelectEntry<E> {
   /// Creates a category entry.
   ///
@@ -1002,6 +1013,10 @@ class SelectCategoryEntry<E> extends SelectEntry<E> {
   final SelectionMode? footerSelectionMode;
 
   /// The layout used to render this category's children.
+  ///
+  /// A [SelectCascadingLayout] renders the children as a cascade, drilling
+  /// down into nested children one column per level, so a category can nest
+  /// deeper than one level without changing the delegate.
   ///
   /// When `null`, a default layout is used at render time:
   /// - [TabNavSelectDelegate] falls back to its `defaultLayout`, then to a

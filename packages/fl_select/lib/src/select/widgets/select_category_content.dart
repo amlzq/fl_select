@@ -8,7 +8,7 @@ import 'widgets.dart';
 /// Renders one category's children by mapping the resolved [SelectLayout]
 /// (`category.layout ?? fallbackLayout`) to the matching select widget.
 ///
-/// This is an internal building block shared by the two-level select bodies
+/// This is an internal building block shared by the category select bodies
 /// (tab-nav, side-nav and expandable) so the six layout flavors are mapped
 /// to widgets in exactly one place.
 class SelectCategoryContentView extends StatelessWidget {
@@ -128,8 +128,8 @@ class SelectCategoryContentView extends StatelessWidget {
       ),
       // The cascading view keeps its own navigation state and writes the
       // selection straight to the [SelectController], so [onTerminalItemTap]
-      // (which follows the two-level `toggleFlatLeaf` semantics) is not used
-      // here.
+      // (which follows the `toggleFlatLeaf` semantics of a category
+      // tree) is not used here.
       SelectCascadingLayout(:final isScrollable) => CascadingView(
         key: ValueKey('category_$index'),
         category: category,

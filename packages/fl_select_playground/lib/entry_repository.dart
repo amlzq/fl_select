@@ -186,20 +186,21 @@ class EntryRepository {
   );
 
   // -------------------------------------------------------------------------
-  // Two-level — categories for the TabNav / SideNav / Expandable delegates.
+  // Category data — categories for the TabNav / SideNav / Expandable
+  // delegates.
   // -------------------------------------------------------------------------
 
-  /// Latest applied two-level selection, if any.
+  /// Latest applied category selection, if any.
   SelectEntries? twoLevelResult;
 
   final Set<SelectCategoryEntry> _twoLevelInitialSelected =
       <SelectCategoryEntry>{};
 
-  /// Two-level entries applied when the select opens.
+  /// Category entries applied when the select opens.
   SelectEntries get twoLevelSelectedData =>
       twoLevelResult ?? _twoLevelInitialSelected;
 
-  /// Two-level entries restored by the reset action.
+  /// Category entries restored by the reset action.
   SelectEntries get twoLevelResetData => _twoLevelInitialSelected;
 
   Future<SelectEntries> fetchTwoLevelData() async {
@@ -333,7 +334,7 @@ class EntryRepository {
         layout: const SelectCounterLayout(),
       ),
     };
-    debugPrint('two-level length: ${entries.length}');
+    debugPrint('category length: ${entries.length}');
     return entries;
   }
 }

@@ -11,16 +11,22 @@ import 'select_search_filter.dart';
 import 'widgets/select_category_content.dart';
 import 'widgets/widgets.dart';
 
-/// Two-level layout: category tabs on top and the focused category's
+/// Category layout: category tabs on top and the focused category's
 /// children below.
+///
+/// Requires a category structure: the top level must be [SelectCategoryEntry]
+/// roots.
 ///
 /// Behavior notes:
 /// - Category tabs drive which category's children are shown below, laid
 ///   out by the category's `layout` (defaulting to
 ///   [TabNavSelectDelegate.defaultLayout], then to a 3-column grid).
 /// - When only one category is available, the tab bar is hidden.
-/// - At most two levels are rendered; levels nested deeper than the second
-///   are not rendered.
+/// - The tabs represent the top category level only; how deep a category's
+///   content goes is decided by its `layout` — [SelectListLayout] /
+///   [SelectGridLayout] / [SelectWrapLayout] / [SelectCounterLayout] /
+///   [SelectRangeLayout] render one level, while [SelectCascadingLayout]
+///   drills down into nested children.
 /// - If a category contains an "Any" child entry, it may be selected by
 ///   default.
 /// - A category's `header`/`footer` entries (if any) are rendered as chip
@@ -163,7 +169,7 @@ class TabNavSelectState extends State<TabNavSelect> {
           'TabNavSelect: child entry "${entry.id}" has a parentId of '
           '"${entry.parentId}" that does not match any category; the tap was '
           'ignored. Check that the child\'s parentId points to its owning '
-          'category id (a two-level structure).',
+          'category.',
         );
         return true;
       }());

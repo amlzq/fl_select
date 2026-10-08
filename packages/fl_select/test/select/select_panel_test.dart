@@ -1130,7 +1130,7 @@ void main() {
     });
 
     testWidgets(
-      'shows an error when a two-level structure has a mismatched parentId instead of hanging',
+      'shows an error when a category structure has a mismatched parentId instead of hanging',
       (tester) async {
         await tester.pumpWidget(
           MaterialApp(
@@ -1169,7 +1169,7 @@ void main() {
     );
 
     testWidgets(
-      'uses errorBuilder for a two-level structure with a mismatched parentId',
+      'uses errorBuilder for a category structure with a mismatched parentId',
       (tester) async {
         await tester.pumpWidget(
           MaterialApp(
@@ -1205,7 +1205,7 @@ void main() {
     );
 
     testWidgets(
-      'derives an omitted parentId for a two-level structure instead of failing',
+      'derives an omitted parentId for a category structure instead of failing',
       (tester) async {
         await tester.pumpWidget(
           MaterialApp(
