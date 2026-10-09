@@ -16,10 +16,13 @@ Delegates carry the styling. Quick path: `selectedColor` / `onSelectedColor`; fi
 | `fieldTileTheme` | Min/max fields of custom range entries |
 | `rangeSliderTheme` | Range slider entries |
 | `wrapViewTheme` | Wrapping chip view (`WrapSelectDelegate` / chip layouts) |
-| `chipBarTheme` | Legacy shared chip theme — only fills `wrapViewTheme` defaults |
+| `chipBarTheme` | Single-row chip bar |
+| `cascadingViewTheme` | End of the cascading background ramp (`CascadingSelectDelegate` / a category using `SelectCascadingLayout`) |
 | `panelTheme` | Panel background decoration (dialog/sheet panel) |
 
 The same fields exist on `SelectThemeData` for app-wide styling, where a delegate's own value wins. `SelectThemeData` additionally carries the color fields (`selectedColor` / `onSelectedColor`, `backgroundColor` / `onBackgroundColor`, `backgroundColorHigh` / `backgroundColorHighest` / `onBackgroundColorHighest`) and `radioTheme` / `checkboxTheme` (`RadioThemeData` / `CheckboxThemeData`), which are global-only — per delegate you replace those controls with `radioBuilder` / `checkboxBuilder` instead.
+
+The cascade's background ramp is styled by `cascadingViewTheme` (`SelectCascadingViewTheme.endBackgroundColor`, defaulting to `SelectThemeData.backgroundColorHighest`). Only its end is a theme field: the ramp's start is the surface the host already painted behind the first column (the panel background, or the sidebar in `CascadingSelect`), so it stays seamless instead of being restyled. The category level of that ramp is the sidebar (`sideBarTheme`).
 
 ```dart
 ListSelectDelegate(
@@ -80,7 +83,7 @@ Precedence: widget parameter → `selectTheme` on the widget → theme extension
 
 A `PopupSelectBar` / `PopupSelectButton` overlay sits above the trigger's route, so a `SelectTheme` wrapped around the trigger alone does not reach it — the trigger injects the `selectTheme` it resolved around the panel instead. Set the theme above the `Navigator`, or through those two extensions.
 
-Chip styling: the wrapping chip view resolves `wrapViewTheme` (`SelectWrapViewTheme`: `variant` (filled/outlined), `chipColor`, `selectedChipColor`, `labelStyle`, `selectedLabelStyle`, `backgroundColor`, `padding`) — set it on the delegate or globally on `SelectThemeData`; a delegate's own value wins over the one on `SelectThemeData`. `SelectThemeData.chipBarTheme` is the shared chip-bar theme — the `SelectThemeData(...)` factory and `SelectThemeData.raw(...)` accept it by that name. It no longer styles the wrap view directly — it is folded into `wrapViewTheme` as a lowest-priority fallback (a field set on both resolves from `wrapViewTheme`), so prefer `wrapViewTheme`.
+Chip styling: the wrapping chip view resolves `wrapViewTheme` (`SelectWrapViewTheme`: `variant` (filled/outlined), `chipColor`, `selectedChipColor`, `labelStyle`, `selectedLabelStyle`, `backgroundColor`, `padding`) — set it on the delegate or globally on `SelectThemeData`; a delegate's own value wins over the one on `SelectThemeData`. The single-row chip bar resolves `chipBarTheme` (`SelectChipBarTheme`, same field names) the same way.
 
 ## Internationalization
 

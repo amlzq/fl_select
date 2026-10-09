@@ -38,7 +38,7 @@ Rules: the builder renders its own selected-state visuals from `selected` and wi
 
 Scope on category delegates: applies to categories laid out as list, grid or wrap (via `category.layout`); the range-slider and counter layouts keep their built-in controls, a category laid out as `SelectCascadingLayout` renders its own per-level nodes so the builder does not reach them either, and a category's header/footer chips are never passed to the builder. `CascadingSelectDelegate` ignores `itemBuilder` (its nodes render per level; a node builder may arrive later). Builders render their own chip visuals; matching the built-in look is a matter of the exported chip themes (`SelectChipBarTheme` for the single-row bar, `SelectWrapViewTheme` for the wrapping form).
 
-Chip views: the built-in chip widgets (the single-row bar, the wrapping view, their skeletons and the chip style helpers) are internal and not part of the public API — do not construct them; build chips through the delegates/layouts instead. The wrapping form is what `WrapSelectDelegate` and `SelectWrapLayout` render. Style a `WrapSelectDelegate`'s chips via its `wrapViewTheme` (`SelectWrapViewTheme`: `variant` (filled/outlined), `chipColor`, `selectedChipColor`, `labelStyle`, `selectedLabelStyle`, `backgroundColor`, `padding`). The legacy `chipBarTheme` (`SelectChipBarTheme`) is folded into the wrap view theme as a lowest-priority fallback, so it only fills in the fields `wrapViewTheme` leaves unset — deprecated, prefer `wrapViewTheme`. Custom `itemBuilder`s render their own chips, resolving visuals from `SelectWrapViewTheme` on the wrap form and from `SelectChipBarTheme` on the single-row bar. In widget tests, assert on the visible chip text instead of the internal widget types.
+Chip views: the built-in chip widgets (the single-row bar, the wrapping view, their skeletons and the chip style helpers) are internal and not part of the public API — do not construct them; build chips through the delegates/layouts instead. The wrapping form is what `WrapSelectDelegate` and `SelectWrapLayout` render. Style a `WrapSelectDelegate`'s chips via its `wrapViewTheme` (`SelectWrapViewTheme`: `variant` (filled/outlined), `chipColor`, `selectedChipColor`, `labelStyle`, `selectedLabelStyle`, `backgroundColor`, `padding`), and the single-row chip bar via `chipBarTheme` (`SelectChipBarTheme`, same field names). Custom `itemBuilder`s render their own chips, resolving visuals from `SelectWrapViewTheme` on the wrap form and from `SelectChipBarTheme` on the single-row bar. In widget tests, assert on the visible chip text instead of the internal widget types.
 
 **Category data** — a tree of `SelectCategoryEntry` roots; the tabs / sidebar / tiles represent the top level only, and each category's content depth follows its `layout`:
 
@@ -101,7 +101,7 @@ ListSelectDelegate(
 
 **Styling** (details in [theming-i18n.md](theming-i18n.md))
 - `selectedColor`, `onSelectedColor`.
-- Fine-grained `*Theme` fields: `actionBarTheme`, `searchBarTheme`, `tabBarTheme`, `sideBarTheme`, `expansionTileTheme`, `listTileTheme`, `gridTileTheme`, `fieldTileTheme`, `rangeSliderTheme`, `wrapViewTheme` (wrapping chip view), `chipBarTheme` (legacy shared chip theme), `panelTheme` (panel background decoration). More colors: `backgroundColor` / `onBackgroundColor`, `backgroundColorHigh` / `backgroundColorHighest` / `onBackgroundColorHighest`. Every theme field also exists on `SelectThemeData` for app-wide styling (a delegate's value wins).
+- Fine-grained `*Theme` fields: `actionBarTheme`, `searchBarTheme`, `tabBarTheme`, `sideBarTheme`, `expansionTileTheme`, `listTileTheme`, `gridTileTheme`, `fieldTileTheme`, `rangeSliderTheme`, `wrapViewTheme` (wrapping chip view), `chipBarTheme` (single-row chip bar), `cascadingViewTheme` (end of the cascading background ramp), `panelTheme` (panel background decoration). More colors: `backgroundColor` / `onBackgroundColor`, `backgroundColorHigh` / `backgroundColorHighest` / `onBackgroundColorHighest`. Every theme field also exists on `SelectThemeData` for app-wide styling (a delegate's value wins).
 
 `GridSelectDelegate` additionally requires `crossAxisCount`.
 
@@ -119,6 +119,8 @@ In every delegate except `CascadingSelectDelegate`, each `SelectCategoryEntry.la
 | `SelectCascadingLayout` | Multi-column cascade: the category's children form column 1, and tapping a branch opens the next column, with no depth limit — the per-category equivalent of `CascadingSelectDelegate` | `isScrollable` |
 
 Depth: list / grid / wrap / counter / range are fixed to one level — they render only the category's direct children. `SelectCascadingLayout` is the only layout without a depth limit.
+
+`SelectCascadingLayout` renders the same multi-column view as `CascadingSelectDelegate`, so its background ramp is styled the same way: `cascadingViewTheme` (`SelectCascadingViewTheme.endBackgroundColor`) sets the deepest level.
 
 ```dart
 SelectCategoryEntry(
