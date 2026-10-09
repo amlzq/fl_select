@@ -44,8 +44,11 @@ abstract final class SelectEntrySchema {
       ),
       'layout': S.object(
         description:
-            'category only: {"kind": "list"|"grid"|"chip"|"counter"'
-            '|"range", ...}; grid also needs crossAxisCount.',
+            'category only: the shape its children render in — '
+            '{"kind": "list"|"grid"|"chip"|"counter"|"range"|"cascading", '
+            '...}. Grid also needs crossAxisCount; "cascading" renders one '
+            'column per level (no depth limit) so nested children drill down, '
+            'and takes an optional isScrollable.',
         additionalProperties: true,
       ),
       'header': S.object(

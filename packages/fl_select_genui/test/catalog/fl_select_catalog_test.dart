@@ -306,6 +306,43 @@ void main() {
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
   });
 
+  testWidgets('a cascading category layout drills into nested children', (
+    tester,
+  ) async {
+    await pumpSelect(tester, {
+      'delegate': 'tabNav',
+      'entries': [
+        {
+          'type': 'category',
+          'id': 'region',
+          'name': 'Region',
+          'layout': {'kind': 'cascading'},
+          'children': [
+            {
+              'type': 'text',
+              'id': 'east',
+              'name': 'East',
+              'children': [
+                {'type': 'text', 'id': 'sh', 'name': 'Shanghai'},
+              ],
+            },
+            {'type': 'text', 'id': 'west', 'name': 'West'},
+          ],
+        },
+      ],
+    });
+
+    expect(find.byIcon(Icons.warning_amber_rounded), findsNothing);
+    expect(find.text('East'), findsOneWidget);
+    expect(find.text('Shanghai'), findsNothing);
+
+    // The branch opens a second column instead of being selected, which is
+    // what separates the cascade from the one-level layouts.
+    await tester.tap(find.text('East'));
+    await tester.pumpAndSettle();
+    expect(find.text('Shanghai'), findsOneWidget);
+  });
+
   testWidgets('a custom range entry in a header/footer shows an error card', (
     tester,
   ) async {

@@ -1,5 +1,50 @@
 # Migration Guide
 
+## MIGRATE TO Next
+
+### fl_select bumped to `^0.16.0`
+
+fl_select 0.16.0 adds the cascading category layout, moves the cascading
+delegate's background colors into themes and removes the deprecated
+`SelectThemeData.chipBarThemeData` getter. None of it is part of this package's
+API, so no source changes are needed; the upstream deprecations and removals are
+recorded here rather than in the changelog:
+
+| fl_select 0.16.0 change | Why fl_select_genui is unaffected |
+| --- | --- |
+| **BREAKING** the deprecated `SelectThemeData.chipBarThemeData` getter is removed | the catalog renders `SelectView` and reads no theme field; theming stays with the host app |
+| **DEPRECATION** `CascadingSelectDelegate.categoryBackgroundColor` / `terminalBackgroundColor` give way to the matching `SelectSideBarTheme` / `SelectCascadingViewTheme` fields | the catalog builds the delegate from payload fields only and paints no colors |
+| **FEATURE** `SelectCascadingLayout` (a `category` `layout` kind of `"cascading"`) is added | additive — it is documented below, and a payload written before it decodes unchanged |
+| **BUGFIX** the cascading delegate pre-selects the focused category's "Any", and keeps a branch when its last leaf is deselected | selection happens inside fl_select; the catalog only reads the resulting selection back |
+| **IMPROVEMENT** the category delegates (`tabNav` / `sideNav` / `expandable`) describe the depth of a category's content as decided by its `layout` | delegate routing is unchanged |
+
+### The `cascading` category layout is now documented as authorable
+
+fl_select 0.16.0's `SelectCascadingLayout` lets any category render its children
+as a cascade, so a two-level delegate (`tabNav` / `sideNav` / `expandable`) can
+host a deeper tree without switching delegate. The `layout` description of
+`SelectEntrySchema` and `FlSelectCatalogItems.systemPromptFragment` now name
+every kind the codec decodes — `list`, `grid`, `chip`, `counter`, `range` and
+`cascading` — and the shipped skill documents the new one:
+
+```json
+{"type": "category", "id": "region", "name": "Region",
+ "layout": {"kind": "cascading", "isScrollable": true},
+ "children": [
+   {"type": "text", "id": "east", "name": "East",
+    "children": [{"type": "text", "id": "sh", "name": "Shanghai"}]},
+   {"type": "text", "id": "west", "name": "West"}]}
+```
+
+`cascading` renders one column per level with no depth limit, so nested
+`children` become drill-down columns; `isScrollable` is optional and only
+switches the columns between dividing the width equally and scrolling
+horizontally.
+
+Agent payloads are otherwise unaffected: no payload field was removed, so a
+payload that was valid before is still valid, and only one that uses the new
+layout kind renders differently (on fl_select 0.16.0 or newer).
+
 ## MIGRATE TO 0.5.0
 
 ### fl_select bumped to `^0.15.0`

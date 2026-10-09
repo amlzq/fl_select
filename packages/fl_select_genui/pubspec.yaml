@@ -16,7 +16,7 @@ environment:
 resolution: workspace
 
 dependencies:
-  fl_select: ^0.15.0
+  fl_select: ^0.16.0
   flutter:
     sdk: flutter
   genui: ^0.10.2

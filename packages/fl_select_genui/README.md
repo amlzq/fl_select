@@ -20,7 +20,10 @@ agent ──JSON payload──▶ Select (fl_select UI) ──selection──▶
    tabNav / sideNav / expandable) plus an `entries` tree authored
    in the `SelectEntryCodec` JSON format. The shape has to match the
    delegate: flat nodes for `list` / `grid` / `wrap`, a `category` tree for
-   `cascading` / `tabNav` / `sideNav` / `expandable`.
+   `cascading` / `tabNav` / `sideNav` / `expandable`. A category picks how its
+   own children render through its `layout`: `list` / `grid` / `chip` /
+   `counter` / `range` render one level, `cascading` renders one column per
+   level and drills into nested children.
 4. The user interacts with a real fl_select component; selections are written
    back to the GenUI data model at `<id>.value` as a
    `Map<String, List<String>>` (same shape as fl_select's `toQueryMap`),

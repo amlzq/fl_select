@@ -1,3 +1,9 @@
+## Next
+
+- **IMPROVEMENT** Bump fl_select to `^0.16.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-060)).
+
+- **FEATURE** Document fl_select 0.16.0's `cascading` category layout for the agent ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-060)).
+
 ## 0.5.0
 
 - **IMPROVEMENT** Bump fl_select to `^0.15.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-050)).

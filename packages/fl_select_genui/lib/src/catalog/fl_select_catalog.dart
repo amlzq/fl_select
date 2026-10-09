@@ -104,10 +104,14 @@ When the user needs to pick values from a structured option set, render a `Selec
   auto-fallback to match the `entries` shape; "flatten" is a legacy alias.
 - `entries`: a tree of nodes, each with a `type`:
   - `category`: group; requires `id`, `name`, non-empty `children`; optional
-    `selectionMode` ("single"/"multiple"), `layout`
-    (`{"kind":"grid","crossAxisCount":3}` etc.), and `header`/`footer`
+    `selectionMode` ("single"/"multiple"), `layout`, and `header`/`footer`
     (branch nodes whose `children` render as chip rows pinned above/below
-    the category children). `headerSelectionMode`/`footerSelectionMode`
+    the category children). `layout` picks how the category's children are
+    rendered: `{"kind":"list"}`, `{"kind":"grid","crossAxisCount":3}`,
+    `{"kind":"chip"}`, `{"kind":"counter"}` and `{"kind":"range"}` render
+    one level; `{"kind":"cascading","isScrollable":true}` renders one
+    column per level and drills into nested children (no depth limit).
+    `headerSelectionMode`/`footerSelectionMode`
     ("single"/"multiple") override `selectionMode` for one row; without them
     a row inherits the category's mode. A `header`/`footer` row renders chips
     only, so its `children` must not contain a `custom` entry — put `custom`

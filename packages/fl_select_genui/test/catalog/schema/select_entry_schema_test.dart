@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fl_select/fl_select.dart';
 import 'package:fl_select_genui/src/catalog/schema/select_entry_schema.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
@@ -30,6 +31,19 @@ const List<String> _nodeFields = [
   'enabled',
   'children',
 ];
+
+/// The category `layout` kinds the codec decodes, mirroring the switch in
+/// `SelectEntryCodec` (package:fl_select) together with the extra fields each
+/// one requires. A kind the agent is not told about cannot be authored, so the
+/// schema description has to name every one of them.
+const Map<String, Map<String, Object?>> _layoutKinds = {
+  'list': <String, Object?>{},
+  'grid': <String, Object?>{'crossAxisCount': 2},
+  'chip': <String, Object?>{},
+  'counter': <String, Object?>{},
+  'range': <String, Object?>{},
+  'cascading': <String, Object?>{'isScrollable': true},
+};
 
 ObjectSchema _node() => SelectEntrySchema.node() as ObjectSchema;
 
@@ -88,6 +102,37 @@ void main() {
         'single',
         'multiple',
       ]);
+    });
+
+    test('documents every layout kind the codec decodes', () {
+      final description = _node().properties!['layout']!.description!;
+
+      for (final MapEntry(key: kind, value: extra) in _layoutKinds.entries) {
+        // The kind really is one the codec accepts...
+        final entries = SelectEntryCodec.fromJson([
+          {
+            'type': 'category',
+            'id': 'c',
+            'name': 'C',
+            'layout': {'kind': kind, ...extra},
+            'children': [
+              {'type': 'text', 'id': 'a', 'name': 'A'},
+            ],
+          },
+        ]);
+        expect(
+          entries.first,
+          isA<SelectCategoryEntry>(),
+          reason: 'fl_select no longer decodes the "$kind" layout',
+        );
+
+        // ...so the agent has to be told it may author one.
+        expect(
+          description,
+          contains('"$kind"'),
+          reason: '"$kind" would reach the agent undocumented',
+        );
+      }
     });
 
     test('rules out custom range entries in the header/footer chip rows', () {
