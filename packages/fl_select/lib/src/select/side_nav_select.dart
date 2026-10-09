@@ -87,6 +87,11 @@ class SideNavSelectState extends State<SideNavSelect> {
   /// Focused category entry
   int _focusedCategoryIndex = 0;
 
+  /// Bumped on every reset so cascading categories rebuild their columns from
+  /// the cleared selection and collapse any expanded column. See
+  /// [SelectCategoryContentView.cascadeRebuildToken].
+  int _cascadeRebuildToken = 0;
+
   var _isScrollingProgrammatically = false;
 
   final GlobalKey _scrollViewKey = GlobalKey();
@@ -458,6 +463,10 @@ class SideNavSelectState extends State<SideNavSelect> {
   void _onResetTap() {
     controller?.resetState(initializeAnyIfEmpty: true);
     _focusedCategoryIndex = 0;
+    // [resetState] clears the selection but leaves the categories and their
+    // entries untouched, so a cascade would keep the columns it had already
+    // expanded. Raise the token to force a rebuild from the cleared state.
+    _cascadeRebuildToken++;
     setState(() {});
     controller?.reset();
   }
@@ -491,6 +500,7 @@ class SideNavSelectState extends State<SideNavSelect> {
     final view = SelectCategoryContentView(
       category: category,
       index: index,
+      cascadeRebuildToken: _cascadeRebuildToken,
       selectedEntries:
           controller?.selectedEntriesForParent(category.id, level: 1) ?? {},
       fallbackLayout: delegate.defaultLayout ?? const SelectWrapLayout(),

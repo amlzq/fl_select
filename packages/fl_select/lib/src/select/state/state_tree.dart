@@ -91,6 +91,10 @@ class StateTree {
   /// [initializeAnyIfEmpty] is true and the category owns an "Any" child, that
   /// child is restored as the default selection (matching the behaviour of
   /// [reset] for the whole tree).
+  ///
+  /// Selections are swept across *every* level via [clearCategorySelections]:
+  /// a cascading branch stores each depth in its own level, so clearing only
+  /// level 1 would leave a grandchild picked at level 2 behind.
   void resetCategory(
     SelectCategoryEntry category, {
     required bool initializeAnyIfEmpty,
@@ -98,17 +102,9 @@ class StateTree {
     // Drop the category from the root selection (level 0).
     _selectedEntriesPerLevel.elementAtOrNull(0)?.remove(category);
 
-    // Clear the category's selected children at level 1.
-    final level1 = _selectedEntriesPerLevel.elementAtOrNull(1);
-    if (level1 != null) {
-      level1.removeWhere(
-        (e) => e is SelectChildEntry && e.parentId == category.id,
-      );
-    }
-
-    // Clear this category's header / footer selections.
-    _selectedHeaderEntries.remove(category.id);
-    _selectedFooterEntries.remove(category.id);
+    // Clear every selection owned by the category's subtree, at all depths,
+    // plus its header / footer selections.
+    clearCategorySelections(category);
 
     if (!initializeAnyIfEmpty) return;
 
@@ -117,12 +113,57 @@ class StateTree {
     final anyItem = category.children?.singleWhereOrNull(testAnyElement);
     if (anyItem == null) return;
     ensureLevels(2);
-    final selectedChildren = _selectedEntriesPerLevel[1];
-    selectedChildren.removeWhere(
-      (e) => e is SelectChildEntry && e.parentId == category.id,
-    );
-    selectedChildren.add(anyItem);
+    _selectedEntriesPerLevel[1].add(anyItem);
     _selectedEntriesPerLevel[0].add(category);
+  }
+
+  /// Removes every selection owned by [category]'s subtree across all levels.
+  ///
+  /// A cascading branch stores one depth per level, mixing entries from
+  /// unrelated categories in the same set, so clearing a whole level would drop
+  /// other categories' selections. Instead, only entries whose parent chain
+  /// roots at [category] are removed: a child entry's
+  /// [SelectChildEntry.parentId] always points at a node inside the category
+  /// subtree (the category itself or one of its non-leaf descendants). The
+  /// category's own header / footer selections (stored per category id, not per
+  /// level) are dropped as well.
+  void clearCategorySelections(SelectCategoryEntry category) {
+    // Ids of nodes that can act as a parent: the category itself plus its
+    // non-leaf descendants. Leaf ids are skipped because no child entry can
+    // reference them as parentId, which also reduces cross-category id
+    // collisions for leaves sharing the same id.
+    final subtreeParentIds = <String>{};
+    void collect(SelectEntry node) {
+      final children = node.children;
+      if (children == null || children.isEmpty) return;
+      subtreeParentIds.add(node.id);
+      for (final child in children) {
+        collect(child);
+      }
+    }
+
+    collect(category);
+    // Header/footer are standalone fields, not members of [category.children];
+    // collect them separately so their nested selections are also matched.
+    final header = category.header;
+    if (header != null) collect(header);
+    final footer = category.footer;
+    if (footer != null) collect(footer);
+
+    if (subtreeParentIds.isEmpty &&
+        !_selectedHeaderEntries.containsKey(category.id) &&
+        !_selectedFooterEntries.containsKey(category.id)) {
+      return;
+    }
+
+    for (var i = 1; i < _selectedEntriesPerLevel.length; i++) {
+      _selectedEntriesPerLevel[i].removeWhere(
+        (e) => e is SelectChildEntry && subtreeParentIds.contains(e.parentId),
+      );
+    }
+
+    _selectedHeaderEntries.remove(category.id);
+    _selectedFooterEntries.remove(category.id);
   }
 
   /// A snapshot of the currently selected entries at [level].

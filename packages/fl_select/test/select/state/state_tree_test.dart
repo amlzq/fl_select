@@ -565,6 +565,53 @@ void main() {
         expect(tree.selectedEntriesAtLevel(0).contains(c), isTrue);
       },
     );
+
+    test('resetCategory clears selections nested below the category', () {
+      final tree = StateTree();
+      final sh = _text('east', 'sh', 'Shanghai');
+      final east = _text('c1', 'east', 'East', children: {sh});
+      final a2 = _text('c2', 'a2', 'A2');
+      final c1 = _category('c1', 'C1', children: {east});
+      final c2 = _category('c2', 'C2', children: {a2});
+      tree.bind([c1, c2], initializeAnyIfEmpty: false);
+
+      // Simulate the cascade path C1 > east > sh, plus a pick in C2.
+      tree.mutableSelectedEntriesAtLevel(0).addAll({c1, c2});
+      tree.mutableSelectedEntriesAtLevel(1).addAll({east, a2});
+      tree.mutableSelectedEntriesAtLevel(2).add(sh);
+
+      tree.resetCategory(c1, initializeAnyIfEmpty: false);
+
+      // The grandchild at level 2 goes with the rest of C1's subtree.
+      expect(tree.selectedEntriesAtLevel(1).contains(east), isFalse);
+      expect(tree.selectedEntriesAtLevel(2).contains(sh), isFalse);
+      expect(tree.selectedEntriesAtLevel(0).contains(c1), isFalse);
+
+      // C2 keeps both its root flag and its pick.
+      expect(tree.selectedEntriesAtLevel(1).contains(a2), isTrue);
+      expect(tree.selectedEntriesAtLevel(0).contains(c2), isTrue);
+    });
+
+    test('resetCategory clears header and footer selections', () {
+      final tree = StateTree();
+      final headerChild = _text('header', 'h1', 'H1');
+      final header = _text('c', 'header', 'Header', children: {headerChild});
+      final c = _category(
+        'c',
+        'C',
+        children: {_text('c', 'a', 'A')},
+        header: header,
+      );
+      tree.bind([c], initializeAnyIfEmpty: false);
+
+      tree.mutableSelectedEntriesAtLevel(0).add(c);
+      tree.mutableHeaderEntriesFor(c.id).add(headerChild);
+
+      tree.resetCategory(c, initializeAnyIfEmpty: false);
+
+      expect(tree.selectedHeaderEntriesFor(c.id), isEmpty);
+      expect(tree.selectedFooterEntriesFor(c.id), isEmpty);
+    });
   });
 
   group('StateTree – _restoreHeaderFooterSelected', () {

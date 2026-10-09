@@ -428,4 +428,38 @@ void main() {
       );
     });
   });
+
+  group('TabNavSelect cascading reset', () {
+    testWidgets('Reset clears the deeper pick and collapses its column', (
+      tester,
+    ) async {
+      final controller = SelectController(
+        selectionMode: SelectionMode.multiple,
+      );
+      await tester.pumpWidget(_harness(controller, entries: _cascadingEntries));
+      await tester.pumpAndSettle();
+
+      // Drill into Cate 1 > East > Shanghai.
+      await tester.tap(find.text('East'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Shanghai'));
+      await tester.pumpAndSettle();
+      expect(
+        controller.selectedEntriesAtLevel(2).map((e) => e.id),
+        equals(<String>['sh']),
+      );
+
+      await tester.tap(find.text('Reset'));
+      await tester.pumpAndSettle();
+
+      // The pick below the category's own children is cleared...
+      expect(controller.selectedEntriesAtLevel(2), isEmpty);
+      expect(controller.selectedEntriesAtLevel(1), isEmpty);
+      // ...and the column it had expanded is gone with it.
+      expect(find.text('Shanghai'), findsNothing);
+      // The first column stays.
+      expect(find.text('East'), findsOneWidget);
+      expect(find.text('West'), findsOneWidget);
+    });
+  });
 }

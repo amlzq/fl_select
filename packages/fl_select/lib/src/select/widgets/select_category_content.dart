@@ -22,6 +22,7 @@ class SelectCategoryContentView extends StatelessWidget {
     required this.delegate,
     required this.onTerminalItemTap,
     this.backgroundColorOffset = 0,
+    this.cascadeRebuildToken = 0,
     this.radioBuilder,
     this.checkboxBuilder,
     this.itemBuilder,
@@ -54,6 +55,16 @@ class SelectCategoryContentView extends StatelessWidget {
   /// (`0`). Side-nav renders the cascade on a panel next to its sidebar, so it
   /// passes `1` and the first column starts one step in.
   final int backgroundColorOffset;
+
+  /// Bumped by the host to force the cascading branch to rebuild its columns
+  /// from the current selection state.
+  ///
+  /// [CascadingView] keeps its expanded path in its own state and only rebuilds
+  /// it when [category] or `entries` change. After a reset neither changes, so
+  /// the host raises this token instead; the cascade then restores itself from
+  /// the reset selection and collapses any path that no longer exists. It is
+  /// part of the cascading key only — the other layouts keep their key stable.
+  final int cascadeRebuildToken;
 
   /// Optional custom radio/checkbox builders forwarded to the list branch.
   final ToggleWidgetBuilder? radioBuilder;
@@ -137,7 +148,7 @@ class SelectCategoryContentView extends StatelessWidget {
         onChanged: (_, entry) => onTerminalItemTap(entry as SelectChildEntry),
       ),
       SelectCascadingLayout(:final isScrollable) => CascadingView(
-        key: ValueKey('category_$index'),
+        key: ValueKey('category_$index-$cascadeRebuildToken'),
         category: category,
         showTitle: false,
         entries: entries,

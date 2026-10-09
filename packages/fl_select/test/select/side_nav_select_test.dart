@@ -1,4 +1,5 @@
 import 'package:fl_select/fl_select.dart';
+import 'package:fl_select/src/select/select_panel.dart';
 import 'package:fl_select/src/select/widgets/widgets.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -46,6 +47,26 @@ SelectCategoryEntry<dynamic> _cascadingRegion() => SelectCategoryEntry<dynamic>(
     SelectTextEntry<dynamic>(id: 'west', name: 'West'),
   },
 );
+
+/// A [SelectPanel] host for [SideNavSelect]. Unlike [SelectView], which hides
+/// the action bar for inline usage, the panel keeps it visible so the reset
+/// button can be exercised.
+Widget _sideNavPanelHarness(
+  SelectController controller,
+  Set<SelectEntry> entries,
+) {
+  return MaterialApp(
+    home: Scaffold(
+      body: SelectPanel(
+        delegate: SideNavSelectDelegate(
+          selectionMode: SelectionMode.multiple,
+          entries: entries,
+        ),
+        controller: controller,
+      ),
+    ),
+  );
+}
 
 /// The color painted by the cascade's first column.
 Color? _firstCascadeColumnColor(WidgetTester tester) => tester
@@ -769,5 +790,33 @@ void main() {
     // column takes the next step of the same ramp rather than repeating the
     // sidebar's color.
     expect(_firstCascadeColumnColor(tester), Color.lerp(background, end, 0.5));
+  });
+
+  testWidgets('Reset clears the deeper pick and collapses its column', (
+    tester,
+  ) async {
+    final controller = SelectController(selectionMode: SelectionMode.multiple);
+    await tester.pumpWidget(
+      _sideNavPanelHarness(controller, {_cascadingRegion()}),
+    );
+    await tester.pumpAndSettle();
+
+    // Drill into Region > East > Shanghai.
+    await tester.tap(find.text('East'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Shanghai'));
+    await tester.pumpAndSettle();
+    expect(
+      controller.selectedEntriesAtLevel(2).map((e) => e.id),
+      equals(<String>['sh']),
+    );
+
+    await tester.tap(find.text('Reset'));
+    await tester.pumpAndSettle();
+
+    expect(controller.selectedEntriesAtLevel(2), isEmpty);
+    expect(controller.selectedEntriesAtLevel(1), isEmpty);
+    expect(find.text('Shanghai'), findsNothing);
+    expect(find.text('East'), findsOneWidget);
   });
 }

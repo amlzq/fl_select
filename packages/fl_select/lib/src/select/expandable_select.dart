@@ -65,6 +65,11 @@ class ExpandableSelect extends StatefulWidget {
 class _ExpandableSelectState extends State<ExpandableSelect> {
   SelectController? controller;
 
+  /// Bumped on every reset so cascading categories rebuild their columns from
+  /// the cleared selection and collapse any expanded column. See
+  /// [SelectCategoryContentView.cascadeRebuildToken].
+  int _cascadeRebuildToken = 0;
+
   bool get _isSearching => widget.searchQuery.isNotEmpty;
 
   List<SelectEntry> get _displayEntries => _isSearching
@@ -189,6 +194,10 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
 
   void _onResetTap() {
     controller?.resetState(initializeAnyIfEmpty: true);
+    // [resetState] clears the selection but leaves the categories and their
+    // entries untouched, so a cascade would keep the columns it had already
+    // expanded. Raise the token to force a rebuild from the cleared state.
+    _cascadeRebuildToken++;
     setState(() {});
     controller?.reset();
   }
@@ -224,6 +233,7 @@ class _ExpandableSelectState extends State<ExpandableSelect> {
                   final content = SelectCategoryContentView(
                     category: category,
                     index: index,
+                    cascadeRebuildToken: _cascadeRebuildToken,
                     selectedEntries:
                         controller?.selectedEntriesAtLevel(1) ?? {},
                     fallbackLayout:

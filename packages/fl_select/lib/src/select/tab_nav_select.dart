@@ -73,6 +73,11 @@ class TabNavSelectState extends State<TabNavSelect> {
   /// Focused category entry.
   SelectCategoryEntry? _focusedCategory;
 
+  /// Bumped on every reset so the focused category's cascade rebuilds from the
+  /// reset selection and collapses any expanded column. See
+  /// [SelectCategoryContentView.cascadeRebuildToken].
+  int _cascadeRebuildToken = 0;
+
   SelectController? controller;
   bool _didInitCategoryFromState = false;
 
@@ -234,11 +239,17 @@ class TabNavSelectState extends State<TabNavSelect> {
 
   void _onResetTap() {
     // Reset only the currently focused category (tab) rather than every
-    // category, so selections in the other tabs are preserved.
-    controller?.resetCategoryState(
-      _focusedCategory!,
-      initializeAnyIfEmpty: true,
-    );
+    // category, so selections in the other tabs are preserved. Prefer the
+    // category actually on screen: under a search query the remembered
+    // [_focusedCategory] may be filtered out (or, with no category entries,
+    // null).
+    final category = _effectiveFocusedCategory;
+    if (category == null) return;
+    controller?.resetCategoryState(category, initializeAnyIfEmpty: true);
+    // The category and its entries are unchanged by a reset, so the cascade
+    // would keep the columns it had already expanded. Raise the token to force
+    // a rebuild from the reset selection state.
+    _cascadeRebuildToken++;
     setState(() {});
     controller?.reset();
   }
@@ -254,6 +265,7 @@ class TabNavSelectState extends State<TabNavSelect> {
     return SelectCategoryContentView(
       category: category,
       index: index,
+      cascadeRebuildToken: _cascadeRebuildToken,
       selectedEntries:
           controller?.selectedEntriesForParent(category.id, level: 1) ?? {},
       fallbackLayout:
