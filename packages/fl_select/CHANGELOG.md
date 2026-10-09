@@ -1,4 +1,4 @@
-## Next
+## 0.16.0
 
 - **FEATURE** add the `SelectCascadingLayout` backed by a themeable `SelectCascadingViewTheme`.
 

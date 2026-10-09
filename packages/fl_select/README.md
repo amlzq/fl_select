@@ -237,7 +237,7 @@ ListSelectDelegate(
 
 #### SelectView
 
-`SelectView` embeds a select directly in a page or dialog body. Pass any `delegate`  — it controls both loading and rendering.
+`SelectView` embeds a select directly in a page or dialog body. Pass any `delegate` — it controls both loading and rendering.
 
 ```dart
 SelectView(
@@ -565,18 +565,18 @@ MaterialApp(
 
 To override the labels for a single delegate, set `applyText` / `resetText` on it directly.
 
-## Accessibility
+#### Accessibility
 
 fl_select provides comprehensive accessibility support for screen readers and assistive technologies. All components are designed to work out of the box with screen readers like TalkBack (Android) and VoiceOver (iOS).
 
-### What's Supported
+##### What's Supported
 
 - **Screen reader announcements**: Panel open/close, apply/reset actions, and selection changes are automatically announced
 - **Semantic labels**: All interactive elements have proper semantic information (buttons, selected states, values)
 - **Keyboard navigation**: Full keyboard support for all components
 - **Localized labels**: Accessibility announcements use the same i18n system as the UI (10 languages supported)
 
-### How to Use
+##### How to Use
 
 No additional setup is required — accessibility is enabled by default. Simply use the components as you normally would:
 
