@@ -161,13 +161,6 @@ class SelectThemeData with Diagnosticable {
   /// Theme overrides for the chip bar widget.
   final SelectChipBarTheme chipBarTheme;
 
-  /// Deprecated alias of [chipBarTheme].
-  @Deprecated(
-    'Use chipBarTheme instead; the renamed field matches '
-    'SelectDelegate.chipBarTheme and pairs with wrapViewTheme.',
-  )
-  SelectChipBarTheme get chipBarThemeData => chipBarTheme;
-
   /// Theme overrides for the panel's elevation, shadow and shape decoration.
   final SelectPanelTheme panelTheme;
 

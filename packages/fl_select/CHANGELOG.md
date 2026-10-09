@@ -8,6 +8,8 @@
 
 - **DEPRECATION** `CascadingSelectDelegate.categoryBackgroundColor` and `terminalBackgroundColor` are deprecated in favour of the matching theme fields ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#cascading-delegate-background-colors)).
 
+- **BREAKING** remove the deprecated `SelectThemeData.chipBarThemeData` getter ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#migrate-to-0140)).
+
 ## 0.15.0
 
 - **FEATURE** `SelectChildEntry.parentId` is now derived from the tree structure.
