@@ -1,6 +1,6 @@
 # Migration Guide
 
-## MIGRATE TO Next
+## MIGRATE TO 0.6.0
 
 ### fl_select bumped to `^0.16.0`
 
