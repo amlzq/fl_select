@@ -1,6 +1,6 @@
 import 'package:fl_select/fl_select.dart';
 import 'package:fl_select/src/select/widgets/widgets.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _themeSideBarColor = Color(0xFF102030);
@@ -10,9 +10,8 @@ const _legacyTerminalColor = Color(0xFF445566);
 
 /// The ambient defaults the ramp falls back to when nothing overrides them.
 final _defaultStartColor = SelectThemeData(ThemeData.light()).backgroundColor;
-final _defaultEndColor = SelectThemeData(
-  ThemeData.light(),
-).backgroundColorHighest;
+final _defaultEndColor = SelectThemeData(ThemeData.light())
+    .backgroundColorHighest;
 
 /// `Region` -> `East` -> `Shanghai`/`Hangzhou` spans three levels: the sidebar
 /// (level 0), the children column (level 1) and the grandchildren column

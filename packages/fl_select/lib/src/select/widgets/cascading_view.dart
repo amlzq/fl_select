@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../constants.dart';
 import '../select_controller.dart';
@@ -694,9 +694,8 @@ class _CascadingViewState extends State<CascadingView> {
             ),
           );
           return ScrollConfiguration(
-            behavior: ScrollConfiguration.of(
-              context,
-            ).copyWith(overscroll: false),
+            behavior: ScrollConfiguration.of(context)
+                .copyWith(overscroll: false),
             child: SingleChildScrollView(
               controller: _cascadeHorizontalController,
               scrollDirection: Axis.horizontal,

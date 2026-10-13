@@ -158,9 +158,9 @@ void main() {
         rootAfter.children!.any((e) => e is SelectChildEntry && e.isAny),
         isFalse,
       );
-      final aAfter =
-          rootAfter.children!.singleWhere((e) => e.id == 'a')
-              as SelectTextEntry;
+      final aAfter = rootAfter.children!.singleWhere(
+        (e) => e.id == 'a',
+      ) as SelectTextEntry;
       expect(
         aAfter.children!.any((e) => e is SelectChildEntry && e.isAny),
         isFalse,
@@ -185,9 +185,9 @@ void main() {
 
       final originalLeaf =
           (root.children!.singleWhere((e) => e.id == 'a') as SelectTextEntry);
-      final clonedLeaf =
-          (clonedRoot.children!.singleWhere((e) => e.id == 'a')
-              as SelectTextEntry);
+      final clonedLeaf = (clonedRoot.children!.singleWhere(
+        (e) => e.id == 'a',
+      ) as SelectTextEntry);
       expect(identical(originalLeaf, clonedLeaf), isFalse);
       expect(
         identical(originalLeaf.children!.first, clonedLeaf.children!.first),
@@ -401,28 +401,24 @@ void main() {
       expect(identical(clonedRoot, root), isFalse);
     });
 
-    test(
-      'cloneTree can avoid cloning deep subtree when deepCloneSelectedSubtree=false',
-      () {
-        final g1 = _text('c1', 'g1', 'G1');
-        final c1 = _text('r', 'c1', 'C1', children: {g1});
-        final root = _category('r', 'R', children: {c1});
+    test('cloneTree can avoid cloning deep subtree when deepCloneSelectedSubtree=false', () {
+      final g1 = _text('c1', 'g1', 'G1');
+      final c1 = _text('r', 'c1', 'C1', children: {g1});
+      final root = _category('r', 'R', children: {c1});
 
-        final cloned = SelectUtils.cloneTree(
-          {root},
-          [
-            <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
-            <SelectEntry<dynamic>>{_text('r', 'c1', 'C1')},
-          ],
-          deepCloneSelectedSubtree: false,
-        );
+      final cloned = SelectUtils.cloneTree(
+        {root},
+        [
+          <SelectEntry<dynamic>>{_category('r', 'R', children: {})},
+          <SelectEntry<dynamic>>{_text('r', 'c1', 'C1')},
+        ],
+        deepCloneSelectedSubtree: false,
+      );
 
-        final clonedRoot = cloned.single as SelectCategoryEntry<dynamic>;
-        final clonedC1 =
-            clonedRoot.children!.single as SelectTextEntry<dynamic>;
-        expect(clonedC1.children, isNull);
-      },
-    );
+      final clonedRoot = cloned.single as SelectCategoryEntry<dynamic>;
+      final clonedC1 = clonedRoot.children!.single as SelectTextEntry<dynamic>;
+      expect(clonedC1.children, isNull);
+    });
 
     test('cloneTree excludes a flat top-level "Any" placeholder', () {
       final any = SelectTextEntry<dynamic>.any(parentId: '', name: 'Any');
@@ -1085,9 +1081,10 @@ void main() {
       // Handing that back to the category's own `copyWith` is what a
       // `SelectEntry<E>` slot used to reject.
       final SelectCategoryEntry<dynamic> widened = parent;
-      final derived =
-          SelectUtils.injectParentIds(widened, parentId: '')
-              as SelectCategoryEntry;
+      final derived = SelectUtils.injectParentIds(
+        widened,
+        parentId: '',
+      ) as SelectCategoryEntry;
 
       expect(derived.header, isA<SelectTextEntry<String>>());
       expect((derived.header! as SelectChildEntry).parentId, 'c1');

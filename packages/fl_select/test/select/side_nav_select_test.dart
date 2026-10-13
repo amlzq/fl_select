@@ -2,7 +2,7 @@ import 'package:fl_select/fl_select.dart';
 import 'package:fl_select/src/select/select_panel.dart';
 import 'package:fl_select/src/select/widgets/widgets.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Builds a [SelectView] backed by a [SideNavSelectDelegate] so we can assert

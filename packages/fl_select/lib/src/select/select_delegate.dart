@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../i18n/select_localizations.dart';
 import 'cascading_select.dart';
@@ -19,12 +19,11 @@ import 'wrap_select.dart';
 ///
 /// Implementations should trigger [onResetTap] and [onApplyTap] from UI controls
 /// (e.g. buttons).
-typedef SelectActionBarBuilder =
-    Widget Function(
-      BuildContext context, {
-      required VoidCallback onResetTap,
-      required VoidCallback onApplyTap,
-    });
+typedef SelectActionBarBuilder = Widget Function(
+  BuildContext context, {
+  required VoidCallback onResetTap,
+  required VoidCallback onApplyTap,
+});
 
 /// Builds a fully custom item widget for one select entry.
 ///
@@ -50,14 +49,13 @@ typedef SelectActionBarBuilder =
 /// range-slider ([SelectRangeLayout]) and counter ([SelectCounterLayout])
 /// category layouts keep their built-in controls. It does not apply to a
 /// category's header/footer chips or to [CascadingSelectDelegate]'s nodes.
-typedef SelectItemBuilder =
-    Widget? Function(
-      BuildContext context,
-      SelectEntry entry, {
-      required bool selected,
-      required VoidCallback onTap,
-      String? categoryId,
-    });
+typedef SelectItemBuilder = Widget? Function(
+  BuildContext context,
+  SelectEntry entry, {
+  required bool selected,
+  required VoidCallback onTap,
+  String? categoryId,
+});
 
 /// Base configuration for a select.
 ///

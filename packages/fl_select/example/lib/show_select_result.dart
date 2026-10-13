@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:fl_select/fl_select.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Debounce delay: consecutive calls within this duration cancel the previous
 /// pending call so that only the **last** result is shown.

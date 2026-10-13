@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'i18n/select_localizations.dart';
 import 'popup_select_bar_theme.dart';
@@ -16,8 +16,9 @@ import 'select_overlay_style.dart';
 /// Default height for [PopupSelectBar] when no theme override is provided.
 const kPopupSelectBarHeight = 44.0;
 
-typedef PopupSelectBarWillToggleCallback =
-    FutureOr<bool> Function(PopupTabData tabData);
+typedef PopupSelectBarWillToggleCallback = FutureOr<bool> Function(
+  PopupTabData tabData,
+);
 
 /// Callback parameter indicates which select is being shown or hidden.
 typedef PopupSelectBarToggleCallback = void Function(PopupTabData tabData);
@@ -25,8 +26,10 @@ typedef PopupSelectBarToggleCallback = void Function(PopupTabData tabData);
 /// Callback for selection change or apply events from a [PopupSelectBar].
 ///
 /// Receives the tab metadata and the selected entries directly.
-typedef PopupSelectBarResultCallback =
-    void Function(PopupTabData tabData, SelectEntries selected);
+typedef PopupSelectBarResultCallback = void Function(
+  PopupTabData tabData,
+  SelectEntries selected,
+);
 
 /// A tab bar that shows an overlay select panel when a tab is tapped.
 ///
@@ -455,9 +458,8 @@ class _PopupSelectBarState extends State<PopupSelectBar>
               }
 
               return ScrollConfiguration(
-                behavior: ScrollConfiguration.of(
-                  context,
-                ).copyWith(overscroll: false),
+                behavior: ScrollConfiguration.of(context)
+                    .copyWith(overscroll: false),
                 child: SingleChildScrollView(
                   controller: _scrollController,
                   scrollDirection: Axis.horizontal,

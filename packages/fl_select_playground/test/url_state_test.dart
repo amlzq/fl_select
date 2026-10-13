@@ -2,7 +2,7 @@ import 'package:fl_select/fl_select.dart';
 import 'package:fl_select_playground/playground_l10n.dart';
 import 'package:fl_select_playground/playground_params.dart';
 import 'package:fl_select_playground/url_state.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

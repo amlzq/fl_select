@@ -1,7 +1,7 @@
 import 'package:example/entry_repository.dart';
 import 'package:example/my_widgets.dart';
 import 'package:fl_select/fl_select.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'log.dart';
 import 'show_select_result.dart';

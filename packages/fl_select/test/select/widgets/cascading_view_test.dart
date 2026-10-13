@@ -3,7 +3,7 @@ import 'package:fl_select/src/select/select_panel.dart';
 // [CascadingView] is intentionally not part of the public API; these tests are
 // in-package, so they reach it through its own library.
 import 'package:fl_select/src/select/widgets/cascading_view.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// A category whose entries drill down one level, laid out with
@@ -190,21 +190,24 @@ void main() {
       expect(find.text('East'), findsOneWidget);
     });
 
-    testWidgets('makes the first column the leftmost surface of the theme ramp', (
-      tester,
-    ) async {
-      await tester.pumpWidget(
-        _viewHarness(
-          theme: const SelectCascadingViewTheme(endBackgroundColor: _endColor),
-        ),
-      );
-      await tester.pumpAndSettle();
+    testWidgets(
+      'makes the first column the leftmost surface of the theme ramp',
+      (tester) async {
+        await tester.pumpWidget(
+          _viewHarness(
+            theme: const SelectCascadingViewTheme(
+              endBackgroundColor: _endColor,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
 
-      // Without an offset the first column is the leftmost surface of the ramp,
-      // so it is seamless with the panel background the host renders on and
-      // only the deeper columns darken.
-      expect(_columnColors(tester), [_panelStartColor]);
-    });
+        // Without an offset the first column is the leftmost surface of the ramp,
+        // so it is seamless with the panel background the host renders on and
+        // only the deeper columns darken.
+        expect(_columnColors(tester), [_panelStartColor]);
+      },
+    );
 
     testWidgets('starts the first column one step in at an offset of 1', (
       tester,

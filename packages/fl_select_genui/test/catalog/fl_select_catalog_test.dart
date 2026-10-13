@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:fl_select/fl_select.dart';
 import 'package:fl_select_genui/src/catalog/fl_select_catalog.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:genui/genui.dart';
 
@@ -124,9 +124,9 @@ void main() {
     await tester.tap(find.text('A 2'));
     await tester.pumpAndSettle();
 
-    final value =
-        context.getValue<dynamic>(DataPath('select1.value'))
-            as Map<dynamic, dynamic>;
+    final value = context.getValue<dynamic>(
+      DataPath('select1.value'),
+    ) as Map<dynamic, dynamic>;
     expect(value['more'], ['a2']);
   });
 
@@ -143,9 +143,9 @@ void main() {
     await tester.tap(find.text('Recent'));
     await tester.pumpAndSettle();
 
-    final value =
-        context.getValue<dynamic>(DataPath('select1.value'))
-            as Map<dynamic, dynamic>;
+    final value = context.getValue<dynamic>(
+      DataPath('select1.value'),
+    ) as Map<dynamic, dynamic>;
     expect(value['sort'], ['recent']);
   });
 

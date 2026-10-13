@@ -4,7 +4,7 @@ publish_to: "none"
 version: 0.16.0
 
 environment:
-  sdk: ^3.10.0
+  sdk: ^3.13.5
 
 # Resolved via the repository root pub workspace (melos).
 resolution: workspace
@@ -12,13 +12,12 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  flutter_localizations:
-    sdk: flutter
   flutter_web_plugins:
     sdk: flutter
-  intl: ^0.20.2
+  material_ui: ^1.6.0
+  intl: ^0.20.3
   fl_select: ^0.16.0
-  package_info_plus: ^8.3.1
+  package_info_plus: ^10.2.2
 
 dev_dependencies:
   flutter_test:

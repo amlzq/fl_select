@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show RenderAbstractViewport;
+import 'package:flutter/rendering.dart'
+    show RenderAbstractViewport, ScrollCacheExtent;
+import 'package:material_ui/material_ui.dart';
 
 import 'action_bar_visibility.dart';
 import 'select_controller.dart';
@@ -429,9 +430,8 @@ class SideNavSelectState extends State<SideNavSelect> {
       padding: const EdgeInsets.only(bottom: 10),
       child: DefaultTextStyle.merge(
         style:
-            Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600) ??
+            Theme.of(context).textTheme.titleSmall
+                ?.copyWith(fontWeight: FontWeight.w600) ??
             const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
         child: Text(name),
       ),
@@ -641,12 +641,14 @@ class SideNavSelectState extends State<SideNavSelect> {
                       // with one continuous animation instead of an
                       // estimate-then-correct jump; it also lets the
                       // scroll-linked highlight observe every section.
-                      cacheExtent: _kRightColumnCacheExtent,
+                      scrollCacheExtent: ScrollCacheExtent.pixels(
+                        _kRightColumnCacheExtent,
+                      ),
                       physics: ChainingClampingScrollPhysics(),
                       padding: const EdgeInsets.symmetric(horizontal: 15),
                       // shrinkWrap: true,
-                      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior
-                          .onDrag, // Automatically dismiss the soft keyboard while dragging.
+                      keyboardDismissBehavior:
+                          ScrollViewKeyboardDismissBehavior.onDrag, // Automatically dismiss the soft keyboard while dragging.
                       children: _displayEntries.mapIndexed((index, item) {
                         final category =
                             _displayEntries[index] as SelectCategoryEntry;

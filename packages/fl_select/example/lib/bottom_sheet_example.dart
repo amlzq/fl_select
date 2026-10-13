@@ -1,7 +1,7 @@
 import 'package:example/entry_repository.dart';
 import 'package:example/log.dart';
 import 'package:fl_select/fl_select.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class BottomSheetExample extends StatefulWidget {
   const BottomSheetExample({super.key});

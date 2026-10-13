@@ -4,14 +4,15 @@ publish_to: "none"
 version: 0.6.0
 
 environment:
-  sdk: ^3.10.0
+  sdk: ^3.13.5
 
 dependencies:
   fl_select_genui:
     path: ../
   flutter:
     sdk: flutter
-  genui: ^0.10.2
+  material_ui: ^1.6.0
+  genui: ^0.10.4
 
 dev_dependencies:
   flutter_test:

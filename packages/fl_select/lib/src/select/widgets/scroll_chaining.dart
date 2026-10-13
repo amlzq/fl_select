@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart' show precisionErrorTolerance;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Touch-gesture scroll chaining shared by the select bodies hosted inside a
 /// page-level scrollable.

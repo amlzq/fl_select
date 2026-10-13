@@ -2,7 +2,7 @@ import 'package:fl_select/fl_select.dart'
     show SelectChipVariant, SelectTheme, SelectThemeData;
 import 'package:fl_select/src/select/widgets/widgets.dart'
     show SelectChipBarDefaults, SelectChipDefaults, SelectWrapViewDefaults;
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Resolves the defaults of both chip views from the same inherited theme, the

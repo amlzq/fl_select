@@ -1,5 +1,5 @@
 import 'package:fl_select/fl_select.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// A minimal [SelectDelegate] used to drive [SelectView] rendering and

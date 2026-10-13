@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Native design dimensions of the simulated phone (before any [FittedBox]
 /// scaling). The inner [MediaQuery] in the playground uses [kPhoneContentSize]

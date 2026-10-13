@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:collection/collection.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../i18n/select_localizations.dart';
 import 'action_bar_visibility.dart';
@@ -257,11 +257,10 @@ class CascadingSelectState extends State<CascadingSelect> {
   /// Picks the focused category from the selection state.
   SelectCategoryEntry? _pickFocusedCategoryFromSelection() =>
       SelectUtils.pickFocusedEntry(
-            (level) => controller?.selectedEntriesAtLevel(level) ?? {},
-            null,
-            0,
-          )
-          as SelectCategoryEntry?;
+        (level) => controller?.selectedEntriesAtLevel(level) ?? {},
+        null,
+        0,
+      ) as SelectCategoryEntry?;
 
   SelectEntries _headerSelectedFor(String categoryId) =>
       controller?.selectedHeaderEntriesFor(categoryId) ?? <SelectEntry>{};
@@ -325,11 +324,9 @@ class CascadingSelectState extends State<CascadingSelect> {
     final previousFocusedCategoryId = focusedCategory.id;
     controller?.resetState(initializeAnyIfEmpty: false);
     _rebuildSelectionState();
-    final newCategory =
-        _effectiveEntries.firstWhereOrNull(
-              (e) => e.id == previousFocusedCategoryId,
-            )
-            as SelectCategoryEntry?;
+    final newCategory = _effectiveEntries.firstWhereOrNull(
+      (e) => e.id == previousFocusedCategoryId,
+    ) as SelectCategoryEntry?;
     if (newCategory != null) {
       _onCategoryItemTap(newCategory);
     }

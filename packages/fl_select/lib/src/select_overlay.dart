@@ -1,6 +1,6 @@
 import 'dart:math' as math;
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'select_overlay_style.dart';
 
@@ -192,7 +192,7 @@ class SelectOverlay extends StatelessWidget {
                   opacity: effectiveAnimation,
                   child: SizeTransition(
                     sizeFactor: effectiveAnimation,
-                    axisAlignment: growUp ? 1.0 : -1.0,
+                    alignment: AlignmentDirectional(-1.0, growUp ? 1.0 : -1.0),
                     child: child,
                   ),
                 ),

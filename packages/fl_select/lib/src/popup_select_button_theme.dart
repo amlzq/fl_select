@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'select/select_theme_data.dart';
 import 'select_overlay_style.dart';

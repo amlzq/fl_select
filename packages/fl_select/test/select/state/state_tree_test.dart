@@ -372,19 +372,16 @@ void main() {
   });
 
   group('StateTree – _initializeAnySelection', () {
-    test(
-      'initializes Any entries for category tree when initializeAnyIfEmpty is true',
-      () {
-        final tree = StateTree();
-        final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
-        final a = _text('c', 'a', 'A');
-        final c = _category('c', 'C', children: {any, a});
-        tree.bind([c], initializeAnyIfEmpty: true);
+    test('initializes Any entries for category tree when initializeAnyIfEmpty is true', () {
+      final tree = StateTree();
+      final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
+      final a = _text('c', 'a', 'A');
+      final c = _category('c', 'C', children: {any, a});
+      tree.bind([c], initializeAnyIfEmpty: true);
 
-        expect(tree.selectedEntriesAtLevel(0).contains(c), isTrue);
-        expect(tree.selectedEntriesAtLevel(1).contains(any), isTrue);
-      },
-    );
+      expect(tree.selectedEntriesAtLevel(0).contains(c), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(any), isTrue);
+    });
 
     test('does not initialize Any when initializeAnyIfEmpty is false', () {
       final tree = StateTree();
@@ -464,19 +461,16 @@ void main() {
       expect(tree.selectedEntriesAtLevel(2).contains(leaf), isTrue);
     });
 
-    test(
-      'falls back to Any when selectedEntries is empty and initializeAnyIfEmpty is true',
-      () {
-        final tree = StateTree();
-        final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
-        final a = _text('c', 'a', 'A');
-        final c = _category('c', 'C', children: {any, a});
-        tree.bind([c], initializeAnyIfEmpty: true, selectedEntries: {});
+    test('falls back to Any when selectedEntries is empty and initializeAnyIfEmpty is true', () {
+      final tree = StateTree();
+      final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
+      final a = _text('c', 'a', 'A');
+      final c = _category('c', 'C', children: {any, a});
+      tree.bind([c], initializeAnyIfEmpty: true, selectedEntries: {});
 
-        expect(tree.selectedEntriesAtLevel(0).contains(c), isTrue);
-        expect(tree.selectedEntriesAtLevel(1).contains(any), isTrue);
-      },
-    );
+      expect(tree.selectedEntriesAtLevel(0).contains(c), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(any), isTrue);
+    });
   });
 
   group('StateTree – reset', () {
@@ -684,22 +678,19 @@ void main() {
   });
 
   group('StateTree – buildChangedEntries / buildAppliedEntries', () {
-    test(
-      'buildChangedEntries returns selected tree with deepCloneSelectedSubtree=false',
-      () {
-        final tree = StateTree();
-        final a = _text('c', 'a', 'A');
-        final c = _category('c', 'C', children: {a});
-        tree.bind([c], initializeAnyIfEmpty: false);
-        tree.mutableSelectedEntriesAtLevel(0).add(c);
-        tree.mutableSelectedEntriesAtLevel(1).add(a);
+    test('buildChangedEntries returns selected tree with deepCloneSelectedSubtree=false', () {
+      final tree = StateTree();
+      final a = _text('c', 'a', 'A');
+      final c = _category('c', 'C', children: {a});
+      tree.bind([c], initializeAnyIfEmpty: false);
+      tree.mutableSelectedEntriesAtLevel(0).add(c);
+      tree.mutableSelectedEntriesAtLevel(1).add(a);
 
-        final changed = tree.buildChangedEntries();
-        expect(changed.length, 1);
-        final resultC = changed.first;
-        expect(resultC.id, 'c');
-      },
-    );
+      final changed = tree.buildChangedEntries();
+      expect(changed.length, 1);
+      final resultC = changed.first;
+      expect(resultC.id, 'c');
+    });
 
     test('buildAppliedEntries returns selected tree with full deep clone', () {
       final tree = StateTree();

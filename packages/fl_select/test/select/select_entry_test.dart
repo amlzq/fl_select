@@ -1060,28 +1060,25 @@ void main() {
     });
   });
 
-  group(
-    'SelectEntriesExtension – findChildrenAtLevel / findIdsAtLevel / findExtrasAtLevel',
-    () {
-      test('findChildrenAtLevel delegates to SelectUtils', () {
-        final a = _text('c', 'a', 'A');
-        final c = _category('c', 'C', children: {a});
+  group('SelectEntriesExtension – findChildrenAtLevel / findIdsAtLevel / findExtrasAtLevel', () {
+    test('findChildrenAtLevel delegates to SelectUtils', () {
+      final a = _text('c', 'a', 'A');
+      final c = _category('c', 'C', children: {a});
 
-        final entries = <SelectEntry<dynamic>>{c};
-        expect(entries.findChildrenAtLevel(c, 0), {c});
-        expect(entries.findChildrenAtLevel(c, 1).contains(a), isTrue);
-      });
+      final entries = <SelectEntry<dynamic>>{c};
+      expect(entries.findChildrenAtLevel(c, 0), {c});
+      expect(entries.findChildrenAtLevel(c, 1).contains(a), isTrue);
+    });
 
-      test('findIdsAtLevel delegates to SelectUtils', () {
-        final a = _text('c', 'a', 'A');
-        final c = _category('c', 'C', children: {a});
+    test('findIdsAtLevel delegates to SelectUtils', () {
+      final a = _text('c', 'a', 'A');
+      final c = _category('c', 'C', children: {a});
 
-        final entries = <SelectEntry<dynamic>>{c};
-        expect(entries.findIdsAtLevel(c, 0), {'c'});
-        expect(entries.findIdsAtLevel(c, 1), {'a'});
-      });
-    },
-  );
+      final entries = <SelectEntry<dynamic>>{c};
+      expect(entries.findIdsAtLevel(c, 0), {'c'});
+      expect(entries.findIdsAtLevel(c, 1), {'a'});
+    });
+  });
 
   group('SelectEntriesExtension – firstSelectedId', () {
     test('returns id of first selected entry', () {
@@ -1541,32 +1538,23 @@ void main() {
       expect(testSameParentElement(a, 'other'), isFalse);
     });
 
-    test(
-      'testSameParentAnyOrCustomElement returns true for any with matching parentId',
-      () {
-        final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
-        expect(testSameParentAnyOrCustomElement(any, 'c'), isTrue);
-      },
-    );
+    test('testSameParentAnyOrCustomElement returns true for any with matching parentId', () {
+      final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
+      expect(testSameParentAnyOrCustomElement(any, 'c'), isTrue);
+    });
 
-    test(
-      'testSameParentAnyOrCustomElement returns true for custom with matching parentId',
-      () {
-        final custom = SelectRangeEntry<int, dynamic>.custom(
-          parentId: 'c',
-          name: 'Custom',
-        );
-        expect(testSameParentAnyOrCustomElement(custom, 'c'), isTrue);
-      },
-    );
+    test('testSameParentAnyOrCustomElement returns true for custom with matching parentId', () {
+      final custom = SelectRangeEntry<int, dynamic>.custom(
+        parentId: 'c',
+        name: 'Custom',
+      );
+      expect(testSameParentAnyOrCustomElement(custom, 'c'), isTrue);
+    });
 
-    test(
-      'testSameParentAnyOrCustomElement returns false for non-any/non-custom with matching parentId',
-      () {
-        final a = _text('c', 'a', 'A');
-        expect(testSameParentAnyOrCustomElement(a, 'c'), isFalse);
-      },
-    );
+    test('testSameParentAnyOrCustomElement returns false for non-any/non-custom with matching parentId', () {
+      final a = _text('c', 'a', 'A');
+      expect(testSameParentAnyOrCustomElement(a, 'c'), isFalse);
+    });
 
     test(
       'testSameParentAnyOrCustomElement returns false for wrong parentId',

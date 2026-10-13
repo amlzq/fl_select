@@ -41,33 +41,30 @@ SelectCategoryEntry<dynamic> _category(
 
 void main() {
   group('SelectionRules – focusCategory', () {
-    test(
-      'single mode: keeps other categories\' selections and adds Any for focused category',
-      () {
-        const rules = SelectionRules();
-        final tree = StateTree();
-        final any = SelectTextEntry<dynamic>.any(parentId: 'c1', name: 'Any');
-        final a = _text('c1', 'a', 'A');
-        final b = _text('c2', 'b', 'B');
-        final c1 = _category('c1', 'C1', children: {any, a});
-        final c2 = _category('c2', 'C2', children: {b});
-        tree.bind([c1, c2], initializeAnyIfEmpty: false);
+    test('single mode: keeps other categories\' selections and adds Any for focused category', () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final any = SelectTextEntry<dynamic>.any(parentId: 'c1', name: 'Any');
+      final a = _text('c1', 'a', 'A');
+      final b = _text('c2', 'b', 'B');
+      final c1 = _category('c1', 'C1', children: {any, a});
+      final c2 = _category('c2', 'C2', children: {b});
+      tree.bind([c1, c2], initializeAnyIfEmpty: false);
 
-        // Pre-select something in another category
-        tree.ensureLevels(2);
-        tree.mutableSelectedEntriesAtLevel(0).add(c2);
-        tree.mutableSelectedEntriesAtLevel(1).add(b);
+      // Pre-select something in another category
+      tree.ensureLevels(2);
+      tree.mutableSelectedEntriesAtLevel(0).add(c2);
+      tree.mutableSelectedEntriesAtLevel(1).add(b);
 
-        rules.focusCategory(tree, c1, selectionMode: SelectionMode.single);
+      rules.focusCategory(tree, c1, selectionMode: SelectionMode.single);
 
-        // Focusing is navigation-only: c2's selections are kept, Any is added
-        // for the newly focused category.
-        expect(tree.selectedEntriesAtLevel(0).contains(c1), isTrue);
-        expect(tree.selectedEntriesAtLevel(0).contains(c2), isTrue);
-        expect(tree.selectedEntriesAtLevel(1).contains(any), isTrue);
-        expect(tree.selectedEntriesAtLevel(1).contains(b), isTrue);
-      },
-    );
+      // Focusing is navigation-only: c2's selections are kept, Any is added
+      // for the newly focused category.
+      expect(tree.selectedEntriesAtLevel(0).contains(c1), isTrue);
+      expect(tree.selectedEntriesAtLevel(0).contains(c2), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(any), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(b), isTrue);
+    });
 
     test(
       'single mode: focus keeps existing child selections in the category',
@@ -268,27 +265,24 @@ void main() {
       },
     );
 
-    test(
-      'multiple mode: unselecting the last item keeps selection empty without Any',
-      () {
-        const rules = SelectionRules();
-        final tree = StateTree();
-        final a = _text('', 'a', 'A');
-        tree.bind([a], initializeAnyIfEmpty: false);
+    test('multiple mode: unselecting the last item keeps selection empty without Any', () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final a = _text('', 'a', 'A');
+      tree.bind([a], initializeAnyIfEmpty: false);
 
-        tree.ensureLevels(1);
-        tree.mutableSelectedEntriesAtLevel(0).add(a);
+      tree.ensureLevels(1);
+      tree.mutableSelectedEntriesAtLevel(0).add(a);
 
-        rules.toggleFlatLeaf(
-          tree,
-          a,
-          selectionMode: SelectionMode.multiple,
-          isCategoryTree: false,
-        );
+      rules.toggleFlatLeaf(
+        tree,
+        a,
+        selectionMode: SelectionMode.multiple,
+        isCategoryTree: false,
+      );
 
-        expect(tree.selectedEntriesAtLevel(0), isEmpty);
-      },
-    );
+      expect(tree.selectedEntriesAtLevel(0), isEmpty);
+    });
 
     test('removes Any entries when selecting non-Any', () {
       const rules = SelectionRules();
@@ -452,212 +446,197 @@ void main() {
       expect(tree.selectedEntriesAtLevel(1).contains(b), isTrue);
     });
 
-    test(
-      'category tree: toggling last selected entry in multiple mode re-adds Any if available',
-      () {
-        const rules = SelectionRules();
-        final tree = StateTree();
-        final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
-        final a = _text('c', 'a', 'A');
-        final b = _text('c', 'b', 'B');
-        final c = _category(
-          'c',
-          'C',
-          children: {any, a, b},
-          selectionMode: SelectionMode.multiple,
-        );
-        tree.bind([c], initializeAnyIfEmpty: false);
+    test('category tree: toggling last selected entry in multiple mode re-adds Any if available', () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final any = SelectTextEntry<dynamic>.any(parentId: 'c', name: 'Any');
+      final a = _text('c', 'a', 'A');
+      final b = _text('c', 'b', 'B');
+      final c = _category(
+        'c',
+        'C',
+        children: {any, a, b},
+        selectionMode: SelectionMode.multiple,
+      );
+      tree.bind([c], initializeAnyIfEmpty: false);
 
-        tree.ensureLevels(2);
-        tree.mutableSelectedEntriesAtLevel(0).add(c);
-        tree.mutableSelectedEntriesAtLevel(1).add(a);
+      tree.ensureLevels(2);
+      tree.mutableSelectedEntriesAtLevel(0).add(c);
+      tree.mutableSelectedEntriesAtLevel(1).add(a);
 
-        // Toggle to deselect a (multiple mode on the category)
-        rules.toggleFlatLeaf(
-          tree,
-          a,
-          selectionMode: SelectionMode.multiple,
-          isCategoryTree: true,
-          category: c,
-        );
+      // Toggle to deselect a (multiple mode on the category)
+      rules.toggleFlatLeaf(
+        tree,
+        a,
+        selectionMode: SelectionMode.multiple,
+        isCategoryTree: true,
+        category: c,
+      );
 
-        // Any should be re-added and category should remain selected
-        expect(tree.selectedEntriesAtLevel(1).contains(any), isTrue);
-        expect(tree.selectedEntriesAtLevel(0).contains(c), isTrue);
-        expect(tree.selectedEntriesAtLevel(1).contains(a), isFalse);
-      },
-    );
+      // Any should be re-added and category should remain selected
+      expect(tree.selectedEntriesAtLevel(1).contains(any), isTrue);
+      expect(tree.selectedEntriesAtLevel(0).contains(c), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(a), isFalse);
+    });
 
-    test(
-      'category tree: toggling last selected entry in multiple mode removes category if no Any',
-      () {
-        const rules = SelectionRules();
-        final tree = StateTree();
-        final a = _text('c', 'a', 'A');
-        final c = _category(
-          'c',
-          'C',
-          children: {a},
-          selectionMode: SelectionMode.multiple,
-        );
-        tree.bind([c], initializeAnyIfEmpty: false);
+    test('category tree: toggling last selected entry in multiple mode removes category if no Any', () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final a = _text('c', 'a', 'A');
+      final c = _category(
+        'c',
+        'C',
+        children: {a},
+        selectionMode: SelectionMode.multiple,
+      );
+      tree.bind([c], initializeAnyIfEmpty: false);
 
-        tree.ensureLevels(2);
-        tree.mutableSelectedEntriesAtLevel(0).add(c);
-        tree.mutableSelectedEntriesAtLevel(1).add(a);
+      tree.ensureLevels(2);
+      tree.mutableSelectedEntriesAtLevel(0).add(c);
+      tree.mutableSelectedEntriesAtLevel(1).add(a);
 
-        // Toggle to deselect a (multiple mode on the category)
-        rules.toggleFlatLeaf(
-          tree,
-          a,
-          selectionMode: SelectionMode.multiple,
-          isCategoryTree: true,
-          category: c,
-        );
+      // Toggle to deselect a (multiple mode on the category)
+      rules.toggleFlatLeaf(
+        tree,
+        a,
+        selectionMode: SelectionMode.multiple,
+        isCategoryTree: true,
+        category: c,
+      );
 
-        // Category should be removed since there's no Any
-        expect(tree.selectedEntriesAtLevel(0).contains(c), isFalse);
-      },
-    );
+      // Category should be removed since there's no Any
+      expect(tree.selectedEntriesAtLevel(0).contains(c), isFalse);
+    });
 
-    test(
-      'delegate single mode: selecting a leaf in a multiple-selection category clears other categories',
-      () {
-        const rules = SelectionRules();
-        final tree = StateTree();
-        final a1 = _text('c1', 'a', 'A');
-        final b1 = _text('c1', 'b', 'B');
-        final c1 = _category(
-          'c1',
-          'C1',
-          children: {a1, b1},
-          selectionMode: SelectionMode.multiple,
-        );
-        final a2 = _text('c2', 'a', 'A2');
-        final b2 = _text('c2', 'b', 'B2');
-        final c2 = _category(
-          'c2',
-          'C2',
-          children: {a2, b2},
-          selectionMode: SelectionMode.multiple,
-        );
-        final a3 = _text('c3', 'a', 'A3');
-        final c3 = _category('c3', 'C3', children: {a3});
-        tree.bind([c1, c2, c3], initializeAnyIfEmpty: false);
+    test('delegate single mode: selecting a leaf in a multiple-selection category clears other categories', () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final a1 = _text('c1', 'a', 'A');
+      final b1 = _text('c1', 'b', 'B');
+      final c1 = _category(
+        'c1',
+        'C1',
+        children: {a1, b1},
+        selectionMode: SelectionMode.multiple,
+      );
+      final a2 = _text('c2', 'a', 'A2');
+      final b2 = _text('c2', 'b', 'B2');
+      final c2 = _category(
+        'c2',
+        'C2',
+        children: {a2, b2},
+        selectionMode: SelectionMode.multiple,
+      );
+      final a3 = _text('c3', 'a', 'A3');
+      final c3 = _category('c3', 'C3', children: {a3});
+      tree.bind([c1, c2, c3], initializeAnyIfEmpty: false);
 
-        // Pre-select leaves in c1 and c3.
-        tree.ensureLevels(2);
-        tree.mutableSelectedEntriesAtLevel(0)
-          ..add(c1)
-          ..add(c3);
-        tree.mutableSelectedEntriesAtLevel(1)
-          ..add(a1)
-          ..add(b1)
-          ..add(a3);
+      // Pre-select leaves in c1 and c3.
+      tree.ensureLevels(2);
+      tree.mutableSelectedEntriesAtLevel(0)
+        ..add(c1)
+        ..add(c3);
+      tree.mutableSelectedEntriesAtLevel(1)
+        ..add(a1)
+        ..add(b1)
+        ..add(a3);
 
-        // Select a leaf in c2 while the delegate-level mode is single.
-        rules.toggleFlatLeaf(
-          tree,
-          a2,
-          selectionMode: SelectionMode.single,
-          isCategoryTree: true,
-          category: c2,
-        );
+      // Select a leaf in c2 while the delegate-level mode is single.
+      rules.toggleFlatLeaf(
+        tree,
+        a2,
+        selectionMode: SelectionMode.single,
+        isCategoryTree: true,
+        category: c2,
+      );
 
-        // Only c2/a2 survives; c1 and c3 selections are cleared.
-        expect(tree.selectedEntriesAtLevel(1).contains(a2), isTrue);
-        expect(tree.selectedEntriesAtLevel(1).contains(a1), isFalse);
-        expect(tree.selectedEntriesAtLevel(1).contains(b1), isFalse);
-        expect(tree.selectedEntriesAtLevel(1).contains(a3), isFalse);
-        expect(tree.selectedEntriesAtLevel(0).contains(c2), isTrue);
-        expect(tree.selectedEntriesAtLevel(0).contains(c1), isFalse);
-        expect(tree.selectedEntriesAtLevel(0).contains(c3), isFalse);
-      },
-    );
+      // Only c2/a2 survives; c1 and c3 selections are cleared.
+      expect(tree.selectedEntriesAtLevel(1).contains(a2), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(a1), isFalse);
+      expect(tree.selectedEntriesAtLevel(1).contains(b1), isFalse);
+      expect(tree.selectedEntriesAtLevel(1).contains(a3), isFalse);
+      expect(tree.selectedEntriesAtLevel(0).contains(c2), isTrue);
+      expect(tree.selectedEntriesAtLevel(0).contains(c1), isFalse);
+      expect(tree.selectedEntriesAtLevel(0).contains(c3), isFalse);
+    });
 
-    test(
-      'delegate single mode: deselecting a leaf in a multiple-selection category keeps other categories',
-      () {
-        const rules = SelectionRules();
-        final tree = StateTree();
-        final a1 = _text('c1', 'a', 'A');
-        final c1 = _category(
-          'c1',
-          'C1',
-          children: {a1},
-          selectionMode: SelectionMode.multiple,
-        );
-        final a2 = _text('c2', 'a', 'A2');
-        final b2 = _text('c2', 'b', 'B2');
-        final c2 = _category(
-          'c2',
-          'C2',
-          children: {a2, b2},
-          selectionMode: SelectionMode.multiple,
-        );
-        tree.bind([c1, c2], initializeAnyIfEmpty: false);
+    test('delegate single mode: deselecting a leaf in a multiple-selection category keeps other categories', () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final a1 = _text('c1', 'a', 'A');
+      final c1 = _category(
+        'c1',
+        'C1',
+        children: {a1},
+        selectionMode: SelectionMode.multiple,
+      );
+      final a2 = _text('c2', 'a', 'A2');
+      final b2 = _text('c2', 'b', 'B2');
+      final c2 = _category(
+        'c2',
+        'C2',
+        children: {a2, b2},
+        selectionMode: SelectionMode.multiple,
+      );
+      tree.bind([c1, c2], initializeAnyIfEmpty: false);
 
-        // Pre-select leaves in both categories.
-        tree.ensureLevels(2);
-        tree.mutableSelectedEntriesAtLevel(0)
-          ..add(c1)
-          ..add(c2);
-        tree.mutableSelectedEntriesAtLevel(1)
-          ..add(a1)
-          ..add(a2);
+      // Pre-select leaves in both categories.
+      tree.ensureLevels(2);
+      tree.mutableSelectedEntriesAtLevel(0)
+        ..add(c1)
+        ..add(c2);
+      tree.mutableSelectedEntriesAtLevel(1)
+        ..add(a1)
+        ..add(a2);
 
-        // Deselect (toggle off) a2: c1's selection must survive.
-        rules.toggleFlatLeaf(
-          tree,
-          a2,
-          selectionMode: SelectionMode.single,
-          isCategoryTree: true,
-          category: c2,
-        );
+      // Deselect (toggle off) a2: c1's selection must survive.
+      rules.toggleFlatLeaf(
+        tree,
+        a2,
+        selectionMode: SelectionMode.single,
+        isCategoryTree: true,
+        category: c2,
+      );
 
-        expect(tree.selectedEntriesAtLevel(1).contains(a2), isFalse);
-        expect(tree.selectedEntriesAtLevel(1).contains(a1), isTrue);
-        expect(tree.selectedEntriesAtLevel(0).contains(c1), isTrue);
-      },
-    );
+      expect(tree.selectedEntriesAtLevel(1).contains(a2), isFalse);
+      expect(tree.selectedEntriesAtLevel(1).contains(a1), isTrue);
+      expect(tree.selectedEntriesAtLevel(0).contains(c1), isTrue);
+    });
 
-    test(
-      'delegate multiple mode: selecting a leaf keeps other categories\' selections',
-      () {
-        const rules = SelectionRules();
-        final tree = StateTree();
-        final a1 = _text('c1', 'a', 'A');
-        final c1 = _category(
-          'c1',
-          'C1',
-          children: {a1},
-          selectionMode: SelectionMode.multiple,
-        );
-        final a2 = _text('c2', 'a', 'A2');
-        final c2 = _category(
-          'c2',
-          'C2',
-          children: {a2},
-          selectionMode: SelectionMode.multiple,
-        );
-        tree.bind([c1, c2], initializeAnyIfEmpty: false);
+    test('delegate multiple mode: selecting a leaf keeps other categories\' selections', () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final a1 = _text('c1', 'a', 'A');
+      final c1 = _category(
+        'c1',
+        'C1',
+        children: {a1},
+        selectionMode: SelectionMode.multiple,
+      );
+      final a2 = _text('c2', 'a', 'A2');
+      final c2 = _category(
+        'c2',
+        'C2',
+        children: {a2},
+        selectionMode: SelectionMode.multiple,
+      );
+      tree.bind([c1, c2], initializeAnyIfEmpty: false);
 
-        tree.ensureLevels(2);
-        tree.mutableSelectedEntriesAtLevel(0).add(c1);
-        tree.mutableSelectedEntriesAtLevel(1).add(a1);
+      tree.ensureLevels(2);
+      tree.mutableSelectedEntriesAtLevel(0).add(c1);
+      tree.mutableSelectedEntriesAtLevel(1).add(a1);
 
-        rules.toggleFlatLeaf(
-          tree,
-          a2,
-          selectionMode: SelectionMode.multiple,
-          isCategoryTree: true,
-          category: c2,
-        );
+      rules.toggleFlatLeaf(
+        tree,
+        a2,
+        selectionMode: SelectionMode.multiple,
+        isCategoryTree: true,
+        category: c2,
+      );
 
-        expect(tree.selectedEntriesAtLevel(1).contains(a1), isTrue);
-        expect(tree.selectedEntriesAtLevel(1).contains(a2), isTrue);
-      },
-    );
+      expect(tree.selectedEntriesAtLevel(1).contains(a1), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(a2), isTrue);
+    });
 
     test('category tree: null category returns early', () {
       const rules = SelectionRules();
@@ -710,43 +689,40 @@ void main() {
     // the delegate-level mode. Before selectionMode became nullable, the
     // implicit single default swallowed the delegate-level multiple mode,
     // so tapping an already-selected leaf could not deselect it.
-    test(
-      'delegate multiple mode: category without explicit mode inherits it and toggles off',
-      () {
-        const rules = SelectionRules();
-        final tree = StateTree();
-        final a = _text('c', 'a', 'A');
-        final b = _text('c', 'b', 'B');
-        final c = _category('c', 'C', children: {a, b}, selectionMode: null);
-        tree.bind([c], initializeAnyIfEmpty: false);
+    test('delegate multiple mode: category without explicit mode inherits it and toggles off', () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final a = _text('c', 'a', 'A');
+      final b = _text('c', 'b', 'B');
+      final c = _category('c', 'C', children: {a, b}, selectionMode: null);
+      tree.bind([c], initializeAnyIfEmpty: false);
 
-        tree.ensureLevels(2);
-        tree.mutableSelectedEntriesAtLevel(0).add(c);
-        tree.mutableSelectedEntriesAtLevel(1).add(a);
+      tree.ensureLevels(2);
+      tree.mutableSelectedEntriesAtLevel(0).add(c);
+      tree.mutableSelectedEntriesAtLevel(1).add(a);
 
-        // Add b under the inherited multiple mode.
-        rules.toggleFlatLeaf(
-          tree,
-          b,
-          selectionMode: SelectionMode.multiple,
-          isCategoryTree: true,
-          category: c,
-        );
-        expect(tree.selectedEntriesAtLevel(1).contains(a), isTrue);
-        expect(tree.selectedEntriesAtLevel(1).contains(b), isTrue);
+      // Add b under the inherited multiple mode.
+      rules.toggleFlatLeaf(
+        tree,
+        b,
+        selectionMode: SelectionMode.multiple,
+        isCategoryTree: true,
+        category: c,
+      );
+      expect(tree.selectedEntriesAtLevel(1).contains(a), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(b), isTrue);
 
-        // Toggle the already-selected a: it must deselect.
-        rules.toggleFlatLeaf(
-          tree,
-          a,
-          selectionMode: SelectionMode.multiple,
-          isCategoryTree: true,
-          category: c,
-        );
-        expect(tree.selectedEntriesAtLevel(1).contains(a), isFalse);
-        expect(tree.selectedEntriesAtLevel(1).contains(b), isTrue);
-      },
-    );
+      // Toggle the already-selected a: it must deselect.
+      rules.toggleFlatLeaf(
+        tree,
+        a,
+        selectionMode: SelectionMode.multiple,
+        isCategoryTree: true,
+        category: c,
+      );
+      expect(tree.selectedEntriesAtLevel(1).contains(a), isFalse);
+      expect(tree.selectedEntriesAtLevel(1).contains(b), isTrue);
+    });
   });
 
   group('SelectionRules – toggleCascadingLeaf', () {
@@ -780,36 +756,33 @@ void main() {
       expect(tree.selectedEntriesAtLevel(1).contains(parent), isTrue);
     });
 
-    test(
-      'single mode: selecting non-Any leaf removes Any from same level and upper levels',
-      () {
-        const rules = SelectionRules();
-        final tree = StateTree();
-        final any = SelectTextEntry<dynamic>.any(parentId: 'p', name: 'Any');
-        final leaf = _text('p', 'l', 'L');
-        final parent = _text('c', 'p', 'P', children: {any, leaf});
-        final c = _category('c', 'C', children: {parent});
-        tree.bind([c], initializeAnyIfEmpty: false);
+    test('single mode: selecting non-Any leaf removes Any from same level and upper levels', () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final any = SelectTextEntry<dynamic>.any(parentId: 'p', name: 'Any');
+      final leaf = _text('p', 'l', 'L');
+      final parent = _text('c', 'p', 'P', children: {any, leaf});
+      final c = _category('c', 'C', children: {parent});
+      tree.bind([c], initializeAnyIfEmpty: false);
 
-        tree.ensureLevels(3);
-        tree.mutableSelectedEntriesAtLevel(0).add(c);
-        tree.mutableSelectedEntriesAtLevel(1).add(parent);
-        tree.mutableSelectedEntriesAtLevel(2).add(any);
+      tree.ensureLevels(3);
+      tree.mutableSelectedEntriesAtLevel(0).add(c);
+      tree.mutableSelectedEntriesAtLevel(1).add(parent);
+      tree.mutableSelectedEntriesAtLevel(2).add(any);
 
-        rules.toggleCascadingLeaf(
-          tree,
-          leaf,
-          selectionMode: SelectionMode.single,
-          childrenSelectionMode: SelectionMode.single,
-          focusedPath: [c, parent],
-          category: c,
-        );
+      rules.toggleCascadingLeaf(
+        tree,
+        leaf,
+        selectionMode: SelectionMode.single,
+        childrenSelectionMode: SelectionMode.single,
+        focusedPath: [c, parent],
+        category: c,
+      );
 
-        // Any should be removed at level 2, and also at level 1 if it was an Any there
-        expect(tree.selectedEntriesAtLevel(2).contains(leaf), isTrue);
-        expect(tree.selectedEntriesAtLevel(2).contains(any), isFalse);
-      },
-    );
+      // Any should be removed at level 2, and also at level 1 if it was an Any there
+      expect(tree.selectedEntriesAtLevel(2).contains(leaf), isTrue);
+      expect(tree.selectedEntriesAtLevel(2).contains(any), isFalse);
+    });
 
     test('single mode: selecting same entry does nothing', () {
       const rules = SelectionRules();
@@ -927,35 +900,32 @@ void main() {
       expect(tree.selectedEntriesAtLevel(2).contains(any), isFalse);
     });
 
-    test(
-      'cascading: deselection removes ancestors that have no remaining selected children',
-      () {
-        const rules = SelectionRules();
-        final tree = StateTree();
-        final leaf = _text('p', 'l', 'L');
-        final parent = _text('c', 'p', 'P', children: {leaf});
-        final c = _category('c', 'C', children: {parent});
-        tree.bind([c], initializeAnyIfEmpty: false);
+    test('cascading: deselection removes ancestors that have no remaining selected children', () {
+      const rules = SelectionRules();
+      final tree = StateTree();
+      final leaf = _text('p', 'l', 'L');
+      final parent = _text('c', 'p', 'P', children: {leaf});
+      final c = _category('c', 'C', children: {parent});
+      tree.bind([c], initializeAnyIfEmpty: false);
 
-        tree.ensureLevels(3);
-        tree.mutableSelectedEntriesAtLevel(0).add(c);
-        tree.mutableSelectedEntriesAtLevel(1).add(parent);
-        tree.mutableSelectedEntriesAtLevel(2).add(leaf);
+      tree.ensureLevels(3);
+      tree.mutableSelectedEntriesAtLevel(0).add(c);
+      tree.mutableSelectedEntriesAtLevel(1).add(parent);
+      tree.mutableSelectedEntriesAtLevel(2).add(leaf);
 
-        // Toggle to deselect leaf (multiple mode)
-        rules.toggleCascadingLeaf(
-          tree,
-          leaf,
-          selectionMode: SelectionMode.multiple,
-          childrenSelectionMode: SelectionMode.multiple,
-          focusedPath: [c, parent],
-          category: c,
-        );
+      // Toggle to deselect leaf (multiple mode)
+      rules.toggleCascadingLeaf(
+        tree,
+        leaf,
+        selectionMode: SelectionMode.multiple,
+        childrenSelectionMode: SelectionMode.multiple,
+        focusedPath: [c, parent],
+        category: c,
+      );
 
-        // Parent and category should be cleaned up
-        // After trimTrailingEmptyLevels, empty levels are removed
-      },
-    );
+      // Parent and category should be cleaned up
+      // After trimTrailingEmptyLevels, empty levels are removed
+    });
 
     test('cascading: deselecting last leaf adds Any if available', () {
       const rules = SelectionRules();
@@ -1048,84 +1018,79 @@ void main() {
     //
     // Reproduces the bug where selecting a level-2 entry (e.g. "东门")
     // left the level-1 "Any" (e.g. "区域" 下的 "不限") still checked.
-    test(
-      'selecting deep leaf removes Any from all ancestor levels (regression)',
-      () {
-        const rules = SelectionRules();
-        final tree = StateTree();
+    test('selecting deep leaf removes Any from all ancestor levels (regression)', () {
+      const rules = SelectionRules();
+      final tree = StateTree();
 
-        // Build a 3-level cascading structure that mirrors the real-world
-        // "区域 → 罗湖 → 东门" hierarchy:
-        //
-        //  level 0: category "region"
-        //  level 1: category children  →  any_region ("不限"),  "luohu"
-        //  level 2: luohu children     →  any_luohu  ("不限"),  "dongmen"
-        final anyRegion = SelectTextEntry<dynamic>.any(
-          parentId: 'region',
-          name: '不限',
-        );
-        final anyLuohu = SelectTextEntry<dynamic>.any(
-          parentId: 'luohu',
-          name: '不限',
-        );
-        final dongmen = _text('luohu', 'dongmen', '东门');
-        final luohu = _text(
-          'region',
-          'luohu',
-          '罗湖',
-          children: {anyLuohu, dongmen},
-        );
-        final region = _category('region', '区域', children: {anyRegion, luohu});
-        tree.bind([region], initializeAnyIfEmpty: false);
+      // Build a 3-level cascading structure that mirrors the real-world
+      // "区域 → 罗湖 → 东门" hierarchy:
+      //
+      //  level 0: category "region"
+      //  level 1: category children  →  any_region ("不限"),  "luohu"
+      //  level 2: luohu children     →  any_luohu  ("不限"),  "dongmen"
+      final anyRegion = SelectTextEntry<dynamic>.any(
+        parentId: 'region',
+        name: '不限',
+      );
+      final anyLuohu = SelectTextEntry<dynamic>.any(
+        parentId: 'luohu',
+        name: '不限',
+      );
+      final dongmen = _text('luohu', 'dongmen', '东门');
+      final luohu = _text(
+        'region',
+        'luohu',
+        '罗湖',
+        children: {anyLuohu, dongmen},
+      );
+      final region = _category('region', '区域', children: {anyRegion, luohu});
+      tree.bind([region], initializeAnyIfEmpty: false);
 
-        // Simulate the initial state: "Any" is selected at both level 1 and level 2
-        tree.ensureLevels(3);
-        tree.mutableSelectedEntriesAtLevel(0).add(region);
-        tree.mutableSelectedEntriesAtLevel(1).add(anyRegion);
-        tree.mutableSelectedEntriesAtLevel(1).add(luohu);
-        tree.mutableSelectedEntriesAtLevel(2).add(anyLuohu);
+      // Simulate the initial state: "Any" is selected at both level 1 and level 2
+      tree.ensureLevels(3);
+      tree.mutableSelectedEntriesAtLevel(0).add(region);
+      tree.mutableSelectedEntriesAtLevel(1).add(anyRegion);
+      tree.mutableSelectedEntriesAtLevel(1).add(luohu);
+      tree.mutableSelectedEntriesAtLevel(2).add(anyLuohu);
 
-        // User taps "东门" (level 2, non-Any, parent is "luohu")
-        rules.toggleCascadingLeaf(
-          tree,
-          dongmen,
-          selectionMode: SelectionMode.multiple,
-          childrenSelectionMode: SelectionMode.multiple,
-          focusedPath: [region, luohu],
-          category: region,
-        );
+      // User taps "东门" (level 2, non-Any, parent is "luohu")
+      rules.toggleCascadingLeaf(
+        tree,
+        dongmen,
+        selectionMode: SelectionMode.multiple,
+        childrenSelectionMode: SelectionMode.multiple,
+        focusedPath: [region, luohu],
+        category: region,
+      );
 
-        // "东门" should now be selected
-        expect(tree.selectedEntriesAtLevel(2).contains(dongmen), isTrue);
+      // "东门" should now be selected
+      expect(tree.selectedEntriesAtLevel(2).contains(dongmen), isTrue);
 
-        // ★ KEY ASSERTION: level-2 "Any" (anyLuohu) under luohu must be removed
-        expect(
-          tree
-              .selectedEntriesAtLevel(2)
-              .any(
-                (e) =>
-                    e is SelectChildEntry && e.parentId == 'luohu' && e.isAny,
-              ),
-          isFalse,
-        );
+      // ★ KEY ASSERTION: level-2 "Any" (anyLuohu) under luohu must be removed
+      expect(
+        tree
+            .selectedEntriesAtLevel(2)
+            .any(
+              (e) => e is SelectChildEntry && e.parentId == 'luohu' && e.isAny,
+            ),
+        isFalse,
+      );
 
-        // ★ BUG FIX: level-1 "Any" (anyRegion) under region must ALSO be removed
-        //   Before the fix this assertion FAILED – anyRegion was still selected.
-        expect(
-          tree
-              .selectedEntriesAtLevel(1)
-              .any(
-                (e) =>
-                    e is SelectChildEntry && e.parentId == 'region' && e.isAny,
-              ),
-          isFalse,
-        );
+      // ★ BUG FIX: level-1 "Any" (anyRegion) under region must ALSO be removed
+      //   Before the fix this assertion FAILED – anyRegion was still selected.
+      expect(
+        tree
+            .selectedEntriesAtLevel(1)
+            .any(
+              (e) => e is SelectChildEntry && e.parentId == 'region' && e.isAny,
+            ),
+        isFalse,
+      );
 
-        // Ancestors (region, luohu) should still be in the tree
-        expect(tree.selectedEntriesAtLevel(0).contains(region), isTrue);
-        expect(tree.selectedEntriesAtLevel(1).contains(luohu), isTrue);
-      },
-    );
+      // Ancestors (region, luohu) should still be in the tree
+      expect(tree.selectedEntriesAtLevel(0).contains(region), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(luohu), isTrue);
+    });
 
     // Regression test: selecting a child-level "Any" must also remove the
     // "Any" entries from all ancestor levels.
@@ -1133,72 +1098,68 @@ void main() {
     // Scenario: "区域" category has "不限" selected at level 1. User navigates
     // into "罗湖" and taps its "不限". The level-1 "不限" (under "区域") must be
     // cleared because the user is now explicitly narrowing the scope.
-    test(
-      'selecting child-level Any removes Any from all ancestor levels (regression)',
-      () {
-        const rules = SelectionRules();
-        final tree = StateTree();
+    test('selecting child-level Any removes Any from all ancestor levels (regression)', () {
+      const rules = SelectionRules();
+      final tree = StateTree();
 
-        // Same hierarchy as above:
-        //  level 0: category "region"
-        //  level 1: any_region ("不限"), luohu ("罗湖")
-        //  level 2: any_luohu ("不限"), dongmen ("东门")
-        final anyRegion = SelectTextEntry<dynamic>.any(
-          parentId: 'region',
-          name: '不限',
-        );
-        final anyLuohu = SelectTextEntry<dynamic>.any(
-          parentId: 'luohu',
-          name: '不限',
-        );
-        final dongmen = _text('luohu', 'dongmen', '东门');
-        final luohu = _text(
-          'region',
-          'luohu',
-          '罗湖',
-          children: {anyLuohu, dongmen},
-        );
-        final region = _category('region', '区域', children: {anyRegion, luohu});
+      // Same hierarchy as above:
+      //  level 0: category "region"
+      //  level 1: any_region ("不限"), luohu ("罗湖")
+      //  level 2: any_luohu ("不限"), dongmen ("东门")
+      final anyRegion = SelectTextEntry<dynamic>.any(
+        parentId: 'region',
+        name: '不限',
+      );
+      final anyLuohu = SelectTextEntry<dynamic>.any(
+        parentId: 'luohu',
+        name: '不限',
+      );
+      final dongmen = _text('luohu', 'dongmen', '东门');
+      final luohu = _text(
+        'region',
+        'luohu',
+        '罗湖',
+        children: {anyLuohu, dongmen},
+      );
+      final region = _category('region', '区域', children: {anyRegion, luohu});
 
-        tree.bind([region], initializeAnyIfEmpty: false);
+      tree.bind([region], initializeAnyIfEmpty: false);
 
-        // Initial state: level-1 "Any" is selected, but luohu's "不限" is NOT
-        // selected yet (the user hasn't entered the luohu sub-tree).
-        tree.ensureLevels(3);
-        tree.mutableSelectedEntriesAtLevel(0).add(region);
-        tree.mutableSelectedEntriesAtLevel(1).add(anyRegion);
-        tree.mutableSelectedEntriesAtLevel(1).add(luohu);
+      // Initial state: level-1 "Any" is selected, but luohu's "不限" is NOT
+      // selected yet (the user hasn't entered the luohu sub-tree).
+      tree.ensureLevels(3);
+      tree.mutableSelectedEntriesAtLevel(0).add(region);
+      tree.mutableSelectedEntriesAtLevel(1).add(anyRegion);
+      tree.mutableSelectedEntriesAtLevel(1).add(luohu);
 
-        // User navigates into "罗湖" and taps "不限" (the child-level Any).
-        // This should select anyLuohu AND clear anyRegion.
-        rules.toggleCascadingLeaf(
-          tree,
-          anyLuohu,
-          selectionMode: SelectionMode.multiple,
-          childrenSelectionMode: SelectionMode.multiple,
-          focusedPath: [region, luohu],
-          category: region,
-        );
+      // User navigates into "罗湖" and taps "不限" (the child-level Any).
+      // This should select anyLuohu AND clear anyRegion.
+      rules.toggleCascadingLeaf(
+        tree,
+        anyLuohu,
+        selectionMode: SelectionMode.multiple,
+        childrenSelectionMode: SelectionMode.multiple,
+        focusedPath: [region, luohu],
+        category: region,
+      );
 
-        // anyLuohu should now be selected at level 2
-        expect(tree.selectedEntriesAtLevel(2).contains(anyLuohu), isTrue);
+      // anyLuohu should now be selected at level 2
+      expect(tree.selectedEntriesAtLevel(2).contains(anyLuohu), isTrue);
 
-        // ★ KEY ASSERTION: level-1 "Any" (anyRegion) must be removed
-        expect(
-          tree
-              .selectedEntriesAtLevel(1)
-              .any(
-                (e) =>
-                    e is SelectChildEntry && e.parentId == 'region' && e.isAny,
-              ),
-          isFalse,
-        );
+      // ★ KEY ASSERTION: level-1 "Any" (anyRegion) must be removed
+      expect(
+        tree
+            .selectedEntriesAtLevel(1)
+            .any(
+              (e) => e is SelectChildEntry && e.parentId == 'region' && e.isAny,
+            ),
+        isFalse,
+      );
 
-        // Ancestors should remain
-        expect(tree.selectedEntriesAtLevel(0).contains(region), isTrue);
-        expect(tree.selectedEntriesAtLevel(1).contains(luohu), isTrue);
-      },
-    );
+      // Ancestors should remain
+      expect(tree.selectedEntriesAtLevel(0).contains(region), isTrue);
+      expect(tree.selectedEntriesAtLevel(1).contains(luohu), isTrue);
+    });
   });
 
   group('SelectionRules – toggleHeaderOrFooter', () {

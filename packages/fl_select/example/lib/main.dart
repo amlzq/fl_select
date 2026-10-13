@@ -1,8 +1,7 @@
 import 'package:example/generated/l10n/app_localizations.dart';
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'accessibility_example.dart';
 import 'bar_example.dart';
@@ -63,12 +62,10 @@ class _MyAppState extends State<MyApp> {
             theme: lightTheme,
             darkTheme: darkTheme,
             themeMode: themeMode,
-            localizationsDelegates: const [
+            localizationsDelegates: [
               AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-              SelectLocalizationsDelegate(),
+              ...GlobalMaterialLocalizations.delegates,
+              const SelectLocalizationsDelegate(),
             ],
             supportedLocales: AppLocalizations.supportedLocales,
             builder: (context, child) {

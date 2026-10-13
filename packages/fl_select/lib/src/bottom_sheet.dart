@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'select/select_delegate.dart';
 import 'select/select_entry.dart';

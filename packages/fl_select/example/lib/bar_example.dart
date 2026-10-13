@@ -2,7 +2,7 @@ import 'package:example/entry_repository.dart';
 import 'package:example/log.dart';
 import 'package:example/my_widgets.dart';
 import 'package:fl_select/fl_select.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 class PopupSelectBarExample extends StatefulWidget {
   const PopupSelectBarExample({super.key});

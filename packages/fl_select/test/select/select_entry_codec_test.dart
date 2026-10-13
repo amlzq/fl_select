@@ -81,8 +81,9 @@ void main() {
         isFalse,
       );
       expect(
-        (layout.children!.firstWhere((e) => e.id == '1br') as SelectChildEntry)
-            .parentId,
+        (layout.children!.firstWhere(
+          (e) => e.id == '1br',
+        ) as SelectChildEntry).parentId,
         'layout',
       );
     });
@@ -325,15 +326,15 @@ void main() {
       final ids = price.children!.map((e) => e.id).toList();
       expect(ids, containsAll(['any', '0-100', 'custom']));
 
-      final range =
-          price.children!.firstWhere((e) => e.id == '0-100')
-              as SelectRangeEntry;
+      final range = price.children!.firstWhere(
+        (e) => e.id == '0-100',
+      ) as SelectRangeEntry;
       expect(range.min, 0);
       expect(range.max, 100);
 
-      final custom =
-          price.children!.firstWhere((e) => e.id == 'custom')
-              as SelectRangeEntry;
+      final custom = price.children!.firstWhere(
+        (e) => e.id == 'custom',
+      ) as SelectRangeEntry;
       expect(custom.min, 0);
       expect(custom.max, 1000);
     });

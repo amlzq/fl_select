@@ -1,8 +1,8 @@
 import 'package:example/entry_repository.dart';
 import 'package:example/log.dart';
 import 'package:fl_select/fl_select.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Demonstrates the accessibility (a11y) support that `fl_select` ships with.
 ///
@@ -160,9 +160,9 @@ class _AccessibilityExampleState extends State<AccessibilityExample> {
                               constraints: const BoxConstraints(minHeight: 42),
                               alignment: Alignment.center,
                               color: selected
-                                  ? Theme.of(
-                                      context,
-                                    ).colorScheme.primaryContainer
+                                  ? Theme.of(context)
+                                        .colorScheme
+                                        .primaryContainer
                                   : null,
                               child: Text(
                                 entry.name ?? '',
@@ -277,9 +277,8 @@ class _SectionHeader extends StatelessWidget {
         children: [
           Text(
             title,
-            style: Theme.of(
-              context,
-            ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+            style: Theme.of(context).textTheme.titleMedium
+                ?.copyWith(fontWeight: FontWeight.w600),
           ),
           const SizedBox(height: 4),
           Text(description, style: Theme.of(context).textTheme.bodySmall),

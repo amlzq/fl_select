@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:fl_select_genui/fl_select_genui.dart';
-import 'package:flutter/material.dart';
 import 'package:genui/genui.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// A payload exactly like one an AI agent would emit for `Select`
 /// (see `FlSelectCatalogItems.systemPromptFragment`).

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'select/select_controller.dart';
 import 'select/select_delegate.dart';
@@ -35,8 +35,10 @@ class PopupTabData extends SelectLabelState {
 ///
 /// Suitable for [PopupSelectButton], which has no tab concept, as well as
 /// multi-tab [PopupSelectBar].
-typedef PopupSelectLabelChangeCallback =
-    void Function(SelectLabelState labelState, SelectEntries selected);
+typedef PopupSelectLabelChangeCallback = void Function(
+  SelectLabelState labelState,
+  SelectEntries selected,
+);
 
 /// Controller for [PopupSelectBar] and its select overlay.
 ///

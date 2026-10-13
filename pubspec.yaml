@@ -1,7 +1,7 @@
 name: fl_select_workspace
 publish_to: none
 environment:
-  sdk: ^3.10.0
+  sdk: ^3.13.5
 
 # Dart Pub Workspace — all packages in this repository share one resolution.
 # (Melos 7+ requires this instead of the legacy melos.yaml.)
@@ -11,7 +11,7 @@ workspace:
   - packages/fl_select_playground
 
 dev_dependencies:
-  melos: ^8.7.0
+  melos: ^8.9.0
 
 melos:
   commands:

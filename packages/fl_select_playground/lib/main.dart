@@ -2,10 +2,9 @@ import 'dart:async';
 
 import 'package:fl_select/fl_select.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_web_plugins/url_strategy.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'generated/l10n/app_localizations.dart';
 import 'playground_l10n.dart';
@@ -155,9 +154,7 @@ class _PlaygroundAppState extends State<PlaygroundApp> {
             darkTheme: darkTheme,
             themeMode: themeMode,
             localizationsDelegates: const [
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
+              ...GlobalMaterialLocalizations.delegates,
               SelectLocalizationsDelegate(),
               AppLocalizations.delegate,
             ],

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../select_entry.dart';
 import '../select_theme.dart';
@@ -346,9 +346,8 @@ class _SelectTabBarState extends State<SelectTabBar> {
       color: effectiveBackgroundColor,
       child: widget.isScrollable
           ? ScrollConfiguration(
-              behavior: ScrollConfiguration.of(
-                context,
-              ).copyWith(overscroll: false),
+              behavior: ScrollConfiguration.of(context)
+                  .copyWith(overscroll: false),
               child: SingleChildScrollView(
                 controller: _scrollController,
                 scrollDirection: Axis.horizontal,

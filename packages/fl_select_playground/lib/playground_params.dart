@@ -1,5 +1,5 @@
 import 'package:fl_select/fl_select.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Where the select is rendered inside the simulated phone.
 enum EntryPoint { view, bar, button, dialog, bottomSheet }
