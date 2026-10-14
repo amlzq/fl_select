@@ -1,5 +1,31 @@
 # Migration Guide
 
+## MIGRATE TO Next
+
+### `material_ui`
+
+fl_select now renders through the standalone
+[`material_ui`](https://pub.dev/packages/material_ui) package that Flutter 3.47
+moved out of the SDK, and this package follows it: `material_ui: ^1.6.0` is
+declared as a dependency and the minimum SDK is raised to Dart ^3.13.5
+(Flutter 3.47).
+
+The catalog's own API is untouched — `FlSelectCatalog` and
+`SelectEntrySchema` expose no Material types, so no source changes are needed
+here. What a host has to do is let the rendered select surface read the Material
+theme it expects: import the standalone package in the host app instead of the
+SDK's Material library, so that the `MaterialApp` and the `Select` widget it
+renders share one Material library. The steps are the same as fl_select's and
+are written out in its
+[migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#material_ui).
+
+Payloads are unaffected: no schema field changed, so a payload that was valid
+before is still valid.
+
+`genui` moves to `^0.10.4`, which points `basicCatalogId` at the canonical
+A2UI catalog URL, adds `catalogIdAliases` so the legacy URL keeps resolving, and
+passes an `Image`'s `description` through to accessibility text.
+
 ## MIGRATE TO 0.6.0
 
 ### fl_select bumped to `^0.16.0`

@@ -1,5 +1,43 @@
 # Migration Guide
 
+## MIGRATE TO Next
+
+### `material_ui`
+
+The select widgets now render through the standalone
+[`material_ui`](https://pub.dev/packages/material_ui) package — the Material
+library that Flutter 3.47 moved out of the SDK — instead of
+`package:flutter/material.dart`. The package therefore depends on
+`material_ui: ^1.6.0` and raises its minimum SDK to Dart ^3.13.5 (Flutter 3.47).
+
+The panel resolves its defaults from the ambient Material `Theme`, so the host
+has to share the same Material library: with only the SDK's `MaterialApp` in the
+tree, `material_ui`'s `Theme.of` finds no matching theme and falls back to a
+default one. Point the host app at the standalone package, which also replaces
+`flutter_localizations`:
+
+```diff
+-import 'package:flutter/material.dart';
+-import 'package:flutter_localizations/flutter_localizations.dart';
++import 'package:material_ui/material_ui.dart';
+```
+
+Its `GlobalMaterialLocalizations.delegates` collapses the three
+`flutter_localizations` delegates into one list entry:
+
+```diff
+  MaterialApp(
+    localizationsDelegates: [
+      AppLocalizations.delegate,
+-     GlobalMaterialLocalizations.delegate,
+-     GlobalWidgetsLocalizations.delegate,
+-     GlobalCupertinoLocalizations.delegate,
++     ...GlobalMaterialLocalizations.delegates,
+      const SelectLocalizationsDelegate(),
+    ],
+  );
+```
+
 ## MIGRATE TO 0.16.0
 
 ### Cascading delegate background colors

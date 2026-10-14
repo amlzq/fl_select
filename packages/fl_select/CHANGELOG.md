@@ -1,3 +1,9 @@
+## Next
+
+- **BREAKING** render through the standalone `material_ui` package instead of Flutter's bundled Material library, and raise the minimum SDK to Dart ^3.13.5 / Flutter 3.47 ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#material_ui)).
+
+- **IMPROVEMENT** adopt Flutter 3.47's replacements for the deprecated members the panel used — `ScrollView.cacheExtent` becomes `scrollCacheExtent` and `SizeTransition.axisAlignment` becomes `alignment`.
+
 ## 0.16.0
 
 - **FEATURE** add the `SelectCascadingLayout` backed by a themeable `SelectCascadingViewTheme`.
