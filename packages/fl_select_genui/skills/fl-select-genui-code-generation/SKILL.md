@@ -1,6 +1,6 @@
 ---
-name: fl_select_genui-code-generation
-description: GenUI SDK (A2UI) bridge for fl_select — registers a `Select` CatalogItem (`FlSelectCatalogItems.select` / `.all` / `.asCatalog()`) with a GenUI `SurfaceController` so AI agents render real fl_select panels from JSON payloads (`delegate` plus an `entries` tree in `SelectEntryCodec` format) and receive selections back as a map of string lists, written to the GenUI data model per payload. Also covers `FlSelectCatalogItems.systemPromptFragment` and the `SelectEntrySchema` JSON Schema. This skill should be used when integrating fl_select with the GenUI SDK (package:genui), building A2UI or chat surfaces with catalog items, authoring or debugging `Select` agent payloads, or handling selection write-back in GenUI data models. For the fl_select widgets, delegates, and entry trees themselves, use the `fl_select-code-generation` skill shipped with fl_select.
+name: fl-select-genui-code-generation
+description: "GenUI SDK (A2UI) bridge for fl_select — registers a `Select` CatalogItem (`FlSelectCatalogItems.select` / `.all` / `.asCatalog()`) with a GenUI `SurfaceController` so AI agents render real fl_select panels from JSON payloads (`delegate` plus an `entries` tree in `SelectEntryCodec` format) and receive selections back as a map of string lists, written to the GenUI data model per payload. Also covers `FlSelectCatalogItems.systemPromptFragment` and the `SelectEntrySchema` JSON Schema. This skill should be used when integrating fl_select with the GenUI SDK (package:genui), building A2UI or chat surfaces with catalog items, authoring or debugging `Select` agent payloads, or handling selection write-back in GenUI data models. For the fl_select widgets, delegates, and entry trees themselves, use the `fl-select-code-generation` skill shipped with fl_select."
 ---
 
 # fl_select_genui
@@ -10,6 +10,14 @@ GenUI SDK (A2UI) integration for [fl_select](https://pub.dev/packages/fl_select)
 ```
 agent ──Select payload (JSON)──▶ fl_select panel ──onChanged──▶ Map<String, List<String>> at <id>.value
 ```
+
+## Instructions
+
+1. Register the catalog — add `FlSelectCatalogItems.all` to the `SurfaceController`'s catalogs (see [Wiring it up](#wiring-it-up)); `asCatalog()` is available when you need the whole `fl_select` catalog.
+2. Append `FlSelectCatalogItems.systemPromptFragment` to the agent's system prompt so it learns the `Select` payload vocabulary.
+3. Emit (or debug) a payload with a required `delegate` plus a non-empty `entries` tree in `SelectEntryCodec` format; add `flatKey` whenever the top level is flat.
+4. Read the selection back from the GenUI data model at `<id>.value` as a `Map<String, List<String>>` — do not intercept `onChanged` yourself.
+5. Use `SelectEntrySchema.node()` / `.tree()` when you need the JSON Schema of an entry tree, and handle invalid payloads by rendering the inline error card rather than crashing.
 
 ## Wiring it up
 
@@ -52,6 +60,8 @@ The API surface hangs off `FlSelectCatalogItems`:
   ]
 }
 ```
+
+## Guidelines
 
 Required: `delegate` + a non-empty `entries` array.
 

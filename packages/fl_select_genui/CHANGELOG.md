@@ -4,6 +4,8 @@
 
 - **IMPROVEMENT** Bump genui to `^0.10.4`.
 
+- **IMPROVEMENT** upgrade the shipped agent skill for the Dart Skills CLI 1.0.x: rename it from `fl_select_genui-code-generation` to `fl-select-genui-code-generation` (hyphen-only names, as required by the Agent Skills spec), quote its frontmatter `description`, add the `## Instructions` / `## Guidelines` sections introduced by the 1.0.1 template, and document the 1.0.x `skills get --all` / `--package` invocations in the README.
+
 ## 0.6.0
 
 - **IMPROVEMENT** Bump fl_select to `^0.16.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#migrate-to-060)).

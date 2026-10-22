@@ -4,6 +4,8 @@
 
 - **IMPROVEMENT** adopt Flutter 3.47's replacements for the deprecated members the panel used — `ScrollView.cacheExtent` becomes `scrollCacheExtent` and `SizeTransition.axisAlignment` becomes `alignment`.
 
+- **IMPROVEMENT** upgrade the shipped agent skill for the Dart Skills CLI 1.0.x: rename it from `fl_select-code-generation` to `fl-select-code-generation` (hyphen-only names, as required by the Agent Skills spec), quote its frontmatter `description`, add the `## Instructions` / `## Guidelines` sections introduced by the 1.0.1 template, and document the 1.0.x `skills get --all` / `--package` invocations in the README.
+
 ## 0.16.0
 
 - **FEATURE** add the `SelectCascadingLayout` backed by a themeable `SelectCascadingViewTheme`.

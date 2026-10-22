@@ -33,12 +33,17 @@ Invalid agent payloads render an inline error card instead of crashing.
 
 ## Agent Skills
 
-This package ships an [agent skill](https://pub.dev/packages/skills) for the Dart Skills CLI at `skills/fl_select_genui-code-generation`, so AI coding agents (Claude Code, Cursor, Codex, Windsurf, GitHub Copilot, etc.) author `Select` payloads correctly — catalog registration, the `SelectEntryCodec` entry-tree format, selection write-back, and the `SelectEntrySchema` JSON Schema.
+This package ships an [agent skill](https://pub.dev/packages/skills) for the Dart Skills CLI at `skills/fl-select-genui-code-generation`, so AI coding agents (Claude Code, Cursor, Codex, Windsurf, GitHub Copilot, etc.) author `Select` payloads correctly — catalog registration, the `SelectEntryCodec` entry-tree format, selection write-back, and the `SelectEntrySchema` JSON Schema.
 
-It is discovered automatically in any project that depends on `fl_select_genui`:
+It is discovered automatically in any project that depends on `fl_select_genui`. Run this from the project root (the CLI resolves skills from that project's dependency tree):
 
 ```bash
+# install every discovered skill without prompting
+dart run skills@ get --all
+
+# or pick interactively / target one package
 dart run skills@ get
+dart run skills@ get --package fl_select_genui
 ```
 
 ## Usage

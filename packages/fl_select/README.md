@@ -6,12 +6,17 @@ A Flutter package for building **selection** UIs (e.g. filter bar) on a composab
 
 ### Agent Skills
 
-This package ships an [agent skill](https://pub.dev/packages/skills) for the Dart Skills CLI at `skills/fl_select-code-generation`, so AI coding agents (Claude Code, Cursor, Codex, Windsurf, GitHub Copilot, etc.) use `fl_select` correctly — accurate APIs, no hallucinated parameters.
+This package ships an [agent skill](https://pub.dev/packages/skills) for the Dart Skills CLI at `skills/fl-select-code-generation`, so AI coding agents (Claude Code, Cursor, Codex, Windsurf, GitHub Copilot, etc.) use `fl_select` correctly — accurate APIs, no hallucinated parameters.
 
-It is discovered automatically in any project that depends on `fl_select`:
+It is discovered automatically in any project that depends on `fl_select`. Run this from the project root (the CLI resolves skills from that project's dependency tree):
 
 ```bash
+# install every discovered skill without prompting
+dart run skills@ get --all
+
+# or pick interactively / target one package
 dart run skills@ get
+dart run skills@ get --package fl_select
 ```
 
 For rendering agent-authored JSON through the GenUI (A2UI) SDK, see the companion package `fl_select_genui`, which ships its own skill the same way.

@@ -1,9 +1,20 @@
 ---
-name: fl_select-code-generation
-description: A Flutter package (fl_select) for building selection UIs (e.g. filter bar) on a composable architecture of entry points, delegates, and layouts — 5 entry points (`SelectView`, `PopupSelectButton`, `PopupSelectBar`, `showSelect`, `showModalBottomSelect`), 7 delegates (list, grid, wrap, cascading, tab-nav, side-nav, expandable), 6 category layouts (list, grid, wrap, range slider, counter, cascading), plus `SelectDelegate` and `SelectEntry` types. A2UI-ready, with single & multiple selection, sync/async loading, search filtering, theming, i18n, and built-in screen-reader accessibility; includes a JSON entry-tree codec (`SelectEntryCodec`) and a GenUI bridge package (`fl_select_genui`). This skill should be used when building filter UIs, dropdown menus with categories, cascading/grid/list/chip selects, range pickers, or whenever working with fl_select APIs or `fl_select_genui`.
+name: fl-select-code-generation
+description: "A Flutter package (fl_select) for building selection UIs (e.g. filter bar) on a composable architecture of entry points, delegates, and layouts — 5 entry points (`SelectView`, `PopupSelectButton`, `PopupSelectBar`, `showSelect`, `showModalBottomSelect`), 7 delegates (list, grid, wrap, cascading, tab-nav, side-nav, expandable), 6 category layouts (list, grid, wrap, range slider, counter, cascading), plus `SelectDelegate` and `SelectEntry` types. A2UI-ready, with single & multiple selection, sync/async loading, search filtering, theming, i18n, and built-in screen-reader accessibility; includes a JSON entry-tree codec (`SelectEntryCodec`) and a GenUI bridge package (`fl_select_genui`). This skill should be used when building filter UIs, dropdown menus with categories, cascading/grid/list/chip selects, range pickers, or whenever working with fl_select APIs or `fl_select_genui`."
 ---
 
 # fl_select
+
+`fl_select` builds selection UIs from two orthogonal layers: entry points decide *where* the select appears, delegates decide *how* the data is laid out. Use it for filter bars, dropdown menus with categories, cascading/grid/list/chip selects, and range pickers.
+
+## Instructions
+
+1. Pick the **entry point** — `SelectView` (inline) · `PopupSelectBar` (filter-bar tabs) · `PopupSelectButton` (single trigger) · `showSelect` (dialog, returns `SelectEntries?`) · `showModalBottomSelect` (bottom sheet). Read [references/entry-points.md](references/entry-points.md).
+2. Pick exactly one **delegate** matching the data shape — flat data: `ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate`; `SelectCategoryEntry` roots: `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate`; cascading data: `CascadingSelectDelegate`. Read [references/delegates.md](references/delegates.md).
+3. Supply data by passing exactly one of `entries` / `entriesLoader` (`Future<SelectEntries> Function()`, where `SelectEntries` is `Set<SelectEntry>`), and build the tree with `children` alone. Read [references/entries.md](references/entries.md).
+4. Choose the selection semantics — `SelectionMode.single` applies on tap, `SelectionMode.multiple` waits for the action bar's "Apply", and `immediate: true` on an entry applies on tap regardless.
+5. Read the result — `onChanged` on views/bars/buttons, the awaited `SelectEntries?` on dialogs/sheets; then serialize with `toQueryMap()` / `toQueryParameters()` (category trees) or `toIdList()` (flat panels).
+6. For declarative JSON data, parse with `SelectEntryCodec` instead of hand-building entries; for GenUI (A2UI) integration, install the `fl-select-genui-code-generation` skill shipped with `fl_select_genui`.
 
 ## Mental model (two orthogonal layers)
 
@@ -16,7 +27,7 @@ description: A Flutter package (fl_select) for building selection UIs (e.g. filt
 
 Any delegate plugs into any entry point — there is exactly one delegate parameter, no per-entry-point variants. Custom layouts come from subclassing `SelectDelegate`, not from new entry points; custom item widgets come from `itemBuilder` on the flat and layout-based category delegates (not `CascadingSelectDelegate`), not from subclassing.
 
-Data reaches the delegate either synchronously (`entries`, `selectedEntries`, `resetEntries` passed directly — static data renders on the first frame, no skeleton) or asynchronously via loaders (`entriesLoader`: `Future<SelectEntries> Function()`, where `SelectEntries` is `Set<SelectEntry>`). Pass exactly one of `entries` / `entriesLoader`; sync data is fixed for a delegate's lifetime — create a new delegate when the data changes.
+Data reaches the delegate either synchronously (`entries`, `selectedEntries`, `resetEntries` passed directly — static data renders on the first frame, no skeleton) or asynchronously via loaders. Pass exactly one of `entries` / `entriesLoader`; sync data is fixed for a delegate's lifetime — create a new delegate when the data changes.
 
 ## Selection semantics (memorize)
 
@@ -55,15 +66,15 @@ final SelectEntries? selected = await showSelect(
 );
 ```
 
-## Common pitfalls
+## Guidelines
 
 - `GridSelectDelegate` requires `crossAxisCount`.
 - The flat delegates (`ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate`) and the layout-based category delegates (`TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate`) accept an `itemBuilder` that fully replaces each item widget — render your own selected state from `selected`, wire `onTap` so taps flow through the library's normal selection flow, and branch per category on `categoryId` (the owning category's id; null on flat delegates). Returning null falls back to the default item widget; custom range entries still render as the built-in min/max input, the range-slider/counter category layouts keep their built-in controls, a category laid out as `SelectCascadingLayout` renders its own per-level nodes so the builder does not reach them, header/footer chips are not covered, and `CascadingSelectDelegate` ignores the builder.
 - Accessibility is built in — nothing to switch on: tiles/chips expose `button` plus `selected`/`enabled`, triggers expose `button` + `expanded`, sliders and counters expose their values, and open/close/apply are announced with the localized `SelectLocalizations` strings (`panelOpened`, `panelClosed`, `cleared`, `applied`, `clearSearch`). The one thing that drops out is `itemBuilder`: it replaces the built-in widget, so wrap your content in `Semantics(button: true, selected: selected, label: entry.name, child: ...)`.
-- The panel's built-in item widgets (list/grid tiles, chips, skeletons, badges, the panel host) are internal and not part of the public API — do not construct them directly. Build through the entry points + delegates/`SelectLayout`s and style them via the exported `Select*Theme`s; the wrapping chip form rendered by `WrapSelectDelegate` / `SelectWrapLayout` is styled with `wrapViewTheme` (`SelectWrapViewTheme`) on the delegate or on `SelectThemeData`.
-- `SelectController.realSelectedCategories` (`SelectEntries`) returns the categories holding at least one non-"Any" selection and drives category badges and TabNavSelect's initial tab focus.
-- Every delegate is single-purpose by data shape: `ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate` accept flat data only — the top level may hold plain entries, and a `SelectCategoryEntry` beside them is rejected (`ExpandableSelectDelegate` / `TabNavSelectDelegate` render categories, `WrapSelectDelegate` renders flat chips). `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` and `CascadingSelectDelegate` require `SelectCategoryEntry` roots instead.
-- `CascadingSelectDelegate` is a dedicated multi-level panel (category rail on the left, cascade on the right; ignores `category.layout`) — style its background ramp with `sideBarTheme` (category level) and `cascadingViewTheme` (deepest level). The three category delegates (`TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate`) lay out each category's `children` according to `category.layout` (list / grid / chips / range slider / counter / cascading), so a category using `SelectCascadingLayout` also navigates a multi-level tree.
+- Do not construct the panel's built-in item widgets (list/grid tiles, chips, skeletons, badges, the panel host) directly — they are internal and not part of the public API. Build through the entry points + delegates/`SelectLayout`s and style them via the exported `Select*Theme`s; the wrapping chip form rendered by `WrapSelectDelegate` / `SelectWrapLayout` is styled with `wrapViewTheme` (`SelectWrapViewTheme`) on the delegate or on `SelectThemeData`.
+- Use `SelectController.realSelectedCategories` (`SelectEntries`) to get the categories holding at least one non-"Any" selection — it drives category badges and TabNavSelect's initial tab focus.
+- Match the delegate to the data shape, never mix: `ListSelectDelegate` / `GridSelectDelegate` / `WrapSelectDelegate` accept flat data only — the top level may hold plain entries, and a `SelectCategoryEntry` beside them is rejected (`ExpandableSelectDelegate` / `TabNavSelectDelegate` render categories, `WrapSelectDelegate` renders flat chips). `TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate` and `CascadingSelectDelegate` require `SelectCategoryEntry` roots instead.
+- Treat `CascadingSelectDelegate` as a dedicated multi-level panel (category rail on the left, cascade on the right; ignores `category.layout`) — style its background ramp with `sideBarTheme` (category level) and `cascadingViewTheme` (deepest level). The three category delegates (`TabNavSelectDelegate` / `SideNavSelectDelegate` / `ExpandableSelectDelegate`) lay out each category's `children` according to `category.layout` (list / grid / chips / range slider / counter / cascading), so a category using `SelectCascadingLayout` also navigates a multi-level tree.
 - Build the tree with `children` alone: an entry's parent is simply the entry holding it, so nesting is the whole wiring — there is no link to name by hand.
 - Use `SelectTextEntry(...)` (a top-level leaf) for flat single-level lists.
 - An "Any" entry (`.any(...)`) clears its category; in `toQueryMap()` it resolves to the parent id.
@@ -73,7 +84,7 @@ final SelectEntries? selected = await showSelect(
 
 - The repo is a melos + pub-workspace monorepo: core package at `packages/fl_select`, GenUI bridge at `packages/fl_select_genui`.
 - `SelectEntryCodec.fromJson(list)` / `toJson(entries)` convert entry trees to/from declarative JSON (`type`: category / text / range / any / custom; `layout.kind`: list / grid / chip / counter / range / cascading). Prefer the codec over hand-building `SelectEntry` objects from dynamic data; it throws `FormatException` / `UnsupportedError` on bad payloads instead of silently dropping data.
-- For GenUI (A2UI) integration — rendering agent-emitted JSON as a live fl_select panel via the `fl_select_genui` package — install the `fl_select_genui-code-generation` skill shipped with that package.
+- For GenUI (A2UI) integration — rendering agent-emitted JSON as a live fl_select panel via the `fl_select_genui` package — install the `fl-select-genui-code-generation` skill shipped with that package.
 
 ## Reference index
 
