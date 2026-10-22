@@ -31,7 +31,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get entryPoint => '入口';
 
   @override
-  String get delegateLabel => '代理';
+  String get delegateLabel => '委托';
 
   @override
   String get selectionMode => '选择模式';
@@ -237,7 +237,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get entryPoint => '入口';
 
   @override
-  String get delegateLabel => '代理';
+  String get delegateLabel => '委托';
 
   @override
   String get selectionMode => '选择模式';
@@ -443,7 +443,7 @@ class AppLocalizationsZhHantHk extends AppLocalizationsZh {
   String get entryPoint => '入口';
 
   @override
-  String get delegateLabel => '代理';
+  String get delegateLabel => '委派';
 
   @override
   String get selectionMode => '選擇模式';
@@ -649,7 +649,7 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   String get entryPoint => '入口';
 
   @override
-  String get delegateLabel => '代理';
+  String get delegateLabel => '委派';
 
   @override
   String get selectionMode => '選擇模式';
@@ -855,7 +855,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get entryPoint => '入口';
 
   @override
-  String get delegateLabel => '代理';
+  String get delegateLabel => '委派';
 
   @override
   String get selectionMode => '選擇模式';
