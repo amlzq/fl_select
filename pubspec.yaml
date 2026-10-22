@@ -14,11 +14,15 @@ dev_dependencies:
   melos: ^8.9.0
 
 melos:
-  commands:
+  command:
     test:
-      exec:
-        run: flutter test
-        concurrency: 1
+      # Flutter's test runner is memory hungry; run one package at a time.
+      concurrency: 1
+      # Skip the implicit `pub get` per package. Run `melos bootstrap` first.
+      noPub: true
+    exec:
+      # Buffer per-package output and print it grouped, instead of interleaving.
+      groupLogs: true
   scripts:
     check:format:
       description: Fail if any Dart file (whole workspace) is not formatted.
@@ -27,7 +31,7 @@ melos:
       description: >-
         Run dart analyze on the whole workspace (warnings/errors are fatal;
         infos like playground's deprecated API demos are allowed).
-      run: flutter analyze --no-fatal-infos
+      run: flutter analyze --no-fatal-infos --no-pub
     check:pana:
       description: >-
         Pre-publish score gate: run pana (pub.dev's scorer) on publishable
@@ -51,14 +55,17 @@ melos:
           echo "==> dry-run: packages/$pkg"
           (cd "packages/$pkg" && dart pub publish --dry-run)
         done
+    check:test:
+      description: Run tests across all packages.
+      run: melos test
     check:
       description: Run all pre-publish gates (format, analyze, test, pana score, publish dry-run).
-      run: >-
-        melos run check:format &&
-        melos run check:analyze &&
-        melos test &&
-        melos run check:pana &&
-        melos run check:publish
+      dependsOn:
+        - check:format
+        - check:analyze
+        - check:test
+        - check:pana
+        - check:publish
     example:run:
       description: Run the fl_select example app (debug mode).
       run: cd packages/fl_select/example && flutter run

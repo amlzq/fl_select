@@ -36,15 +36,23 @@ fl_select/
 
 ## Development
 
-This repo uses [melos](https://melos.invertible.dev/) to manage the workspace.
+This repo uses [melos](https://melos.invertible.dev/) to manage the workspace. It is configured by the
+`melos:` section of the root `pubspec.yaml` (there is no separate `melos.yaml`).
 
 ```bash
 dart pub global activate melos
-melos bootstrap   # install dependencies and link packages
+melos bootstrap          # install dependencies and link packages
 
-melos run analyze
-melos run test
+melos run check:analyze  # analyze the whole workspace
+melos test               # run tests across all packages
+melos run check          # full pre-publish gate (format, analyze, test, pana, publish dry-run)
+
+melos changed                            # list packages changed since their latest release tag
+melos exec --diff=HEAD~1 -- flutter test  # test only what changed since a git ref
 ```
+
+`melos test` and `melos run check:analyze` pass `--no-pub`, so run `melos bootstrap` after changing
+any `pubspec.yaml` before running the gates.
 
 ## License
 
