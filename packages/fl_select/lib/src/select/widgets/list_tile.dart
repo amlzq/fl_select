@@ -182,10 +182,13 @@ class _SelectListTileDefaults extends SelectListTileTheme {
     var groupValue = 2;
     if (selected) groupValue = value;
     return IgnorePointer(
-      child: RadioGroup<int>(
-        groupValue: groupValue,
-        onChanged: (int? value) {},
-        child: const Radio<int>(value: value),
+      child: RadioTheme(
+        data: _theme.radioTheme,
+        child: RadioGroup<int>(
+          groupValue: groupValue,
+          onChanged: (int? value) {},
+          child: const Radio<int>(value: value),
+        ),
       ),
     );
   };
@@ -193,7 +196,10 @@ class _SelectListTileDefaults extends SelectListTileTheme {
   @override
   ToggleWidgetBuilder? get checkboxBuilder => (context, checked) {
     return IgnorePointer(
-      child: Checkbox(value: checked, onChanged: (bool? newValue) {}),
+      child: CheckboxTheme(
+        data: _theme.checkboxTheme,
+        child: Checkbox(value: checked, onChanged: (bool? newValue) {}),
+      ),
     );
   };
 }

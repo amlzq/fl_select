@@ -68,8 +68,8 @@ class SelectThemeData with Diagnosticable {
       expansionTileTheme:
           expansionTileTheme ?? const SelectExpansionTileTheme(),
       rangeSliderTheme: rangeSliderTheme ?? const SelectRangeSliderTheme(),
-      radioTheme: radioTheme ?? const RadioThemeData(),
-      checkboxTheme: checkboxTheme ?? const CheckboxThemeData(),
+      radioTheme: radioTheme ?? theme.radioTheme,
+      checkboxTheme: checkboxTheme ?? theme.checkboxTheme,
       chipBarTheme: chipBarTheme ?? const SelectChipBarTheme(),
       panelTheme: panelTheme ?? const SelectPanelTheme(),
       searchBarTheme: searchBarTheme ?? const SelectSearchBarTheme(),
