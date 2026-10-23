@@ -91,8 +91,7 @@ Add `SelectLocalizationsDelegate()` to `MaterialApp`. It ships translations for 
 
 ```dart
 const localizationsDelegates = <LocalizationsDelegate>[
-  GlobalMaterialLocalizations.delegate,
-  GlobalWidgetsLocalizations.delegate,
+  ...GlobalMaterialLocalizations.delegates,
   SelectLocalizationsDelegate(),
 ];
 
