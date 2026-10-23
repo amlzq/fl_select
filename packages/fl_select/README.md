@@ -1,8 +1,10 @@
+[![codecov](https://codecov.io/gh/amlzq/fl_select/graph/badge.svg?token=CTUREA7AHU)](https://codecov.io/gh/amlzq/fl_select)
+
 A Flutter package for building **selection** UIs (e.g. filter bar) on a composable architecture of **entry points, delegates, and layouts**. A2UI-ready, with single & multiple selection, sync/async loading, search filtering, theming, and i18n built in.
 
-[Playground](https://flselect.zeaon.dev/)
-
 ![Highlights](https://raw.githubusercontent.com/amlzq/fl_select/main/screenshots/highlights.gif)
+
+[Playground](https://flselect.zeaon.dev/)
 
 ### Agent Skills
 

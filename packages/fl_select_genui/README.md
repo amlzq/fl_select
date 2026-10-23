@@ -1,3 +1,5 @@
+[![codecov](https://codecov.io/gh/amlzq/fl_select/graph/badge.svg?token=CTUREA7AHU)](https://codecov.io/gh/amlzq/fl_select)
+
 [GenUI SDK](https://pub.dev/packages/genui) (A2UI) integration for
 [fl_select](https://pub.dev/packages/fl_select): exposes fl_select
 components as `CatalogItem`s so conversational AI agents can render real,

@@ -1,0 +1,30 @@
+coverage:
+  status:
+    project:
+      default:
+        target: auto
+        threshold: 1%
+    patch:
+      default:
+        target: auto
+        threshold: 5%
+
+comment:
+  layout: "flags, files"
+  require_changes: false
+
+flag_management:
+  default_rules:
+    carryforward: true
+
+flags:
+  fl_select:
+    paths:
+      - packages/fl_select/
+  fl_select_genui:
+    paths:
+      - packages/fl_select_genui/
+
+ignore:
+  - "packages/*/example/**"
+  - "**/build/**"
