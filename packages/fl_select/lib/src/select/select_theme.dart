@@ -22,6 +22,14 @@ class SelectTheme extends InheritedTheme {
   }
 
   /// Merges the given [data] into the ambient [SelectThemeData].
+  ///
+  /// Each component theme (`listTileTheme`, `panelTheme`, ...) is merged field
+  /// by field: a field [data] leaves null keeps the ambient value.
+  ///
+  /// The colors and the `radioTheme` / `checkboxTheme` are the exception. They
+  /// are not nullable on [SelectThemeData] — a value was already filled in from
+  /// the Material theme when [data] was built — so [data] replaces the ambient
+  /// ones as a whole.
   static Widget merge({
     Key? key,
     SelectThemeData? data,
@@ -32,7 +40,8 @@ class SelectTheme extends InheritedTheme {
     }
     return Builder(
       builder: (context) {
-        final merged = SelectTheme.of(context).copyWith(
+        final ambient = SelectTheme.of(context);
+        final merged = ambient.copyWith(
           selectedColor: data.selectedColor,
           onSelectedColor: data.onSelectedColor,
           backgroundColor: data.backgroundColor,
@@ -40,28 +49,33 @@ class SelectTheme extends InheritedTheme {
           backgroundColorHigh: data.backgroundColorHigh,
           backgroundColorHighest: data.backgroundColorHighest,
           onBackgroundColorHighest: data.onBackgroundColorHighest,
-          actionBarTheme: data.actionBarTheme,
-          tabBarTheme: data.tabBarTheme,
-          sideBarTheme: data.sideBarTheme,
-          gridTileTheme: data.gridTileTheme,
-          listTileTheme: data.listTileTheme,
-          fieldTileTheme: data.fieldTileTheme,
-          expansionTileTheme: data.expansionTileTheme,
-          rangeSliderTheme: data.rangeSliderTheme,
           radioTheme: data.radioTheme,
           checkboxTheme: data.checkboxTheme,
-          chipBarTheme: data.chipBarTheme,
-          searchBarTheme: data.searchBarTheme,
-          wrapViewTheme: data.wrapViewTheme,
-          cascadingViewTheme: data.cascadingViewTheme,
-          skeletonViewTheme: data.skeletonViewTheme,
-          counterTheme: data.counterTheme,
+          actionBarTheme: ambient.actionBarTheme.merge(data.actionBarTheme),
+          tabBarTheme: ambient.tabBarTheme.merge(data.tabBarTheme),
+          sideBarTheme: ambient.sideBarTheme.merge(data.sideBarTheme),
+          gridTileTheme: ambient.gridTileTheme.merge(data.gridTileTheme),
+          listTileTheme: ambient.listTileTheme.merge(data.listTileTheme),
+          fieldTileTheme: ambient.fieldTileTheme.merge(data.fieldTileTheme),
+          expansionTileTheme: ambient.expansionTileTheme.merge(
+            data.expansionTileTheme,
+          ),
+          rangeSliderTheme: ambient.rangeSliderTheme.merge(
+            data.rangeSliderTheme,
+          ),
+          chipBarTheme: ambient.chipBarTheme.merge(data.chipBarTheme),
+          panelTheme: ambient.panelTheme.merge(data.panelTheme),
+          searchBarTheme: ambient.searchBarTheme.merge(data.searchBarTheme),
+          wrapViewTheme: ambient.wrapViewTheme.merge(data.wrapViewTheme),
+          cascadingViewTheme: ambient.cascadingViewTheme.merge(
+            data.cascadingViewTheme,
+          ),
+          skeletonViewTheme: ambient.skeletonViewTheme.merge(
+            data.skeletonViewTheme,
+          ),
+          counterTheme: ambient.counterTheme.merge(data.counterTheme),
         );
-        return SelectTheme(
-          key: key,
-          data: merged.copyWith(panelTheme: data.panelTheme),
-          child: child,
-        );
+        return SelectTheme(key: key, data: merged, child: child);
       },
     );
   }

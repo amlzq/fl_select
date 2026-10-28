@@ -1,5 +1,7 @@
 ## Next
 
+- **BUGFIX** `SelectTheme.merge` now merges each component theme field by field instead of replacing it, so a field the inner data leaves null keeps the ambient value. The colors and `radioTheme` / `checkboxTheme` are still replaced as a whole, because `SelectThemeData` fills them in from the Material theme.
+
 - **FEATURE** add `SelectSkeletonViewTheme` (`skeletonViewTheme`) for the loading placeholders, `SelectCounterTheme` (`counterTheme`) for the spin-box counter, and `SelectCascadingViewTheme.startBackgroundColor` for a standalone `CascadingView` (`CascadingSelect` still takes its start from `SelectSideBarTheme.backgroundColor`).
 
 - **BREAKING** `SelectThemeData.backgroundColorHigh`, `backgroundColorHighest` and `onBackgroundColorHighest`, and the matching `SelectDelegate` fields, are deprecated and **no longer have any effect**: no widget reads them, so existing values are silently ignored. Each consumer now defaults to the `ColorScheme` directly and is styled through its own theme ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#backgroundcolorhigh-backgroundcolorhighest-and-onbackgroundcolorhighest)).
