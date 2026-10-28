@@ -73,7 +73,10 @@ class SelectGridTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = SelectGridTileTheme.of(context);
 
-    final effectiveSelectedColor = selectedColor ?? theme.selectedColor;
+    final effectiveSelectedColor =
+        selectedColor ??
+        theme.selectedColor ??
+        SelectTheme.selectedColorOf(context);
 
     final effectiveVariant =
         variant ?? theme.variant ?? SelectGridTileVariant.filled;
@@ -134,18 +137,68 @@ class SelectGridTile extends StatelessWidget {
             border: effectiveBorder,
             borderRadius: BorderRadius.circular(4),
           ),
-          child: Text(
-            label,
-            style: TextStyle(
-              fontSize: 13,
-              color: effectiveTextColor,
-              fontWeight: selected ? FontWeight.w500 : FontWeight.normal,
-            ),
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-          ),
+          child: _content(context, theme, effectiveTextColor),
         ),
       ),
+    );
+  }
+
+  Widget _content(
+    BuildContext context,
+    SelectGridTileTheme theme,
+    Color color,
+  ) {
+    // The base keeps the tile's compact look; a labelStyle only refines it, and
+    // the state-dependent color always comes from the color tokens.
+    final base = TextStyle(
+      fontSize: 13,
+      fontWeight: selected ? FontWeight.w500 : FontWeight.normal,
+    );
+    final labelText = Text(
+      label,
+      style: base.merge(labelStyle ?? theme.labelStyle).copyWith(color: color),
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    );
+    if (leading == null && sublabel == null && trailing == null) {
+      return labelText;
+    }
+    final sublabelStyleMerged = TextStyle(fontSize: 11)
+        .merge(sublabelStyle ?? theme.sublabelStyle)
+        .copyWith(color: color);
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (leading != null) ...[
+          IconTheme.merge(
+            data: IconThemeData(color: color, size: 16),
+            child: leading!,
+          ),
+          const SizedBox(width: 4),
+        ],
+        Flexible(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              labelText,
+              if (sublabel != null)
+                Text(
+                  sublabel!,
+                  style: sublabelStyleMerged,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+            ],
+          ),
+        ),
+        if (trailing != null) ...[
+          const SizedBox(width: 4),
+          IconTheme.merge(
+            data: IconThemeData(color: color, size: 16),
+            child: trailing!,
+          ),
+        ],
+      ],
     );
   }
 }

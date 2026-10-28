@@ -159,4 +159,56 @@ void main() {
       );
     });
   });
+
+  group('SelectGridTile', () {
+    testWidgets('outlined selected text uses the global selectedColor', (
+      tester,
+    ) async {
+      await _pump(
+        tester,
+        data,
+        const SelectGridTile(
+          label: 'x',
+          selected: true,
+          variant: SelectGridTileVariant.outlined,
+        ),
+      );
+      expect(_textColor(tester, 'x'), _selected);
+    });
+
+    testWidgets('applies the theme labelStyle but keeps the state color', (
+      tester,
+    ) async {
+      await _pump(
+        tester,
+        data.copyWith(
+          gridTileTheme: const SelectGridTileTheme(
+            labelStyle: TextStyle(fontSize: 21, color: Colors.red),
+          ),
+        ),
+        const SelectGridTile(label: 'x'),
+      );
+      final style = tester.widget<Text>(find.text('x')).style!;
+      expect(style.fontSize, 21);
+      expect(style.color, _onBackground);
+    });
+
+    testWidgets('renders sublabel, leading and trailing when given', (
+      tester,
+    ) async {
+      await _pump(
+        tester,
+        null,
+        const SelectGridTile(
+          label: 'x',
+          sublabel: 'sub',
+          leading: Icon(Icons.add),
+          trailing: Icon(Icons.remove),
+        ),
+      );
+      expect(find.text('sub'), findsOneWidget);
+      expect(find.byIcon(Icons.add), findsOneWidget);
+      expect(find.byIcon(Icons.remove), findsOneWidget);
+    });
+  });
 }
