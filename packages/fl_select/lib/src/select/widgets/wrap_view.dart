@@ -223,11 +223,15 @@ class _SelectWrapViewState extends State<SelectWrapView> with CustomRangeHost {
         (widget.labelStyle ?? theme.labelStyle ?? defaults.labelStyle!)
             .copyWith(inherit: true);
 
+    // A color on an explicit selectedLabelStyle wins; otherwise the label color
+    // is derived from the chip color (and onSelectedColor).
+    final explicitSelectedLabelStyle =
+        widget.selectedLabelStyle ?? theme.selectedLabelStyle;
     final effectiveSelectedLabelStyle =
-        (widget.selectedLabelStyle ??
-                theme.selectedLabelStyle ??
-                defaults.selectedLabelStyle!)
-            .copyWith(inherit: true, color: selectedTextColor);
+        (explicitSelectedLabelStyle ?? defaults.selectedLabelStyle!).copyWith(
+          inherit: true,
+          color: explicitSelectedLabelStyle?.color ?? selectedTextColor,
+        );
 
     final showTitle = widget.showTitle && widget.category?.name != null;
 

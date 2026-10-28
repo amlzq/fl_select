@@ -86,4 +86,72 @@ void main() {
       SelectRangeEntry<int, dynamic>.custom(),
     ]);
   });
+
+  group('selected label color', () {
+    const custom = Color(0xFF12AB34);
+    const onSelected = Color(0xFFFFEE00);
+    final entry = SelectTextEntry<dynamic>(id: 'a', name: 'A');
+
+    Widget bar({TextStyle? style, SelectThemeData? theme}) {
+      return MaterialApp(
+        home: Scaffold(
+          body: SelectTheme(
+            data: theme ?? const SelectThemeData(),
+            child: SelectChipBar(
+              entries: [entry],
+              selectedEntries: {entry},
+              selectedLabelStyle: style,
+              variant: SelectChipVariant.filled,
+              onChanged: (_, _) {},
+            ),
+          ),
+        ),
+      );
+    }
+
+    TextStyle? labelStyle(WidgetTester tester) =>
+        tester.widget<Text>(find.text('A')).style;
+
+    testWidgets('explicit selectedLabelStyle color wins', (tester) async {
+      await tester.pumpWidget(
+        bar(
+          style: const TextStyle(color: custom),
+          theme: const SelectThemeData(onSelectedColor: onSelected),
+        ),
+      );
+      expect(labelStyle(tester)?.color, custom);
+    });
+
+    testWidgets('theme selectedLabelStyle color wins', (tester) async {
+      await tester.pumpWidget(
+        bar(
+          theme: const SelectThemeData(
+            onSelectedColor: onSelected,
+            chipBarTheme: SelectChipBarTheme(
+              selectedLabelStyle: TextStyle(color: custom),
+            ),
+          ),
+        ),
+      );
+      expect(labelStyle(tester)?.color, custom);
+    });
+
+    testWidgets('a style without color falls back to onSelectedColor', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        bar(
+          style: const TextStyle(fontSize: 20),
+          theme: const SelectThemeData(onSelectedColor: onSelected),
+        ),
+      );
+      expect(labelStyle(tester)?.color, onSelected);
+      expect(labelStyle(tester)?.fontSize, 20);
+    });
+
+    testWidgets('without any override the color is derived', (tester) async {
+      await tester.pumpWidget(bar());
+      expect(labelStyle(tester)?.color, isIn([Colors.white, Colors.black]));
+    });
+  });
 }
