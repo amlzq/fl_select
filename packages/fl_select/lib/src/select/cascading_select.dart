@@ -179,7 +179,7 @@ class CascadingSelectState extends State<CascadingSelect> {
         theme.cascadingViewTheme.endBackgroundColor ??
         // ignore: deprecated_member_use_from_same_package
         delegate.terminalBackgroundColor ??
-        theme.backgroundColorHighest;
+        Theme.of(context).colorScheme.surfaceContainer;
     // The cascading UI always renders at least two levels (the category
     // sidebar plus one children column), so the ramp must span at least
     // two steps even for depth-1 trees (categories without children).
@@ -336,7 +336,6 @@ class CascadingSelectState extends State<CascadingSelect> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = SelectTheme.of(context);
     final isScrollable = delegate.isScrollable == true;
 
     // Empty-state guard: when searching yields no results, show a placeholder.
@@ -387,7 +386,7 @@ class CascadingSelectState extends State<CascadingSelect> {
     // spans at least the category level plus one column.
     final selectedTileColor = _backgroundColors[1];
 
-    final effectiveSelectedColor = theme.selectedColor;
+    final effectiveSelectedColor = SelectTheme.selectedColorOf(context);
 
     final focusedCategoryIndex = _effectiveEntries.indexOf(focusedCategory);
 
@@ -504,7 +503,7 @@ class CascadingSelectSkeleton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final effectiveBackgroundColor =
-        backgroundColor ?? SelectTheme.of(context).backgroundColor;
+        backgroundColor ?? SelectTheme.backgroundColorOf(context);
     final effectiveSideBarWidth = sideBarWidth ?? kSelectSideBarWidth;
     final random = Random();
     return Column(

@@ -424,7 +424,7 @@ void main() {
       // background instead of starting one step darker.
       expect(
         _firstCascadeColumnColor(tester),
-        SelectThemeData(ThemeData.light()).backgroundColor,
+        ThemeData.light().colorScheme.surface,
       );
     });
   });

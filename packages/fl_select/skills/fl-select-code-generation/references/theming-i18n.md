@@ -38,19 +38,19 @@ ListSelectDelegate(
 PopupSelectBar(
   tabs: ...,
   selectDelegates: ...,
-  selectTheme: SelectThemeData(Theme.of(context)),
+  selectTheme: SelectThemeData(),
   onApplied: (tabData, selected) {},
 );
 ```
 
 ## Globally
 
-Every select resolves its base theme from the ambient `SelectTheme` — an `InheritedTheme` carrying a `SelectThemeData` (read back via `SelectTheme.of(context)`), which falls back to a `SelectThemeData` derived from the Material `ThemeData` when none is in scope. Delegate-level theme fields merge field-wise on top of it. Wrap it above the `Navigator` so inline views, dialogs, sheets and popup overlays are all covered, and use `SelectTheme.merge` to layer a partial `SelectThemeData` over the ambient one:
+Every select resolves its base theme from the ambient `SelectTheme` — an `InheritedTheme` carrying a `SelectThemeData` (read back via `SelectTheme.of(context)`), which falls back to an empty `SelectThemeData` when none is in scope. Every color and control theme on it is nullable: a value left unset is resolved from the Material `ThemeData` at build time (`SelectTheme.selectedColorOf(context)`, `backgroundColorOf`, `radioThemeOf`, ...). Delegate-level theme fields merge field-wise on top of it. Wrap it above the `Navigator` so inline views, dialogs, sheets and popup overlays are all covered, and use `SelectTheme.merge` to layer a partial `SelectThemeData` over the ambient one:
 
 ```dart
 MaterialApp(
   builder: (context, child) => SelectTheme.merge(
-    data: SelectThemeData(Theme.of(context), selectedColor: Colors.teal),
+    data: SelectThemeData(selectedColor: Colors.teal),
     child: child!,
   ),
   home: const HomePage(),
@@ -66,7 +66,7 @@ MaterialApp(
       PopupSelectBarTheme(
         height: 48,
         labelColor: Colors.blue,
-        selectTheme: SelectThemeData(ThemeData.light()),
+        selectTheme: SelectThemeData(),
       ),
       PopupSelectButtonTheme(
         backgroundColor: Colors.green,
@@ -79,7 +79,7 @@ MaterialApp(
 
 `PopupSelectBarTheme` fields include `height`, `labelColor`, `unselectedLabelColor`, `labelStyle`, `unselectedLabelStyle`, `indicator`, `unselectedIndicator`, `overlayStyle`, `selectTheme`. `PopupSelectButtonTheme` fields include `backgroundColor`, `foregroundColor`, `iconColor`, `elevation`, `side`, `shape`, `textStyle`, `padding`, `overlayStyle`, `selectTheme`.
 
-Precedence: widget parameter → `selectTheme` on the widget → theme extension → ambient `SelectTheme` → `SelectThemeData` derived from the Material `ThemeData`.
+Precedence: widget parameter → `selectTheme` on the widget → theme extension → ambient `SelectTheme` → the Material `ThemeData` (for the colors and `radioTheme` / `checkboxTheme` left unset).
 
 A `PopupSelectBar` / `PopupSelectButton` overlay sits above the trigger's route, so a `SelectTheme` wrapped around the trigger alone does not reach it — the trigger injects the `selectTheme` it resolved around the panel instead. Set the theme above the `Navigator`, or through those two extensions.
 

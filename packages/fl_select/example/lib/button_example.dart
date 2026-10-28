@@ -80,7 +80,6 @@ class _PopupSelectButtonExampleState extends State<PopupSelectButtonExample> {
                     extensions: <ThemeExtension<dynamic>>[
                       popupSelectButtonTheme.copyWith(
                         selectTheme: SelectThemeData(
-                          Theme.of(context),
                           actionBarTheme: SelectActionBarTheme(
                             backgroundColor: Colors.green,
                           ),

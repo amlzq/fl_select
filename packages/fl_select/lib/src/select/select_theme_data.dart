@@ -21,141 +21,91 @@ import 'widgets/wrap_view_theme.dart';
 
 /// Theme configuration for select widgets.
 ///
-/// This object is usually derived from a Material [ThemeData] plus optional
-/// overrides, and is consumed by select widgets to keep styling consistent.
+/// Holds only the values to override: anything left null is resolved by the
+/// widgets from the Material [ThemeData] they are built under.
 @immutable
 class SelectThemeData with Diagnosticable {
-  /// Creates a [SelectThemeData] by reading defaults from [theme] and applying
-  /// optional overrides.
-  factory SelectThemeData(
-    ThemeData theme, {
-    Color? selectedColor,
-    Color? onSelectedColor,
-    Color? backgroundColor,
-    Color? onBackgroundColor,
+  /// Creates a [SelectThemeData] holding only the values to override.
+  ///
+  /// Every color and control theme is nullable: `null` means "not set", and the
+  /// widgets then resolve the value from the Material [ThemeData] they are
+  /// built under (see [SelectTheme.selectedColorOf] and its siblings). This is
+  /// what lets [SelectTheme.merge] keep an ambient value that the merged data
+  /// leaves unset, and keeps the defaults in step with a changing
+  /// [ThemeData] (e.g. a light/dark switch).
+  const SelectThemeData({
+    this.selectedColor,
+    this.onSelectedColor,
+    this.backgroundColor,
+    this.onBackgroundColor,
     @Deprecated(
       'No longer read by select widgets. Use SelectSideBarTheme.selectedTileColor and SelectSkeletonViewTheme.color instead.',
     )
-    Color? backgroundColorHigh,
+    this.backgroundColorHigh,
     @Deprecated(
       'No longer read by select widgets. Use the tile, chip, range slider and cascading view themes\' own colors instead.',
     )
-    Color? backgroundColorHighest,
+    this.backgroundColorHighest,
     @Deprecated(
       'No longer read by select widgets. Use the tile, chip, range slider and counter themes\' own colors instead.',
     )
-    Color? onBackgroundColorHighest,
-    SelectActionBarTheme? actionBarTheme,
-    SelectTabBarTheme? tabBarTheme,
-    SelectSideBarTheme? sideBarTheme,
-    SelectGridTileTheme? gridTileTheme,
-    SelectListTileTheme? listTileTheme,
-    SelectFieldTileTheme? fieldTileTheme,
-    SelectExpansionTileTheme? expansionTileTheme,
-    SelectRangeSliderTheme? rangeSliderTheme,
-    RadioThemeData? radioTheme,
-    CheckboxThemeData? checkboxTheme,
-    SelectChipBarTheme? chipBarTheme,
-    SelectPanelTheme? panelTheme,
-    SelectSearchBarTheme? searchBarTheme,
-    SelectWrapViewTheme? wrapViewTheme,
-    SelectCascadingViewTheme? cascadingViewTheme,
-    SelectSkeletonViewTheme? skeletonViewTheme,
-    SelectCounterTheme? counterTheme,
-  }) {
-    return SelectThemeData.raw(
-      selectedColor: selectedColor ?? theme.colorScheme.primary,
-      onSelectedColor: onSelectedColor ?? theme.colorScheme.onPrimary,
-      backgroundColor: backgroundColor ?? theme.colorScheme.surface,
-      onBackgroundColor: onBackgroundColor ?? theme.colorScheme.onSurface,
-      backgroundColorHigh:
-          backgroundColorHigh ?? theme.colorScheme.surfaceContainerLow,
-      backgroundColorHighest:
-          backgroundColorHighest ?? theme.colorScheme.surfaceContainer,
-      onBackgroundColorHighest:
-          onBackgroundColorHighest ?? theme.colorScheme.onSurfaceVariant,
-      actionBarTheme: actionBarTheme ?? const SelectActionBarTheme(),
-      tabBarTheme: tabBarTheme ?? const SelectTabBarTheme(),
-      sideBarTheme: sideBarTheme ?? const SelectSideBarTheme(),
-      gridTileTheme: gridTileTheme ?? const SelectGridTileTheme(),
-      listTileTheme: listTileTheme ?? const SelectListTileTheme(),
-      fieldTileTheme: fieldTileTheme ?? const SelectFieldTileTheme(),
-      expansionTileTheme:
-          expansionTileTheme ?? const SelectExpansionTileTheme(),
-      rangeSliderTheme: rangeSliderTheme ?? const SelectRangeSliderTheme(),
-      radioTheme: radioTheme ?? theme.radioTheme,
-      checkboxTheme: checkboxTheme ?? theme.checkboxTheme,
-      chipBarTheme: chipBarTheme ?? const SelectChipBarTheme(),
-      panelTheme: panelTheme ?? const SelectPanelTheme(),
-      searchBarTheme: searchBarTheme ?? const SelectSearchBarTheme(),
-      wrapViewTheme: wrapViewTheme ?? const SelectWrapViewTheme(),
-      cascadingViewTheme:
-          cascadingViewTheme ?? const SelectCascadingViewTheme(),
-      skeletonViewTheme: skeletonViewTheme ?? const SelectSkeletonViewTheme(),
-      counterTheme: counterTheme ?? const SelectCounterTheme(),
-    );
-  }
-
-  /// Creates a [SelectThemeData] with explicit values.
-  const SelectThemeData.raw({
-    required this.selectedColor,
-    required this.onSelectedColor,
-    required this.backgroundColor,
-    required this.onBackgroundColor,
-    required this.backgroundColorHigh,
-    required this.backgroundColorHighest,
-    required this.onBackgroundColorHighest,
-    required this.actionBarTheme,
-    required this.tabBarTheme,
-    required this.sideBarTheme,
-    required this.gridTileTheme,
-    required this.listTileTheme,
-    required this.fieldTileTheme,
-    required this.expansionTileTheme,
-    required this.rangeSliderTheme,
-    required this.radioTheme,
-    required this.checkboxTheme,
-    required this.chipBarTheme,
-    required this.panelTheme,
-    required this.searchBarTheme,
-    required this.wrapViewTheme,
-    required this.cascadingViewTheme,
-    required this.skeletonViewTheme,
-    required this.counterTheme,
+    this.onBackgroundColorHighest,
+    this.actionBarTheme = const SelectActionBarTheme(),
+    this.tabBarTheme = const SelectTabBarTheme(),
+    this.sideBarTheme = const SelectSideBarTheme(),
+    this.gridTileTheme = const SelectGridTileTheme(),
+    this.listTileTheme = const SelectListTileTheme(),
+    this.fieldTileTheme = const SelectFieldTileTheme(),
+    this.expansionTileTheme = const SelectExpansionTileTheme(),
+    this.rangeSliderTheme = const SelectRangeSliderTheme(),
+    this.radioTheme,
+    this.checkboxTheme,
+    this.chipBarTheme = const SelectChipBarTheme(),
+    this.panelTheme = const SelectPanelTheme(),
+    this.searchBarTheme = const SelectSearchBarTheme(),
+    this.wrapViewTheme = const SelectWrapViewTheme(),
+    this.cascadingViewTheme = const SelectCascadingViewTheme(),
+    this.skeletonViewTheme = const SelectSkeletonViewTheme(),
+    this.counterTheme = const SelectCounterTheme(),
   });
 
-  /// Convenience factory that uses [theme] defaults without any overrides.
-  factory SelectThemeData.fallback(ThemeData theme) => SelectThemeData(theme);
-
   /// The background color used for selected entries.
-  final Color selectedColor;
+  ///
+  /// When null, [ColorScheme.primary] is used.
+  final Color? selectedColor;
 
   /// Text/icon color used on top of [selectedColor].
-  final Color onSelectedColor;
+  ///
+  /// When null, [ColorScheme.onPrimary] is used.
+  final Color? onSelectedColor;
 
   /// Base background color used by the select panel.
-  final Color backgroundColor;
+  ///
+  /// When null, [ColorScheme.surface] is used.
+  final Color? backgroundColor;
 
   /// Text/icon color used on top of [backgroundColor].
-  final Color onBackgroundColor;
+  ///
+  /// When null, [ColorScheme.onSurface] is used.
+  final Color? onBackgroundColor;
 
   /// A higher-contrast background color used for elevated sections.
   @Deprecated(
     'No longer read by select widgets. Use SelectSideBarTheme.selectedTileColor and SelectSkeletonViewTheme.color instead.',
   )
-  final Color backgroundColorHigh;
+  final Color? backgroundColorHigh;
 
   /// The highest-contrast background color (often used for nested levels).
   @Deprecated(
     'No longer read by select widgets. Use the tile, chip, range slider and cascading view themes\' own colors instead.',
   )
-  final Color backgroundColorHighest;
+  final Color? backgroundColorHighest;
 
   /// Text/icon color used on top of [backgroundColorHighest].
   @Deprecated(
     'No longer read by select widgets. Use the tile, chip, range slider and counter themes\' own colors instead.',
   )
-  final Color onBackgroundColorHighest;
+  final Color? onBackgroundColorHighest;
 
   /// Theme overrides for the action bar widget.
   final SelectActionBarTheme actionBarTheme;
@@ -181,10 +131,14 @@ class SelectThemeData with Diagnosticable {
   final SelectRangeSliderTheme rangeSliderTheme;
 
   /// Theme used for radio controls when rendered by select widgets.
-  final RadioThemeData radioTheme;
+  ///
+  /// When null, the ambient [ThemeData.radioTheme] is used.
+  final RadioThemeData? radioTheme;
 
   /// Theme used for checkbox controls when rendered by select widgets.
-  final CheckboxThemeData checkboxTheme;
+  ///
+  /// When null, the ambient [ThemeData.checkboxTheme] is used.
+  final CheckboxThemeData? checkboxTheme;
 
   /// Theme overrides for the chip bar widget.
   final SelectChipBarTheme chipBarTheme;
@@ -243,7 +197,7 @@ class SelectThemeData with Diagnosticable {
     SelectSkeletonViewTheme? skeletonViewTheme,
     SelectCounterTheme? counterTheme,
   }) {
-    return SelectThemeData.raw(
+    return SelectThemeData(
       selectedColor: selectedColor ?? this.selectedColor,
       onSelectedColor: onSelectedColor ?? this.onSelectedColor,
       backgroundColor: backgroundColor ?? this.backgroundColor,
@@ -282,30 +236,30 @@ class SelectThemeData with Diagnosticable {
     if (identical(a, b)) {
       return a;
     }
-    return SelectThemeData.raw(
-      selectedColor: Color.lerp(a?.selectedColor, b?.selectedColor, t)!,
-      onSelectedColor: Color.lerp(a?.onSelectedColor, b?.onSelectedColor, t)!,
-      backgroundColor: Color.lerp(a?.backgroundColor, b?.backgroundColor, t)!,
+    return SelectThemeData(
+      selectedColor: Color.lerp(a?.selectedColor, b?.selectedColor, t),
+      onSelectedColor: Color.lerp(a?.onSelectedColor, b?.onSelectedColor, t),
+      backgroundColor: Color.lerp(a?.backgroundColor, b?.backgroundColor, t),
       onBackgroundColor: Color.lerp(
         a?.onBackgroundColor,
         b?.onBackgroundColor,
         t,
-      )!,
+      ),
       backgroundColorHigh: Color.lerp(
         a?.backgroundColorHigh,
         b?.backgroundColorHigh,
         t,
-      )!,
+      ),
       backgroundColorHighest: Color.lerp(
         a?.backgroundColorHighest,
         b?.backgroundColorHighest,
         t,
-      )!,
+      ),
       onBackgroundColorHighest: Color.lerp(
         a?.onBackgroundColorHighest,
         b?.onBackgroundColorHighest,
         t,
-      )!,
+      ),
       actionBarTheme: SelectActionBarTheme.lerp(
         a?.actionBarTheme,
         b?.actionBarTheme,
@@ -342,12 +296,12 @@ class SelectThemeData with Diagnosticable {
         b?.rangeSliderTheme,
         t,
       ),
-      radioTheme: RadioThemeData.lerp(a?.radioTheme, b?.radioTheme, t),
-      checkboxTheme: CheckboxThemeData.lerp(
-        a?.checkboxTheme,
-        b?.checkboxTheme,
-        t,
-      ),
+      radioTheme: a?.radioTheme == null && b?.radioTheme == null
+          ? null
+          : RadioThemeData.lerp(a?.radioTheme, b?.radioTheme, t),
+      checkboxTheme: a?.checkboxTheme == null && b?.checkboxTheme == null
+          ? null
+          : CheckboxThemeData.lerp(a?.checkboxTheme, b?.checkboxTheme, t),
       chipBarTheme: SelectChipBarTheme.lerp(
         a?.chipBarTheme,
         b?.chipBarTheme,

@@ -488,7 +488,7 @@ GridSelectDelegate(
 PopupSelectBar(
   tabs: ...,
   selectDelegates: ...,
-  selectTheme: SelectThemeData(Theme.of(context)), // overrides every tab's delegate
+  selectTheme: SelectThemeData(), // overrides every tab's delegate
   onApplied: (tabData, selected) {},
 );
 ```
@@ -498,7 +498,7 @@ PopupSelectBar(
 ```dart
 MaterialApp(
   builder: (context, child) => SelectTheme.merge(
-    data: SelectThemeData(Theme.of(context), selectedColor: Colors.teal),
+    data: SelectThemeData(selectedColor: Colors.teal),
     child: child!,
   ),
   home: const HomePage(),
@@ -515,7 +515,7 @@ MaterialApp(
       PopupSelectBarTheme(
         height: 48,
         labelColor: Colors.blue,
-        selectTheme: SelectThemeData(ThemeData.light()),
+        selectTheme: SelectThemeData(),
       ),
       PopupSelectButtonTheme(
         backgroundColor: Colors.green,
@@ -537,7 +537,7 @@ MaterialApp(
     return Theme(
       data: baseTheme.copyWith(
         extensions: <ThemeExtension<dynamic>>[
-          PopupSelectBarTheme(selectTheme: SelectThemeData(baseTheme)),
+          PopupSelectBarTheme(selectTheme: SelectThemeData()),
           PopupSelectButtonTheme(
             backgroundColor: baseTheme.colorScheme.primary,
             foregroundColor: baseTheme.colorScheme.onPrimary,

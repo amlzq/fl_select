@@ -109,7 +109,7 @@ class SelectSideBarTheme with Diagnosticable {
     final theme = SelectTheme.of(context);
     return theme.sideBarTheme.backgroundColor ??
         fallback ??
-        theme.backgroundColor;
+        SelectTheme.backgroundColorOf(context);
   }
 
   /// Resolves the surface that the selected category merges into.

@@ -13,23 +13,54 @@ class SelectTheme extends InheritedTheme {
 
   final SelectThemeData data;
 
-  /// Returns the nearest [SelectThemeData] or a fallback derived from the
-  /// current Material [ThemeData].
+  /// Returns the nearest [SelectThemeData], or an empty one (every value left
+  /// to the Material theme) when there is none.
+  ///
+  /// The returned colors and control themes are the raw overrides and may be
+  /// null; use [selectedColorOf], [onSelectedColorOf], [backgroundColorOf],
+  /// [onBackgroundColorOf], [radioThemeOf] and [checkboxThemeOf] for the
+  /// resolved values.
   static SelectThemeData of(BuildContext context) {
     final SelectTheme? inheritedTheme = context
         .dependOnInheritedWidgetOfExactType<SelectTheme>();
-    return inheritedTheme?.data ?? SelectThemeData.fallback(Theme.of(context));
+    return inheritedTheme?.data ?? const SelectThemeData();
   }
+
+  /// The color of selected entries: [SelectThemeData.selectedColor], else
+  /// [ColorScheme.primary].
+  static Color selectedColorOf(BuildContext context) =>
+      of(context).selectedColor ?? Theme.of(context).colorScheme.primary;
+
+  /// The color on top of [selectedColorOf]: [SelectThemeData.onSelectedColor],
+  /// else [ColorScheme.onPrimary].
+  static Color onSelectedColorOf(BuildContext context) =>
+      of(context).onSelectedColor ?? Theme.of(context).colorScheme.onPrimary;
+
+  /// The panel background: [SelectThemeData.backgroundColor], else
+  /// [ColorScheme.surface].
+  static Color backgroundColorOf(BuildContext context) =>
+      of(context).backgroundColor ?? Theme.of(context).colorScheme.surface;
+
+  /// The color on top of [backgroundColorOf]:
+  /// [SelectThemeData.onBackgroundColor], else [ColorScheme.onSurface].
+  static Color onBackgroundColorOf(BuildContext context) =>
+      of(context).onBackgroundColor ?? Theme.of(context).colorScheme.onSurface;
+
+  /// The radio control theme: [SelectThemeData.radioTheme], else
+  /// [ThemeData.radioTheme].
+  static RadioThemeData radioThemeOf(BuildContext context) =>
+      of(context).radioTheme ?? Theme.of(context).radioTheme;
+
+  /// The checkbox control theme: [SelectThemeData.checkboxTheme], else
+  /// [ThemeData.checkboxTheme].
+  static CheckboxThemeData checkboxThemeOf(BuildContext context) =>
+      of(context).checkboxTheme ?? Theme.of(context).checkboxTheme;
 
   /// Merges the given [data] into the ambient [SelectThemeData].
   ///
-  /// Each component theme (`listTileTheme`, `panelTheme`, ...) is merged field
-  /// by field: a field [data] leaves null keeps the ambient value.
-  ///
-  /// The colors and the `radioTheme` / `checkboxTheme` are the exception. They
-  /// are not nullable on [SelectThemeData] — a value was already filled in from
-  /// the Material theme when [data] was built — so [data] replaces the ambient
-  /// ones as a whole.
+  /// A value [data] leaves unset keeps the ambient one. Each component theme
+  /// (`listTileTheme`, `panelTheme`, ...) is merged field by field; a color or
+  /// `radioTheme` / `checkboxTheme` is replaced only when [data] sets it.
   static Widget merge({
     Key? key,
     SelectThemeData? data,

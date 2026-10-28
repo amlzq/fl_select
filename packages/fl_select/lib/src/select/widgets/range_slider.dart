@@ -1,7 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../select_theme.dart';
-import '../select_theme_data.dart';
 import 'range_slider_theme.dart';
 
 /// A custom-drawn dual-thumb range slider.
@@ -442,7 +441,6 @@ class _SelectRangeSliderDefaults extends SelectRangeSliderTheme {
 
   final BuildContext context;
 
-  late final SelectThemeData _theme = SelectTheme.of(context);
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
@@ -452,13 +450,13 @@ class _SelectRangeSliderDefaults extends SelectRangeSliderTheme {
   );
 
   @override
-  Color? get selectedColor => _theme.selectedColor;
+  Color? get selectedColor => SelectTheme.selectedColorOf(context);
 
   @override
-  Color? get activeTrackColor => _theme.selectedColor;
+  Color? get activeTrackColor => SelectTheme.selectedColorOf(context);
 
   @override
-  Color? get thumbColor => _theme.selectedColor;
+  Color? get thumbColor => SelectTheme.selectedColorOf(context);
 
   @override
   Color? get thumbFillColor => Colors.white;
@@ -468,7 +466,7 @@ class _SelectRangeSliderDefaults extends SelectRangeSliderTheme {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     if (isDark) {
       return Color.lerp(
-        _theme.backgroundColor,
+        SelectTheme.backgroundColorOf(context),
         _colorScheme.surfaceContainer,
         0.5,
       );

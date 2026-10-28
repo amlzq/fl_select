@@ -4,7 +4,6 @@ import 'package:material_ui/material_ui.dart';
 import '../../i18n/select_localizations.dart';
 import '../select_entry.dart';
 import '../select_theme.dart';
-import '../select_theme_data.dart';
 import 'constants.dart';
 import 'counter_theme.dart';
 import 'skeleton_view.dart';
@@ -330,12 +329,11 @@ class _SelectCounterDefaults extends SelectCounterTheme {
 
   final BuildContext context;
 
-  late final SelectThemeData _theme = SelectTheme.of(context);
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
 
   @override
   Color? get valueColor => _colorScheme.onSurfaceVariant;
 
   @override
-  Color? get selectedValueColor => _theme.selectedColor;
+  Color? get selectedValueColor => SelectTheme.selectedColorOf(context);
 }

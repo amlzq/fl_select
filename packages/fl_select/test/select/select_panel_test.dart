@@ -171,7 +171,6 @@ void main() {
             backgroundColor: _amber,
           ),
           selectTheme: SelectThemeData(
-            ThemeData.light(),
             wrapViewTheme: const SelectWrapViewTheme(padding: _ambientPadding),
           ),
         ),
@@ -198,7 +197,6 @@ void main() {
       await tester.pumpWidget(
         wrapViewPanelHarness(
           selectTheme: SelectThemeData(
-            ThemeData.light(),
             wrapViewTheme: const SelectWrapViewTheme(
               backgroundColor: Colors.teal,
             ),
@@ -253,7 +251,6 @@ void main() {
         MaterialApp(
           home: SelectTheme(
             data: SelectThemeData(
-              ThemeData.light(),
               chipBarTheme: const SelectChipBarTheme(
                 backgroundColor: Colors.teal,
               ),
@@ -378,7 +375,6 @@ void main() {
       final theme = await tileSideEffectiveTheme(
         tester,
         selectTheme: SelectThemeData(
-          ThemeData.light(),
           gridTileTheme: const SelectGridTileTheme(tileColor: Colors.blue),
         ),
         gridTileTheme: const SelectGridTileTheme(
@@ -393,7 +389,6 @@ void main() {
       final theme = await tileSideEffectiveTheme(
         tester,
         selectTheme: SelectThemeData(
-          ThemeData.light(),
           fieldTileTheme: const SelectFieldTileTheme(textColor: Colors.blue),
         ),
         fieldTileTheme: const SelectFieldTileTheme(
@@ -408,7 +403,6 @@ void main() {
       final theme = await tileSideEffectiveTheme(
         tester,
         selectTheme: SelectThemeData(
-          ThemeData.light(),
           sideBarTheme: const SelectSideBarTheme(padding: _ambientPadding),
         ),
         sideBarTheme: const SelectSideBarTheme(width: 88),
@@ -527,7 +521,6 @@ void main() {
       final theme = await injectionEffectiveTheme(
         tester,
         selectTheme: SelectThemeData(
-          ThemeData.light(),
           panelTheme: SelectPanelTheme(shape: ambientShape),
         ),
         delegate: WrapSelectDelegate(
@@ -544,7 +537,6 @@ void main() {
       final theme = await injectionEffectiveTheme(
         tester,
         selectTheme: SelectThemeData(
-          ThemeData.light(),
           tabBarTheme: const SelectTabBarTheme(padding: _ambientPadding),
         ),
         delegate: WrapSelectDelegate(
@@ -561,7 +553,6 @@ void main() {
       final theme = await injectionEffectiveTheme(
         tester,
         selectTheme: SelectThemeData(
-          ThemeData.light(),
           listTileTheme: const SelectListTileTheme(textColor: _amber),
         ),
         delegate: WrapSelectDelegate(
@@ -578,7 +569,6 @@ void main() {
       final theme = await injectionEffectiveTheme(
         tester,
         selectTheme: SelectThemeData(
-          ThemeData.light(),
           expansionTileTheme: const SelectExpansionTileTheme(
             titlePadding: _ambientPadding,
           ),
@@ -694,7 +684,6 @@ void main() {
             fillColor: _amber,
           ),
           selectTheme: SelectThemeData(
-            ThemeData.light(),
             searchBarTheme: const SelectSearchBarTheme(
               padding: _ambientPadding,
             ),
@@ -722,7 +711,6 @@ void main() {
       await tester.pumpWidget(
         searchBarPanelHarness(
           selectTheme: SelectThemeData(
-            ThemeData.light(),
             searchBarTheme: const SelectSearchBarTheme(
               filled: true,
               fillColor: Colors.teal,
@@ -793,7 +781,6 @@ void main() {
       final theme = await rangeColorEffectiveTheme(
         tester,
         selectTheme: SelectThemeData(
-          ThemeData.light(),
           rangeSliderTheme: const SelectRangeSliderTheme(trackHeight: 4),
         ),
         rangeSliderTheme: const SelectRangeSliderTheme(thumbRadius: 12),
@@ -807,7 +794,7 @@ void main() {
     testWidgets('delegate selectedColor overrides ambient', (tester) async {
       final theme = await rangeColorEffectiveTheme(
         tester,
-        selectTheme: SelectThemeData(ThemeData.light(), selectedColor: _teal),
+        selectTheme: SelectThemeData(selectedColor: _teal),
         selectedColor: _amber,
       );
       expect(theme.selectedColor, _amber);
@@ -818,19 +805,16 @@ void main() {
     ) async {
       final theme = await rangeColorEffectiveTheme(
         tester,
-        selectTheme: SelectThemeData(
-          ThemeData.light(),
-          backgroundColorHigh: _teal,
-        ),
+        selectTheme: SelectThemeData(backgroundColorHigh: _teal),
       );
       expect(theme.backgroundColorHigh, _teal);
     });
 
-    testWidgets('Material fallback applies when neither supplies one', (
+    testWidgets('selectedColor stays unset when neither supplies one', (
       tester,
     ) async {
       final theme = await rangeColorEffectiveTheme(tester);
-      expect(theme.selectedColor, isNotNull);
+      expect(theme.selectedColor, isNull);
     });
   });
 
@@ -904,7 +888,6 @@ void main() {
             backgroundColor: _amber,
           ),
           selectTheme: SelectThemeData(
-            ThemeData.light(),
             chipBarTheme: const SelectChipBarTheme(padding: _ambientPadding),
           ),
         ),
@@ -931,7 +914,6 @@ void main() {
       await tester.pumpWidget(
         chipBarPanelHarness(
           selectTheme: SelectThemeData(
-            ThemeData.light(),
             chipBarTheme: const SelectChipBarTheme(
               backgroundColor: Colors.teal,
             ),
@@ -1019,7 +1001,6 @@ void main() {
             backgroundColor: _amber,
           ),
           selectTheme: SelectThemeData(
-            ThemeData.light(),
             actionBarTheme: const SelectActionBarTheme(
               padding: _ambientPadding,
             ),
@@ -1048,7 +1029,6 @@ void main() {
       await tester.pumpWidget(
         actionBarPanelHarness(
           selectTheme: SelectThemeData(
-            ThemeData.light(),
             actionBarTheme: const SelectActionBarTheme(
               backgroundColor: Colors.teal,
             ),

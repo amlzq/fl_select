@@ -32,8 +32,6 @@ Future<SelectThemeData> _resolve(
 }
 
 void main() {
-  final base = ThemeData.light();
-
   group('SelectTheme.merge', () {
     testWidgets('keeps ambient component fields the inner theme leaves null', (
       tester,
@@ -41,7 +39,6 @@ void main() {
       final theme = await _resolve(
         tester,
         outer: SelectThemeData(
-          base,
           listTileTheme: const SelectListTileTheme(
             textColor: _red,
             tileColor: _green,
@@ -49,7 +46,6 @@ void main() {
           counterTheme: const SelectCounterTheme(valueColor: _red),
         ),
         inner: SelectThemeData(
-          base,
           listTileTheme: const SelectListTileTheme(tileColor: _blue),
         ),
       );
@@ -63,11 +59,9 @@ void main() {
       final theme = await _resolve(
         tester,
         outer: SelectThemeData(
-          base,
           panelTheme: const SelectPanelTheme(elevation: 4, shadowColor: _red),
         ),
         inner: SelectThemeData(
-          base,
           panelTheme: const SelectPanelTheme(shadowColor: _blue),
         ),
       );
@@ -80,14 +74,12 @@ void main() {
       final theme = await _resolve(
         tester,
         outer: SelectThemeData(
-          base,
           cascadingViewTheme: const SelectCascadingViewTheme(
             startBackgroundColor: _red,
           ),
           skeletonViewTheme: const SelectSkeletonViewTheme(color: _red),
         ),
         inner: SelectThemeData(
-          base,
           cascadingViewTheme: const SelectCascadingViewTheme(
             endBackgroundColor: _blue,
           ),
@@ -99,19 +91,68 @@ void main() {
       expect(theme.skeletonViewTheme.color, _red);
     });
 
-    testWidgets('still replaces the non-nullable colors as a whole', (
+    testWidgets('keeps an ambient color the inner theme leaves unset', (
       tester,
     ) async {
       final theme = await _resolve(
         tester,
-        outer: SelectThemeData(base, selectedColor: _red),
-        inner: SelectThemeData(base, backgroundColor: _blue),
+        outer: const SelectThemeData(
+          selectedColor: _red,
+          onSelectedColor: _green,
+        ),
+        inner: const SelectThemeData(backgroundColor: _blue),
       );
 
+      expect(theme.selectedColor, _red);
+      expect(theme.onSelectedColor, _green);
       expect(theme.backgroundColor, _blue);
-      // Documented limitation: the inner data already carries the Material
-      // default for `selectedColor`, so it overrides the ambient red.
-      expect(theme.selectedColor, base.colorScheme.primary);
+    });
+
+    testWidgets('lets the inner theme override an ambient color and control '
+        'theme', (tester) async {
+      const radio = RadioThemeData(splashRadius: 12);
+      final theme = await _resolve(
+        tester,
+        outer: const SelectThemeData(
+          selectedColor: _red,
+          radioTheme: RadioThemeData(splashRadius: 4),
+        ),
+        inner: const SelectThemeData(selectedColor: _blue, radioTheme: radio),
+      );
+
+      expect(theme.selectedColor, _blue);
+      expect(theme.radioTheme, radio);
+    });
+
+    testWidgets('resolves unset colors from the current Material theme', (
+      tester,
+    ) async {
+      late BuildContext seen;
+      Widget build(ThemeData theme) => MaterialApp(
+        theme: theme,
+        home: SelectTheme(
+          data: const SelectThemeData(),
+          child: Builder(
+            builder: (context) {
+              seen = context;
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
+      );
+
+      await tester.pumpWidget(build(ThemeData.light()));
+      expect(
+        SelectTheme.selectedColorOf(seen),
+        ThemeData.light().colorScheme.primary,
+      );
+
+      await tester.pumpWidget(build(ThemeData.dark()));
+      await tester.pumpAndSettle();
+      expect(
+        SelectTheme.selectedColorOf(seen),
+        ThemeData.dark().colorScheme.primary,
+      );
     });
 
     testWidgets('returns the child untouched when data is null', (

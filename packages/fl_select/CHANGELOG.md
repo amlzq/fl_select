@@ -1,6 +1,8 @@
 ## Next
 
-- **BUGFIX** `SelectTheme.merge` now merges each component theme field by field instead of replacing it, so a field the inner data leaves null keeps the ambient value. The colors and `radioTheme` / `checkboxTheme` are still replaced as a whole, because `SelectThemeData` fills them in from the Material theme.
+- **BREAKING** `SelectThemeData` now holds only overrides: it is `const`, takes no `ThemeData`, and `selectedColor`, `onSelectedColor`, `backgroundColor`, `onBackgroundColor`, `radioTheme` and `checkboxTheme` are nullable. A value left unset is resolved from the Material theme when the widget builds (`SelectTheme.selectedColorOf`, `backgroundColorOf`, `radioThemeOf`, ...), so defaults follow a light/dark switch instead of being captured when the data was built. `SelectThemeData.fallback` and `.raw` are removed ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#selectthemedata-holds-only-overrides)).
+
+- **BUGFIX** `SelectTheme.merge` now keeps an ambient value that the merged data leaves unset: component themes merge field by field, and a color or `radioTheme` / `checkboxTheme` is replaced only when the merged data sets it.
 
 - **FEATURE** add `SelectSkeletonViewTheme` (`skeletonViewTheme`) for the loading placeholders, `SelectCounterTheme` (`counterTheme`) for the spin-box counter, and `SelectCascadingViewTheme.startBackgroundColor` for a standalone `CascadingView` (`CascadingSelect` still takes its start from `SelectSideBarTheme.backgroundColor`).
 

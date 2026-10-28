@@ -465,12 +465,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(
-            appBar: bar(
-              selectTheme: SelectThemeData(
-                ThemeData.light(),
-                selectedColor: teal,
-              ),
-            ),
+            appBar: bar(selectTheme: SelectThemeData(selectedColor: teal)),
             body: const SizedBox.expand(),
           ),
         ),
@@ -490,10 +485,7 @@ void main() {
           theme: ThemeData(
             extensions: [
               PopupSelectBarTheme(
-                selectTheme: SelectThemeData(
-                  ThemeData.light(),
-                  selectedColor: teal,
-                ),
+                selectTheme: SelectThemeData(selectedColor: teal),
               ),
             ],
           ),
@@ -507,8 +499,8 @@ void main() {
       expect(injectedPanelTheme(tester).selectedColor, teal);
     });
 
-    testWidgets('the panel falls back to the Material theme when none is '
-        'resolved', (tester) async {
+    testWidgets('the panel leaves the colors to the Material theme when none '
+        'is resolved', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
           home: Scaffold(appBar: bar(), body: const SizedBox.expand()),
@@ -518,10 +510,7 @@ void main() {
       await tester.tap(find.text('Filter'));
       await tester.pumpAndSettle();
 
-      expect(
-        injectedPanelTheme(tester).selectedColor,
-        ThemeData.light().colorScheme.primary,
-      );
+      expect(injectedPanelTheme(tester).selectedColor, isNull);
     });
   });
 }

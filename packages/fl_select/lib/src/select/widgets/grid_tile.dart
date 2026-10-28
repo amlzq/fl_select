@@ -1,7 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../select_theme.dart';
-import '../select_theme_data.dart';
 import 'grid_tile_theme.dart';
 
 /// A grid tile used by select grid layouts.
@@ -162,12 +161,11 @@ class _SelectGridTileDefaults extends SelectGridTileTheme {
   final bool isEnabled;
   final bool isSelected;
 
-  late final SelectThemeData _theme = SelectTheme.of(context);
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  Color? get selectedColor => _theme.selectedColor;
+  Color? get selectedColor => SelectTheme.selectedColorOf(context);
 
   @override
   Color? get textColor => _colorScheme.onSurfaceVariant;
@@ -187,7 +185,7 @@ class _SelectGridTileDefaults extends SelectGridTileTheme {
           ? 0.2
           : 0.35;
       return Color.lerp(
-        _theme.backgroundColor,
+        SelectTheme.backgroundColorOf(context),
         _colorScheme.surfaceContainer,
         blendAmount,
       );
@@ -200,11 +198,15 @@ class _SelectGridTileDefaults extends SelectGridTileTheme {
 
   @override
   Color? get selectedTileColor {
-    final baseSelected = _theme.selectedColor;
+    final baseSelected = SelectTheme.selectedColorOf(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     if (isDark) {
       // In dark theme, blend with background for a more harmonious look
-      return Color.lerp(_theme.backgroundColor, baseSelected, 0.35);
+      return Color.lerp(
+        SelectTheme.backgroundColorOf(context),
+        baseSelected,
+        0.35,
+      );
     }
     return baseSelected;
   }

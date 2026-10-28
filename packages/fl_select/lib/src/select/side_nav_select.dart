@@ -576,8 +576,6 @@ class SideNavSelectState extends State<SideNavSelect> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = SelectTheme.of(context);
-
     final actionBar =
         controller?.hasMultipleMode == true &&
             !SelectActionBarVisibility.isHidden(context)
@@ -600,12 +598,12 @@ class SideNavSelectState extends State<SideNavSelect> {
     final selectedCategories =
         controller?.realSelectedCategories ?? <SelectEntry>{};
 
-    final categoryBackgroundColor = theme.backgroundColor;
+    final categoryBackgroundColor = SelectTheme.backgroundColorOf(context);
     final terminalBackgroundColor = SelectSideBarTheme.resolveSelectedTileColor(
       context,
     );
 
-    final effectiveSelectedColor = theme.selectedColor;
+    final effectiveSelectedColor = SelectTheme.selectedColorOf(context);
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -688,9 +686,7 @@ class SideNavSelectSkeleton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = SelectTheme.of(context);
-
-    final categoryBackgroundColor = theme.backgroundColor;
+    final categoryBackgroundColor = SelectTheme.backgroundColorOf(context);
 
     return ColoredBox(
       color: categoryBackgroundColor,

@@ -115,7 +115,9 @@ Widget _viewHarness({
   return MaterialApp(
     home: Scaffold(
       body: SelectTheme(
-        data: SelectThemeData(ThemeData.light(), cascadingViewTheme: theme),
+        data: SelectThemeData(
+          cascadingViewTheme: theme ?? const SelectCascadingViewTheme(),
+        ),
         child: CascadingView(
           entries: category.children!.toList(),
           category: category,
@@ -147,7 +149,7 @@ const _overrideStartColor = Color(0xFF607080);
 const _overrideEndColor = Color(0xFFA0B0C0);
 
 /// The panel background a bare view falls back to as the ramp start.
-final _panelStartColor = SelectThemeData(ThemeData.light()).backgroundColor;
+final _panelStartColor = ThemeData.light().colorScheme.surface;
 
 /// The step a column takes with `backgroundColorOffset: 1` on a three-level
 /// category.

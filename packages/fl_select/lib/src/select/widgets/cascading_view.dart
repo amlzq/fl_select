@@ -249,7 +249,7 @@ class _CascadingViewState extends State<CascadingView> {
     final startColor =
         widget.startBackgroundColor ??
         theme.cascadingViewTheme.startBackgroundColor ??
-        theme.backgroundColor;
+        SelectTheme.backgroundColorOf(context);
     final endColor =
         widget.endBackgroundColor ??
         theme.cascadingViewTheme.endBackgroundColor ??

@@ -15,32 +15,63 @@ const _checkboxTheme = CheckboxThemeData(
 
 void main() {
   group('SelectThemeData radio/checkbox defaults', () {
-    test('fall back to the Material ThemeData values', () {
-      final theme = ThemeData.light().copyWith(
-        radioTheme: _radioTheme,
-        checkboxTheme: _checkboxTheme,
-      );
-      final data = SelectThemeData(theme);
+    test('are unset until resolved', () {
+      const data = SelectThemeData();
 
-      expect(data.radioTheme, _radioTheme);
-      expect(data.checkboxTheme, _checkboxTheme);
+      expect(data.radioTheme, isNull);
+      expect(data.checkboxTheme, isNull);
     });
 
-    test('explicit overrides win over the Material ThemeData values', () {
-      final theme = ThemeData.light().copyWith(
-        radioTheme: _radioTheme,
-        checkboxTheme: _checkboxTheme,
-      );
-      const overrideRadio = RadioThemeData(splashRadius: 12);
-      const overrideCheckbox = CheckboxThemeData(splashRadius: 16);
-      final data = SelectThemeData(
-        theme,
-        radioTheme: overrideRadio,
-        checkboxTheme: overrideCheckbox,
+    testWidgets('resolve to the Material ThemeData values', (tester) async {
+      late BuildContext seen;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData.light().copyWith(
+            radioTheme: _radioTheme,
+            checkboxTheme: _checkboxTheme,
+          ),
+          home: Builder(
+            builder: (context) {
+              seen = context;
+              return const SizedBox.shrink();
+            },
+          ),
+        ),
       );
 
-      expect(data.radioTheme, overrideRadio);
-      expect(data.checkboxTheme, overrideCheckbox);
+      expect(SelectTheme.radioThemeOf(seen), _radioTheme);
+      expect(SelectTheme.checkboxThemeOf(seen), _checkboxTheme);
+    });
+
+    testWidgets('explicit overrides win over the Material ThemeData values', (
+      tester,
+    ) async {
+      const overrideRadio = RadioThemeData(splashRadius: 12);
+      const overrideCheckbox = CheckboxThemeData(splashRadius: 16);
+      late BuildContext seen;
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: ThemeData.light().copyWith(
+            radioTheme: _radioTheme,
+            checkboxTheme: _checkboxTheme,
+          ),
+          home: SelectTheme(
+            data: const SelectThemeData(
+              radioTheme: overrideRadio,
+              checkboxTheme: overrideCheckbox,
+            ),
+            child: Builder(
+              builder: (context) {
+                seen = context;
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+        ),
+      );
+
+      expect(SelectTheme.radioThemeOf(seen), overrideRadio);
+      expect(SelectTheme.checkboxThemeOf(seen), overrideCheckbox);
     });
   });
 
@@ -49,7 +80,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: SelectTheme(
-            data: SelectThemeData(ThemeData.light(), radioTheme: _radioTheme),
+            data: SelectThemeData(radioTheme: _radioTheme),
             child: const Scaffold(
               body: SelectRadioListTile(label: 'A', selected: true),
             ),
@@ -67,10 +98,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: SelectTheme(
-            data: SelectThemeData(
-              ThemeData.light(),
-              checkboxTheme: _checkboxTheme,
-            ),
+            data: SelectThemeData(checkboxTheme: _checkboxTheme),
             child: const Scaffold(
               body: SelectCheckboxListTile(label: 'A', checked: true),
             ),

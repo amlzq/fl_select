@@ -66,15 +66,15 @@ void main() {
 
   group('SelectThemeData.panelTheme', () {
     test('default is a const SelectPanelTheme', () {
-      final theme = SelectThemeData(ThemeData.light());
+      final theme = SelectThemeData();
       expect(theme.panelTheme, const SelectPanelTheme());
     });
 
     test('copyWith and lerp propagate panelTheme', () {
       const themeA = SelectPanelTheme(elevation: 0);
       const themeB = SelectPanelTheme(elevation: 8, shape: _shapeB);
-      final dataA = SelectThemeData(ThemeData.light(), panelTheme: themeA);
-      final dataB = SelectThemeData(ThemeData.light(), panelTheme: themeB);
+      final dataA = SelectThemeData(panelTheme: themeA);
+      final dataB = SelectThemeData(panelTheme: themeB);
 
       final copied = dataA.copyWith(panelTheme: themeB);
       expect(copied.panelTheme, themeB);

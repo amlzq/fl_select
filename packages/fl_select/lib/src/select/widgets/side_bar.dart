@@ -352,7 +352,6 @@ class _SelectSideBarDefaults extends SelectSideBarTheme {
   _SelectSideBarDefaults(this.context) : super();
 
   final BuildContext context;
-  late final SelectThemeData _theme = SelectTheme.of(context);
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
@@ -362,14 +361,15 @@ class _SelectSideBarDefaults extends SelectSideBarTheme {
   EdgeInsetsGeometry? get padding => EdgeInsets.zero;
 
   @override
-  Color? get selectedColor => _theme.selectedColor;
+  Color? get selectedColor => SelectTheme.selectedColorOf(context);
 
   @override
   TextStyle? get labelStyle => _textTheme.bodyLarge;
 
   @override
-  TextStyle? get selectedLabelStyle =>
-      _textTheme.bodyMedium?.copyWith(color: _theme.selectedColor);
+  TextStyle? get selectedLabelStyle => _textTheme.bodyMedium?.copyWith(
+    color: SelectTheme.selectedColorOf(context),
+  );
 
   @override
   Color? get indicatorColor => selectedColor;

@@ -112,7 +112,7 @@ void main() {
       await tester.pumpWidget(
         MaterialApp(
           home: SelectTheme(
-            data: SelectThemeData(ThemeData.light()).copyWith(
+            data: SelectThemeData().copyWith(
               cascadingViewTheme: const SelectCascadingViewTheme(
                 endBackgroundColor: _e1,
               ),
@@ -133,7 +133,7 @@ void main() {
 
   group('SelectThemeData.cascadingViewTheme', () {
     test('defaults to an empty theme', () {
-      final data = SelectThemeData(ThemeData.light());
+      final data = SelectThemeData();
 
       expect(data.cascadingViewTheme, const SelectCascadingViewTheme());
       expect(data.cascadingViewTheme.endBackgroundColor, null);
@@ -141,17 +141,16 @@ void main() {
 
     test('participates in equality and interpolation', () {
       final withColor = SelectThemeData(
-        ThemeData.light(),
         cascadingViewTheme: const SelectCascadingViewTheme(
           endBackgroundColor: _e1,
         ),
       );
 
-      expect(withColor, isNot(SelectThemeData(ThemeData.light())));
+      expect(withColor, isNot(SelectThemeData()));
       expect(
         SelectThemeData.lerp(
           withColor,
-          SelectThemeData(ThemeData.light()),
+          SelectThemeData(),
           0,
         )!.cascadingViewTheme.endBackgroundColor,
         _e1,

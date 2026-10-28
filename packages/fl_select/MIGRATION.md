@@ -2,6 +2,31 @@
 
 ## MIGRATE TO Next
 
+### `SelectThemeData` holds only overrides
+
+`SelectThemeData` no longer reads the Material `ThemeData` when it is built. It
+is a `const` bag of overrides: drop the `ThemeData` argument, and note that
+`selectedColor`, `onSelectedColor`, `backgroundColor`, `onBackgroundColor`,
+`radioTheme` and `checkboxTheme` are now nullable (`null` means "not set").
+
+```diff
+- SelectThemeData(Theme.of(context), selectedColor: Colors.teal)
++ const SelectThemeData(selectedColor: Colors.teal)
+```
+
+- Widgets resolve an unset value from the `ThemeData` they are built under, so
+  the defaults follow a light/dark switch. Previously they were captured from
+  the `ThemeData` passed at construction, and went stale when you put the data
+  in a `PopupSelectBarTheme` extension and the app theme changed.
+- To read the resolved value, use `SelectTheme.selectedColorOf(context)`,
+  `onSelectedColorOf`, `backgroundColorOf`, `onBackgroundColorOf`,
+  `radioThemeOf` and `checkboxThemeOf`. `SelectTheme.of(context)` returns the raw
+  overrides, so `.selectedColor` may be `null`.
+- `SelectThemeData.fallback` and `SelectThemeData.raw` are removed; use
+  `const SelectThemeData()`.
+- `SelectTheme.merge` now keeps an ambient value that the merged data leaves
+  unset. It used to overwrite it with the default captured at construction.
+
 ### `backgroundColorHigh`, `backgroundColorHighest` and `onBackgroundColorHighest`
 
 `SelectThemeData.backgroundColorHigh`, `backgroundColorHighest` and
@@ -38,7 +63,7 @@ change. A delegate carries the same themes, so the fields move over one for one:
 ```
 
 The same themes can be set once for every select through the ambient
-`SelectTheme` (`SelectThemeData(theme, listTileTheme: ..., skeletonViewTheme: ...)`);
+`SelectTheme` (`SelectThemeData(listTileTheme: ..., skeletonViewTheme: ...)`);
 a delegate's theme is merged on top of it.
 
 `SideNavSelect` paints its content pane with the same

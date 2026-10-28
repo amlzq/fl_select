@@ -77,7 +77,6 @@ class _MyAppState extends State<MyApp> {
                       barrierColor: Colors.black54,
                     ),
                     selectTheme: SelectThemeData(
-                      baseTheme,
                       // actionBarTheme: SelectActionBarTheme(
                       //   backgroundColor: Colors.red,
                       // ),
@@ -94,7 +93,6 @@ class _MyAppState extends State<MyApp> {
                       barrierColor: Colors.amber[100],
                     ),
                     selectTheme: SelectThemeData(
-                      baseTheme,
                       actionBarTheme: SelectActionBarTheme(
                         backgroundColor: Colors.red,
                       ),

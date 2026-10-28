@@ -783,7 +783,7 @@ void main() {
     await tester.pumpWidget(_sideNavHarness({_cascadingRegion()}));
     await tester.pumpAndSettle();
 
-    final background = SelectThemeData(ThemeData.light()).backgroundColor;
+    final background = ThemeData.light().colorScheme.surface;
     final end = ThemeData.light().colorScheme.surfaceContainer;
 
     // The sidebar paints the ramp start flush against the cascade, so the first

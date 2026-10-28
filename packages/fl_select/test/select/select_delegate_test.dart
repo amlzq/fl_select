@@ -343,7 +343,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SelectTheme(
-              data: SelectThemeData.fallback(ThemeData()),
+              data: const SelectThemeData(),
               child: SelectControllerProvider(
                 controller: controller,
                 child: Builder(
@@ -409,7 +409,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SelectTheme(
-              data: SelectThemeData.fallback(ThemeData()),
+              data: const SelectThemeData(),
               child: SelectControllerProvider(
                 controller: controller,
                 child: Builder(
@@ -477,7 +477,7 @@ void main() {
         MaterialApp(
           home: Scaffold(
             body: SelectTheme(
-              data: SelectThemeData.fallback(ThemeData()),
+              data: const SelectThemeData(),
               child: SelectControllerProvider(
                 controller: controller,
                 child: Builder(

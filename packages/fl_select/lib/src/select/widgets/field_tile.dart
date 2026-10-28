@@ -331,7 +331,6 @@ class _SelectFieldTileDefaults extends SelectFieldTileTheme {
 
   final BuildContext context;
 
-  late final SelectThemeData _theme = SelectTheme.of(context);
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
@@ -345,7 +344,7 @@ class _SelectFieldTileDefaults extends SelectFieldTileTheme {
   TextStyle? get sublabelStyle => _textTheme.bodyMedium;
 
   @override
-  Color? get selectedColor => _theme.selectedColor;
+  Color? get selectedColor => SelectTheme.selectedColorOf(context);
 
   /// Default [tileColor] based on [variant].
   ///
@@ -360,7 +359,7 @@ class _SelectFieldTileDefaults extends SelectFieldTileTheme {
           ? 0.2
           : 0.35;
       return Color.lerp(
-        _theme.backgroundColor,
+        SelectTheme.backgroundColorOf(context),
         _colorScheme.surfaceContainer,
         blendAmount,
       );
@@ -377,10 +376,14 @@ class _SelectFieldTileDefaults extends SelectFieldTileTheme {
   /// background in dark theme for a harmonious look.
   @override
   Color? get selectedTileColor {
-    final baseSelected = _theme.selectedColor;
+    final baseSelected = SelectTheme.selectedColorOf(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     if (isDark) {
-      return Color.lerp(_theme.backgroundColor, baseSelected, 0.35);
+      return Color.lerp(
+        SelectTheme.backgroundColorOf(context),
+        baseSelected,
+        0.35,
+      );
     }
     return baseSelected;
   }

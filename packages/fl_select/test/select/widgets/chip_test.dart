@@ -20,7 +20,7 @@ Future<(SelectChipBarDefaults, SelectWrapViewDefaults)> _defaults(
     MaterialApp(
       theme: theme,
       home: SelectTheme(
-        data: SelectThemeData(theme),
+        data: SelectThemeData(),
         child: Builder(
           builder: (context) {
             bar = SelectChipBarDefaults(context, variant);

@@ -2,7 +2,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../select_delegate.dart';
 import '../select_theme.dart';
-import '../select_theme_data.dart';
 
 /// Visual variant for chip.
 enum SelectChipVariant { filled, outlined }
@@ -102,7 +101,6 @@ class SelectChipDefaults {
   /// The chip variant resolved by the hosting view.
   final SelectChipVariant? variant;
 
-  late final SelectThemeData _theme = SelectTheme.of(context);
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
 
   late final TextTheme _textTheme = Theme.of(context).textTheme;
@@ -117,7 +115,7 @@ class SelectChipDefaults {
     if (isDark) {
       final blendAmount = variant == SelectChipVariant.outlined ? 0.2 : 0.35;
       return Color.lerp(
-        _theme.backgroundColor,
+        SelectTheme.backgroundColorOf(context),
         _colorScheme.surfaceContainer,
         blendAmount,
       );
@@ -132,10 +130,14 @@ class SelectChipDefaults {
   ///
   /// Blends with the background in dark theme for a harmonious look.
   Color? get selectedChipColor {
-    final baseSelected = _theme.selectedColor;
+    final baseSelected = SelectTheme.selectedColorOf(context);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     if (isDark) {
-      return Color.lerp(_theme.backgroundColor, baseSelected, 0.35);
+      return Color.lerp(
+        SelectTheme.backgroundColorOf(context),
+        baseSelected,
+        0.35,
+      );
     }
     return baseSelected;
   }
@@ -145,8 +147,9 @@ class SelectChipDefaults {
       _textTheme.labelLarge?.copyWith(color: _colorScheme.onSurfaceVariant);
 
   /// Default label style of a selected chip.
-  TextStyle? get selectedLabelStyle =>
-      _textTheme.labelLarge?.copyWith(color: _theme.onSelectedColor);
+  TextStyle? get selectedLabelStyle => _textTheme.labelLarge?.copyWith(
+    color: SelectTheme.onSelectedColorOf(context),
+  );
 
   /// The label color a selected chip needs to stay legible.
   ///

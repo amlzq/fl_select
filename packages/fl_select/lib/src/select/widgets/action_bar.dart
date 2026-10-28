@@ -2,7 +2,6 @@ import 'package:material_ui/material_ui.dart';
 
 import '../../i18n/select_localizations.dart';
 import '../select_theme.dart';
-import '../select_theme_data.dart';
 import 'action_bar_theme.dart';
 import 'skeleton_view.dart';
 
@@ -177,13 +176,12 @@ class SelectActionBarSkeleton extends StatelessWidget {
 }
 
 class _SelectActionBarDefaults extends SelectActionBarTheme {
-  _SelectActionBarDefaults(this.context) : super();
+  const _SelectActionBarDefaults(this.context) : super();
 
   final BuildContext context;
-  late final SelectThemeData _theme = SelectTheme.of(context);
 
   @override
-  Color? get backgroundColor => _theme.backgroundColor;
+  Color? get backgroundColor => SelectTheme.backgroundColorOf(context);
 
   @override
   EdgeInsets? get padding =>

@@ -1,7 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../select_theme.dart';
-import '../select_theme_data.dart';
 import 'constants.dart';
 import 'list_tile_theme.dart';
 
@@ -161,7 +160,6 @@ class _SelectListTileDefaults extends SelectListTileTheme {
   _SelectListTileDefaults(this.context) : super();
 
   final BuildContext context;
-  late final SelectThemeData _theme = SelectTheme.of(context);
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
@@ -175,7 +173,7 @@ class _SelectListTileDefaults extends SelectListTileTheme {
   TextStyle? get sublabelStyle => _textTheme.bodyMedium;
 
   @override
-  Color? get selectedColor => _theme.selectedColor;
+  Color? get selectedColor => SelectTheme.selectedColorOf(context);
 
   @override
   ToggleWidgetBuilder? get radioBuilder => (context, selected) {
@@ -184,7 +182,7 @@ class _SelectListTileDefaults extends SelectListTileTheme {
     if (selected) groupValue = value;
     return IgnorePointer(
       child: RadioTheme(
-        data: _theme.radioTheme,
+        data: SelectTheme.radioThemeOf(context),
         child: RadioGroup<int>(
           groupValue: groupValue,
           onChanged: (int? value) {},
@@ -198,7 +196,7 @@ class _SelectListTileDefaults extends SelectListTileTheme {
   ToggleWidgetBuilder? get checkboxBuilder => (context, checked) {
     return IgnorePointer(
       child: CheckboxTheme(
-        data: _theme.checkboxTheme,
+        data: SelectTheme.checkboxThemeOf(context),
         child: Checkbox(value: checked, onChanged: (bool? newValue) {}),
       ),
     );

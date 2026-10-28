@@ -272,10 +272,7 @@ void main() {
             theme: ThemeData(
               extensions: [
                 PopupSelectButtonTheme(
-                  selectTheme: SelectThemeData(
-                    ThemeData.light(),
-                    selectedColor: teal,
-                  ),
+                  selectTheme: SelectThemeData(selectedColor: teal),
                 ),
               ],
             ),

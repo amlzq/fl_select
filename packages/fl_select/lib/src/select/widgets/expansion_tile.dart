@@ -381,12 +381,11 @@ class _SelectExpansionTileDefaults extends SelectExpansionTileTheme {
   _SelectExpansionTileDefaults(this.context) : super();
 
   final BuildContext context;
-  late final SelectThemeData _theme = SelectTheme.of(context);
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
   TextStyle? get titleStyle => _textTheme.titleSmall;
 
   @override
-  Color? get selectedColor => _theme.selectedColor;
+  Color? get selectedColor => SelectTheme.selectedColorOf(context);
 }

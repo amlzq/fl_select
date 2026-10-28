@@ -401,10 +401,13 @@ class _PanelDecoratedBox extends StatelessWidget {
     final panel = theme.panelTheme;
     final hasDecoration = panel.elevation != null || panel.shape != null;
     if (!hasDecoration) {
-      return ColoredBox(color: theme.backgroundColor, child: child);
+      return ColoredBox(
+        color: SelectTheme.backgroundColorOf(context),
+        child: child,
+      );
     }
     return Material(
-      color: theme.backgroundColor,
+      color: SelectTheme.backgroundColorOf(context),
       elevation: panel.elevation ?? 0,
       shadowColor: panel.shadowColor,
       surfaceTintColor: panel.surfaceTintColor,

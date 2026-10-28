@@ -600,17 +600,16 @@ class _SelectTabBarDefaults extends SelectTabBarTheme {
   _SelectTabBarDefaults(this.context) : super();
 
   final BuildContext context;
-  late final SelectThemeData _theme = SelectTheme.of(context);
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  Color? get backgroundColor => _theme.backgroundColor;
+  Color? get backgroundColor => SelectTheme.backgroundColorOf(context);
 
   @override
   EdgeInsetsGeometry? get padding => EdgeInsets.zero;
 
   @override
-  Color? get selectedColor => _theme.selectedColor;
+  Color? get selectedColor => SelectTheme.selectedColorOf(context);
 
   @override
   TextStyle? get labelStyle => _textTheme.titleSmall;
