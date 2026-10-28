@@ -304,6 +304,8 @@ class SelectThemeData with Diagnosticable {
         b?.rangeSliderTheme,
         t,
       ),
+      // RadioThemeData/CheckboxThemeData.lerp turn two null sides into an empty
+      // (non-null) theme, which would count as "set"; keep them unset.
       radioTheme: a?.radioTheme == null && b?.radioTheme == null
           ? null
           : RadioThemeData.lerp(a?.radioTheme, b?.radioTheme, t),
@@ -344,15 +346,16 @@ class SelectThemeData with Diagnosticable {
     );
   }
 
+  // The deprecated `backgroundColorHigh`, `backgroundColorHighest` and
+  // `onBackgroundColorHighest` are deliberately left out of [==] and
+  // [hashCode]: no widget reads them, so a difference in them alone must not
+  // notify [SelectTheme] dependents.
   @override
   int get hashCode => Object.hashAll([
     selectedColor,
     onSelectedColor,
     backgroundColor,
     onBackgroundColor,
-    backgroundColorHigh,
-    backgroundColorHighest,
-    onBackgroundColorHighest,
     actionBarTheme,
     tabBarTheme,
     sideBarTheme,
@@ -385,9 +388,6 @@ class SelectThemeData with Diagnosticable {
         other.onSelectedColor == onSelectedColor &&
         other.backgroundColor == backgroundColor &&
         other.onBackgroundColor == onBackgroundColor &&
-        other.backgroundColorHigh == backgroundColorHigh &&
-        other.backgroundColorHighest == backgroundColorHighest &&
-        other.onBackgroundColorHighest == onBackgroundColorHighest &&
         other.actionBarTheme == actionBarTheme &&
         other.tabBarTheme == tabBarTheme &&
         other.sideBarTheme == sideBarTheme &&

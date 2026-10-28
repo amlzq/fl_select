@@ -60,6 +60,19 @@ void main() {
   });
 
   group('SelectThemeData equality', () {
+    test('ignores the deprecated Highest colors', () {
+      const a = SelectThemeData(selectedColor: _red);
+      const b = SelectThemeData(
+        selectedColor: _red,
+        backgroundColorHigh: _blue,
+        backgroundColorHighest: _blue,
+        onBackgroundColorHighest: _blue,
+      );
+
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+    });
+
     test('is value-equal over every field', () {
       const a = SelectThemeData(
         selectedColor: _red,
