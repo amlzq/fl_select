@@ -98,10 +98,11 @@ class SelectGridTile extends StatelessWidget {
         : Colors.transparent;
 
     final selectedTextColor = effectiveVariant == SelectGridTileVariant.filled
-        ? (ThemeData.estimateBrightnessForColor(tileBackgroundColor) ==
-                  Brightness.dark
-              ? Colors.white
-              : effectiveSelectedColor)
+        ? (SelectTheme.of(context).onSelectedColor ??
+              (ThemeData.estimateBrightnessForColor(tileBackgroundColor) ==
+                      Brightness.dark
+                  ? Colors.white
+                  : effectiveSelectedColor))
         : effectiveSelectedColor;
 
     final effectiveTextColor = enabled

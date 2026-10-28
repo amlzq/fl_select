@@ -5,6 +5,7 @@ import 'package:material_ui/material_ui.dart';
 import '../constants.dart';
 import '../select_delegate.dart';
 import '../select_entry.dart';
+import '../select_theme.dart';
 import 'chip.dart';
 import 'constants.dart';
 import 'custom_range_host.dart';
@@ -215,6 +216,7 @@ class _SelectWrapViewState extends State<SelectWrapView> with CustomRangeHost {
     final selectedTextColor = SelectChipDefaults.selectedTextColor(
       effectiveVariant,
       effectiveSelectedChipColor,
+      onSelectedColor: SelectTheme.of(context).onSelectedColor,
     );
 
     final effectiveLabelStyle =

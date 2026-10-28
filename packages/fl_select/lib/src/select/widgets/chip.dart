@@ -158,13 +158,18 @@ class SelectChipDefaults {
   ///
   /// A [SelectChipVariant.filled] chip paints [selectedChipColor] as its
   /// background, so its label flips between black and white depending on that
-  /// color's brightness. An outlined chip paints it as the label instead.
+  /// color's brightness unless [onSelectedColor] is set. An outlined chip
+  /// paints it as the label instead.
   static Color selectedTextColor(
     SelectChipVariant variant,
-    Color selectedChipColor,
-  ) {
+    Color selectedChipColor, {
+    Color? onSelectedColor,
+  }) {
     if (variant != SelectChipVariant.filled) {
       return selectedChipColor;
+    }
+    if (onSelectedColor != null) {
+      return onSelectedColor;
     }
     return ThemeData.estimateBrightnessForColor(selectedChipColor) ==
             Brightness.dark

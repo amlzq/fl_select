@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 
 import '../constants.dart';
 import '../select_entry.dart';
+import '../select_theme.dart';
 import 'chip.dart';
 import 'chip_bar_theme.dart';
 import 'constants.dart';
@@ -197,6 +198,7 @@ class _SelectChipBarState extends State<SelectChipBar> {
     final selectedTextColor = SelectChipDefaults.selectedTextColor(
       effectiveVariant,
       effectiveSelectedChipColor,
+      onSelectedColor: SelectTheme.of(context).onSelectedColor,
     );
 
     final effectiveLabelStyle =

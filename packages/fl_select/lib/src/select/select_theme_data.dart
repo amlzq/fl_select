@@ -76,7 +76,11 @@ class SelectThemeData with Diagnosticable {
 
   /// Text/icon color used on top of [selectedColor].
   ///
-  /// When null, [ColorScheme.onPrimary] is used.
+  /// Overrides the selected text color of filled grid tiles, field tiles and
+  /// chips, which otherwise pick white or black by background brightness. It
+  /// is applied regardless of the tile or chip color, so pair it with
+  /// `selectedTileColor` / `selectedChipColor` when those are customized.
+  /// When null, [ColorScheme.onPrimary] is used elsewhere.
   final Color? onSelectedColor;
 
   /// Base background color used by the select panel.

@@ -7,6 +7,7 @@ import 'package:material_ui/material_ui.dart';
 
 const _selected = Color(0xFF00AA00);
 const _onBackground = Color(0xFFAA00AA);
+const _onSelected = Color(0xFFFFEE00);
 
 Future<void> _pump(
   WidgetTester tester,
@@ -97,6 +98,65 @@ void main() {
       );
       final scheme = Theme.of(tester.element(find.text('x'))).colorScheme;
       expect(_textColor(tester, 'x'), scheme.primary);
+    });
+  });
+
+  group('onSelectedColor', () {
+    const onSelected = SelectThemeData(onSelectedColor: _onSelected);
+
+    testWidgets('colors selected filled grid tile text', (tester) async {
+      await _pump(
+        tester,
+        onSelected,
+        const SelectGridTile(
+          label: 'x',
+          selected: true,
+          variant: SelectGridTileVariant.filled,
+        ),
+      );
+      expect(_textColor(tester, 'x'), _onSelected);
+    });
+
+    testWidgets('does not change outlined grid tile text', (tester) async {
+      const tile = SelectGridTile(
+        label: 'x',
+        selected: true,
+        variant: SelectGridTileVariant.outlined,
+      );
+      await _pump(tester, null, tile);
+      final baseline = _textColor(tester, 'x');
+      await _pump(tester, onSelected, tile);
+      expect(_textColor(tester, 'x'), baseline);
+      expect(baseline, isNot(_onSelected));
+    });
+
+    test('filled chip label uses it over the brightness heuristic', () {
+      expect(
+        SelectChipDefaults.selectedTextColor(
+          SelectChipVariant.filled,
+          Colors.black,
+          onSelectedColor: _onSelected,
+        ),
+        _onSelected,
+      );
+      expect(
+        SelectChipDefaults.selectedTextColor(
+          SelectChipVariant.filled,
+          Colors.black,
+        ),
+        Colors.white,
+      );
+    });
+
+    test('outlined chip label stays the selected chip color', () {
+      expect(
+        SelectChipDefaults.selectedTextColor(
+          SelectChipVariant.outlined,
+          Colors.black,
+          onSelectedColor: _onSelected,
+        ),
+        Colors.black,
+      );
     });
   });
 }

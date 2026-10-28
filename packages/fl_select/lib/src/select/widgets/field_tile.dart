@@ -240,10 +240,11 @@ class _TextField extends StatelessWidget {
         theme.selectedColor ?? defaults.selectedColor!;
     final selectedTextColor = isFilled
         // `tileBackgroundColor` is non-null exactly when `isFilled` is true.
-        ? (ThemeData.estimateBrightnessForColor(tileBackgroundColor!) ==
-                  Brightness.dark
-              ? Colors.white
-              : effectiveSelectedColor)
+        ? (SelectTheme.of(context).onSelectedColor ??
+              (ThemeData.estimateBrightnessForColor(tileBackgroundColor!) ==
+                      Brightness.dark
+                  ? Colors.white
+                  : effectiveSelectedColor))
         : effectiveSelectedColor;
     final effectiveColor = selected ? selectedTextColor : effectiveTextColor;
 
