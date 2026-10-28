@@ -223,9 +223,10 @@ under a category used to raise an `ArgumentError` (`parentId: ''` did not match
 `'c1'`). Its `parentId` is now derived, so such a tree simply works; to keep
 asserting an invalid tree, set a wrong non-empty `parentId` explicitly.
 
-Passing `parentId` explicitly is **deprecated** in favour of the derived form
-and will be removed in a future minor version, at which point the tree
-structure becomes the only source of the parent link.
+Passing `parentId` explicitly is **discouraged** in favour of the derived form.
+It is not deprecated and is not scheduled for removal: the field is still what
+the controller uses to look entries up, and an explicit value is validated
+against the tree.
 
 ### The entry tree is no longer parameterized by `E`
 

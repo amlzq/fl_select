@@ -1,5 +1,7 @@
 ## Next
 
+- **BREAKING** remove the named constructors deprecated in 0.15.0: `SelectTextEntry.id`, `SelectTextEntry.name`, `SelectTextEntry.children`, `SelectChildEntry.empty`, `SelectChildEntry.children` and `SelectCategoryEntry.children`. Use the plain constructors instead; `parentId` is derived from the tree structure when the entries are bound ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#named-constructors-converge-on-the-plain-constructors)).
+
 - **BREAKING** `SelectThemeData` now holds only overrides: it is `const`, takes no `ThemeData`, and `selectedColor`, `onSelectedColor`, `backgroundColor`, `onBackgroundColor`, `radioTheme` and `checkboxTheme` are nullable. A value left unset is resolved from the Material theme when the widget builds (`SelectTheme.selectedColorOf`, `backgroundColorOf`, `radioThemeOf`, ...), so defaults follow a light/dark switch instead of being captured when the data was built. `SelectThemeData.fallback` and `.raw` are removed ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#selectthemedata-holds-only-overrides)).
 
 - **BUGFIX** `SelectTheme.merge` now keeps an ambient value that the merged data leaves unset: component themes merge field by field, and a color or `radioTheme` / `checkboxTheme` is replaced only when the merged data sets it.
@@ -38,7 +40,7 @@
 
 - **IMPROVEMENT** `SelectCategoryEntry` no longer includes `name` in its identity.
 
-- **DEPRECATION** passing `parentId` explicitly is deprecated in favour of the derived form ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#parentid-is-derived-from-the-tree-structure)).
+- **IMPROVEMENT** passing `parentId` explicitly is discouraged in favour of the derived form ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#parentid-is-derived-from-the-tree-structure)).
 
 - **DEPRECATION** the named constructors that only spared the `parentId` boilerplate converge on the plain constructors ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#named-constructors-converge-on-the-plain-constructors)).
 

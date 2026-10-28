@@ -16,8 +16,7 @@ class SelectUtils {
   /// Two flags control the behaviour:
   ///
   /// - [overwrite] — when `true`, every descendant's `parentId` is replaced by
-  ///   the id of the node it actually sits under. The `.children` factory
-  ///   constructors use this mode because for them the tree shape is
+  ///   the id of the node it actually sits under, because the tree shape is
   ///   authoritative. When `false`, only descendants whose `parentId` is
   ///   **empty** are filled in: an explicitly authored `parentId` is preserved
   ///   so that one contradicting the tree still surfaces through
@@ -137,8 +136,7 @@ class SelectUtils {
   /// Only empty `parentId` values are filled in: entries that already carry an
   /// explicit link are returned unchanged, and custom [SelectEntry] subclasses
   /// that are not [SelectChildEntry] are left untouched (they have nowhere to
-  /// store a parent link — build those with the `.children` factory
-  /// constructors instead). This makes an omitted `parentId` legal without
+  /// store a parent link). This makes an omitted `parentId` legal without
   /// weakening `SelectController.validateEntries` for explicitly authored
   /// links.
   ///
