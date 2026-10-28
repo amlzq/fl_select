@@ -180,6 +180,9 @@ class SelectSideBarTheme with Diagnosticable {
         b?.indicatorPadding,
         t,
       ),
+      indicatorAnimationDuration: t < 0.5
+          ? a?.indicatorAnimationDuration
+          : b?.indicatorAnimationDuration,
     );
   }
 

@@ -164,7 +164,8 @@ class _SelectOverlayHostState extends State<SelectOverlayHost> {
   ///
   /// The overlay is inserted into the [Overlay] above the trigger's route, so
   /// it cannot inherit a [SelectTheme] wrapped around the trigger — the
-  /// resolved theme is provided here instead. When the trigger resolved no
+  /// resolved theme is provided here instead, merged over any [SelectTheme]
+  /// the overlay does inherit so values it leaves unset are kept. When the trigger resolved no
   /// theme, the panel falls back to a theme derived from the ambient
   /// [ThemeData].
   Widget _themedPanel() {
@@ -176,6 +177,6 @@ class _SelectOverlayHostState extends State<SelectOverlayHost> {
     if (selectTheme == null) {
       return panel;
     }
-    return SelectTheme(data: selectTheme, child: panel);
+    return SelectTheme.merge(data: selectTheme, child: panel);
   }
 }

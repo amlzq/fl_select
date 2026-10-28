@@ -143,6 +143,9 @@ class SelectTabBarTheme with Diagnosticable {
         t,
       ),
       indicatorSize: t < 0.5 ? a?.indicatorSize : b?.indicatorSize,
+      indicatorAnimationDuration: t < 0.5
+          ? a?.indicatorAnimationDuration
+          : b?.indicatorAnimationDuration,
     );
   }
 

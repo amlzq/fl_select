@@ -82,8 +82,8 @@ class SelectActionBarTheme with Diagnosticable {
     return SelectActionBarTheme(
       backgroundColor: Color.lerp(a?.backgroundColor, b?.backgroundColor, t),
       padding: EdgeInsets.lerp(a?.padding, b?.padding, t),
-      resetFlex: a?.resetFlex ?? b?.resetFlex ?? 1.toInt(),
-      applyFlex: a?.applyFlex ?? b?.applyFlex ?? 1.toInt(),
+      resetFlex: t < 0.5 ? a?.resetFlex : b?.resetFlex,
+      applyFlex: t < 0.5 ? a?.applyFlex : b?.applyFlex,
       resetButtonStyle: ButtonStyle.lerp(
         a?.resetButtonStyle,
         b?.resetButtonStyle,
