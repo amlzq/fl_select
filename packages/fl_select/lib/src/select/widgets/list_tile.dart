@@ -162,10 +162,11 @@ class _SelectListTileDefaults extends SelectListTileTheme {
 
   final BuildContext context;
   late final SelectThemeData _theme = SelectTheme.of(context);
+  late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  Color? get textColor => _theme.onBackgroundColorHighest;
+  Color? get textColor => _colorScheme.onSurfaceVariant;
 
   @override
   TextStyle? get labelStyle => _textTheme.bodyLarge;

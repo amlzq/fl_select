@@ -10,8 +10,7 @@ const _legacyTerminalColor = Color(0xFF445566);
 
 /// The ambient defaults the ramp falls back to when nothing overrides them.
 final _defaultStartColor = SelectThemeData(ThemeData.light()).backgroundColor;
-final _defaultEndColor = SelectThemeData(ThemeData.light())
-    .backgroundColorHighest;
+final _defaultEndColor = ThemeData.light().colorScheme.surfaceContainer;
 
 /// `Region` -> `East` -> `Shanghai`/`Hangzhou` spans three levels: the sidebar
 /// (level 0), the children column (level 1) and the grandchildren column

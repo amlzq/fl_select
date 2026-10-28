@@ -784,7 +784,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final background = SelectThemeData(ThemeData.light()).backgroundColor;
-    final end = SelectThemeData(ThemeData.light()).backgroundColorHighest;
+    final end = ThemeData.light().colorScheme.surfaceContainer;
 
     // The sidebar paints the ramp start flush against the cascade, so the first
     // column takes the next step of the same ramp rather than repeating the

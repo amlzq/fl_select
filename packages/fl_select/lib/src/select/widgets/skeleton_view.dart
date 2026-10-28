@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:material_ui/material_ui.dart';
 
-import '../select_theme.dart';
+import 'skeleton_view_theme.dart';
 
 /// A shimmering wrapper used for loading skeleton UIs.
 ///
@@ -127,7 +127,8 @@ class SkeletonTile extends StatelessWidget {
 
   /// The fill color of the placeholder tile.
   ///
-  /// If null, [SelectThemeData.backgroundColorHigh] is used.
+  /// If null, [SelectSkeletonViewTheme.color] is used, then
+  /// [ColorScheme.surfaceContainerLow].
   final Color? color;
 
   /// A border to draw around the placeholder tile.
@@ -175,9 +176,23 @@ class SkeletonTile extends StatelessWidget {
         decoration: BoxDecoration(
           border: border,
           borderRadius: borderRadius,
-          color: color ?? SelectTheme.of(context).backgroundColorHigh,
+          color:
+              color ??
+              SelectSkeletonViewTheme.of(context).color ??
+              _SelectSkeletonViewDefaults(context).color!,
         ),
       ),
     );
   }
+}
+
+/// The values the skeleton placeholders fall back to when neither their props
+/// nor the merged [SelectSkeletonViewTheme] provide them.
+class _SelectSkeletonViewDefaults extends SelectSkeletonViewTheme {
+  const _SelectSkeletonViewDefaults(this.context) : super();
+
+  final BuildContext context;
+
+  @override
+  Color? get color => Theme.of(context).colorScheme.surfaceContainerLow;
 }

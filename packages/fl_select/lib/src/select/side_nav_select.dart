@@ -601,7 +601,9 @@ class SideNavSelectState extends State<SideNavSelect> {
         controller?.realSelectedCategories ?? <SelectEntry>{};
 
     final categoryBackgroundColor = theme.backgroundColor;
-    final terminalBackgroundColor = theme.backgroundColorHigh;
+    final terminalBackgroundColor = SelectSideBarTheme.resolveSelectedTileColor(
+      context,
+    );
 
     final effectiveSelectedColor = theme.selectedColor;
 

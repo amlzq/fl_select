@@ -7,14 +7,33 @@ import '../select_theme.dart';
 /// shared by `CascadingSelect` and the `SelectCascadingLayout` branch of the
 /// category containers).
 ///
-/// The theme owns the **end** of the background ramp only. Its start is the
-/// surface the host already painted behind the first column — the panel
-/// background by default, the sidebar in `CascadingSelect` — so it is not a
-/// style knob: the host that paints that surface passes it through
-/// `CascadingView.startBackgroundColor`.
+/// The theme describes the two ends of the cascading background ramp, which the
+/// levels in between interpolate over.
+///
+/// A host that paints the first level itself owns the start of the ramp: the
+/// start must match the surface painted behind the first column, or a seam
+/// shows between them. `CascadingSelect` therefore ignores
+/// [startBackgroundColor] and takes its sidebar's background
+/// ([SelectSideBarTheme.backgroundColor]) instead. [startBackgroundColor] is for
+/// a `CascadingView` used on its own, where no host paints that surface.
 @immutable
 class SelectCascadingViewTheme with Diagnosticable {
-  const SelectCascadingViewTheme({this.endBackgroundColor});
+  const SelectCascadingViewTheme({
+    this.startBackgroundColor,
+    this.endBackgroundColor,
+  });
+
+  /// The background color of the first level, i.e. the start of the cascading
+  /// background ramp.
+  ///
+  /// Keep it equal to the surface the view sits on, otherwise a seam shows
+  /// between that surface and the first column. A `startBackgroundColor`
+  /// passed to the cascading view wins over this theme; when both are null,
+  /// [SelectThemeData.backgroundColor] is used.
+  ///
+  /// Hosts that paint the first level themselves (`CascadingSelect`, whose
+  /// sidebar is that level) ignore this value.
+  final Color? startBackgroundColor;
 
   /// The background color of the deepest level, i.e. the end of the cascading
   /// background ramp.
@@ -25,14 +44,18 @@ class SelectCascadingViewTheme with Diagnosticable {
   /// clamps to this color, and the selected item of a column is painted with
   /// the next level's color.
   ///
-  /// When null, [SelectThemeData.backgroundColorHighest] is used; an
+  /// When null, [ColorScheme.surfaceContainer] is used; an
   /// `endBackgroundColor` passed explicitly to the cascading view wins over
   /// this theme.
   final Color? endBackgroundColor;
 
   /// Returns a copy of this theme with the given fields replaced.
-  SelectCascadingViewTheme copyWith({Color? endBackgroundColor}) {
+  SelectCascadingViewTheme copyWith({
+    Color? startBackgroundColor,
+    Color? endBackgroundColor,
+  }) {
     return SelectCascadingViewTheme(
+      startBackgroundColor: startBackgroundColor ?? this.startBackgroundColor,
       endBackgroundColor: endBackgroundColor ?? this.endBackgroundColor,
     );
   }
@@ -44,6 +67,7 @@ class SelectCascadingViewTheme with Diagnosticable {
       return this;
     }
     return SelectCascadingViewTheme(
+      startBackgroundColor: other.startBackgroundColor ?? startBackgroundColor,
       endBackgroundColor: other.endBackgroundColor ?? endBackgroundColor,
     );
   }
@@ -63,6 +87,11 @@ class SelectCascadingViewTheme with Diagnosticable {
       return a;
     }
     return SelectCascadingViewTheme(
+      startBackgroundColor: Color.lerp(
+        a?.startBackgroundColor,
+        b?.startBackgroundColor,
+        t,
+      ),
       endBackgroundColor: Color.lerp(
         a?.endBackgroundColor,
         b?.endBackgroundColor,
@@ -72,7 +101,7 @@ class SelectCascadingViewTheme with Diagnosticable {
   }
 
   @override
-  int get hashCode => endBackgroundColor.hashCode;
+  int get hashCode => Object.hash(startBackgroundColor, endBackgroundColor);
 
   @override
   bool operator ==(Object other) {
@@ -83,6 +112,7 @@ class SelectCascadingViewTheme with Diagnosticable {
       return false;
     }
     return other is SelectCascadingViewTheme &&
+        other.startBackgroundColor == startBackgroundColor &&
         other.endBackgroundColor == endBackgroundColor;
   }
 }

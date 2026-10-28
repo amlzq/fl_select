@@ -47,7 +47,7 @@ CascadingSelectDelegate(
 );
 ```
 
-`errorBuilder` takes only `(Object error, StackTrace? stackTrace)` — there is no `context` parameter and no reload callback. The default skeletons are painted with `SelectThemeData.backgroundColorHigh`; pass `skeletonBuilder` (a `WidgetBuilder`) to replace them wholesale.
+`errorBuilder` takes only `(Object error, StackTrace? stackTrace)` — there is no `context` parameter and no reload callback. The default skeletons are painted with `SelectSkeletonViewTheme.color` (default `ColorScheme.surfaceContainerLow`); pass `skeletonBuilder` (a `WidgetBuilder`) to replace them wholesale.
 
 ## Initial selection (async restore)
 

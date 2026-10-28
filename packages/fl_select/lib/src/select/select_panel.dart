@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
@@ -207,6 +209,8 @@ class _SelectPanelState extends State<SelectPanel> {
     final delegateRangeSliderTheme = widget.delegate.rangeSliderTheme;
     final delegateWrapViewTheme = widget.delegate.wrapViewTheme;
     final delegateCascadingViewTheme = widget.delegate.cascadingViewTheme;
+    final delegateSkeletonViewTheme = widget.delegate.skeletonViewTheme;
+    final delegateCounterTheme = widget.delegate.counterTheme;
     // Deprecated bridge: `chipBarTheme` used to style the wrap view as well.
     // Mapping it into the wrap view's own theme here — as the lowest-priority
     // layer — keeps that styling working while letting the wrap view resolve
@@ -261,6 +265,12 @@ class _SelectPanelState extends State<SelectPanel> {
       cascadingViewTheme: delegateCascadingViewTheme == null
           ? null
           : baseTheme.cascadingViewTheme.merge(delegateCascadingViewTheme),
+      skeletonViewTheme: delegateSkeletonViewTheme == null
+          ? null
+          : baseTheme.skeletonViewTheme.merge(delegateSkeletonViewTheme),
+      counterTheme: delegateCounterTheme == null
+          ? null
+          : baseTheme.counterTheme.merge(delegateCounterTheme),
     );
 
     return SelectTheme(

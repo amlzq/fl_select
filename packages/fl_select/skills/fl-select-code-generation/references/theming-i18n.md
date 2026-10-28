@@ -20,9 +20,9 @@ Delegates carry the styling. Quick path: `selectedColor` / `onSelectedColor`; fi
 | `cascadingViewTheme` | End of the cascading background ramp (`CascadingSelectDelegate` / a category using `SelectCascadingLayout`) |
 | `panelTheme` | Panel background decoration (dialog/sheet panel) |
 
-The same fields exist on `SelectThemeData` for app-wide styling, where a delegate's own value wins. `SelectThemeData` additionally carries the color fields (`selectedColor` / `onSelectedColor`, `backgroundColor` / `onBackgroundColor`, `backgroundColorHigh` / `backgroundColorHighest` / `onBackgroundColorHighest`) and `radioTheme` / `checkboxTheme` (`RadioThemeData` / `CheckboxThemeData`), which are global-only — per delegate you replace those controls with `radioBuilder` / `checkboxBuilder` instead.
+The same fields exist on `SelectThemeData` for app-wide styling, where a delegate's own value wins. `SelectThemeData` additionally carries the color fields (`selectedColor` / `onSelectedColor`, `backgroundColor` / `onBackgroundColor`) and `radioTheme` / `checkboxTheme` (`RadioThemeData` / `CheckboxThemeData`), which are global-only — per delegate you replace those controls with `radioBuilder` / `checkboxBuilder` instead.
 
-The cascade's background ramp is styled by `cascadingViewTheme` (`SelectCascadingViewTheme.endBackgroundColor`, defaulting to `SelectThemeData.backgroundColorHighest`). Only its end is a theme field: the ramp's start is the surface the host already painted behind the first column (the panel background, or the sidebar in `CascadingSelect`), so it stays seamless instead of being restyled. The category level of that ramp is the sidebar (`sideBarTheme`).
+The cascade's background ramp is styled by `cascadingViewTheme` (`SelectCascadingViewTheme.endBackgroundColor`, defaulting to `ColorScheme.surfaceContainer`). `startBackgroundColor` exists for a standalone `CascadingView`; `CascadingSelect` ignores it and starts from `SelectSideBarTheme.backgroundColor`. Keep the start equal to the surface the view sits on: the ramp's start is the surface the host already painted behind the first column (the panel background, or the sidebar in `CascadingSelect`), so it stays seamless instead of being restyled. The category level of that ramp is the sidebar (`sideBarTheme`).
 
 ```dart
 ListSelectDelegate(

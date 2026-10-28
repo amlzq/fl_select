@@ -42,6 +42,9 @@ class SelectSideBarTheme with Diagnosticable {
   final TextStyle? selectedLabelStyle;
 
   /// Overrides the default value of the selected tile color.
+  ///
+  /// `SideNavSelect` also paints its content pane with this color so the
+  /// selected category merges into it; see [resolveSelectedTileColor].
   final Color? selectedTileColor;
 
   /// Overrides the default value of the indicator color used by the sidebar.
@@ -107,6 +110,20 @@ class SelectSideBarTheme with Diagnosticable {
     return theme.sideBarTheme.backgroundColor ??
         fallback ??
         theme.backgroundColor;
+  }
+
+  /// Resolves the surface that the selected category merges into.
+  ///
+  /// `SideNavSelect` paints the selected category tile and the content pane next
+  /// to it with this one color, so the selected tile reads as part of the pane.
+  /// Both read it through here, which is what keeps them in agreement: set
+  /// [selectedTileColor] and the pane follows.
+  ///
+  /// The ambient [SelectThemeData.sideBarTheme] wins, then
+  /// [ColorScheme.surfaceContainerLow].
+  static Color resolveSelectedTileColor(BuildContext context) {
+    return SelectTheme.of(context).sideBarTheme.selectedTileColor ??
+        Theme.of(context).colorScheme.surfaceContainerLow;
   }
 
   /// Returns a new theme where non-null fields from [other] override the

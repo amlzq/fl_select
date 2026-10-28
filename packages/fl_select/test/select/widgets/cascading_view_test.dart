@@ -138,9 +138,9 @@ Widget _viewHarness({
 /// column — is always [_endColor].
 ///
 /// Which step a column takes depends on `backgroundColorOffset`: the default `0`
-/// puts the first column on the leftmost surface — the ramp start, which is not
-/// themeable, so a bare [CascadingView] starts from the panel background
-/// ([_panelStartColor]) — while `1` puts it one step in, as the sidebar hosts
+/// puts the first column on the leftmost surface — the ramp start, which a bare
+/// [CascadingView] takes from the panel background ([_panelStartColor]) unless
+/// the theme sets it — while `1` puts it one step in, as the sidebar hosts
 /// do.
 const _endColor = Color(0xFF506070);
 const _overrideStartColor = Color(0xFF607080);
@@ -238,6 +238,39 @@ void main() {
 
       expect(_columnColors(tester), contains(_overrideFirstColumnColor));
       expect(_columnColors(tester), isNot(contains(_overrideStartColor)));
+    });
+
+    testWidgets('takes the ramp start from the theme', (tester) async {
+      await tester.pumpWidget(
+        _viewHarness(
+          theme: const SelectCascadingViewTheme(
+            startBackgroundColor: _overrideStartColor,
+            endBackgroundColor: _overrideEndColor,
+          ),
+          backgroundColorOffset: 1,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(_columnColors(tester), contains(_overrideFirstColumnColor));
+    });
+
+    testWidgets('a start passed to the view wins over the theme', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _viewHarness(
+          theme: const SelectCascadingViewTheme(
+            startBackgroundColor: _endColor,
+            endBackgroundColor: _overrideEndColor,
+          ),
+          startBackgroundColor: _overrideStartColor,
+          backgroundColorOffset: 1,
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(_columnColors(tester), contains(_overrideFirstColumnColor));
     });
 
     testWidgets('an end passed to the view wins over the theme', (

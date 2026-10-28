@@ -443,11 +443,12 @@ class _SelectRangeSliderDefaults extends SelectRangeSliderTheme {
   final BuildContext context;
 
   late final SelectThemeData _theme = SelectTheme.of(context);
+  late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
   TextStyle? get endLabelStyle => _textTheme.bodyMedium?.copyWith(
-    color: _theme.onBackgroundColorHighest.withValues(alpha: 0.7),
+    color: _colorScheme.onSurfaceVariant.withValues(alpha: 0.7),
   );
 
   @override
@@ -468,11 +469,11 @@ class _SelectRangeSliderDefaults extends SelectRangeSliderTheme {
     if (isDark) {
       return Color.lerp(
         _theme.backgroundColor,
-        _theme.backgroundColorHighest,
+        _colorScheme.surfaceContainer,
         0.5,
       );
     }
-    return Color.lerp(_theme.onBackgroundColorHighest, Colors.white, 0.8);
+    return Color.lerp(_colorScheme.onSurfaceVariant, Colors.white, 0.8);
   }
 
   @override

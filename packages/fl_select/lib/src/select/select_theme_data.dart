@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -5,6 +7,7 @@ import 'select_panel_theme.dart';
 import 'widgets/action_bar_theme.dart';
 import 'widgets/cascading_view_theme.dart';
 import 'widgets/chip_bar_theme.dart';
+import 'widgets/counter_theme.dart';
 import 'widgets/expansion_tile_theme.dart';
 import 'widgets/field_tile_theme.dart';
 import 'widgets/grid_tile_theme.dart';
@@ -12,6 +15,7 @@ import 'widgets/list_tile_theme.dart';
 import 'widgets/range_slider_theme.dart';
 import 'widgets/search_bar_theme.dart';
 import 'widgets/side_bar_theme.dart';
+import 'widgets/skeleton_view_theme.dart';
 import 'widgets/tab_bar_theme.dart';
 import 'widgets/wrap_view_theme.dart';
 
@@ -29,8 +33,17 @@ class SelectThemeData with Diagnosticable {
     Color? onSelectedColor,
     Color? backgroundColor,
     Color? onBackgroundColor,
+    @Deprecated(
+      'No longer read by select widgets. Use SelectSideBarTheme.selectedTileColor and SelectSkeletonViewTheme.color instead.',
+    )
     Color? backgroundColorHigh,
+    @Deprecated(
+      'No longer read by select widgets. Use the tile, chip, range slider and cascading view themes\' own colors instead.',
+    )
     Color? backgroundColorHighest,
+    @Deprecated(
+      'No longer read by select widgets. Use the tile, chip, range slider and counter themes\' own colors instead.',
+    )
     Color? onBackgroundColorHighest,
     SelectActionBarTheme? actionBarTheme,
     SelectTabBarTheme? tabBarTheme,
@@ -47,6 +60,8 @@ class SelectThemeData with Diagnosticable {
     SelectSearchBarTheme? searchBarTheme,
     SelectWrapViewTheme? wrapViewTheme,
     SelectCascadingViewTheme? cascadingViewTheme,
+    SelectSkeletonViewTheme? skeletonViewTheme,
+    SelectCounterTheme? counterTheme,
   }) {
     return SelectThemeData.raw(
       selectedColor: selectedColor ?? theme.colorScheme.primary,
@@ -76,6 +91,8 @@ class SelectThemeData with Diagnosticable {
       wrapViewTheme: wrapViewTheme ?? const SelectWrapViewTheme(),
       cascadingViewTheme:
           cascadingViewTheme ?? const SelectCascadingViewTheme(),
+      skeletonViewTheme: skeletonViewTheme ?? const SelectSkeletonViewTheme(),
+      counterTheme: counterTheme ?? const SelectCounterTheme(),
     );
   }
 
@@ -103,6 +120,8 @@ class SelectThemeData with Diagnosticable {
     required this.searchBarTheme,
     required this.wrapViewTheme,
     required this.cascadingViewTheme,
+    required this.skeletonViewTheme,
+    required this.counterTheme,
   });
 
   /// Convenience factory that uses [theme] defaults without any overrides.
@@ -121,12 +140,21 @@ class SelectThemeData with Diagnosticable {
   final Color onBackgroundColor;
 
   /// A higher-contrast background color used for elevated sections.
+  @Deprecated(
+    'No longer read by select widgets. Use SelectSideBarTheme.selectedTileColor and SelectSkeletonViewTheme.color instead.',
+  )
   final Color backgroundColorHigh;
 
   /// The highest-contrast background color (often used for nested levels).
+  @Deprecated(
+    'No longer read by select widgets. Use the tile, chip, range slider and cascading view themes\' own colors instead.',
+  )
   final Color backgroundColorHighest;
 
   /// Text/icon color used on top of [backgroundColorHighest].
+  @Deprecated(
+    'No longer read by select widgets. Use the tile, chip, range slider and counter themes\' own colors instead.',
+  )
   final Color onBackgroundColorHighest;
 
   /// Theme overrides for the action bar widget.
@@ -173,14 +201,29 @@ class SelectThemeData with Diagnosticable {
   /// Theme overrides for the cascading view (multi-column item area).
   final SelectCascadingViewTheme cascadingViewTheme;
 
+  /// Theme overrides for the loading skeleton placeholders.
+  final SelectSkeletonViewTheme skeletonViewTheme;
+
+  /// Theme overrides for the spin-box counter.
+  final SelectCounterTheme counterTheme;
+
   /// Creates a copy of this theme data with the given fields replaced.
   SelectThemeData copyWith({
     Color? selectedColor,
     Color? onSelectedColor,
     Color? backgroundColor,
     Color? onBackgroundColor,
+    @Deprecated(
+      'No longer read by select widgets. Use SelectSideBarTheme.selectedTileColor and SelectSkeletonViewTheme.color instead.',
+    )
     Color? backgroundColorHigh,
+    @Deprecated(
+      'No longer read by select widgets. Use the tile, chip, range slider and cascading view themes\' own colors instead.',
+    )
     Color? backgroundColorHighest,
+    @Deprecated(
+      'No longer read by select widgets. Use the tile, chip, range slider and counter themes\' own colors instead.',
+    )
     Color? onBackgroundColorHighest,
     SelectActionBarTheme? actionBarTheme,
     SelectTabBarTheme? tabBarTheme,
@@ -197,6 +240,8 @@ class SelectThemeData with Diagnosticable {
     SelectSearchBarTheme? searchBarTheme,
     SelectWrapViewTheme? wrapViewTheme,
     SelectCascadingViewTheme? cascadingViewTheme,
+    SelectSkeletonViewTheme? skeletonViewTheme,
+    SelectCounterTheme? counterTheme,
   }) {
     return SelectThemeData.raw(
       selectedColor: selectedColor ?? this.selectedColor,
@@ -223,6 +268,8 @@ class SelectThemeData with Diagnosticable {
       searchBarTheme: searchBarTheme ?? this.searchBarTheme,
       wrapViewTheme: wrapViewTheme ?? this.wrapViewTheme,
       cascadingViewTheme: cascadingViewTheme ?? this.cascadingViewTheme,
+      skeletonViewTheme: skeletonViewTheme ?? this.skeletonViewTheme,
+      counterTheme: counterTheme ?? this.counterTheme,
     );
   }
 
@@ -322,6 +369,16 @@ class SelectThemeData with Diagnosticable {
         b?.cascadingViewTheme,
         t,
       ),
+      skeletonViewTheme: SelectSkeletonViewTheme.lerp(
+        a?.skeletonViewTheme,
+        b?.skeletonViewTheme,
+        t,
+      ),
+      counterTheme: SelectCounterTheme.lerp(
+        a?.counterTheme,
+        b?.counterTheme,
+        t,
+      ),
     );
   }
 
@@ -349,6 +406,8 @@ class SelectThemeData with Diagnosticable {
     searchBarTheme,
     wrapViewTheme,
     cascadingViewTheme,
+    skeletonViewTheme,
+    counterTheme,
   ]);
 
   @override
@@ -381,6 +440,8 @@ class SelectThemeData with Diagnosticable {
         other.panelTheme == panelTheme &&
         other.searchBarTheme == searchBarTheme &&
         other.wrapViewTheme == wrapViewTheme &&
-        other.cascadingViewTheme == cascadingViewTheme;
+        other.cascadingViewTheme == cascadingViewTheme &&
+        other.skeletonViewTheme == skeletonViewTheme &&
+        other.counterTheme == counterTheme;
   }
 }

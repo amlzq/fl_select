@@ -101,7 +101,7 @@ ListSelectDelegate(
 
 **Styling** (details in [theming-i18n.md](theming-i18n.md))
 - `selectedColor`, `onSelectedColor`.
-- Fine-grained `*Theme` fields: `actionBarTheme`, `searchBarTheme`, `tabBarTheme`, `sideBarTheme`, `expansionTileTheme`, `listTileTheme`, `gridTileTheme`, `fieldTileTheme`, `rangeSliderTheme`, `wrapViewTheme` (wrapping chip view), `chipBarTheme` (single-row chip bar), `cascadingViewTheme` (end of the cascading background ramp), `panelTheme` (panel background decoration). More colors: `backgroundColor` / `onBackgroundColor`, `backgroundColorHigh` / `backgroundColorHighest` / `onBackgroundColorHighest`. Every theme field also exists on `SelectThemeData` for app-wide styling (a delegate's value wins).
+- Fine-grained `*Theme` fields: `actionBarTheme`, `searchBarTheme`, `tabBarTheme`, `sideBarTheme`, `expansionTileTheme`, `listTileTheme`, `gridTileTheme`, `fieldTileTheme`, `rangeSliderTheme`, `wrapViewTheme` (wrapping chip view), `chipBarTheme` (single-row chip bar), `cascadingViewTheme` (end of the cascading background ramp), `panelTheme` (panel background decoration). Also `skeletonViewTheme` (placeholder fill) and `counterTheme` (spin-box value colors). More colors: `backgroundColor` / `onBackgroundColor`; `backgroundColorHigh` / `backgroundColorHighest` / `onBackgroundColorHighest` are deprecated and no longer read. Every theme field also exists on `SelectThemeData` for app-wide styling (a delegate's value wins).
 
 `GridSelectDelegate` additionally requires `crossAxisCount`.
 

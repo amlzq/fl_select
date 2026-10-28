@@ -2,6 +2,54 @@
 
 ## MIGRATE TO Next
 
+### `backgroundColorHigh`, `backgroundColorHighest` and `onBackgroundColorHighest`
+
+`SelectThemeData.backgroundColorHigh`, `backgroundColorHighest` and
+`onBackgroundColorHighest`, and the `SelectDelegate` fields of the same names,
+are deprecated. They are **no longer read by any widget**, so setting them has
+no effect: they were one global knob shared by unrelated widgets, and each of
+those widgets now has its own theme. Every default is unchanged
+(`ColorScheme.surfaceContainerLow`, `surfaceContainer` and `onSurfaceVariant`).
+
+| Was used for | Now styled through |
+| --- | --- |
+| Tile and chip text (`onBackgroundColorHighest`) | `textColor` of `SelectListTileTheme`, `SelectGridTileTheme`, `SelectFieldTileTheme`; `labelStyle` of `SelectWrapViewTheme` / `SelectChipBarTheme` |
+| Tile and chip fill (`backgroundColorHighest`) | `tileColor` of the grid and field tile themes; `chipColor` of the wrap view and chip bar themes |
+| Range slider track and end labels | `inactiveTrackColor`, `endLabelStyle` of `SelectRangeSliderTheme` |
+| Counter value text (`onBackgroundColorHighest`) | `SelectCounterTheme.valueColor` (new) |
+| Cascade end color (`backgroundColorHighest`) | `SelectCascadingViewTheme.endBackgroundColor` |
+| Skeleton fill (`backgroundColorHigh`) | `SelectSkeletonViewTheme.color` (new) |
+| `SideNavSelect` content pane and selected category (`backgroundColorHigh`) | `SelectSideBarTheme.selectedTileColor` |
+
+Because one value no longer restyles every consumer, set each theme you want to
+change. A delegate carries the same themes, so the fields move over one for one:
+
+```diff
+  ListSelectDelegate(
+-   backgroundColorHighest: Colors.blueGrey.shade50,
+-   onBackgroundColorHighest: Colors.blueGrey.shade900,
++   listTileTheme: SelectListTileTheme(
++     tileColor: Colors.blueGrey.shade50,
++     textColor: Colors.blueGrey.shade900,
++   ),
++   skeletonViewTheme: SelectSkeletonViewTheme(color: Colors.blueGrey.shade50),
+    entriesLoader: ...,
+  );
+```
+
+The same themes can be set once for every select through the ambient
+`SelectTheme` (`SelectThemeData(theme, listTileTheme: ..., skeletonViewTheme: ...)`);
+a delegate's theme is merged on top of it.
+
+`SideNavSelect` paints its content pane with the same
+`SelectSideBarTheme.selectedTileColor`, so the selected category merges into the
+pane; set it once and both follow.
+
+`SelectCascadingViewTheme` also gains `startBackgroundColor`, for a standalone
+`CascadingView`. Keep it equal to the surface the view sits on, or a seam shows
+next to the first column. `CascadingSelect` ignores it: its sidebar paints the
+first level, so the ramp starts from `SelectSideBarTheme.backgroundColor`.
+
 ### `material_ui`
 
 The select widgets now render through the standalone
@@ -82,7 +130,8 @@ layer below the themes, so existing code holds its colors until they are removed
 
 #### The ramp start is not themeable
 
-`SelectCascadingViewTheme` has no start color. The start describes the surface
+`SelectCascadingViewTheme` had no start color in 0.16.0 (it gained
+`startBackgroundColor` afterwards, for a standalone `CascadingView`). The start describes the surface
 the host already painted behind the first column, rather than restyling it: the
 panel background (`SelectThemeData.backgroundColor`) by default, and the sidebar
 in `CascadingSelect`, which is flush against the first column and therefore

@@ -332,10 +332,11 @@ class _SelectFieldTileDefaults extends SelectFieldTileTheme {
   final BuildContext context;
 
   late final SelectThemeData _theme = SelectTheme.of(context);
+  late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  Color? get textColor => _theme.onBackgroundColorHighest;
+  Color? get textColor => _colorScheme.onSurfaceVariant;
 
   @override
   TextStyle? get labelStyle => _textTheme.bodyLarge;
@@ -349,7 +350,7 @@ class _SelectFieldTileDefaults extends SelectFieldTileTheme {
   /// Default [tileColor] based on [variant].
   ///
   /// Mirrors [_SelectGridTileDefaults.tileColor]: a light tint derived from
-  /// [SelectThemeData.onBackgroundColorHighest] toward white in light theme;
+  /// [ColorScheme.onSurfaceVariant] toward white in light theme;
   /// blends surface colors for harmony in dark theme.
   @override
   Color? get tileColor {
@@ -360,14 +361,14 @@ class _SelectFieldTileDefaults extends SelectFieldTileTheme {
           : 0.35;
       return Color.lerp(
         _theme.backgroundColor,
-        _theme.backgroundColorHighest,
+        _colorScheme.surfaceContainer,
         blendAmount,
       );
     }
     if (variant == SelectFieldTileVariant.outlined) {
-      return Color.lerp(_theme.onBackgroundColorHighest, Colors.white, 0.55);
+      return Color.lerp(_colorScheme.onSurfaceVariant, Colors.white, 0.55);
     }
-    return Color.lerp(_theme.onBackgroundColorHighest, Colors.white, 0.8);
+    return Color.lerp(_colorScheme.onSurfaceVariant, Colors.white, 0.8);
   }
 
   /// Default [selectedTileColor].

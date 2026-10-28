@@ -43,6 +43,32 @@ void main() {
       expect(const SelectCascadingViewTheme().merge(base), base);
     });
 
+    test('start color takes part in copyWith, merge, equality and lerp', () {
+      const theme = SelectCascadingViewTheme(startBackgroundColor: _e1);
+
+      expect(
+        theme.copyWith(startBackgroundColor: _e2).startBackgroundColor,
+        _e2,
+      );
+      expect(theme.copyWith(endBackgroundColor: _e2).startBackgroundColor, _e1);
+      expect(
+        theme.merge(const SelectCascadingViewTheme(endBackgroundColor: _e2)),
+        const SelectCascadingViewTheme(
+          startBackgroundColor: _e1,
+          endBackgroundColor: _e2,
+        ),
+      );
+      expect(theme, isNot(const SelectCascadingViewTheme()));
+      expect(
+        SelectCascadingViewTheme.lerp(
+          theme,
+          const SelectCascadingViewTheme(startBackgroundColor: _e2),
+          0.5,
+        ).startBackgroundColor,
+        Color.lerp(_e1, _e2, 0.5),
+      );
+    });
+
     test('lerp interpolates the end', () {
       final lerped = SelectCascadingViewTheme.lerp(
         const SelectCascadingViewTheme(endBackgroundColor: _e1),

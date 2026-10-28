@@ -103,13 +103,14 @@ class SelectChipDefaults {
   final SelectChipVariant? variant;
 
   late final SelectThemeData _theme = SelectTheme.of(context);
+  late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
 
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   /// Default chip color based on [variant].
   ///
   /// Mirrors the grid tile defaults: a light tint derived from
-  /// [SelectThemeData.onBackgroundColorHighest] toward white in light theme;
+  /// [ColorScheme.onSurfaceVariant] toward white in light theme;
   /// blends surface colors for harmony in dark theme.
   Color? get chipColor {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -117,14 +118,14 @@ class SelectChipDefaults {
       final blendAmount = variant == SelectChipVariant.outlined ? 0.2 : 0.35;
       return Color.lerp(
         _theme.backgroundColor,
-        _theme.backgroundColorHighest,
+        _colorScheme.surfaceContainer,
         blendAmount,
       );
     }
     if (variant == SelectChipVariant.outlined) {
-      return Color.lerp(_theme.onBackgroundColorHighest, Colors.white, 0.55);
+      return Color.lerp(_colorScheme.onSurfaceVariant, Colors.white, 0.55);
     }
-    return Color.lerp(_theme.onBackgroundColorHighest, Colors.white, 0.8);
+    return Color.lerp(_colorScheme.onSurfaceVariant, Colors.white, 0.8);
   }
 
   /// Default selected chip color.
@@ -141,7 +142,7 @@ class SelectChipDefaults {
 
   /// Default label style of an unselected chip.
   TextStyle? get labelStyle =>
-      _textTheme.labelLarge?.copyWith(color: _theme.onBackgroundColorHighest);
+      _textTheme.labelLarge?.copyWith(color: _colorScheme.onSurfaceVariant);
 
   /// Default label style of a selected chip.
   TextStyle? get selectedLabelStyle =>

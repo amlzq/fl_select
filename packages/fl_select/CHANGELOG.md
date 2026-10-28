@@ -1,5 +1,9 @@
 ## Next
 
+- **FEATURE** add `SelectSkeletonViewTheme` (`skeletonViewTheme`) for the loading placeholders, `SelectCounterTheme` (`counterTheme`) for the spin-box counter, and `SelectCascadingViewTheme.startBackgroundColor` for a standalone `CascadingView` (`CascadingSelect` still takes its start from `SelectSideBarTheme.backgroundColor`).
+
+- **BREAKING** `SelectThemeData.backgroundColorHigh`, `backgroundColorHighest` and `onBackgroundColorHighest`, and the matching `SelectDelegate` fields, are deprecated and **no longer have any effect**: no widget reads them, so existing values are silently ignored. Each consumer now defaults to the `ColorScheme` directly and is styled through its own theme ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#backgroundcolorhigh-backgroundcolorhighest-and-onbackgroundcolorhighest)).
+
 - **BREAKING** render through the standalone `material_ui` package instead of Flutter's bundled Material library, and raise the minimum SDK to Dart ^3.13.5 / Flutter 3.47 ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#material_ui)).
 
 - **IMPROVEMENT** adopt Flutter 3.47's replacements for the deprecated members the panel used — `ScrollView.cacheExtent` becomes `scrollCacheExtent` and `SizeTransition.axisAlignment` becomes `alignment`.

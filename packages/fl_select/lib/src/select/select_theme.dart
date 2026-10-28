@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'package:material_ui/material_ui.dart';
 
 import 'select_theme_data.dart';
@@ -52,6 +54,8 @@ class SelectTheme extends InheritedTheme {
           searchBarTheme: data.searchBarTheme,
           wrapViewTheme: data.wrapViewTheme,
           cascadingViewTheme: data.cascadingViewTheme,
+          skeletonViewTheme: data.skeletonViewTheme,
+          counterTheme: data.counterTheme,
         );
         return SelectTheme(
           key: key,

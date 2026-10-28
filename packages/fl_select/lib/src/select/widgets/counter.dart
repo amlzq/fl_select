@@ -4,7 +4,9 @@ import 'package:material_ui/material_ui.dart';
 import '../../i18n/select_localizations.dart';
 import '../select_entry.dart';
 import '../select_theme.dart';
+import '../select_theme_data.dart';
 import 'constants.dart';
+import 'counter_theme.dart';
 import 'skeleton_view.dart';
 
 /// A spin-box counter for a single-valued [SelectCategoryEntry].
@@ -130,6 +132,8 @@ class _SelectCounterState extends State<SelectCounter> {
   @override
   Widget build(BuildContext context) {
     final theme = SelectTheme.of(context);
+    final counterTheme = theme.counterTheme;
+    final defaults = _SelectCounterDefaults(context);
     final showTitle = widget.showTitle && widget.category?.name != null;
     final labels = _items.map((e) => e.name ?? '').toList();
 
@@ -160,8 +164,9 @@ class _SelectCounterState extends State<SelectCounter> {
                 decrementIcon: widget.decrementIcon,
                 incrementIcon: widget.incrementIcon,
                 valueColor: _index == 0
-                    ? theme.onBackgroundColorHighest
-                    : theme.selectedColor,
+                    ? counterTheme.valueColor ?? defaults.valueColor!
+                    : counterTheme.selectedValueColor ??
+                          defaults.selectedValueColor!,
                 onChanged: _onSpinChanged,
               ),
             ),
@@ -316,4 +321,21 @@ class SelectCounterSkeleton extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The values the counter falls back to when the merged [SelectCounterTheme]
+/// does not provide them.
+class _SelectCounterDefaults extends SelectCounterTheme {
+  _SelectCounterDefaults(this.context) : super();
+
+  final BuildContext context;
+
+  late final SelectThemeData _theme = SelectTheme.of(context);
+  late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
+
+  @override
+  Color? get valueColor => _colorScheme.onSurfaceVariant;
+
+  @override
+  Color? get selectedValueColor => _theme.selectedColor;
 }

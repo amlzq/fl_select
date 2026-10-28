@@ -163,13 +163,14 @@ class _SelectGridTileDefaults extends SelectGridTileTheme {
   final bool isSelected;
 
   late final SelectThemeData _theme = SelectTheme.of(context);
+  late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
   Color? get selectedColor => _theme.selectedColor;
 
   @override
-  Color? get textColor => _theme.onBackgroundColorHighest;
+  Color? get textColor => _colorScheme.onSurfaceVariant;
 
   @override
   TextStyle? get labelStyle => _textTheme.bodyLarge;
@@ -187,14 +188,14 @@ class _SelectGridTileDefaults extends SelectGridTileTheme {
           : 0.35;
       return Color.lerp(
         _theme.backgroundColor,
-        _theme.backgroundColorHighest,
+        _colorScheme.surfaceContainer,
         blendAmount,
       );
     }
     if (variant == SelectGridTileVariant.outlined) {
-      return Color.lerp(_theme.onBackgroundColorHighest, Colors.white, 0.55);
+      return Color.lerp(_colorScheme.onSurfaceVariant, Colors.white, 0.55);
     }
-    return Color.lerp(_theme.onBackgroundColorHighest, Colors.white, 0.8);
+    return Color.lerp(_colorScheme.onSurfaceVariant, Colors.white, 0.8);
   }
 
   @override

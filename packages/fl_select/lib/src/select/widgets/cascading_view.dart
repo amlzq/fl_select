@@ -95,8 +95,9 @@ class CascadingView extends StatefulWidget {
   /// flush against the first column and therefore shares this color — passes
   /// `1` and the view only ramps from it.
   ///
-  /// Leaving it null accepts [SelectThemeData.backgroundColor] — the panel
-  /// background the category containers render on.
+  /// Leaving it null accepts [SelectCascadingViewTheme.startBackgroundColor],
+  /// then [SelectThemeData.backgroundColor] — the panel background the
+  /// category containers render on.
   ///
   /// The levels in between are interpolated from the depth of [category]: the
   /// ramp spans the category level plus the deepest descendant level, and a
@@ -127,7 +128,7 @@ class CascadingView extends StatefulWidget {
   /// background ramp.
   ///
   /// When null, [SelectCascadingViewTheme.endBackgroundColor] is used if set,
-  /// otherwise [SelectThemeData.backgroundColorHighest].
+  /// otherwise [ColorScheme.surfaceContainer].
   final Color? endBackgroundColor;
 
   /// Whether to expand the first branch that still has children when nothing
@@ -245,7 +246,10 @@ class _CascadingViewState extends State<CascadingView> {
   List<Color> _resolveBackgroundColors(BuildContext context) {
     final theme = SelectTheme.of(context);
     final defaults = _SelectCascadingViewDefaults(context);
-    final startColor = widget.startBackgroundColor ?? theme.backgroundColor;
+    final startColor =
+        widget.startBackgroundColor ??
+        theme.cascadingViewTheme.startBackgroundColor ??
+        theme.backgroundColor;
     final endColor =
         widget.endBackgroundColor ??
         theme.cascadingViewTheme.endBackgroundColor ??
@@ -729,12 +733,11 @@ class _CascadingViewState extends State<CascadingView> {
 /// Only the end is fallible: the start is the surface the host already painted
 /// behind the first column, so it is resolved where that surface is known.
 class _SelectCascadingViewDefaults extends SelectCascadingViewTheme {
-  _SelectCascadingViewDefaults(this.context) : super();
+  const _SelectCascadingViewDefaults(this.context) : super();
 
   final BuildContext context;
 
-  late final SelectThemeData _theme = SelectTheme.of(context);
-
   @override
-  Color? get endBackgroundColor => _theme.backgroundColorHighest;
+  Color? get endBackgroundColor =>
+      Theme.of(context).colorScheme.surfaceContainer;
 }

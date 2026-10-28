@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'package:material_ui/material_ui.dart';
 
 import '../i18n/select_localizations.dart';
@@ -98,13 +100,13 @@ typedef SelectItemBuilder = Widget? Function(
 /// under `src/select/`.
 abstract class SelectDelegate {
   SelectDelegate({
-    this.selectionMode = SelectionMode.single,
     SelectEntries? entries,
     this.entriesLoader,
     SelectEntries? selectedEntries,
     this.selectedEntriesLoader,
     SelectEntries? resetEntries,
     this.resetEntriesLoader,
+    this.selectionMode = SelectionMode.single,
     this.actionBarBuilder,
     this.selectedColor,
     this.onSelectedColor,
@@ -130,6 +132,8 @@ abstract class SelectDelegate {
     this.chipBarTheme,
     this.wrapViewTheme,
     this.cascadingViewTheme,
+    this.skeletonViewTheme,
+    this.counterTheme,
     this.rangeSliderTheme,
     this.panelTheme,
     this.skeletonBuilder,
@@ -234,12 +238,21 @@ abstract class SelectDelegate {
   final Color? onBackgroundColor;
 
   /// A higher-contrast background color used for elevated sections.
+  @Deprecated(
+    'No longer read by select widgets. Use SelectSideBarTheme.selectedTileColor and SelectSkeletonViewTheme.color instead.',
+  )
   final Color? backgroundColorHigh;
 
   /// The highest-contrast background color (often used for nested levels).
+  @Deprecated(
+    'No longer read by select widgets. Use the tile, chip, range slider and cascading view themes\' own colors instead.',
+  )
   final Color? backgroundColorHighest;
 
   /// Text/icon color used on top of [backgroundColorHighest].
+  @Deprecated(
+    'No longer read by select widgets. Use the tile, chip, range slider and counter themes\' own colors instead.',
+  )
   final Color? onBackgroundColorHighest;
 
   final String? resetText;
@@ -313,6 +326,12 @@ abstract class SelectDelegate {
   /// [SelectCascadingLayout] in the tab-nav, side-nav and expandable selects.
   final SelectCascadingViewTheme? cascadingViewTheme;
 
+  /// Theme overrides for the loading skeleton placeholders.
+  final SelectSkeletonViewTheme? skeletonViewTheme;
+
+  /// Theme overrides for the spin-box counter.
+  final SelectCounterTheme? counterTheme;
+
   /// Theme overrides for range sliders in range fields.
   final SelectRangeSliderTheme? rangeSliderTheme;
 
@@ -380,13 +399,13 @@ class ListSelectDelegate extends SelectDelegate {
     this.checkboxBuilder,
     this.radioBuilder,
     this.itemBuilder,
-    super.selectionMode,
     super.entries,
     super.entriesLoader,
     super.selectedEntries,
     super.selectedEntriesLoader,
     super.resetEntries,
     super.resetEntriesLoader,
+    super.selectionMode,
     super.actionBarBuilder,
     super.selectedColor,
     super.onSelectedColor,
@@ -412,6 +431,8 @@ class ListSelectDelegate extends SelectDelegate {
     super.chipBarTheme,
     super.wrapViewTheme,
     super.cascadingViewTheme,
+    super.skeletonViewTheme,
+    super.counterTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -487,13 +508,13 @@ class GridSelectDelegate extends SelectDelegate {
     this.checkboxBuilder,
     this.radioBuilder,
     this.itemBuilder,
-    super.selectionMode,
     super.entries,
     super.entriesLoader,
     super.selectedEntries,
     super.selectedEntriesLoader,
     super.resetEntries,
     super.resetEntriesLoader,
+    super.selectionMode,
     super.actionBarBuilder,
     super.selectedColor,
     super.onSelectedColor,
@@ -519,6 +540,8 @@ class GridSelectDelegate extends SelectDelegate {
     super.chipBarTheme,
     super.wrapViewTheme,
     super.cascadingViewTheme,
+    super.skeletonViewTheme,
+    super.counterTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -609,13 +632,13 @@ class WrapSelectDelegate extends SelectDelegate {
     this.spacing = 0.0,
     this.runSpacing = 0.0,
     this.itemBuilder,
-    super.selectionMode,
     super.entries,
     super.entriesLoader,
     super.selectedEntries,
     super.selectedEntriesLoader,
     super.resetEntries,
     super.resetEntriesLoader,
+    super.selectionMode,
     super.actionBarBuilder,
     super.selectedColor,
     super.onSelectedColor,
@@ -641,6 +664,8 @@ class WrapSelectDelegate extends SelectDelegate {
     super.chipBarTheme,
     super.wrapViewTheme,
     super.cascadingViewTheme,
+    super.skeletonViewTheme,
+    super.counterTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -721,13 +746,13 @@ class CascadingSelectDelegate extends SelectDelegate {
     this.checkboxBuilder,
     this.radioBuilder,
     this.isScrollable = false,
-    super.selectionMode,
     super.entries,
     super.entriesLoader,
     super.selectedEntries,
     super.selectedEntriesLoader,
     super.resetEntries,
     super.resetEntriesLoader,
+    super.selectionMode,
     super.actionBarBuilder,
     super.selectedColor,
     super.onSelectedColor,
@@ -753,6 +778,8 @@ class CascadingSelectDelegate extends SelectDelegate {
     super.chipBarTheme,
     super.wrapViewTheme,
     super.cascadingViewTheme,
+    super.skeletonViewTheme,
+    super.counterTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -839,13 +866,13 @@ class TabNavSelectDelegate extends SelectDelegate {
     this.radioBuilder,
     this.itemBuilder,
     this.isScrollable = false,
-    super.selectionMode,
     super.entries,
     super.entriesLoader,
     super.selectedEntries,
     super.selectedEntriesLoader,
     super.resetEntries,
     super.resetEntriesLoader,
+    super.selectionMode,
     super.actionBarBuilder,
     super.selectedColor,
     super.onSelectedColor,
@@ -871,6 +898,8 @@ class TabNavSelectDelegate extends SelectDelegate {
     super.chipBarTheme,
     super.wrapViewTheme,
     super.cascadingViewTheme,
+    super.skeletonViewTheme,
+    super.counterTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -962,13 +991,13 @@ class SideNavSelectDelegate extends SelectDelegate {
     this.defaultLayout,
     this.itemBuilder,
     this.isScrollable = true,
-    super.selectionMode,
     super.entries,
     super.entriesLoader,
     super.selectedEntries,
     super.selectedEntriesLoader,
     super.resetEntries,
     super.resetEntriesLoader,
+    super.selectionMode,
     super.actionBarBuilder,
     super.selectedColor,
     super.onSelectedColor,
@@ -994,6 +1023,8 @@ class SideNavSelectDelegate extends SelectDelegate {
     super.chipBarTheme,
     super.wrapViewTheme,
     super.cascadingViewTheme,
+    super.skeletonViewTheme,
+    super.counterTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
@@ -1080,13 +1111,13 @@ class ExpandableSelectDelegate extends SelectDelegate {
     this.radioBuilder,
     this.checkboxBuilder,
     this.itemBuilder,
-    super.selectionMode,
     super.entries,
     super.entriesLoader,
     super.selectedEntries,
     super.selectedEntriesLoader,
     super.resetEntries,
     super.resetEntriesLoader,
+    super.selectionMode,
     super.actionBarBuilder,
     super.selectedColor,
     super.onSelectedColor,
@@ -1112,6 +1143,8 @@ class ExpandableSelectDelegate extends SelectDelegate {
     super.chipBarTheme,
     super.wrapViewTheme,
     super.cascadingViewTheme,
+    super.skeletonViewTheme,
+    super.counterTheme,
     super.rangeSliderTheme,
     super.panelTheme,
     super.skeletonBuilder,
