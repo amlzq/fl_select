@@ -493,7 +493,7 @@ PopupSelectBar(
 );
 ```
 
-**Globally** — wrap `SelectTheme` above the `Navigator` so inline views, dialogs, sheets and popup overlays are all covered. Delegate-level theme fields merge field-wise on top of it; use `SelectTheme.merge` to layer a partial `SelectThemeData` over the ambient one:
+**Globally** — wrap `SelectTheme` above the `Navigator` so inline views, dialogs, sheets and popup overlays are all covered. Delegate-level theme fields merge field-wise on top of it; use `SelectTheme.merge` to layer a partial `SelectThemeData` over the ambient one: (see [docs/theme.md](docs/theme.md) for which token reaches which widget)
 
 ```dart
 MaterialApp(
