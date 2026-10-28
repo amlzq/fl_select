@@ -143,8 +143,11 @@ class SelectChipDefaults {
   }
 
   /// Default label style of an unselected chip.
-  TextStyle? get labelStyle =>
-      _textTheme.labelLarge?.copyWith(color: _colorScheme.onSurfaceVariant);
+  TextStyle? get labelStyle => _textTheme.labelLarge?.copyWith(
+    color:
+        SelectTheme.of(context).onBackgroundColor ??
+        _colorScheme.onSurfaceVariant,
+  );
 
   /// Default label style of a selected chip.
   TextStyle? get selectedLabelStyle => _textTheme.labelLarge?.copyWith(

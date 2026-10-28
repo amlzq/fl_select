@@ -168,7 +168,9 @@ class _SelectGridTileDefaults extends SelectGridTileTheme {
   Color? get selectedColor => SelectTheme.selectedColorOf(context);
 
   @override
-  Color? get textColor => _colorScheme.onSurfaceVariant;
+  Color? get textColor =>
+      SelectTheme.of(context).onBackgroundColor ??
+      _colorScheme.onSurfaceVariant;
 
   @override
   TextStyle? get labelStyle => _textTheme.bodyLarge;

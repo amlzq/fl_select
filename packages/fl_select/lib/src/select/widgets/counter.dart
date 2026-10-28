@@ -332,7 +332,9 @@ class _SelectCounterDefaults extends SelectCounterTheme {
   late final ColorScheme _colorScheme = Theme.of(context).colorScheme;
 
   @override
-  Color? get valueColor => _colorScheme.onSurfaceVariant;
+  Color? get valueColor =>
+      SelectTheme.of(context).onBackgroundColor ??
+      _colorScheme.onSurfaceVariant;
 
   @override
   Color? get selectedValueColor => SelectTheme.selectedColorOf(context);

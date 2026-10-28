@@ -335,7 +335,9 @@ class _SelectFieldTileDefaults extends SelectFieldTileTheme {
   late final TextTheme _textTheme = Theme.of(context).textTheme;
 
   @override
-  Color? get textColor => _colorScheme.onSurfaceVariant;
+  Color? get textColor =>
+      SelectTheme.of(context).onBackgroundColor ??
+      _colorScheme.onSurfaceVariant;
 
   @override
   TextStyle? get labelStyle => _textTheme.bodyLarge;

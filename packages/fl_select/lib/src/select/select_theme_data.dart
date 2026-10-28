@@ -86,7 +86,10 @@ class SelectThemeData with Diagnosticable {
 
   /// Text/icon color used on top of [backgroundColor].
   ///
-  /// When null, [ColorScheme.onSurface] is used.
+  /// Sets the default unselected text color of the list, grid and field tiles,
+  /// the chips and the counter. When null, [ColorScheme.onSurfaceVariant] is
+  /// used there ([SelectTheme.onBackgroundColorOf] itself resolves to
+  /// [ColorScheme.onSurface]).
   final Color? onBackgroundColor;
 
   /// A higher-contrast background color used for elevated sections.
@@ -125,6 +128,7 @@ class SelectThemeData with Diagnosticable {
   /// Theme overrides for range field tiles.
   final SelectFieldTileTheme fieldTileTheme;
 
+  /// Theme overrides for expansion tiles.
   final SelectExpansionTileTheme expansionTileTheme;
 
   /// Theme overrides for the range slider widget.
