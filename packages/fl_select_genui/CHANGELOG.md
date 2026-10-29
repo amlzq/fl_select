@@ -1,4 +1,4 @@
-## Next
+## 0.7.0
 
 - **IMPROVEMENT** Bump fl_select to `^0.17.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#fl_select-bumped-to-0170)).
 
@@ -62,7 +62,7 @@
 
 - **FEATURE** Add `FlSelectCatalogItems.selectFilter`: renders a fl_select panel (`SelectView`) from an agent-authored JSON payload — delegate (list / grid / flatten / cascading), `selectionMode`, `crossAxisCount`, and an `entries` tree in the `SelectEntryCodec` format.
 
-- **FEATURE** Add selection write-back: user selections are stored at `<id>.value` as a  `Map<String, List<String>>` (same shape as fl_select's `toQueryMap()`).
+- **FEATURE** Add selection write-back: user selections are stored at `<id>.value` as a `Map<String, List<String>>` (same shape as fl_select's `toQueryMap()`).
 
 - **FEATURE** Add `FlSelectCatalogItems.systemPromptFragment` and catalog registration helpers (`.asCatalog()` / `.all`).
 

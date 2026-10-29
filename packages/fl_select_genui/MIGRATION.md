@@ -1,18 +1,18 @@
 # Migration Guide
 
-## MIGRATE TO Next
+## MIGRATE TO 0.7.0
 
 ### fl_select bumped to `^0.17.0`
 
 fl_select 0.17.0 is a breaking release, but none of it reaches this package's
 API, so no source changes are needed:
 
-| fl_select 0.17.0 change | Why fl_select_genui is unaffected |
-| --- | --- |
-| **BREAKING** the named entry constructors deprecated in 0.15.0 are removed | the catalog decodes payloads with the plain constructors |
-| **BREAKING** `SelectThemeData` holds only overrides and resolves the rest from the Material theme | the catalog reads no theme field; theming stays with the host app |
-| **BREAKING** `backgroundColorHigh` / `backgroundColorHighest` / `onBackgroundColorHighest` have no effect | the catalog paints no colors |
-| **BREAKING** rendering moves to `material_ui`, minimum SDK Dart ^3.13.5 | already followed, see below |
+| fl_select 0.17.0 change                                                                                   | Why fl_select_genui is unaffected                                 |
+| --------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| **BREAKING** the named entry constructors deprecated in 0.15.0 are removed                                | the catalog decodes payloads with the plain constructors          |
+| **BREAKING** `SelectThemeData` holds only overrides and resolves the rest from the Material theme         | the catalog reads no theme field; theming stays with the host app |
+| **BREAKING** `backgroundColorHigh` / `backgroundColorHighest` / `onBackgroundColorHighest` have no effect | the catalog paints no colors                                      |
+| **BREAKING** rendering moves to `material_ui`, minimum SDK Dart ^3.13.5                                   | already followed, see below                                       |
 
 ### `material_ui`
 
@@ -48,13 +48,13 @@ delegate's background colors into themes and removes the deprecated
 API, so no source changes are needed; the upstream deprecations and removals are
 recorded here rather than in the changelog:
 
-| fl_select 0.16.0 change | Why fl_select_genui is unaffected |
-| --- | --- |
-| **BREAKING** the deprecated `SelectThemeData.chipBarThemeData` getter is removed | the catalog renders `SelectView` and reads no theme field; theming stays with the host app |
-| **DEPRECATION** `CascadingSelectDelegate.categoryBackgroundColor` / `terminalBackgroundColor` give way to the matching `SelectSideBarTheme` / `SelectCascadingViewTheme` fields | the catalog builds the delegate from payload fields only and paints no colors |
-| **FEATURE** `SelectCascadingLayout` (a `category` `layout` kind of `"cascading"`) is added | additive — it is documented below, and a payload written before it decodes unchanged |
-| **BUGFIX** the cascading delegate pre-selects the focused category's "Any", and keeps a branch when its last leaf is deselected | selection happens inside fl_select; the catalog only reads the resulting selection back |
-| **IMPROVEMENT** the category delegates (`tabNav` / `sideNav` / `expandable`) describe the depth of a category's content as decided by its `layout` | delegate routing is unchanged |
+| fl_select 0.16.0 change                                                                                                                                                         | Why fl_select_genui is unaffected                                                          |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| **BREAKING** the deprecated `SelectThemeData.chipBarThemeData` getter is removed                                                                                                | the catalog renders `SelectView` and reads no theme field; theming stays with the host app |
+| **DEPRECATION** `CascadingSelectDelegate.categoryBackgroundColor` / `terminalBackgroundColor` give way to the matching `SelectSideBarTheme` / `SelectCascadingViewTheme` fields | the catalog builds the delegate from payload fields only and paints no colors              |
+| **FEATURE** `SelectCascadingLayout` (a `category` `layout` kind of `"cascading"`) is added                                                                                      | additive — it is documented below, and a payload written before it decodes unchanged       |
+| **BUGFIX** the cascading delegate pre-selects the focused category's "Any", and keeps a branch when its last leaf is deselected                                                 | selection happens inside fl_select; the catalog only reads the resulting selection back    |
+| **IMPROVEMENT** the category delegates (`tabNav` / `sideNav` / `expandable`) describe the depth of a category's content as decided by its `layout`                              | delegate routing is unchanged                                                              |
 
 ### The `cascading` category layout is now documented as authorable
 
@@ -66,12 +66,21 @@ every kind the codec decodes — `list`, `grid`, `chip`, `counter`, `range` and
 `cascading` — and the shipped skill documents the new one:
 
 ```json
-{"type": "category", "id": "region", "name": "Region",
- "layout": {"kind": "cascading", "isScrollable": true},
- "children": [
-   {"type": "text", "id": "east", "name": "East",
-    "children": [{"type": "text", "id": "sh", "name": "Shanghai"}]},
-   {"type": "text", "id": "west", "name": "West"}]}
+{
+  "type": "category",
+  "id": "region",
+  "name": "Region",
+  "layout": { "kind": "cascading", "isScrollable": true },
+  "children": [
+    {
+      "type": "text",
+      "id": "east",
+      "name": "East",
+      "children": [{ "type": "text", "id": "sh", "name": "Shanghai" }]
+    },
+    { "type": "text", "id": "west", "name": "West" }
+  ]
+}
 ```
 
 `cascading` renders one column per level with no depth limit, so nested
@@ -91,15 +100,15 @@ fl_select 0.15.0 reshapes the entry model, derives the parent links and adds a
 validation pass; none of it leaks into this package's API, so no source changes
 were needed for the model itself:
 
-| fl_select 0.15.0 change | Why fl_select_genui is unaffected |
-| --- | --- |
-| `SelectChildEntry.parentId` is derived from the tree (passing it is deprecated) | the catalog never authors `parentId`: entries come from `SelectEntryCodec.fromJson`, which derives the links itself |
-| the entry tree is no longer parameterized by `E` (`Set<SelectEntry>`, plain `SelectEntry` headers/footers) | the catalog already spells `Set<SelectEntry>`; no entry built here carries an `extra` payload |
-| the named constructors that spared the `parentId` boilerplate converged on the plain constructors | agent payloads are built by the codec, not by these constructors |
-| `SelectCategoryEntry` exposes its `extra` payload; `name` dropped from its identity | the catalog carries no `extra` payload on categories and matches a category by `id` |
-| `findExtrasAtLevel` returns nullable payloads | not referenced |
-| cloning no longer drops entry data; the codec round-trips `headerSelectionMode`/`footerSelectionMode` | additive; a payload written by an earlier version decodes unchanged |
-| the panel resolves its base theme from the ambient `SelectTheme` | the catalog renders `SelectView` directly; panel theming stays with the host app |
+| fl_select 0.15.0 change                                                                                    | Why fl_select_genui is unaffected                                                                                   |
+| ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `SelectChildEntry.parentId` is derived from the tree (passing it is deprecated)                            | the catalog never authors `parentId`: entries come from `SelectEntryCodec.fromJson`, which derives the links itself |
+| the entry tree is no longer parameterized by `E` (`Set<SelectEntry>`, plain `SelectEntry` headers/footers) | the catalog already spells `Set<SelectEntry>`; no entry built here carries an `extra` payload                       |
+| the named constructors that spared the `parentId` boilerplate converged on the plain constructors          | agent payloads are built by the codec, not by these constructors                                                    |
+| `SelectCategoryEntry` exposes its `extra` payload; `name` dropped from its identity                        | the catalog carries no `extra` payload on categories and matches a category by `id`                                 |
+| `findExtrasAtLevel` returns nullable payloads                                                              | not referenced                                                                                                      |
+| cloning no longer drops entry data; the codec round-trips `headerSelectionMode`/`footerSelectionMode`      | additive; a payload written by an earlier version decodes unchanged                                                 |
+| the panel resolves its base theme from the ambient `SelectTheme`                                           | the catalog renders `SelectView` directly; panel theming stays with the host app                                    |
 
 ### Invalid entry trees now surface through the error card
 
@@ -148,13 +157,13 @@ No code changes are required — the skill is additive.
 fl_select 0.13.0 removes and internalizes several symbols; none of them are
 referenced by this package, so no source changes were needed:
 
-| fl_select 0.13.0 change | Why fl_select_genui is unaffected |
-| --- | --- |
+| fl_select 0.13.0 change                                                                        | Why fl_select_genui is unaffected                                                                         |
+| ---------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
 | `FlattenSelectDelegate` removed; `GridSelectDelegate` / `ListSelectDelegate` are flat-only now | every `delegate` token already routes to the single-purpose delegates (see the routing table under 0.1.0) |
-| `SelectItemBuilder` gains `categoryId` and returns `Widget?` | the catalog never passes an `itemBuilder` |
-| Panel widgets internalized (deprecated aliases) | rendering goes through the public entry point `SelectView` only |
-| `SelectListViewState` / `SelectGridViewState` private, `SkeletonBuilder` removed | not referenced |
-| Dart `^3.10.0` / Flutter 3.35.7 minimum | already this package's constraints |
+| `SelectItemBuilder` gains `categoryId` and returns `Widget?`                                   | the catalog never passes an `itemBuilder`                                                                 |
+| Panel widgets internalized (deprecated aliases)                                                | rendering goes through the public entry point `SelectView` only                                           |
+| `SelectListViewState` / `SelectGridViewState` private, `SkeletonBuilder` removed               | not referenced                                                                                            |
+| Dart `^3.10.0` / Flutter 3.35.7 minimum                                                        | already this package's constraints                                                                        |
 
 Agent payloads are unaffected: existing JSON keeps rendering identically.
 
@@ -163,10 +172,10 @@ Agent payloads are unaffected: existing JSON keeps rendering identically.
 The catalog item is renamed to `Select` to reflect that it is a selection
 component, not a filter panel.
 
-| | up to 0.1.0 | Next |
-| --- | --- | --- |
-| Dart getter | `FlSelectCatalogItems.selectFilter` | `FlSelectCatalogItems.select` |
-| payload `type` | `SelectFilter` | `Select` |
+|                | up to 0.1.0                         | Next                          |
+| -------------- | ----------------------------------- | ----------------------------- |
+| Dart getter    | `FlSelectCatalogItems.selectFilter` | `FlSelectCatalogItems.select` |
+| payload `type` | `SelectFilter`                      | `Select`                      |
 
 The old getter and payload type keep working as deprecated aliases; both will
 be removed in a future minor release. Update the agent system prompt to the
@@ -184,15 +193,15 @@ schema `enum` and the system prompt fragment.
 
 ### Delegate token routing
 
-| payload `delegate` | category data | flat data |
-| --- | --- | --- |
-| `tabNav` (new) | `TabNavSelectDelegate` | falls back to `ListSelectDelegate` |
-| `sideNav` (new) | `SideNavSelectDelegate` | falls back to `ListSelectDelegate` |
-| `expandable` (new) | `ExpandableSelectDelegate` | falls back to `ListSelectDelegate` |
-| `grid` | `TabNavSelectDelegate`¹ | `GridSelectDelegate` |
-| `wrap` / `chips` / `flatten` | `SideNavSelectDelegate` | `WrapSelectDelegate` |
-| `list` (default) / unknown | `ExpandableSelectDelegate` | `ListSelectDelegate` |
-| `cascading`² | `CascadingSelectDelegate` | `CascadingSelectDelegate` |
+| payload `delegate`           | category data              | flat data                          |
+| ---------------------------- | -------------------------- | ---------------------------------- |
+| `tabNav` (new)               | `TabNavSelectDelegate`     | falls back to `ListSelectDelegate` |
+| `sideNav` (new)              | `SideNavSelectDelegate`    | falls back to `ListSelectDelegate` |
+| `expandable` (new)           | `ExpandableSelectDelegate` | falls back to `ListSelectDelegate` |
+| `grid`                       | `TabNavSelectDelegate`¹    | `GridSelectDelegate`               |
+| `wrap` / `chips` / `flatten` | `SideNavSelectDelegate`    | `WrapSelectDelegate`               |
+| `list` (default) / unknown   | `ExpandableSelectDelegate` | `ListSelectDelegate`               |
+| `cascading`²                 | `CascadingSelectDelegate`  | `CascadingSelectDelegate`          |
 
 ¹ `crossAxisCount` maps onto the delegate's `defaultLayout` grid.
 ² `cascading` is a multi-level cascade (unlimited depth), not one of the two-level category layouts — it renders both entry-tree shapes natively and ignores `category.layout`.
