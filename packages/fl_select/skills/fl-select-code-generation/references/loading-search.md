@@ -71,7 +71,7 @@ CascadingSelectDelegate(
   searchHintText: 'Search',
   searchDebounceDuration: const Duration(milliseconds: 300),
   searchPredicate: (entry, query) =>
-      entry.name.toLowerCase().contains(query.toLowerCase()),
+      (entry.name ?? '').toLowerCase().contains(query.toLowerCase()),
 );
 ```
 
