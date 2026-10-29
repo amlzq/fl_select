@@ -1,6 +1,6 @@
 # Delegates
 
-A `SelectDelegate` controls both data loading (`entries` directly or `entriesLoader` async) and how the body is rendered. It is passed to every entry point. The seven built-ins are single-purpose by data shape — the delegate and the binding reject the shape they do not support, so a mis-migration surfaces immediately.
+A `SelectDelegate` controls both data loading (`entries` directly or `entriesLoader` async) and how the body is rendered. It is passed to every entry point. The seven built-ins are single-purpose by data shape — the delegate and the binding reject the shape they do not support, so a mismatched delegate surfaces immediately.
 
 **Flat data** — plain top-level entries (`SelectTextEntry` leaf / `SelectRangeEntry`, one level only, no `SelectCategoryEntry`):
 
@@ -8,7 +8,7 @@ A `SelectDelegate` controls both data loading (`entries` directly or `entriesLoa
 | --- | --- |
 | `ListSelectDelegate` | Single-column list. |
 | `GridSelectDelegate` | Grid body (`crossAxisCount` required). |
-| `WrapSelectDelegate` | Wrapable chip bar — the go-to for filter bars. |
+| `WrapSelectDelegate` | Wrappable chip bar — the go-to for filter bars. |
 
 ### Custom item widgets — `itemBuilder`
 
@@ -101,7 +101,7 @@ ListSelectDelegate(
 
 **Styling** (details in [theming-i18n.md](theming-i18n.md))
 - `selectedColor`, `onSelectedColor`.
-- Fine-grained `*Theme` fields: `actionBarTheme`, `searchBarTheme`, `tabBarTheme`, `sideBarTheme`, `expansionTileTheme`, `listTileTheme`, `gridTileTheme`, `fieldTileTheme`, `rangeSliderTheme`, `wrapViewTheme` (wrapping chip view), `chipBarTheme` (single-row chip bar), `cascadingViewTheme` (end of the cascading background ramp), `panelTheme` (panel background decoration). Also `skeletonViewTheme` (placeholder fill) and `counterTheme` (spin-box value colors). More colors: `backgroundColor` / `onBackgroundColor`; `backgroundColorHigh` / `backgroundColorHighest` / `onBackgroundColorHighest` are deprecated and no longer read. Every theme field also exists on `SelectThemeData` for app-wide styling (a delegate's value wins).
+- Fine-grained `*Theme` fields: `actionBarTheme`, `searchBarTheme`, `tabBarTheme`, `sideBarTheme`, `expansionTileTheme`, `listTileTheme`, `gridTileTheme`, `fieldTileTheme`, `rangeSliderTheme`, `wrapViewTheme` (wrapping chip view), `chipBarTheme` (single-row chip bar), `cascadingViewTheme` (end of the cascading background ramp), `panelTheme` (panel background decoration). Also `skeletonViewTheme` (placeholder fill) and `counterTheme` (spin-box value colors). More colors: `backgroundColor` / `onBackgroundColor`; Every theme field also exists on `SelectThemeData` for app-wide styling (a delegate's value wins).
 
 `GridSelectDelegate` additionally requires `crossAxisCount`.
 

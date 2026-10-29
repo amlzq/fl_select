@@ -39,7 +39,7 @@ PopupSelectBar(
 );
 ```
 
-Key parameters: `tabs` / `selectDelegates` (required, lengths must match) · `onApplied` (required, `void Function(PopupTabData, SelectEntries)`) · `onChanged`, `onReset` · `controller` (`PopupSelectController`) · `initialIndex` · `selectTheme` (a `SelectThemeData` applied to every tab's delegate) · `direction` (`PopupSelectDirection.below` / `.above`) · bar styling: `height`, `isScrollable`, `backgroundColor`, `elevation`, `labelColor`, `unselectedLabelColor`, `labelStyle`, `unselectedLabelStyle`, `indicator`, `unselectedIndicator`, `overlayStyle` · overlay lifecycle hooks `onSelectShowed/Hidden/WillShow/WillHide`.
+Key parameters: `tabs` / `selectDelegates` (required, lengths must match) · `onApplied` (required, `void Function(PopupTabData, SelectEntries)`) · `onChanged`, `onReset` · `controller` (`PopupSelectController`) · `initialIndex` · `selectTheme` (a `SelectThemeData` applied to every tab's delegate) · `direction` (`PopupSelectDirection.below` / `.above` / `.adaptive`) · bar styling: `height`, `isScrollable`, `backgroundColor`, `elevation`, `labelColor`, `unselectedLabelColor`, `labelStyle`, `unselectedLabelStyle`, `indicator`, `unselectedIndicator`, `overlayStyle` · overlay lifecycle hooks `onSelectShowed/Hidden/WillShow/WillHide`.
 
 `PopupTab` fields: `label`, `labelLoader` (async label), `child` (fully custom tab), `tag`.
 
@@ -66,6 +66,29 @@ PopupSelectButton.outlined(
 ```
 
 Variants: default constructor (`text` — transparent, no border, like `TextButton`), `.filled(...)`, `.elevated(...)`, `.outlined(...)` (or pass `variant: PopupSelectButtonVariant.text/filled/elevated/outlined`). Other parameters mirror `PopupSelectBar`: `onApplied` (required, `void Function(SelectEntries)`), `onChanged`, `onReset`, `labelLoader`, `icon`, `direction`, `overlayStyle`, and the `onSelect*` lifecycle hooks.
+
+### Overlay placement and style
+
+`PopupSelectBar` and `PopupSelectButton` share two knobs for the dropdown panel:
+
+- `direction` (`PopupSelectDirection`, default `below`) — `below` / `above` always open on that side of the trigger; `adaptive` prefers below and flips above when there is more room there. The panel is clamped horizontally to stay on screen.
+- `overlayStyle` (`SelectOverlayStyle`, all fields optional) — `maxHeightFactor` (panel height as a fraction of the space between the trigger and the screen edge, default `0.7`; only affects scrollable content), `minWidth` (e.g. the trigger's width), `maxWidth`, `barrierColor` (scrim behind the panel, transparent by default, e.g. `Colors.black54`) and `barrierIntercept` (default `true`: tapping the scrim dismisses the panel; `false` lets taps pass through to the widgets below and does not dismiss).
+
+```dart
+PopupSelectButton(
+  label: 'Sort',
+  selectDelegate: ListSelectDelegate(entriesLoader: _fetchSort),
+  direction: PopupSelectDirection.adaptive,
+  overlayStyle: const SelectOverlayStyle(
+    maxHeightFactor: 0.5,
+    minWidth: 240,
+    barrierColor: Colors.black54,
+  ),
+  onApplied: (selected) {},
+);
+```
+
+To style every bar/button at once, set `overlayStyle` on the `PopupSelectBarTheme` / `PopupSelectButtonTheme` extension; a widget's own `overlayStyle` wins. `SelectOverlayStyle.copyWith` derives variants.
 
 ## showSelect — modal dialog
 
