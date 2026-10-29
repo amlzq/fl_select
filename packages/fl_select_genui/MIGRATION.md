@@ -2,6 +2,18 @@
 
 ## MIGRATE TO Next
 
+### fl_select bumped to `^0.17.0`
+
+fl_select 0.17.0 is a breaking release, but none of it reaches this package's
+API, so no source changes are needed:
+
+| fl_select 0.17.0 change | Why fl_select_genui is unaffected |
+| --- | --- |
+| **BREAKING** the named entry constructors deprecated in 0.15.0 are removed | the catalog decodes payloads with the plain constructors |
+| **BREAKING** `SelectThemeData` holds only overrides and resolves the rest from the Material theme | the catalog reads no theme field; theming stays with the host app |
+| **BREAKING** `backgroundColorHigh` / `backgroundColorHighest` / `onBackgroundColorHighest` have no effect | the catalog paints no colors |
+| **BREAKING** rendering moves to `material_ui`, minimum SDK Dart ^3.13.5 | already followed, see below |
+
 ### `material_ui`
 
 fl_select now renders through the standalone

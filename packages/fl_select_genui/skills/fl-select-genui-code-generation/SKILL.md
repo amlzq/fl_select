@@ -19,6 +19,10 @@ agent ──Select payload (JSON)──▶ fl_select panel ──onChanged──
 4. Read the selection back from the GenUI data model at `<id>.value` as a `Map<String, List<String>>` — do not intercept `onChanged` yourself.
 5. Use `SelectEntrySchema.node()` / `.tree()` when you need the JSON Schema of an entry tree, and handle invalid payloads by rendering the inline error card rather than crashing.
 
+## Requirements
+
+Requires `fl_select: ^0.17.0` and `genui: ^0.10.4`. The minimum SDK is Dart ^3.13.5 / Flutter 3.47, because fl_select renders through the standalone `material_ui` package — the host app should import `material_ui` rather than the SDK's Material library so the `MaterialApp` and the rendered select share one Material library. Payloads are unaffected by these versions.
+
 ## Wiring it up
 
 ```dart

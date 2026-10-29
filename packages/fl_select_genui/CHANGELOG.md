@@ -1,5 +1,7 @@
 ## Next
 
+- **IMPROVEMENT** Bump fl_select to `^0.17.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#fl_select-bumped-to-0170)).
+
 - **IMPROVEMENT** Follow fl_select onto the standalone `material_ui` package — add the `material_ui: ^1.6.0` dependency and raise the minimum SDK to Dart ^3.13.5 / Flutter 3.47 ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#material_ui)).
 
 - **IMPROVEMENT** Bump genui to `^0.10.4`.
