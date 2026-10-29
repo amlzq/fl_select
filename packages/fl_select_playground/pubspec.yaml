@@ -1,7 +1,7 @@
 name: fl_select_playground
 description: "Interactive playground for the fl_select package."
 publish_to: "none"
-version: 0.16.0
+version: 0.17.0
 
 environment:
   sdk: ^3.13.5
@@ -16,7 +16,7 @@ dependencies:
     sdk: flutter
   material_ui: ^1.6.0
   intl: ^0.20.3
-  fl_select: ^0.16.0
+  fl_select: ^0.17.0
   package_info_plus: ^10.2.2
 
 dev_dependencies:
@@ -42,4 +42,3 @@ flutter:
           weight: 500
         - asset: assets/fonts/Roboto-Bold.ttf
           weight: 700
-
