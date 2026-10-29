@@ -1,20 +1,20 @@
 ## Next
 
-- **BREAKING** remove the named constructors deprecated in 0.15.0: `SelectTextEntry.id`, `SelectTextEntry.name`, `SelectTextEntry.children`, `SelectChildEntry.empty`, `SelectChildEntry.children` and `SelectCategoryEntry.children`. Use the plain constructors instead; `parentId` is derived from the tree structure when the entries are bound ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#named-constructors-converge-on-the-plain-constructors)).
+- **BREAKING** remove the named entry constructors deprecated in 0.15.0 ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#named-constructors-converge-on-the-plain-constructors)).
 
-- **BREAKING** `SelectThemeData` now holds only overrides: it is `const`, takes no `ThemeData`, and `selectedColor`, `onSelectedColor`, `backgroundColor`, `onBackgroundColor`, `radioTheme` and `checkboxTheme` are nullable. A value left unset is resolved from the Material theme when the widget builds (`SelectTheme.selectedColorOf`, `backgroundColorOf`, `radioThemeOf`, ...), so defaults follow a light/dark switch instead of being captured when the data was built. `SelectThemeData.fallback` and `.raw` are removed ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#selectthemedata-holds-only-overrides)).
+- **BREAKING** `SelectThemeData` now holds only overrides and resolves unset values from the Material theme at build time ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#selectthemedata-holds-only-overrides)).
 
-- **BUGFIX** `SelectTheme.merge` now keeps an ambient value that the merged data leaves unset: component themes merge field by field, and a color or `radioTheme` / `checkboxTheme` is replaced only when the merged data sets it.
+- **BREAKING** `SelectThemeData.backgroundColorHigh`, `backgroundColorHighest` and `onBackgroundColorHighest` (and the matching `SelectDelegate` fields) no longer have any effect ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#backgroundcolorhigh-backgroundcolorhighest-and-onbackgroundcolorhighest)).
 
-- **FEATURE** add `SelectSkeletonViewTheme` (`skeletonViewTheme`) for the loading placeholders, `SelectCounterTheme` (`counterTheme`) for the spin-box counter, and `SelectCascadingViewTheme.startBackgroundColor` for a standalone `CascadingView` (`CascadingSelect` still takes its start from `SelectSideBarTheme.backgroundColor`).
+- **BREAKING** render through the standalone `material_ui` package and raise the minimum SDK to Dart ^3.13.5 / Flutter 3.47 ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#material_ui)).
 
-- **BREAKING** `SelectThemeData.backgroundColorHigh`, `backgroundColorHighest` and `onBackgroundColorHighest`, and the matching `SelectDelegate` fields, are deprecated and **no longer have any effect**: no widget reads them, so existing values are silently ignored. Each consumer now defaults to the `ColorScheme` directly and is styled through its own theme ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#backgroundcolorhigh-backgroundcolorhighest-and-onbackgroundcolorhighest)).
+- **FEATURE** add `SelectSkeletonViewTheme`, `SelectCounterTheme` and `SelectCascadingViewTheme.startBackgroundColor`.
 
-- **BREAKING** render through the standalone `material_ui` package instead of Flutter's bundled Material library, and raise the minimum SDK to Dart ^3.13.5 / Flutter 3.47 ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#material_ui)).
+- **BUGFIX** `SelectTheme.merge` now keeps an ambient value that the merged data leaves unset.
 
-- **IMPROVEMENT** adopt Flutter 3.47's replacements for the deprecated members the panel used — `ScrollView.cacheExtent` becomes `scrollCacheExtent` and `SizeTransition.axisAlignment` becomes `alignment`.
+- **IMPROVEMENT** adopt Flutter 3.47's replacements for the deprecated `cacheExtent` and `axisAlignment` members.
 
-- **IMPROVEMENT** upgrade the shipped agent skill for the Dart Skills CLI 1.0.x: rename it from `fl_select-code-generation` to `fl-select-code-generation` (hyphen-only names, as required by the Agent Skills spec), quote its frontmatter `description`, add the `## Instructions` / `## Guidelines` sections introduced by the 1.0.1 template, and document the 1.0.x `skills get --all` / `--package` invocations in the README.
+- **IMPROVEMENT** upgrade the shipped agent skill for the Dart Skills CLI 1.0.x (renamed to `fl-select-code-generation`).
 
 ## 0.16.0
 
