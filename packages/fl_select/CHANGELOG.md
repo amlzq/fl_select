@@ -1,4 +1,4 @@
-## Next
+## 0.17.0
 
 - **BREAKING** remove the named entry constructors deprecated in 0.15.0 ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#named-constructors-converge-on-the-plain-constructors)).
 

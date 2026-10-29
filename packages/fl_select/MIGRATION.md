@@ -1,6 +1,6 @@
 # Migration Guide
 
-## MIGRATE TO Next
+## MIGRATE TO 0.17.0
 
 ### `SelectThemeData` holds only overrides
 
@@ -36,15 +36,15 @@ no effect: they were one global knob shared by unrelated widgets, and each of
 those widgets now has its own theme. Every default is unchanged
 (`ColorScheme.surfaceContainerLow`, `surfaceContainer` and `onSurfaceVariant`).
 
-| Was used for | Now styled through |
-| --- | --- |
-| Tile and chip text (`onBackgroundColorHighest`) | `textColor` of `SelectListTileTheme`, `SelectGridTileTheme`, `SelectFieldTileTheme`; `labelStyle` of `SelectWrapViewTheme` / `SelectChipBarTheme` |
-| Tile and chip fill (`backgroundColorHighest`) | `tileColor` of the grid and field tile themes; `chipColor` of the wrap view and chip bar themes |
-| Range slider track and end labels | `inactiveTrackColor`, `endLabelStyle` of `SelectRangeSliderTheme` |
-| Counter value text (`onBackgroundColorHighest`) | `SelectCounterTheme.valueColor` (new) |
-| Cascade end color (`backgroundColorHighest`) | `SelectCascadingViewTheme.endBackgroundColor` |
-| Skeleton fill (`backgroundColorHigh`) | `SelectSkeletonViewTheme.color` (new) |
-| `SideNavSelect` content pane and selected category (`backgroundColorHigh`) | `SelectSideBarTheme.selectedTileColor` |
+| Was used for                                                               | Now styled through                                                                                                                                |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Tile and chip text (`onBackgroundColorHighest`)                            | `textColor` of `SelectListTileTheme`, `SelectGridTileTheme`, `SelectFieldTileTheme`; `labelStyle` of `SelectWrapViewTheme` / `SelectChipBarTheme` |
+| Tile and chip fill (`backgroundColorHighest`)                              | `tileColor` of the grid and field tile themes; `chipColor` of the wrap view and chip bar themes                                                   |
+| Range slider track and end labels                                          | `inactiveTrackColor`, `endLabelStyle` of `SelectRangeSliderTheme`                                                                                 |
+| Counter value text (`onBackgroundColorHighest`)                            | `SelectCounterTheme.valueColor` (new)                                                                                                             |
+| Cascade end color (`backgroundColorHighest`)                               | `SelectCascadingViewTheme.endBackgroundColor`                                                                                                     |
+| Skeleton fill (`backgroundColorHigh`)                                      | `SelectSkeletonViewTheme.color` (new)                                                                                                             |
+| `SideNavSelect` content pane and selected category (`backgroundColorHigh`) | `SelectSideBarTheme.selectedTileColor`                                                                                                            |
 
 Because one value no longer restyles every consumer, set each theme you want to
 change. A delegate carries the same themes, so the fields move over one for one:
@@ -321,14 +321,14 @@ are **deprecated** and will be removed in a future minor version. They keep
 working unchanged — nothing has to be updated to compile — but new code should
 use the plain constructors:
 
-| Deprecated                            | Use instead                                                       |
-| ------------------------------------- | ----------------------------------------------------------------- |
-| `SelectTextEntry.id(id: 'a')`         | `SelectTextEntry(id: 'a', name: '')`                              |
-| `SelectTextEntry.name(id: 'a', name: 'A')` | `SelectTextEntry(id: 'a', name: 'A')`                        |
-| `SelectTextEntry.children(...)`       | `SelectTextEntry(...)` with `children:`                           |
-| `SelectChildEntry.empty()`            | `SelectChildEntry(id: '')`                                        |
-| `SelectChildEntry.children(...)`      | `SelectChildEntry(...)` with `children:`                          |
-| `SelectCategoryEntry.children(...)`   | `SelectCategoryEntry(...)` with `children:` / `header:` / `footer:` |
+| Deprecated                                 | Use instead                                                         |
+| ------------------------------------------ | ------------------------------------------------------------------- |
+| `SelectTextEntry.id(id: 'a')`              | `SelectTextEntry(id: 'a', name: '')`                                |
+| `SelectTextEntry.name(id: 'a', name: 'A')` | `SelectTextEntry(id: 'a', name: 'A')`                               |
+| `SelectTextEntry.children(...)`            | `SelectTextEntry(...)` with `children:`                             |
+| `SelectChildEntry.empty()`                 | `SelectChildEntry(id: '')`                                          |
+| `SelectChildEntry.children(...)`           | `SelectChildEntry(...)` with `children:`                            |
+| `SelectCategoryEntry.children(...)`        | `SelectCategoryEntry(...)` with `children:` / `header:` / `footer:` |
 
 ```diff
   SelectCategoryEntry(
@@ -480,7 +480,7 @@ Two paths that rebuild entries no longer discard data:
   `footerSelectionMode` of a `SelectCategoryEntry`, which were neither emitted
   nor read back before. An explicit mode is emitted
   (`"headerSelectionMode": "multiple"`); a `null` one stays absent from the JSON,
-  because `null` means *inherit the category's effective mode*, and flattening it
+  because `null` means _inherit the category's effective mode_, and flattening it
   into an explicit `SelectionMode.single` would change what the decoded tree
   selects.
 
@@ -939,21 +939,21 @@ The `previousSelected` / `resetSelected` API surface has been renamed to
 rename covers `SelectController`, `StateTree`, `SelectDelegate.buildBody` and
 the four `Select*` widgets:
 
-| Old name                                                | New name                                                 |
-| ------------------------------------------------------- | -------------------------------------------------------- |
-| `SelectController.previousSelected`                      | `SelectController.selectedEntries`                       |
-| `SelectController.resetSelected`                         | `SelectController.resetEntries`                          |
-| `SelectController.bindState(previousSelectedOverride:)`  | `SelectController.bindState(selectedEntriesOverride:)`   |
-| `SelectController.bindState(resetSelectedOverride:)`     | `SelectController.bindState(resetEntriesOverride:)`      |
-| `StateTree.previousSelected`                             | `StateTree.selectedEntries`                              |
-| `StateTree.resetSelected`                                | `StateTree.resetEntries`                                 |
-| `StateTree.bind(previousSelected:)`                      | `StateTree.bind(selectedEntries:)`                       |
-| `StateTree.bind(resetSelected:)`                         | `StateTree.bind(resetEntries:)`                          |
-| `SelectDelegate.buildBody(previousSelected)`             | `SelectDelegate.buildBody(selectedEntries)`              |
-| `CascadingSelect.previousSelected`                       | `CascadingSelect.selectedEntries`                        |
-| `ListSelect.previousSelected`                            | `ListSelect.selectedEntries`                             |
-| `GridSelect.previousSelected`                            | `GridSelect.selectedEntries`                             |
-| `FlattenSelect.previousSelected`                         | `FlattenSelect.selectedEntries`                          |
+| Old name                                                | New name                                               |
+| ------------------------------------------------------- | ------------------------------------------------------ |
+| `SelectController.previousSelected`                     | `SelectController.selectedEntries`                     |
+| `SelectController.resetSelected`                        | `SelectController.resetEntries`                        |
+| `SelectController.bindState(previousSelectedOverride:)` | `SelectController.bindState(selectedEntriesOverride:)` |
+| `SelectController.bindState(resetSelectedOverride:)`    | `SelectController.bindState(resetEntriesOverride:)`    |
+| `StateTree.previousSelected`                            | `StateTree.selectedEntries`                            |
+| `StateTree.resetSelected`                               | `StateTree.resetEntries`                               |
+| `StateTree.bind(previousSelected:)`                     | `StateTree.bind(selectedEntries:)`                     |
+| `StateTree.bind(resetSelected:)`                        | `StateTree.bind(resetEntries:)`                        |
+| `SelectDelegate.buildBody(previousSelected)`            | `SelectDelegate.buildBody(selectedEntries)`            |
+| `CascadingSelect.previousSelected`                      | `CascadingSelect.selectedEntries`                      |
+| `ListSelect.previousSelected`                           | `ListSelect.selectedEntries`                           |
+| `GridSelect.previousSelected`                           | `GridSelect.selectedEntries`                           |
+| `FlattenSelect.previousSelected`                        | `FlattenSelect.selectedEntries`                        |
 
 The old names were kept as deprecated aliases on the public-facing
 `SelectController` constructor parameters and getters for backward
