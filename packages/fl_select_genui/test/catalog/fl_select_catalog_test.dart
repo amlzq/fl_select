@@ -70,7 +70,6 @@ final _categoryDelegates = <String, Matcher>{
   'tabNav': isA<TabNavSelectDelegate>(),
   'sideNav': isA<SideNavSelectDelegate>(),
   'expandable': isA<ExpandableSelectDelegate>(),
-  'flatten': isA<SideNavSelectDelegate>(),
 };
 
 /// The same tokens for a flat option list: every grouped token falls back to
@@ -83,7 +82,6 @@ final _flatDelegates = <String, Matcher>{
   'tabNav': isA<ListSelectDelegate>(),
   'sideNav': isA<ListSelectDelegate>(),
   'expandable': isA<ListSelectDelegate>(),
-  'flatten': isA<WrapSelectDelegate>(),
 };
 
 void main() {
@@ -107,7 +105,7 @@ void main() {
   });
 
   testWidgets('renders entries authored by an agent', (tester) async {
-    await pumpSelect(tester, {'delegate': 'flatten', 'entries': _entries});
+    await pumpSelect(tester, {'delegate': 'sideNav', 'entries': _entries});
 
     expect(find.text('More'), findsWidgets);
     expect(find.text('A 1'), findsOneWidget);
@@ -116,7 +114,7 @@ void main() {
 
   testWidgets('writes the selection back to the data model', (tester) async {
     final context = await pumpSelect(tester, {
-      'delegate': 'flatten',
+      'delegate': 'sideNav',
       'selectionMode': 'single',
       'entries': _entries,
     });
@@ -189,11 +187,11 @@ void main() {
   testWidgets('shows an error card instead of crashing on bad entries', (
     tester,
   ) async {
-    await pumpSelect(tester, {'delegate': 'flatten', 'entries': <Object?>[]});
+    await pumpSelect(tester, {'delegate': 'list', 'entries': <Object?>[]});
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
 
     await pumpSelect(tester, {
-      'delegate': 'flatten',
+      'delegate': 'sideNav',
       'entries': [
         {'type': 'nonsense'},
       ],
@@ -312,6 +310,20 @@ void main() {
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
   });
 
+  testWidgets('unknown delegate tokens fall back to the default', (
+    tester,
+  ) async {
+    for (final token in ['flatten', 'chips', 'nonsense']) {
+      await pumpSelect(tester, {'delegate': token, 'entries': _entries});
+      expect(tester.takeException(), isNull, reason: token);
+      expect(
+        delegateOf(tester),
+        isA<ExpandableSelectDelegate>(),
+        reason: token,
+      );
+    }
+  });
+
   testWidgets('non-string delegate falls back to the default', (tester) async {
     await pumpSelect(tester, {'delegate': 7, 'entries': _entries});
 
@@ -332,7 +344,7 @@ void main() {
     // when the surface re-renders.
     Widget build() => item.widgetBuilder(
       CatalogItemContext(
-        data: {'delegate': 'flatten', 'search': true, 'entries': _entries},
+        data: {'delegate': 'sideNav', 'search': true, 'entries': _entries},
         id: 'select1',
         type: item.name,
         buildChild: (_, [_]) => const SizedBox.shrink(),
@@ -408,13 +420,13 @@ void main() {
 
   testWidgets('search flag toggles the search field', (tester) async {
     await pumpSelect(tester, {
-      'delegate': 'flatten',
+      'delegate': 'sideNav',
       'entries': _entries,
       'search': true,
     });
     expect(find.byType(TextField), findsOneWidget);
 
-    await pumpSelect(tester, {'delegate': 'flatten', 'entries': _entries});
+    await pumpSelect(tester, {'delegate': 'sideNav', 'entries': _entries});
     expect(find.byType(TextField), findsNothing);
   });
 

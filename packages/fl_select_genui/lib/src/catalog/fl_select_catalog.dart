@@ -41,9 +41,8 @@ abstract final class FlSelectCatalogItems {
           description:
               'Body layout: "list"/"grid" fit any shape, "wrap" is a flat '
               'chip cloud, "cascading" is a drill-down tree, "tabNav"/'
-              '"sideNav"/"expandable" render category groups, "flatten" is a '
-              'legacy alias. Layouts auto-fallback to match the entries '
-              'shape.',
+              '"sideNav"/"expandable" render category groups. Layouts '
+              'auto-fallback to match the entries shape.',
           enumValues: [
             'list',
             'grid',
@@ -52,7 +51,6 @@ abstract final class FlSelectCatalogItems {
             'tabNav',
             'sideNav',
             'expandable',
-            'flatten',
           ],
         ),
         'selectionMode': S.string(
@@ -103,7 +101,7 @@ When the user needs to pick values from a structured option set, render a `Selec
   cloud), "cascading" (drill-down menus), "tabNav" (category tabs on top),
   "sideNav" (recommended for category groups: left rail, options in one
   scrollable panel), or "expandable" (accordion groups). Layouts
-  auto-fallback to match the `entries` shape; "flatten" is a legacy alias.
+  auto-fallback to match the `entries` shape.
 - `entries`: a tree of nodes, each with a `type`:
   - `category`: group; requires `id`, `name`, non-empty `children`; optional
     `selectionMode` ("single"/"multiple"), `layout`, and `header`/`footer`
@@ -283,13 +281,9 @@ class _SelectWidgetState extends State<_SelectWidget> {
               entries: entries,
             ),
 
-      // Wrap — flat chip cloud; category data (including the legacy
-      // sideNav share below) renders as sideNav.
-      'sideNav' ||
-      'wrap' ||
-      'chips' ||
-      'flatten' when isCategoryData => SideNavSelectDelegate.new,
-      'wrap' || 'chips' || 'flatten' => WrapSelectDelegate.new,
+      // Wrap — flat chip cloud; category data renders as sideNav.
+      'sideNav' || 'wrap' when isCategoryData => SideNavSelectDelegate.new,
+      'wrap' => WrapSelectDelegate.new,
 
       // Cascading — drill-down tree; flat data falls back to the list,
       // because the cascading body only renders category trees.
