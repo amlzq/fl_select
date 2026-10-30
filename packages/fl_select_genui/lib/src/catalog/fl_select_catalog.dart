@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:fl_select/fl_select.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:genui/genui.dart';
@@ -131,11 +133,26 @@ When the user needs to pick values from a structured option set, render a `Selec
   (e.g. `"sort"` → `{"sort": ["recent"]}`).''';
 }
 
-class _SelectWidget extends StatelessWidget {
+class _SelectWidget extends StatefulWidget {
   const _SelectWidget({required this.itemContext, required this.dataPath});
 
   final CatalogItemContext itemContext;
   final String dataPath;
+
+  @override
+  State<_SelectWidget> createState() => _SelectWidgetState();
+}
+
+class _SelectWidgetState extends State<_SelectWidget> {
+  CatalogItemContext get itemContext => widget.itemContext;
+  String get dataPath => widget.dataPath;
+
+  /// The delegate built for [_delegateKey]. GenUI hands the builder a fresh
+  /// context on every surface update, and a new delegate object makes
+  /// `SelectView` drop its search text and selection, so the delegate is only
+  /// rebuilt when the payload actually changes.
+  SelectDelegate? _delegate;
+  String? _delegateKey;
 
   @override
   Widget build(BuildContext context) {
@@ -196,8 +213,14 @@ class _SelectWidget extends StatelessWidget {
       );
     }
 
+    final key = _payloadKey(data);
+    if (key == null || key != _delegateKey) {
+      _delegate = _buildDelegate(data, entries, isCategoryData);
+      _delegateKey = key;
+    }
+
     return SelectView(
-      delegate: _buildDelegate(data, entries, isCategoryData),
+      delegate: _delegate!,
       onChanged: (selected) {
         // Write the selection back so the agent (and other widgets) can
         // react to it. Category trees yield Map<String, List<String>> via
@@ -210,6 +233,16 @@ class _SelectWidget extends StatelessWidget {
         );
       },
     );
+  }
+
+  /// A value-equality key for [data], or null when it is not JSON-encodable
+  /// (the delegate is then rebuilt every time).
+  static String? _payloadKey(JsonMap data) {
+    try {
+      return jsonEncode(data);
+    } on JsonUnsupportedObjectError {
+      return null;
+    }
   }
 
   SelectDelegate _buildDelegate(

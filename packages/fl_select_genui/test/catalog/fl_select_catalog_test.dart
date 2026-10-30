@@ -290,6 +290,69 @@ void main() {
     expect(delegateOf(tester), isA<ExpandableSelectDelegate>());
   });
 
+  testWidgets('selection and search survive a parent rebuild', (tester) async {
+    final item = FlSelectCatalogItems.select;
+    final context = DataContext(InMemoryDataModel(), DataPath('root'));
+    final rebuild = ValueNotifier<int>(0);
+    addTearDown(rebuild.dispose);
+
+    await tester.pumpWidget(const MaterialApp(home: Placeholder()));
+    final buildContext = tester.element(find.byType(Placeholder));
+
+    // Each rebuild hands the builder a fresh, equal payload, as GenUI does
+    // when the surface re-renders.
+    Widget build() => item.widgetBuilder(
+      CatalogItemContext(
+        data: {'delegate': 'flatten', 'search': true, 'entries': _entries},
+        id: 'select1',
+        type: item.name,
+        buildChild: (_, [_]) => const SizedBox.shrink(),
+        dispatchEvent: (_) {},
+        buildContext: buildContext,
+        dataContext: context,
+        getComponent: (_) => null,
+        getCatalogItem: (_) => null,
+        surfaceId: 'test-surface',
+        reportError: (_, _) {},
+      ),
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: ValueListenableBuilder<int>(
+            valueListenable: rebuild,
+            builder: (_, _, _) => build(),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('A 1'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField), 'A');
+    await tester.pumpAndSettle();
+
+    rebuild.value++;
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.widget<TextField>(find.byType(TextField)).controller?.text,
+      'A',
+      reason: 'search text lost after rebuild',
+    );
+
+    // A 1 must still count as selected: selecting A 2 adds to it.
+    await tester.tap(find.text('A 2'));
+    await tester.pumpAndSettle();
+    final value = context.getValue<dynamic>(
+      DataPath('select1.value'),
+    ) as Map<dynamic, dynamic>;
+    expect(value['more'], unorderedEquals(['a1', 'a2']));
+  });
+
   testWidgets('search flag toggles the search field', (tester) async {
     await pumpSelect(tester, {
       'delegate': 'flatten',
