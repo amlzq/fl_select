@@ -258,109 +258,60 @@ class _SelectWidgetState extends State<_SelectWidget> {
       'single' => SelectionMode.single,
       _ => SelectionMode.multiple,
     };
-    final searchEnabled = data['search'] == true;
     final crossAxisCount = _crossAxisCountOf(data['crossAxisCount']);
+
     // Category-aware delegates assert on flat data (and flat delegates on
     // category data), so the requested layout is matched to the actual
     // entry-tree shape: grouped layouts fall back to their flat equivalent
     // and vice versa.
-    return switch (delegateName) {
-      // List — flat list panel; category data falls through to the default
-      // arm below.
-      'list' when !isCategoryData => ListSelectDelegate(
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
+    final _DelegateFactory create = switch (delegateName) {
+      // Grid — flat grid; category data renders as tabNav with a grid layout.
+      'grid' when isCategoryData =>
+        ({required searchEnabled, required selectionMode, required entries}) =>
+            TabNavSelectDelegate(
+              defaultLayout: SelectGridLayout(crossAxisCount: crossAxisCount),
+              searchEnabled: searchEnabled,
+              selectionMode: selectionMode,
+              entries: entries,
+            ),
+      'grid' =>
+        ({required searchEnabled, required selectionMode, required entries}) =>
+            GridSelectDelegate(
+              crossAxisCount: crossAxisCount,
+              searchEnabled: searchEnabled,
+              selectionMode: selectionMode,
+              entries: entries,
+            ),
 
-      // Grid — flat grid; category data renders as tabNav with a
-      // grid layout.
-      'grid' when isCategoryData => TabNavSelectDelegate(
-        defaultLayout: SelectGridLayout(crossAxisCount: crossAxisCount),
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
-      'grid' => GridSelectDelegate(
-        crossAxisCount: crossAxisCount,
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
-
-      // Wrap — flat chip cloud; category data (including the
-      // legacy sideNav share below) renders as sideNav.
+      // Wrap — flat chip cloud; category data (including the legacy
+      // sideNav share below) renders as sideNav.
       'sideNav' ||
       'wrap' ||
       'chips' ||
-      'flatten' when isCategoryData => SideNavSelectDelegate(
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
-      'wrap' || 'chips' || 'flatten' => WrapSelectDelegate(
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
+      'flatten' when isCategoryData => SideNavSelectDelegate.new,
+      'wrap' || 'chips' || 'flatten' => WrapSelectDelegate.new,
 
       // Cascading — drill-down tree; flat data falls back to the list,
       // because the cascading body only renders category trees.
-      'cascading' when !isCategoryData => ListSelectDelegate(
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
-      'cascading' => CascadingSelectDelegate(
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
+      'cascading' when isCategoryData => CascadingSelectDelegate.new,
 
-      // TabNav — category tabs on top; flat data falls back to the list.
-      'tabNav' when isCategoryData => TabNavSelectDelegate(
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
-      'tabNav' => ListSelectDelegate(
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
+      // TabNav — category tabs on top.
+      'tabNav' when isCategoryData => TabNavSelectDelegate.new,
 
-      // SideNav — left category rail; flat data falls back to the list.
-      'sideNav' => ListSelectDelegate(
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
+      // Expandable — accordion groups.
+      'expandable' when isCategoryData => ExpandableSelectDelegate.new,
 
-      // Expandable — accordion groups; flat data falls back to the list.
-      'expandable' when isCategoryData => ExpandableSelectDelegate(
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
-      'expandable' => ListSelectDelegate(
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
-
-      // default / unknown tokens: category data groups as expandable,
-      // flat data as list.
-      _ when isCategoryData => ExpandableSelectDelegate(
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
-      _ => ListSelectDelegate(
-        searchEnabled: searchEnabled,
-        selectionMode: selectionMode,
-        entries: entries,
-      ),
+      // Everything else: flat data (including the grouped tokens "cascading",
+      // "tabNav", "sideNav" and "expandable") lists; unknown tokens on
+      // category data group as expandable.
+      _ when isCategoryData => ExpandableSelectDelegate.new,
+      _ => ListSelectDelegate.new,
     };
+    return create(
+      searchEnabled: data['search'] == true,
+      selectionMode: selectionMode,
+      entries: entries,
+    );
   }
 
   /// Agent payloads are untrusted JSON: a column count may arrive as `3.0`, a
@@ -426,6 +377,12 @@ class _SelectWidgetState extends State<_SelectWidget> {
     return null;
   }
 }
+
+typedef _DelegateFactory = SelectDelegate Function({
+  required bool searchEnabled,
+  required SelectionMode selectionMode,
+  required Set<SelectEntry> entries,
+});
 
 class _SchemaError extends StatelessWidget {
   const _SchemaError(this.message);
