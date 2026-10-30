@@ -185,7 +185,10 @@ class _SelectWidget extends StatelessWidget {
 
     // A flat selection has no category ids to key the write-back by, so the
     // agent must name the key explicitly.
-    final flatKey = data['flatKey'] as String?;
+    final flatKey = switch (data['flatKey']) {
+      final String key => key,
+      _ => null,
+    };
     if (!isCategoryData && (flatKey == null || flatKey.isEmpty)) {
       return _SchemaError(
         '${itemContext.type} with flat (non-category) entries requires a '
@@ -214,12 +217,16 @@ class _SelectWidget extends StatelessWidget {
     Set<SelectEntry> entries,
     bool isCategoryData,
   ) {
-    final delegateName = data['delegate'] as String? ?? 'list';
+    final delegateName = switch (data['delegate']) {
+      final String name => name,
+      _ => 'list',
+    };
     final selectionMode = switch (data['selectionMode']) {
       'single' => SelectionMode.single,
       _ => SelectionMode.multiple,
     };
     final searchEnabled = data['search'] == true;
+    final crossAxisCount = _crossAxisCountOf(data['crossAxisCount']);
     // Category-aware delegates assert on flat data (and flat delegates on
     // category data), so the requested layout is matched to the actual
     // entry-tree shape: grouped layouts fall back to their flat equivalent
@@ -236,15 +243,13 @@ class _SelectWidget extends StatelessWidget {
       // Grid — flat grid; category data renders as tabNav with a
       // grid layout.
       'grid' when isCategoryData => TabNavSelectDelegate(
-        defaultLayout: SelectGridLayout(
-          crossAxisCount: data['crossAxisCount'] as int? ?? 3,
-        ),
+        defaultLayout: SelectGridLayout(crossAxisCount: crossAxisCount),
         searchEnabled: searchEnabled,
         selectionMode: selectionMode,
         entries: entries,
       ),
       'grid' => GridSelectDelegate(
-        crossAxisCount: data['crossAxisCount'] as int? ?? 3,
+        crossAxisCount: crossAxisCount,
         searchEnabled: searchEnabled,
         selectionMode: selectionMode,
         entries: entries,
@@ -323,6 +328,13 @@ class _SelectWidget extends StatelessWidget {
         entries: entries,
       ),
     };
+  }
+
+  /// Agent payloads are untrusted JSON: a column count may arrive as `3.0`, a
+  /// string or a non-positive number. Anything unusable falls back to 3.
+  static int _crossAxisCountOf(Object? raw) {
+    if (raw is num && raw.isFinite && raw >= 1) return raw.toInt();
+    return 3;
   }
 
   static Map<String, List<String>> _encodeSelection(

@@ -256,6 +256,40 @@ void main() {
     }
   });
 
+  testWidgets('malformed crossAxisCount falls back instead of throwing', (
+    tester,
+  ) async {
+    for (final bad in <Object?>['4', 0, -2, double.nan, null, 4.0]) {
+      await pumpSelect(tester, {
+        'delegate': 'grid',
+        'crossAxisCount': bad,
+        'flatKey': 'sort',
+        'entries': _flatEntries,
+      });
+      expect(tester.takeException(), isNull, reason: 'crossAxisCount=$bad');
+      final delegate = delegateOf(tester) as GridSelectDelegate;
+      expect(delegate.crossAxisCount, bad == 4.0 ? 4 : 3, reason: '$bad');
+    }
+  });
+
+  testWidgets('non-string flatKey shows an error card', (tester) async {
+    await pumpSelect(tester, {
+      'delegate': 'list',
+      'flatKey': 5,
+      'entries': _flatEntries,
+    });
+
+    expect(tester.takeException(), isNull);
+    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+  });
+
+  testWidgets('non-string delegate falls back to the default', (tester) async {
+    await pumpSelect(tester, {'delegate': 7, 'entries': _entries});
+
+    expect(tester.takeException(), isNull);
+    expect(delegateOf(tester), isA<ExpandableSelectDelegate>());
+  });
+
   testWidgets('search flag toggles the search field', (tester) async {
     await pumpSelect(tester, {
       'delegate': 'flatten',
