@@ -1,6 +1,7 @@
 import 'package:fl_select/fl_select.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'controls_widgets.dart';
 import 'playground_l10n.dart';
 import 'playground_params.dart';
 
@@ -31,11 +32,11 @@ class ControlsPanel extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          _SectionTitle(
+          SectionTitle(
             l10n.entryPoint,
             techParam: 'PlaygroundParams.entryPoint',
           ),
-          _EnumDropdown<EntryPoint>(
+          EnumDropdown<EntryPoint>(
             value: params.entryPoint,
             items: const {
               EntryPoint.view: 'SelectView',
@@ -85,10 +86,10 @@ class ControlsPanel extends StatelessWidget {
   // ---- Delegate picker ----
 
   Widget _buildDelegate() {
-    return _Group(
+    return ControlGroup(
       children: <Widget>[
-        _SectionTitle(l10n.delegate, techParam: 'PlaygroundParams.delegate'),
-        _EnumDropdown<Delegate>(
+        SectionTitle(l10n.delegate, techParam: 'PlaygroundParams.delegate'),
+        EnumDropdown<Delegate>(
           value: params.delegate,
           items: {
             Delegate.list: l10n.layoutList,
@@ -109,7 +110,7 @@ class ControlsPanel extends StatelessWidget {
 
   Widget _buildIsScrollable() {
     return SwitchListTile(
-      title: _TechSwitchTitle(
+      title: TechSwitchTitle(
         l10n.scrollable,
         techParam: 'PopupSelectBar.isScrollable',
       ),
@@ -120,15 +121,15 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildDirection() {
-    return _Group(
+    return ControlGroup(
       children: <Widget>[
-        _SectionTitle(
+        SectionTitle(
           l10n.direction,
           techParam: params.entryPoint == EntryPoint.button
               ? 'PopupSelectButton.direction'
               : 'PopupSelectBar.direction',
         ),
-        _EnumDropdown<PopupSelectDirection>(
+        EnumDropdown<PopupSelectDirection>(
           value: params.direction,
           items: {
             PopupSelectDirection.below: l10n.directionBelow,
@@ -142,13 +143,13 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildButtonVariant() {
-    return _Group(
+    return ControlGroup(
       children: <Widget>[
-        _SectionTitle(
+        SectionTitle(
           l10n.buttonVariant,
           techParam: 'PopupSelectButton.variant',
         ),
-        _EnumDropdown<PopupSelectButtonVariant>(
+        EnumDropdown<PopupSelectButtonVariant>(
           value: params.buttonVariant,
           items: {
             PopupSelectButtonVariant.elevated: l10n.elevated,
@@ -166,9 +167,9 @@ class ControlsPanel extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        _SectionTitle(l10n.headerOptions),
+        SectionTitle(l10n.headerOptions),
         SwitchListTile(
-          title: _TechSwitchTitle(l10n.leadingOption, techParam: 'leading'),
+          title: TechSwitchTitle(l10n.leadingOption, techParam: 'leading'),
           value: params.headerLeading,
           onChanged: (v) => onChanged(params.copyWith(headerLeading: v)),
           contentPadding: EdgeInsets.zero,
@@ -179,7 +180,7 @@ class ControlsPanel extends StatelessWidget {
 
   Widget _buildHeaderTrailing() {
     return SwitchListTile(
-      title: _TechSwitchTitle(l10n.trailingOption, techParam: 'trailing'),
+      title: TechSwitchTitle(l10n.trailingOption, techParam: 'trailing'),
       value: params.headerTrailing,
       onChanged: (v) => onChanged(params.copyWith(headerTrailing: v)),
       contentPadding: EdgeInsets.zero,
@@ -190,7 +191,7 @@ class ControlsPanel extends StatelessWidget {
     return Column(
       children: <Widget>[
         SwitchListTile(
-          title: _TechSwitchTitle(
+          title: TechSwitchTitle(
             l10n.centerTitleOption,
             techParam: 'centerTitle',
           ),
@@ -207,7 +208,7 @@ class ControlsPanel extends StatelessWidget {
 
   Widget _buildCascadingScrollable() {
     return SwitchListTile(
-      title: _TechSwitchTitle(
+      title: TechSwitchTitle(
         l10n.scrollable,
         techParam: 'CascadingSelectDelegate.isScrollable',
       ),
@@ -218,7 +219,7 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildCrossAxisCount() {
-    return _Slider(
+    return ControlSlider(
       title: l10n.columns(params.crossAxisCount),
       value: params.crossAxisCount.toDouble(),
       min: 2,
@@ -231,7 +232,7 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildChildAspectRatio() {
-    return _Slider(
+    return ControlSlider(
       title: l10n.aspectRatio(params.childAspectRatio.toStringAsFixed(1)),
       value: params.childAspectRatio,
       min: 1.0,
@@ -244,7 +245,7 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildCrossAxisSpacing() {
-    return _Slider(
+    return ControlSlider(
       title: l10n.columnSpacing(params.crossAxisSpacing.round()),
       value: params.crossAxisSpacing,
       min: 0,
@@ -257,7 +258,7 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildMainAxisSpacing() {
-    return _Slider(
+    return ControlSlider(
       title: l10n.rowSpacing(params.mainAxisSpacing.round()),
       value: params.mainAxisSpacing,
       min: 0,
@@ -270,7 +271,7 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildSpacing() {
-    return _Slider(
+    return ControlSlider(
       title: l10n.spacing(params.spacing.round()),
       value: params.spacing,
       min: 0,
@@ -283,7 +284,7 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildRunSpacing() {
-    return _Slider(
+    return ControlSlider(
       title: l10n.runSpacing(params.runSpacing.round()),
       value: params.runSpacing,
       min: 0,
@@ -296,9 +297,9 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildTileVariant() {
-    return _Group(
+    return ControlGroup(
       children: <Widget>[
-        _SectionTitle(
+        SectionTitle(
           l10n.tileVariant,
           techParam: params.delegate == Delegate.grid
               ? 'SelectGridTileTheme.variant'
@@ -324,7 +325,7 @@ class ControlsPanel extends StatelessWidget {
 
   Widget _buildSearchEnabled() {
     return SwitchListTile(
-      title: _TechSwitchTitle(
+      title: TechSwitchTitle(
         l10n.searchEnabled,
         techParam: 'SelectDelegate.searchEnabled',
       ),
@@ -335,9 +336,9 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildSelectionMode() {
-    return _Group(
+    return ControlGroup(
       children: <Widget>[
-        _SectionTitle(
+        SectionTitle(
           l10n.selectionMode,
           techParam: 'SelectDelegate.selectionMode',
         ),
@@ -361,9 +362,9 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildBrightness() {
-    return _Group(
+    return ControlGroup(
       children: <Widget>[
-        _SectionTitle(l10n.brightness, techParam: 'ThemeData.brightness'),
+        SectionTitle(l10n.brightness, techParam: 'ThemeData.brightness'),
         SegmentedButton<Brightness?>(
           selected: {params.brightness},
           onSelectionChanged: (set) {
@@ -386,15 +387,15 @@ class ControlsPanel extends StatelessWidget {
   }
 
   Widget _buildSeedColor() {
-    return _Group(
+    return ControlGroup(
       children: <Widget>[
-        _SectionTitle(l10n.seedColor, techParam: 'ColorScheme.fromSeed'),
+        SectionTitle(l10n.seedColor, techParam: 'ColorScheme.fromSeed'),
         Wrap(
           spacing: 10,
           runSpacing: 10,
           children: <Widget>[
             for (final color in seedColorPresets)
-              _ColorSwatch(
+              SeedColorSwatch(
                 color: color,
                 selected: color.toARGB32 == params.seedColor.toARGB32,
                 onTap: () => onChanged(params.copyWith(seedColor: color)),
@@ -407,212 +408,13 @@ class ControlsPanel extends StatelessWidget {
 
   Widget _buildUseMaterial3() {
     return SwitchListTile(
-      title: _TechSwitchTitle(
+      title: TechSwitchTitle(
         l10n.material3,
         techParam: 'ThemeData.useMaterial3',
       ),
       value: params.useMaterial3,
       onChanged: (v) => onChanged(params.copyWith(useMaterial3: v)),
       contentPadding: EdgeInsets.zero,
-    );
-  }
-}
-
-/// Vertical spacer shared by every self-contained control group, so the
-/// panel keeps a uniform rhythm no matter which subset is visible.
-class _Group extends StatelessWidget {
-  final List<Widget> children;
-
-  const _Group({required this.children});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[...children, const SizedBox(height: 16)],
-    );
-  }
-}
-
-class _Slider extends StatelessWidget {
-  final String title;
-  final double value;
-  final double min;
-  final double max;
-  final int divisions;
-  final String label;
-  final ValueChanged<double> onChanged;
-
-  /// Technical parameter name revealed by the help tooltip, e.g.
-  /// `GridSelectDelegate.crossAxisCount`.
-  final String? techParam;
-
-  const _Slider({
-    required this.title,
-    required this.value,
-    required this.min,
-    required this.max,
-    required this.divisions,
-    required this.label,
-    required this.onChanged,
-    this.techParam,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        _SectionTitle(title, techParam: techParam),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: divisions,
-          label: label,
-          onChanged: onChanged,
-        ),
-      ],
-    );
-  }
-}
-
-/// Section title with an optional help icon whose tooltip reveals the
-/// technical parameter name (`fl_select` / Flutter API) behind the control —
-/// see CONTROLS.md §1. The technical name is never translated.
-class _SectionTitle extends StatelessWidget {
-  final String text;
-
-  /// Technical parameter name, e.g. `GridSelectDelegate.crossAxisSpacing`.
-  final String? techParam;
-
-  const _SectionTitle(this.text, {this.techParam});
-
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Row(
-        spacing: 4,
-        children: <Widget>[
-          Flexible(
-            child: Text(
-              text,
-              style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: scheme.primary,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          if (techParam != null) _TechHelpIcon(techParam!),
-        ],
-      ),
-    );
-  }
-}
-
-/// A switch-list title that carries the same optional technical-parameter
-/// tooltip as [_SectionTitle], keeping switches consistent with section
-/// titles.
-class _TechSwitchTitle extends StatelessWidget {
-  final String text;
-  final String? techParam;
-
-  const _TechSwitchTitle(this.text, {this.techParam});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      spacing: 4,
-      children: <Widget>[
-        Flexible(child: Text(text)),
-        if (techParam != null) _TechHelpIcon(techParam!),
-      ],
-    );
-  }
-}
-
-/// Small help icon that shows the technical parameter name on hover /
-/// long-press.
-class _TechHelpIcon extends StatelessWidget {
-  final String techParam;
-
-  const _TechHelpIcon(this.techParam);
-
-  @override
-  Widget build(BuildContext context) {
-    return Tooltip(
-      message: techParam,
-      triggerMode: TooltipTriggerMode.tap,
-      child: Icon(
-        Icons.help_outline,
-        size: 14,
-        color: Theme.of(context).hintColor,
-      ),
-    );
-  }
-}
-
-class _EnumDropdown<T> extends StatelessWidget {
-  final T value;
-  final Map<T, String> items;
-  final ValueChanged<T> onChanged;
-  final bool enabled;
-
-  const _EnumDropdown({
-    required this.value,
-    required this.items,
-    required this.onChanged,
-    this.enabled = true,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return DropdownButtonFormField<T>(
-      initialValue: value,
-      isExpanded: true,
-      items: <DropdownMenuItem<T>>[
-        for (final entry in items.entries)
-          DropdownMenuItem<T>(value: entry.key, child: Text(entry.value)),
-      ],
-      onChanged: enabled ? (v) => onChanged(v as T) : null,
-    );
-  }
-}
-
-class _ColorSwatch extends StatelessWidget {
-  final Color color;
-  final bool selected;
-  final VoidCallback onTap;
-
-  const _ColorSwatch({
-    required this.color,
-    required this.selected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(20),
-      child: Container(
-        width: 34,
-        height: 34,
-        decoration: BoxDecoration(
-          color: color,
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: selected ? Colors.black87 : Colors.transparent,
-            width: 3,
-          ),
-          boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 4)],
-        ),
-        child: selected
-            ? const Icon(Icons.check, color: Colors.white, size: 18)
-            : null,
-      ),
     );
   }
 }
