@@ -149,6 +149,35 @@ void main() {
     expect(value['sort'], ['recent']);
   });
 
+  testWidgets('flat multiple selection accumulates under flatKey and clears', (
+    tester,
+  ) async {
+    final context = await pumpSelect(tester, {
+      'delegate': 'list',
+      'selectionMode': 'multiple',
+      'flatKey': 'sort',
+      'entries': _flatEntries,
+    });
+    Map<dynamic, dynamic> value() =>
+        context.getValue<dynamic>(DataPath('select1.value'))
+            as Map<dynamic, dynamic>;
+
+    await tester.tap(find.text('Recent'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Cheapest'));
+    await tester.pumpAndSettle();
+    expect(value()['sort'], unorderedEquals(['recent', 'cheapest']));
+
+    await tester.tap(find.text('Recent'));
+    await tester.pumpAndSettle();
+    expect(value()['sort'], ['cheapest']);
+
+    // Deselecting the last option writes an empty map, not a stale value.
+    await tester.tap(find.text('Cheapest'));
+    await tester.pumpAndSettle();
+    expect(value(), isEmpty);
+  });
+
   testWidgets('flat entries without flatKey show an error card', (
     tester,
   ) async {
@@ -351,6 +380,30 @@ void main() {
       DataPath('select1.value'),
     ) as Map<dynamic, dynamic>;
     expect(value['more'], unorderedEquals(['a1', 'a2']));
+  });
+
+  testWidgets('mixed category and flat entries show an error card', (
+    tester,
+  ) async {
+    final category = _entries.first;
+    final leaf = _flatEntries.first;
+
+    // Either order must be rejected: the shape check looks at the first
+    // entry only, so validation has to catch the stray sibling.
+    for (final entries in [
+      [category, leaf],
+      [leaf, category],
+    ]) {
+      await pumpSelect(tester, {
+        'delegate': 'list',
+        'flatKey': 'sort',
+        'entries': entries,
+      });
+
+      expect(tester.takeException(), isNull);
+      expect(find.byType(SelectView), findsNothing);
+      expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+    }
   });
 
   testWidgets('search flag toggles the search field', (tester) async {

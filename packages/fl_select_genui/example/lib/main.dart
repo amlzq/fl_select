@@ -104,8 +104,10 @@ class _FlSelectGenuiDemoState extends State<FlSelectGenuiDemo> {
             _Section(
               title: '3. Selection written back to the data model',
               child: ValueListenableBuilder(
-                valueListenable: _model.subscribe<dynamic>(
-                  DataPath('root.demo.value'),
+                // Subscribe through the same DataContext the Select writes to;
+                // DataPath separates segments with "/", not ".".
+                valueListenable: _dataContext.subscribe<dynamic>(
+                  DataPath('demo.value'),
                 ),
                 builder: (context, value, _) => SelectableText(
                   value == null
