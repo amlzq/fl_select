@@ -19,9 +19,9 @@ enum PlaygroundLanguage {
   portuguese,
   vietnamese,
   simplifiedChinese,
+  chineseTw,
+  chineseHk,
   traditionalChinese,
-  traditionalChineseHk,
-  traditionalChineseTw,
 }
 
 extension PlaygroundLanguageX on PlaygroundLanguage {
@@ -49,20 +49,20 @@ extension PlaygroundLanguageX on PlaygroundLanguage {
         return const Locale('vi');
       case PlaygroundLanguage.simplifiedChinese:
         return const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hans');
-      case PlaygroundLanguage.traditionalChinese:
-        return const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
-      case PlaygroundLanguage.traditionalChineseHk:
-        return const Locale.fromSubtags(
-          languageCode: 'zh',
-          scriptCode: 'Hant',
-          countryCode: 'HK',
-        );
-      case PlaygroundLanguage.traditionalChineseTw:
+      case PlaygroundLanguage.chineseTw:
         return const Locale.fromSubtags(
           languageCode: 'zh',
           scriptCode: 'Hant',
           countryCode: 'TW',
         );
+      case PlaygroundLanguage.chineseHk:
+        return const Locale.fromSubtags(
+          languageCode: 'zh',
+          scriptCode: 'Hant',
+          countryCode: 'HK',
+        );
+      case PlaygroundLanguage.traditionalChinese:
+        return const Locale.fromSubtags(languageCode: 'zh', scriptCode: 'Hant');
     }
   }
 
@@ -89,12 +89,12 @@ extension PlaygroundLanguageX on PlaygroundLanguage {
         return 'Tiếng Việt';
       case PlaygroundLanguage.simplifiedChinese:
         return '简体中文';
+      case PlaygroundLanguage.chineseTw:
+        return '中文（台灣）';
+      case PlaygroundLanguage.chineseHk:
+        return '中文（香港）';
       case PlaygroundLanguage.traditionalChinese:
         return '繁體中文';
-      case PlaygroundLanguage.traditionalChineseHk:
-        return '繁體中文（香港）';
-      case PlaygroundLanguage.traditionalChineseTw:
-        return '繁體中文（台灣）';
     }
   }
 }

@@ -114,9 +114,9 @@ abstract final class PlaygroundUrlCodec {
         PlaygroundLanguage.portuguese: 'pt',
         PlaygroundLanguage.vietnamese: 'vi',
         PlaygroundLanguage.simplifiedChinese: 'zh-Hans',
+        PlaygroundLanguage.chineseTw: 'zh-TW',
+        PlaygroundLanguage.chineseHk: 'zh-HK',
         PlaygroundLanguage.traditionalChinese: 'zh-Hant',
-        PlaygroundLanguage.traditionalChineseHk: 'zh-HK',
-        PlaygroundLanguage.traditionalChineseTw: 'zh-TW',
       };
 
   static const Map<ThemeMode, String> _themeModeCodes = <ThemeMode, String>{

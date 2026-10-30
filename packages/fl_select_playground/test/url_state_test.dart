@@ -41,7 +41,7 @@ void main() {
         centerTitle: false,
         brightness: Brightness.dark,
       ),
-      language: PlaygroundLanguage.traditionalChineseTw,
+      language: PlaygroundLanguage.chineseTw,
       themeMode: ThemeMode.light,
     );
 
@@ -69,7 +69,7 @@ void main() {
     expect(decoded.params.headerTrailing, isTrue);
     expect(decoded.params.centerTitle, isFalse);
     expect(decoded.params.brightness, Brightness.dark);
-    expect(decoded.language, PlaygroundLanguage.traditionalChineseTw);
+    expect(decoded.language, PlaygroundLanguage.chineseTw);
     expect(decoded.themeMode, ThemeMode.light);
   });
 

@@ -166,7 +166,7 @@ class AppLocalizationsZh extends AppLocalizations {
   String get phoneDialogTitle => '对话框';
 
   @override
-  String get phoneBottomSheetTitle => '底部弹层';
+  String get phoneBottomSheetTitle => '底部弹出面板';
 
   @override
   String get tapBarHint => '点击顶栏打开选择器';
@@ -372,7 +372,7 @@ class AppLocalizationsZhHans extends AppLocalizationsZh {
   String get phoneDialogTitle => '对话框';
 
   @override
-  String get phoneBottomSheetTitle => '底部弹层';
+  String get phoneBottomSheetTitle => '底部弹出面板';
 
   @override
   String get tapBarHint => '点击顶栏打开选择器';
@@ -527,7 +527,7 @@ class AppLocalizationsZhHantHk extends AppLocalizationsZh {
   String get brightness => '明暗';
 
   @override
-  String get follow => '跟隨應用';
+  String get follow => '跟隨應用程式';
 
   @override
   String get light => '淺色';
@@ -560,10 +560,10 @@ class AppLocalizationsZhHantHk extends AppLocalizationsZh {
   String get headerOptions => '標題欄選項';
 
   @override
-  String get leadingOption => '前置組件';
+  String get leadingOption => '前置元件';
 
   @override
-  String get trailingOption => '後置組件';
+  String get trailingOption => '後置元件';
 
   @override
   String get centerTitleOption => '標題置中';
@@ -578,7 +578,7 @@ class AppLocalizationsZhHantHk extends AppLocalizationsZh {
   String get phoneDialogTitle => '對話框';
 
   @override
-  String get phoneBottomSheetTitle => '底部彈層';
+  String get phoneBottomSheetTitle => '底部彈出面板';
 
   @override
   String get tapBarHint => '點擊頂欄打開選擇器';
@@ -655,7 +655,7 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   String get selectionMode => '選擇模式';
 
   @override
-  String get tileVariant => '磚塊樣式';
+  String get tileVariant => '圖磚樣式';
 
   @override
   String get seedColor => '主題色';
@@ -703,7 +703,7 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   String get outlined => '外框';
 
   @override
-  String get elevated => '立體';
+  String get elevated => '浮起';
 
   @override
   String get text => '文字';
@@ -724,7 +724,7 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   String get directionAbove => '向上';
 
   @override
-  String get directionAdaptive => '自適應';
+  String get directionAdaptive => '自動調整';
 
   @override
   String get buttonVariant => '按鈕樣式';
@@ -733,7 +733,7 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   String get brightness => '明暗';
 
   @override
-  String get follow => '跟隨應用';
+  String get follow => '跟隨應用程式';
 
   @override
   String get light => '淺色';
@@ -742,10 +742,10 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   String get dark => '深色';
 
   @override
-  String get layoutList => '列表';
+  String get layoutList => '清單';
 
   @override
-  String get layoutGrid => '網格';
+  String get layoutGrid => '格狀';
 
   @override
   String get layoutWrap => '平鋪';
@@ -754,10 +754,10 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   String get layoutCascading => '連動';
 
   @override
-  String get layoutTabNav => '頂導航';
+  String get layoutTabNav => '頂端導覽';
 
   @override
-  String get layoutSideNav => '側導航';
+  String get layoutSideNav => '側邊導覽';
 
   @override
   String get layoutExpandable => '分組';
@@ -766,10 +766,10 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   String get headerOptions => '標題列選項';
 
   @override
-  String get leadingOption => '前置組件';
+  String get leadingOption => '前置元件';
 
   @override
-  String get trailingOption => '後置組件';
+  String get trailingOption => '後置元件';
 
   @override
   String get centerTitleOption => '標題置中';
@@ -784,19 +784,19 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   String get phoneDialogTitle => '對話框';
 
   @override
-  String get phoneBottomSheetTitle => '底部彈出層';
+  String get phoneBottomSheetTitle => '底部面板';
 
   @override
-  String get tapBarHint => '點擊頂欄開啟選擇器';
+  String get tapBarHint => '點擊頂端列開啟選擇器';
 
   @override
   String get openSelect => '開啟選擇器';
 
   @override
-  String get listSelect => '列表選擇器';
+  String get listSelect => '清單選擇器';
 
   @override
-  String get gridSelect => '網格選擇器';
+  String get gridSelect => '格狀選擇器';
 
   @override
   String get wrapSelect => '平鋪選擇器';
@@ -805,10 +805,10 @@ class AppLocalizationsZhHantTw extends AppLocalizationsZh {
   String get cascadingSelect => '連動選擇器';
 
   @override
-  String get tabNavSelect => '頂導航選擇器';
+  String get tabNavSelect => '頂端導覽選擇器';
 
   @override
-  String get sideNavSelect => '側導航選擇器';
+  String get sideNavSelect => '側邊導覽選擇器';
 
   @override
   String get expandableSelect => '分組選擇器';
@@ -939,7 +939,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get brightness => '明暗';
 
   @override
-  String get follow => '跟隨應用';
+  String get follow => '跟隨應用程式';
 
   @override
   String get light => '淺色';
@@ -972,10 +972,10 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get headerOptions => '標題欄選項';
 
   @override
-  String get leadingOption => '前置組件';
+  String get leadingOption => '前置元件';
 
   @override
-  String get trailingOption => '後置組件';
+  String get trailingOption => '後置元件';
 
   @override
   String get centerTitleOption => '標題置中';
@@ -990,7 +990,7 @@ class AppLocalizationsZhHant extends AppLocalizationsZh {
   String get phoneDialogTitle => '對話框';
 
   @override
-  String get phoneBottomSheetTitle => '底部彈層';
+  String get phoneBottomSheetTitle => '底部彈出面板';
 
   @override
   String get tapBarHint => '點擊頂欄打開選擇器';

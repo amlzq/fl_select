@@ -48,7 +48,7 @@
   "phonePopupBarTitle": "弹出选择栏",
   "phonePopupButtonTitle": "弹出选择按钮",
   "phoneDialogTitle": "对话框",
-  "phoneBottomSheetTitle": "底部弹层",
+  "phoneBottomSheetTitle": "底部弹出面板",
   "tapBarHint": "点击顶栏打开选择器",
   "openSelect": "打开选择器",
   "listSelect": "列表选择器",
