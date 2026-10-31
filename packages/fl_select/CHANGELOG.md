@@ -1,3 +1,9 @@
+## Next
+
+- **FEATURE** add `PopupSelectBarTheme.of` and `PopupSelectButtonTheme.of`, which return an empty theme when none is registered on the ambient `Theme`.
+
+- **BUGFIX** `PopupSelectBarTheme.lerp` and `PopupSelectButtonTheme.lerp` now switch `overlayStyle` (and, for the bar, `indicator` and `unselectedIndicator`) at the midpoint instead of always keeping the starting value.
+
 ## 0.17.0
 
 - **BREAKING** remove the named entry constructors deprecated in 0.15.0 ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select/MIGRATION.md#named-constructors-converge-on-the-plain-constructors)).

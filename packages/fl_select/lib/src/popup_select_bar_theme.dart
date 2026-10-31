@@ -79,8 +79,15 @@ class PopupSelectBarTheme extends ThemeExtension<PopupSelectBarTheme> {
     );
   }
 
+  /// Returns the [PopupSelectBarTheme] from the nearest [Theme], or null.
   static PopupSelectBarTheme? maybeOf(BuildContext context) {
     return Theme.of(context).extension<PopupSelectBarTheme>();
+  }
+
+  /// Returns the [PopupSelectBarTheme] from the nearest [Theme], or an empty
+  /// theme (all fields null) if none is registered.
+  static PopupSelectBarTheme of(BuildContext context) {
+    return maybeOf(context) ?? const PopupSelectBarTheme();
   }
 
   @override
@@ -145,9 +152,12 @@ class PopupSelectBarTheme extends ThemeExtension<PopupSelectBarTheme> {
         other.unselectedLabelStyle,
         t,
       ),
-      indicator: indicator,
-      unselectedIndicator: unselectedIndicator,
-      overlayStyle: overlayStyle,
+      // Widgets and overlay styles cannot be interpolated; switch halfway.
+      indicator: t < 0.5 ? indicator : other.indicator,
+      unselectedIndicator: t < 0.5
+          ? unselectedIndicator
+          : other.unselectedIndicator,
+      overlayStyle: t < 0.5 ? overlayStyle : other.overlayStyle,
       selectTheme: SelectThemeData.lerp(selectTheme, other.selectTheme, t),
     );
   }

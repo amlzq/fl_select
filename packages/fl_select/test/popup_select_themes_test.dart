@@ -74,6 +74,40 @@ void main() {
         (heightOnly.lerp(empty, .8) as PopupSelectBarTheme).height,
         isNull,
       );
+
+      const a = PopupSelectBarTheme(
+        indicator: SizedBox(width: 1),
+        unselectedIndicator: SizedBox(width: 2),
+        overlayStyle: SelectOverlayStyle(),
+      );
+      const b = PopupSelectBarTheme(
+        indicator: SizedBox(width: 3),
+        unselectedIndicator: SizedBox(width: 4),
+        overlayStyle: SelectOverlayStyle(maxHeightFactor: .3),
+      );
+      final early = a.lerp(b, .2) as PopupSelectBarTheme;
+      final late = a.lerp(b, .8) as PopupSelectBarTheme;
+      expect(early.indicator, a.indicator);
+      expect(early.unselectedIndicator, a.unselectedIndicator);
+      expect(early.overlayStyle, a.overlayStyle);
+      expect(late.indicator, b.indicator);
+      expect(late.unselectedIndicator, b.unselectedIndicator);
+      expect(late.overlayStyle, b.overlayStyle);
+    });
+
+    testWidgets('of falls back to an empty theme', (tester) async {
+      late PopupSelectBarTheme found;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              found = PopupSelectBarTheme.of(context);
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      expect(found, const PopupSelectBarTheme());
     });
 
     testWidgets('maybeOf', (tester) async {
@@ -181,6 +215,36 @@ void main() {
       expect((a.lerp(b, .8) as PopupSelectButtonTheme).side, isNull);
       expect((a.lerp(b, .2) as PopupSelectButtonTheme).elevation, 1);
       expect((a.lerp(b, .8) as PopupSelectButtonTheme).elevation, isNull);
+
+      const s1 = PopupSelectButtonTheme(
+        overlayStyle: SelectOverlayStyle(maxHeightFactor: .2),
+      );
+      const s2 = PopupSelectButtonTheme(
+        overlayStyle: SelectOverlayStyle(maxHeightFactor: .3),
+      );
+      expect(
+        (s1.lerp(s2, .2) as PopupSelectButtonTheme).overlayStyle,
+        s1.overlayStyle,
+      );
+      expect(
+        (s1.lerp(s2, .8) as PopupSelectButtonTheme).overlayStyle,
+        s2.overlayStyle,
+      );
+    });
+
+    testWidgets('of falls back to an empty theme', (tester) async {
+      late PopupSelectButtonTheme found;
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Builder(
+            builder: (context) {
+              found = PopupSelectButtonTheme.of(context);
+              return const SizedBox();
+            },
+          ),
+        ),
+      );
+      expect(found, const PopupSelectButtonTheme());
     });
 
     testWidgets('maybeOf', (tester) async {

@@ -103,6 +103,12 @@ class PopupSelectButtonTheme extends ThemeExtension<PopupSelectButtonTheme> {
     return Theme.of(context).extension<PopupSelectButtonTheme>();
   }
 
+  /// Returns the [PopupSelectButtonTheme] from the nearest [Theme], or an empty
+  /// theme (all fields null) if none is registered.
+  static PopupSelectButtonTheme of(BuildContext context) {
+    return maybeOf(context) ?? const PopupSelectButtonTheme();
+  }
+
   @override
   int get hashCode => Object.hash(
     backgroundColor,
@@ -172,7 +178,8 @@ class PopupSelectButtonTheme extends ThemeExtension<PopupSelectButtonTheme> {
           : t < 0.5
           ? elevation
           : other.elevation,
-      overlayStyle: overlayStyle,
+      // Overlay styles cannot be interpolated; switch halfway.
+      overlayStyle: t < 0.5 ? overlayStyle : other.overlayStyle,
       selectTheme: SelectThemeData.lerp(selectTheme, other.selectTheme, t),
     );
   }
