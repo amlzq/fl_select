@@ -4,6 +4,9 @@ import 'package:fl_select_genui/fl_select_genui.dart';
 import 'package:genui/genui.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'agent_page.dart';
+import 'llm_client.dart';
+
 /// A payload exactly like one an AI agent would emit for `Select`
 /// (see `FlSelectCatalogItems.systemPromptFragment`).
 const agentPayload = '''
@@ -37,6 +40,18 @@ const agentPayload = '''
 }
 ''';
 
+// Provide these with `--dart-define`, e.g.
+// flutter run --dart-define=LLM_API_KEY=sk-... --dart-define=LLM_MODEL=gpt-4o-mini
+const _llmApiKey = String.fromEnvironment('LLM_API_KEY');
+const _llmBaseUrl = String.fromEnvironment(
+  'LLM_BASE_URL',
+  defaultValue: 'https://api.openai.com/v1',
+);
+const _llmModel = String.fromEnvironment(
+  'LLM_MODEL',
+  defaultValue: 'gpt-4o-mini',
+);
+
 void main() {
   runApp(const FlSelectGenuiDemo());
 }
@@ -58,12 +73,45 @@ class _FlSelectGenuiDemoState extends State<FlSelectGenuiDemo> {
     super.dispose();
   }
 
+  void _openAgent(BuildContext context) {
+    if (_llmApiKey.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Run with --dart-define=LLM_API_KEY=<your key>'),
+        ),
+      );
+      return;
+    }
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => AgentPage(
+          client: OpenAiCompatibleClient(
+            apiKey: _llmApiKey,
+            baseUrl: _llmBaseUrl,
+            model: _llmModel,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(useMaterial3: true),
       home: Scaffold(
-        appBar: AppBar(title: const Text('fl_select_genui demo')),
+        appBar: AppBar(
+          title: const Text('fl_select_genui demo'),
+          actions: [
+            Builder(
+              builder: (context) => TextButton.icon(
+                icon: const Icon(Icons.chat_bubble_outline),
+                label: const Text('Agent chat'),
+                onPressed: () => _openAgent(context),
+              ),
+            ),
+          ],
+        ),
         body: ListView(
           padding: const EdgeInsets.all(16),
           children: [
