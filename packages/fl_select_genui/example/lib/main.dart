@@ -53,17 +53,17 @@ const _llmModel = String.fromEnvironment(
 );
 
 void main() {
-  runApp(const FlSelectGenuiDemo());
+  runApp(const FlSelectGenuiExample());
 }
 
-class FlSelectGenuiDemo extends StatefulWidget {
-  const FlSelectGenuiDemo({super.key});
+class FlSelectGenuiExample extends StatefulWidget {
+  const FlSelectGenuiExample({super.key});
 
   @override
-  State<FlSelectGenuiDemo> createState() => _FlSelectGenuiDemoState();
+  State<FlSelectGenuiExample> createState() => _FlSelectGenuiExampleState();
 }
 
-class _FlSelectGenuiDemoState extends State<FlSelectGenuiDemo> {
+class _FlSelectGenuiExampleState extends State<FlSelectGenuiExample> {
   final DataModel _model = InMemoryDataModel();
   late final DataContext _dataContext = DataContext(_model, DataPath('root'));
 
@@ -101,7 +101,7 @@ class _FlSelectGenuiDemoState extends State<FlSelectGenuiDemo> {
       theme: ThemeData(useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('fl_select_genui demo'),
+          title: const Text('fl_select_genui example'),
           actions: [
             Builder(
               builder: (context) => TextButton.icon(
@@ -134,7 +134,7 @@ class _FlSelectGenuiDemoState extends State<FlSelectGenuiDemo> {
                   return item.widgetBuilder(
                     CatalogItemContext(
                       data: jsonDecode(agentPayload) as JsonMap,
-                      id: 'demo',
+                      id: 'example',
                       type: item.name,
                       buildChild: (_, [_]) => const SizedBox.shrink(),
                       dispatchEvent: (_) {},
@@ -142,7 +142,7 @@ class _FlSelectGenuiDemoState extends State<FlSelectGenuiDemo> {
                       dataContext: _dataContext,
                       getComponent: (_) => null,
                       getCatalogItem: (_) => null,
-                      surfaceId: 'demo-surface',
+                      surfaceId: 'example-surface',
                       reportError: (error, _) => debugPrint('$error'),
                     ),
                   );
@@ -155,7 +155,7 @@ class _FlSelectGenuiDemoState extends State<FlSelectGenuiDemo> {
                 // Subscribe through the same DataContext the Select writes to;
                 // DataPath separates segments with "/", not ".".
                 valueListenable: _dataContext.subscribe<dynamic>(
-                  DataPath('demo.value'),
+                  DataPath('example.value'),
                 ),
                 builder: (context, value, _) => SelectableText(
                   value == null

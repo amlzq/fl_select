@@ -66,7 +66,7 @@ final controller = SurfaceController(
 FlSelectCatalogItems.systemPromptFragment;
 ```
 
-See [`example/`](example/) for an end-to-end demo of the payload →
+See [`example/`](example/) for an end-to-end example of the payload →
 render → write-back loop.
 
 ## Entry tree format

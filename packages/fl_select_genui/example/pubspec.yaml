@@ -1,5 +1,5 @@
 name: example
-description: "Demo of fl_select_genui: rendering an agent-authored Select."
+description: "Example of fl_select_genui: rendering an agent-authored Select."
 publish_to: "none"
 version: 0.7.0
 

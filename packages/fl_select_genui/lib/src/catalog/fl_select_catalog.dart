@@ -282,8 +282,27 @@ class _SelectWidgetState extends State<_SelectWidget> {
             ),
 
       // Wrap — flat chip cloud; category data renders as sideNav.
-      'sideNav' || 'wrap' when isCategoryData => SideNavSelectDelegate.new,
-      'wrap' => WrapSelectDelegate.new,
+      // The default 80dp sidebar truncates names like "Amenities", and chips
+      // default to touching, so widen the bar and space the chips.
+      'sideNav' || 'wrap' when isCategoryData =>
+        ({required searchEnabled, required selectionMode, required entries}) =>
+            SideNavSelectDelegate(
+              defaultLayout: const SelectWrapLayout(spacing: 8, runSpacing: 8),
+              sideBarTheme: const SelectSideBarTheme(width: 110),
+              searchEnabled: searchEnabled,
+              selectionMode: selectionMode,
+              entries: entries,
+            ),
+      // Chips default to touching (spacing 0), so give the flat cloud room.
+      'wrap' =>
+        ({required searchEnabled, required selectionMode, required entries}) =>
+            WrapSelectDelegate(
+              spacing: 8,
+              runSpacing: 8,
+              searchEnabled: searchEnabled,
+              selectionMode: selectionMode,
+              entries: entries,
+            ),
 
       // Cascading — drill-down tree; flat data falls back to the list,
       // because the cascading body only renders category trees.

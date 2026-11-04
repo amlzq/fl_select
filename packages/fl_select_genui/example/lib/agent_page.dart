@@ -54,7 +54,9 @@ class _AgentPageState extends State<AgentPage> {
       PromptFragments.acknowledgeUser(),
       'Prefer a `Select` component whenever the user must choose from '
           'options. Keep the surface small: a Column with one short Text and '
-          'one Select.',
+          'one Select. Never use a Row; stack everything in a Column so nothing '
+          'overflows a phone screen. Put all user-facing wording inside the surface\'s Text; '
+          'do not repeat it as plain text outside the surface.',
       FlSelectCatalogItems.systemPromptFragment,
     ],
   ).systemPromptJoined();
@@ -133,8 +135,28 @@ class _AgentPageState extends State<AgentPage> {
     final json = const JsonEncoder.withIndent('  ').convert(values);
     _send(
       'My selection (JSON from the data model):\n$json',
-      shown: 'Submitted selection:\n$json',
+      shown: _describe(values),
     );
+  }
+
+  /// Human-readable echo of the data model, e.g. `hotel: grand-plaza`.
+  String _describe(Object? values) {
+    if (values is! Map) return 'Selection submitted';
+    final parts = <String>[];
+    void walk(String prefix, Object? v) {
+      if (v is Map) {
+        v.forEach(
+          (k, child) => walk(prefix.isEmpty ? '$k' : '$prefix.$k', child),
+        );
+      } else if (v is Iterable) {
+        parts.add('$prefix: ${v.join(', ')}');
+      } else if (v != null) {
+        parts.add('$prefix: $v');
+      }
+    }
+
+    walk('', values);
+    return parts.isEmpty ? 'Selection submitted' : parts.join('\n');
   }
 
   void _scrollToEnd() {
@@ -229,7 +251,9 @@ class _AgentPageState extends State<AgentPage> {
                 : null,
             child: Padding(
               padding: const EdgeInsets.all(10),
-              child: Text(entry.text.trim()),
+              child: Text(
+                entry.text.trim().replaceAll(RegExp(r'\n\s*\n+'), '\n\n'),
+              ),
             ),
           ),
         );

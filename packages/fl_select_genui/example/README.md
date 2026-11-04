@@ -1,6 +1,6 @@
 # fl_select_genui example
 
-A demo app showing the end-to-end GenUI (A2UI) flow of `fl_select_genui`:
+An example app showing the end-to-end GenUI (A2UI) flow of `fl_select_genui`:
 
 1. **Agent payload** — a JSON payload as a conversational AI agent would
    produce it for a chat surface.
@@ -18,20 +18,25 @@ flutter run -d macos   # or: -d chrome, an iOS simulator, an Android device
 
 ## Agent chat (real model)
 
-The demo's **Agent chat** button opens a chat page backed by a real model:
+The example's **Agent chat** button opens a chat page backed by a real model:
 the model answers with A2UI JSON, the page renders any `Select` it emits, and
 **Send selection** posts the chosen values back as the next user turn.
 
 It speaks the OpenAI-compatible `/chat/completions` protocol (OpenAI,
-DeepSeek, Moonshot, Qwen, ...). Pass the key at launch; it is never written to
-disk:
+DeepSeek, Moonshot, Qwen, ...). Credentials live in a git-ignored
+`dart_defines.local.json`; start from a template:
 
 ```bash
-flutter run -d macos \
-  --dart-define=LLM_API_KEY=<your key> \
-  --dart-define=LLM_BASE_URL=https://api.openai.com/v1 \
-  --dart-define=LLM_MODEL=gpt-4o-mini
+cp dart_defines.openai.example.json dart_defines.local.json    # OpenAI
+cp dart_defines.deepseek.example.json dart_defines.local.json  # DeepSeek
 ```
 
-`LLM_BASE_URL` and `LLM_MODEL` are optional. Try "Help me pick a hotel" or "I
+then replace `LLM_API_KEY`. Launch with the file (the `fl_select_genui example`
+VS Code configurations already do):
+
+```bash
+flutter run -d macos --dart-define-from-file=dart_defines.local.json
+```
+
+Try "Help me pick a hotel" or "I
 want to sort the results".
