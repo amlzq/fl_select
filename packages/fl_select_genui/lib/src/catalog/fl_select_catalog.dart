@@ -211,9 +211,18 @@ class _SelectWidgetState extends State<_SelectWidget> {
       );
     }
 
-    final key = _payloadKey(data);
+    // The sidebar width follows the longest category name, so it depends on
+    // the theme and text scale as well as the payload.
+    final sideBarWidth = isCategoryData ? _sideBarWidthOf(context, entries) : 0;
+    final payloadKey = _payloadKey(data);
+    final key = payloadKey == null ? null : '$payloadKey|$sideBarWidth';
     if (key == null || key != _delegateKey) {
-      _delegate = _buildDelegate(data, entries, isCategoryData);
+      _delegate = _buildDelegate(
+        data,
+        entries,
+        isCategoryData,
+        sideBarWidth.toDouble(),
+      );
       _delegateKey = key;
     }
 
@@ -243,10 +252,42 @@ class _SelectWidgetState extends State<_SelectWidget> {
     }
   }
 
+  /// Width for the side navigation, sized to the longest category name.
+  ///
+  /// The default 80dp truncates names like "Amenities". Measures each name
+  /// with the sidebar's label style (`bodyLarge`) and adds the tile's
+  /// horizontal padding (20) and badge (10) plus a little slack for the
+  /// selected style. Clamped so one very long name cannot take over the
+  /// panel; beyond the cap the sidebar ellipsizes as before.
+  static int _sideBarWidthOf(BuildContext context, Set<SelectEntry> entries) {
+    const minWidth = 80.0;
+    const maxWidth = 160.0;
+    const chrome = 20.0 + 10.0 + 6.0;
+    final style = Theme.of(context).textTheme.bodyLarge;
+    final textScaler = MediaQuery.textScalerOf(context);
+    final direction = Directionality.of(context);
+
+    var widest = 0.0;
+    for (final entry in entries) {
+      final name = entry.name;
+      if (name == null || name.isEmpty) continue;
+      final painter = TextPainter(
+        text: TextSpan(text: name, style: style),
+        textDirection: direction,
+        textScaler: textScaler,
+        maxLines: 1,
+      )..layout();
+      if (painter.width > widest) widest = painter.width;
+      painter.dispose();
+    }
+    return (widest + chrome).clamp(minWidth, maxWidth).ceil();
+  }
+
   SelectDelegate _buildDelegate(
     JsonMap data,
     Set<SelectEntry> entries,
     bool isCategoryData,
+    double sideBarWidth,
   ) {
     final delegateName = switch (data['delegate']) {
       final String name => name,
@@ -282,13 +323,13 @@ class _SelectWidgetState extends State<_SelectWidget> {
             ),
 
       // Wrap — flat chip cloud; category data renders as sideNav.
-      // The default 80dp sidebar truncates names like "Amenities", and chips
-      // default to touching, so widen the bar and space the chips.
+      // The sidebar is sized to the category names (see _sideBarWidthOf), and
+      // chips default to touching, so space them.
       'sideNav' || 'wrap' when isCategoryData =>
         ({required searchEnabled, required selectionMode, required entries}) =>
             SideNavSelectDelegate(
               defaultLayout: const SelectWrapLayout(spacing: 8, runSpacing: 8),
-              sideBarTheme: const SelectSideBarTheme(width: 110),
+              sideBarTheme: SelectSideBarTheme(width: sideBarWidth),
               searchEnabled: searchEnabled,
               selectionMode: selectionMode,
               entries: entries,

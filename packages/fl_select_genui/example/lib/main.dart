@@ -85,7 +85,7 @@ class _FlSelectGenuiExampleState extends State<FlSelectGenuiExample> {
     Navigator.of(context).push(
       MaterialPageRoute<void>(
         builder: (_) => AgentPage(
-          client: OpenAiCompatibleClient(
+          client: ChatCompletionsClient(
             apiKey: _llmApiKey,
             baseUrl: _llmBaseUrl,
             model: _llmModel,
