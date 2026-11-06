@@ -1,4 +1,4 @@
-## Next
+## 0.8.0
 
 - **BREAKING** Remove the `flatten` and `chips` delegate tokens; use `wrap` or `sideNav` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#delegate-token-routing)).
 
