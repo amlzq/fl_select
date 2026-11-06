@@ -61,6 +61,20 @@ abstract final class FlSelectCatalogItems {
           description: 'Grid delegate only: columns.',
         ),
         'search': S.boolean(description: 'Enable search field.'),
+        'defaultLayout': S.object(
+          description:
+              'tabNav/sideNav/expandable only: layout for categories that '
+              'do not set their own `layout`, e.g. {"kind":"chip"} or '
+              '{"kind":"grid","crossAxisCount":2}. Same shape as a '
+              'category `layout`.',
+          additionalProperties: true,
+        ),
+        'isScrollable': S.boolean(
+          description:
+              'tabNav/sideNav/cascading only: whether the category rail / '
+              'tab bar scrolls. Omit to keep the default (tabNav then scrolls '
+              'automatically when its labels do not fit).',
+        ),
         'flatKey': S.string(
           description:
               'Key under which a flat (non-category) selection is written '
@@ -102,6 +116,10 @@ When the user needs to pick values from a structured option set, render a `Selec
   "sideNav" (recommended for category groups: left rail, options in one
   scrollable panel), or "expandable" (accordion groups). Layouts
   auto-fallback to match the `entries` shape.
+- Optional `search` (bool), `selectionMode` ("single"/"multiple"),
+  `defaultLayout` (a layout object, for "tabNav"/"sideNav"/"expandable":
+  used by categories without their own `layout`) and `isScrollable` (bool,
+  for "tabNav"/"sideNav"/"cascading").
 - `entries`: a tree of nodes, each with a `type`:
   - `category`: group; requires `id`, `name`, non-empty `children`; optional
     `selectionMode` ("single"/"multiple"), `layout`, and `header`/`footer`
@@ -211,32 +229,54 @@ class _SelectWidgetState extends State<_SelectWidget> {
       );
     }
 
-    // The sidebar width follows the longest category name, so it depends on
-    // the theme and text scale as well as the payload.
-    final sideBarWidth = isCategoryData ? _sideBarWidthOf(context, entries) : 0;
-    final payloadKey = _payloadKey(data);
-    final key = payloadKey == null ? null : '$payloadKey|$sideBarWidth';
-    if (key == null || key != _delegateKey) {
-      _delegate = _buildDelegate(
-        data,
-        entries,
-        isCategoryData,
-        sideBarWidth.toDouble(),
-      );
-      _delegateKey = key;
-    }
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // The sidebar width follows the longest category name, so it depends on
+        // the theme and text scale as well as the payload.
+        final sideBarWidth = isCategoryData
+            ? _sideBarWidthOf(context, entries)
+            : 0;
+        final SelectLayout? defaultLayout;
+        try {
+          defaultLayout = _defaultLayoutOf(data['defaultLayout']);
+        } on FormatException catch (e) {
+          return _SchemaError('Invalid defaultLayout: ${e.message}');
+        }
+        // tabNav picks scrolling from the tab labels unless the payload says.
+        final tabsScroll =
+            data['delegate'] == 'tabNav' &&
+            isCategoryData &&
+            data['isScrollable'] is! bool &&
+            _tabsOverflow(context, entries, constraints.maxWidth);
+        final payloadKey = _payloadKey(data);
+        final key = payloadKey == null
+            ? null
+            : '$payloadKey|$sideBarWidth|$tabsScroll';
+        if (key == null || key != _delegateKey) {
+          _delegate = _buildDelegate(
+            data,
+            entries,
+            isCategoryData,
+            sideBarWidth.toDouble(),
+            defaultLayout,
+            tabsScroll,
+          );
+          _delegateKey = key;
+        }
 
-    return SelectView(
-      delegate: _delegate!,
-      onChanged: (selected) {
-        // Write the selection back so the agent (and other widgets) can
-        // react to it. Category trees yield Map<String, List<String>> via
-        // `toQueryMap`; flat selections yield their ids under `flatKey`.
-        itemContext.dataContext.update(
-          DataPath(dataPath),
-          selected.isEmpty
-              ? <String, List<String>>{}
-              : _encodeSelection(selected, flatKey),
+        return SelectView(
+          delegate: _delegate!,
+          onChanged: (selected) {
+            // Write the selection back so the agent (and other widgets) can
+            // react to it. Category trees yield Map<String, List<String>> via
+            // `toQueryMap`; flat selections yield their ids under `flatKey`.
+            itemContext.dataContext.update(
+              DataPath(dataPath),
+              selected.isEmpty
+                  ? <String, List<String>>{}
+                  : _encodeSelection(selected, flatKey),
+            );
+          },
         );
       },
     );
@@ -283,11 +323,44 @@ class _SelectWidgetState extends State<_SelectWidget> {
     return (widest + chrome).clamp(minWidth, maxWidth).ceil();
   }
 
+  /// Whether equal-width tabs would be too narrow for their labels: the
+  /// tabs share [maxWidth], so scroll once the widest label (plus tab
+  /// padding) no longer fits in `maxWidth / count`. Unbounded width never
+  /// needs scrolling.
+  static bool _tabsOverflow(
+    BuildContext context,
+    Set<SelectEntry> entries,
+    double maxWidth,
+  ) {
+    if (!maxWidth.isFinite || entries.length < 2) return false;
+    const chrome = 9.0 + 16.0; // tab padding + breathing room
+    final style = Theme.of(context).textTheme.titleSmall
+        ?.copyWith(fontWeight: FontWeight.w600);
+    final textScaler = MediaQuery.textScalerOf(context);
+    final direction = Directionality.of(context);
+    var widest = 0.0;
+    for (final entry in entries) {
+      final name = entry.name;
+      if (name == null || name.isEmpty) continue;
+      final painter = TextPainter(
+        text: TextSpan(text: name, style: style),
+        textDirection: direction,
+        textScaler: textScaler,
+        maxLines: 1,
+      )..layout();
+      if (painter.width > widest) widest = painter.width;
+      painter.dispose();
+    }
+    return widest + chrome > maxWidth / entries.length;
+  }
+
   SelectDelegate _buildDelegate(
     JsonMap data,
     Set<SelectEntry> entries,
     bool isCategoryData,
     double sideBarWidth,
+    SelectLayout? defaultLayout,
+    bool tabsScroll,
   ) {
     final delegateName = switch (data['delegate']) {
       final String name => name,
@@ -298,6 +371,11 @@ class _SelectWidgetState extends State<_SelectWidget> {
       _ => SelectionMode.multiple,
     };
     final crossAxisCount = _crossAxisCountOf(data['crossAxisCount']);
+    // Null keeps each delegate's own default.
+    final isScrollable = switch (data['isScrollable']) {
+      final bool v => v,
+      _ => null,
+    };
 
     // Category-aware delegates assert on flat data (and flat delegates on
     // category data), so the requested layout is matched to the actual
@@ -328,7 +406,10 @@ class _SelectWidgetState extends State<_SelectWidget> {
       'sideNav' || 'wrap' when isCategoryData =>
         ({required searchEnabled, required selectionMode, required entries}) =>
             SideNavSelectDelegate(
-              defaultLayout: const SelectWrapLayout(spacing: 8, runSpacing: 8),
+              defaultLayout:
+                  defaultLayout ??
+                  const SelectWrapLayout(spacing: 8, runSpacing: 8),
+              isScrollable: isScrollable ?? true,
               sideBarTheme: SelectSideBarTheme(width: sideBarWidth),
               searchEnabled: searchEnabled,
               selectionMode: selectionMode,
@@ -347,18 +428,47 @@ class _SelectWidgetState extends State<_SelectWidget> {
 
       // Cascading — drill-down tree; flat data falls back to the list,
       // because the cascading body only renders category trees.
-      'cascading' when isCategoryData => CascadingSelectDelegate.new,
+      'cascading' when isCategoryData =>
+        ({required searchEnabled, required selectionMode, required entries}) =>
+            CascadingSelectDelegate(
+              isScrollable: isScrollable ?? false,
+              searchEnabled: searchEnabled,
+              selectionMode: selectionMode,
+              entries: entries,
+            ),
 
       // TabNav — category tabs on top.
-      'tabNav' when isCategoryData => TabNavSelectDelegate.new,
+      'tabNav' when isCategoryData =>
+        ({required searchEnabled, required selectionMode, required entries}) =>
+            TabNavSelectDelegate(
+              defaultLayout: defaultLayout,
+              isScrollable: isScrollable ?? tabsScroll,
+              searchEnabled: searchEnabled,
+              selectionMode: selectionMode,
+              entries: entries,
+            ),
 
       // Expandable — accordion groups.
-      'expandable' when isCategoryData => ExpandableSelectDelegate.new,
+      'expandable' when isCategoryData =>
+        ({required searchEnabled, required selectionMode, required entries}) =>
+            ExpandableSelectDelegate(
+              defaultLayout: defaultLayout,
+              searchEnabled: searchEnabled,
+              selectionMode: selectionMode,
+              entries: entries,
+            ),
 
       // Everything else: flat data (including the grouped tokens "cascading",
       // "tabNav", "sideNav" and "expandable") lists; unknown tokens on
       // category data group as expandable.
-      _ when isCategoryData => ExpandableSelectDelegate.new,
+      _ when isCategoryData =>
+        ({required searchEnabled, required selectionMode, required entries}) =>
+            ExpandableSelectDelegate(
+              defaultLayout: defaultLayout,
+              searchEnabled: searchEnabled,
+              selectionMode: selectionMode,
+              entries: entries,
+            ),
       _ => ListSelectDelegate.new,
     };
     return create(
@@ -366,6 +476,25 @@ class _SelectWidgetState extends State<_SelectWidget> {
       selectionMode: selectionMode,
       entries: entries,
     );
+  }
+
+  /// Decodes a top-level `defaultLayout` by reusing the entry codec's layout
+  /// parser through a throwaway category, so both places accept exactly the
+  /// same `{"kind": ...}` shapes. Returns null when absent.
+  static SelectLayout? _defaultLayoutOf(Object? raw) {
+    if (raw == null) return null;
+    final decoded = SelectEntryCodec.fromJson([
+      {
+        'type': 'category',
+        'id': '_defaultLayout',
+        'name': '_defaultLayout',
+        'layout': raw,
+        'children': [
+          {'type': 'text', 'id': '_', 'name': '_'},
+        ],
+      },
+    ]);
+    return (decoded.single as SelectCategoryEntry).layout;
   }
 
   /// Agent payloads are untrusted JSON: a column count may arrive as `3.0`, a

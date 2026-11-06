@@ -283,6 +283,110 @@ void main() {
     }
   });
 
+  testWidgets('defaultLayout and isScrollable reach the delegates', (
+    tester,
+  ) async {
+    await pumpSelect(tester, {
+      'delegate': 'tabNav',
+      'isScrollable': true,
+      'defaultLayout': {'kind': 'grid', 'crossAxisCount': 2},
+      'entries': _entries,
+    });
+    var tabNav = delegateOf(tester) as TabNavSelectDelegate;
+    expect(tabNav.isScrollable, isTrue);
+    expect(
+      tabNav.defaultLayout,
+      isA<SelectGridLayout>().having((l) => l.crossAxisCount, 'cols', 2),
+    );
+
+    await pumpSelect(tester, {
+      'delegate': 'expandable',
+      'defaultLayout': {'kind': 'chip'},
+      'entries': _entries,
+    });
+    expect(
+      (delegateOf(tester) as ExpandableSelectDelegate).defaultLayout,
+      isA<SelectWrapLayout>(),
+    );
+
+    // Omitted: tabNav keeps its default, sideNav keeps scrolling.
+    await pumpSelect(tester, {'delegate': 'tabNav', 'entries': _entries});
+    tabNav = delegateOf(tester) as TabNavSelectDelegate;
+    expect(tabNav.isScrollable, isFalse);
+    expect(tabNav.defaultLayout, isNull);
+    await pumpSelect(tester, {'delegate': 'sideNav', 'entries': _entries});
+    expect((delegateOf(tester) as SideNavSelectDelegate).isScrollable, isTrue);
+
+    await pumpSelect(tester, {
+      'delegate': 'cascading',
+      'isScrollable': true,
+      'entries': _entries,
+    });
+    expect(
+      (delegateOf(tester) as CascadingSelectDelegate).isScrollable,
+      isTrue,
+    );
+  });
+
+  testWidgets('a bad defaultLayout shows the schema error card', (
+    tester,
+  ) async {
+    for (final bad in <Object?>[
+      'chip',
+      {'kind': 'bogus'},
+      {'x': 1},
+    ]) {
+      await pumpSelect(tester, {
+        'delegate': 'tabNav',
+        'defaultLayout': bad,
+        'entries': _entries,
+      });
+      expect(tester.takeException(), isNull, reason: '$bad');
+      expect(find.textContaining('Invalid defaultLayout'), findsOneWidget);
+    }
+  });
+
+  testWidgets('tabNav scrolls only when its labels do not fit', (tester) async {
+    List<Map<String, Object?>> categories(int count, String prefix) => [
+      for (var i = 0; i < count; i++)
+        {
+          'type': 'category',
+          'id': 'c$i',
+          'name': '$prefix $i',
+          'children': [
+            {'type': 'text', 'id': 't$i', 'name': 'Option $i'},
+          ],
+        },
+    ];
+    bool scrolls(TabNavSelectDelegate d) => d.isScrollable;
+
+    await pumpSelect(tester, {
+      'delegate': 'tabNav',
+      'entries': categories(3, 'Tab'),
+    });
+    expect(scrolls(delegateOf(tester) as TabNavSelectDelegate), isFalse);
+
+    await pumpSelect(tester, {
+      'delegate': 'tabNav',
+      'entries': categories(12, 'Category'),
+    });
+    expect(scrolls(delegateOf(tester) as TabNavSelectDelegate), isTrue);
+
+    await pumpSelect(tester, {
+      'delegate': 'tabNav',
+      'entries': categories(3, 'A very long category name indeed'),
+    });
+    expect(scrolls(delegateOf(tester) as TabNavSelectDelegate), isTrue);
+
+    // An explicit value always wins over the heuristic.
+    await pumpSelect(tester, {
+      'delegate': 'tabNav',
+      'isScrollable': false,
+      'entries': categories(12, 'Category'),
+    });
+    expect(scrolls(delegateOf(tester) as TabNavSelectDelegate), isFalse);
+  });
+
   testWidgets('malformed crossAxisCount falls back instead of throwing', (
     tester,
   ) async {

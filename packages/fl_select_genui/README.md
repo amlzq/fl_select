@@ -26,6 +26,13 @@ agent ──JSON payload──▶ Select (fl_select UI) ──selection──▶
    own children render through its `layout`: `list` / `grid` / `chip` /
    `counter` / `range` render one level, `cascading` renders one column per
    level and drills into nested children.
+
+   Optional top-level fields tune the whole panel: `selectionMode`
+   (`single` / `multiple`), `search` (boolean), `defaultLayout` (a layout
+   object used by categories without their own `layout`, for `tabNav` /
+   `sideNav` / `expandable`) and `isScrollable` (`tabNav` / `sideNav` /
+   `cascading`). Leave `isScrollable` out and `tabNav` scrolls on its own
+   when its category names do not fit the width.
 4. The user interacts with a real fl_select component; selections are written
    back to the GenUI data model at `<id>.value` as a
    `Map<String, List<String>>` (same shape as fl_select's `toQueryMap`),
