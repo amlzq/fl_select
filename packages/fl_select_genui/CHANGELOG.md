@@ -1,3 +1,15 @@
+## Next
+
+- **BREAKING** Remove the `flatten` and `chips` delegate tokens; use `wrap` or `sideNav` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#delegate-token-routing)).
+
+- **IMPROVEMENT** `Select` accepts optional `defaultLayout` and `isScrollable`, and `tabNav` scrolls on its own when its tabs do not fit.
+
+- **IMPROVEMENT** The example app gains an Agent chat page that talks to a real model.
+
+- **BUGFIX** `Select` keeps its search text and selection when its parent rebuilds.
+
+- **BUGFIX** Malformed `crossAxisCount`, `flatKey` or `delegate` values no longer throw.
+
 ## 0.7.0
 
 - **IMPROVEMENT** Bump fl_select to `^0.17.0` ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#fl_select-bumped-to-0170)).

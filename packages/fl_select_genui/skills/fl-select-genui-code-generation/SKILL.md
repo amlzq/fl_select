@@ -69,7 +69,7 @@ The API surface hangs off `FlSelectCatalogItems`:
 
 Required: `delegate` + a non-empty `entries` array.
 
-- `delegate`: `list` / `grid` (with `crossAxisCount`) / `wrap` (flat chip cloud) / `cascading` (drill-down tree) / `tabNav` (category tabs) / `sideNav` (recommended for category data — left rail) / `expandable` (accordion groups). A `category` tree at the top level is required by `cascading` / `tabNav` / `sideNav` / `expandable`; `list` / `grid` / `wrap` take flat nodes. Use `wrap` for flat chips and `sideNav` for categories. Layouts auto-fallback to match the `entries` shape, so a category layout on flat data (or vice versa) never asserts.
+- `delegate`: `list` / `grid` (with `crossAxisCount`) / `wrap` (flat chip cloud) / `cascading` (drill-down tree) / `tabNav` (category tabs) / `sideNav` (recommended for category data — left rail) / `expandable` (accordion groups). A `category` tree at the top level is required by `cascading` / `tabNav` / `sideNav` / `expandable`; `list` / `grid` / `wrap` take flat nodes. Use `wrap` for flat chips and `sideNav` for categories. A bad `crossAxisCount` falls back to 3 columns. Layouts auto-fallback to match the `entries` shape, so a category layout on flat data (or vice versa) never asserts.
 - `selectionMode`: `single` / `multiple` (default `multiple`). `search`: boolean.
 - `defaultLayout` (optional; `tabNav` / `sideNav` / `expandable` only): the layout used by categories that do not set their own `layout`, in the same `{"kind": ...}` shape, e.g. `{"kind":"chip"}` or `{"kind":"grid","crossAxisCount":2}`. A malformed value renders the error card. Without it `sideNav` falls back to a spaced chip wrap and the others to their own default.
 - `isScrollable` (optional boolean; `tabNav` / `sideNav` / `cascading` only): whether the tab bar / category rail scrolls. When omitted, `tabNav` scrolls automatically if its category names do not fit the available width, `sideNav` scrolls, and `cascading` does not; an explicit value always wins.
@@ -84,6 +84,6 @@ Selections are written to the GenUI data model at `<id>.value` as a `Map<String,
 - Flat panels — `{flatKey: [ids]}` (fl_select's `toIdList()`).
 - An empty selection writes `{}`.
 
-Invalid payloads (malformed JSON, empty `entries`, a flat panel missing `flatKey`, a `custom` entry inside a `header`/`footer`, or an entry tree fl_select rejects — duplicate sibling ids, a non-category entry beside a category) render an inline error card instead of crashing.
+Invalid payloads (malformed JSON, empty `entries`, a flat panel missing `flatKey`, a `custom` entry inside a `header`/`footer`, a malformed `defaultLayout`, or an entry tree fl_select rejects — duplicate sibling ids, a non-category entry beside a category) render an inline error card instead of crashing.
 
 Package: <https://pub.dev/packages/fl_select_genui> · fl_select: <https://pub.dev/packages/fl_select>
