@@ -1,6 +1,7 @@
-/// GenUI SDK integration for fl_select.
+/// A2UI integration for fl_select.
 ///
-/// Exposes fl_select widgets as GenUI `CatalogItem`s so that AI agents can
+/// Exposes fl_select widgets as A2UI catalog components
+/// (`ComponentImplementation`s of package:a2ui_flutter) so that AI agents can
 /// render real selection UIs inside chat surfaces and receive user selections
 /// back as structured data (via `toQueryMap`-style encoding).
 library;

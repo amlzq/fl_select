@@ -1,3 +1,13 @@
+## Unreleased
+
+- **BREAKING** Move from `genui` to the A2UI Dart SDKs `a2ui_core` (`^0.5.0`) and `a2ui_flutter` (`^0.1.0`). Agents keep speaking A2UI v0.9.
+
+- **BREAKING** `FlSelectCatalogItems.select` is an `a2ui_flutter` `ComponentImplementation` instead of a genui `CatalogItem`, `all` returns `List<ComponentImplementation>`, and `asCatalog()` returns a `CatalogImplementation` with the id `fl_select`. Register them with a `MessageProcessor` and render surfaces with `A2uiSurface`, as the README shows. `dataSchema` and `widgetBuilder` are now `schema` and `builder`; `exampleData` and `isImplicitlyFlexible` are gone, since `ComponentImplementation` has neither.
+
+- **BREAKING** The `MessageProcessor` checks every `Select` payload against its schema before rendering it. A payload with a wrong type, an unknown `delegate` token, empty `entries`, or a property the schema does not declare (such as `weight` or `accessibility`) is rejected with a `VALIDATION_FAILED` error instead of rendering a fallback or the error card. Payloads that match the schema but are still invalid render the error card as before.
+
+- **IMPROVEMENT** The example app renders through `MessageProcessor` and `A2uiSurface`, and its Agent chat page prompts the model through `a2ui_agent`, which asks for `<a2ui-json>` blocks instead of fenced JSON.
+
 ## 0.8.0
 
 - **BREAKING** Remove the `flatten` and `chips` delegate tokens; use `wrap` or `sideNav` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#delegate-token-routing)).

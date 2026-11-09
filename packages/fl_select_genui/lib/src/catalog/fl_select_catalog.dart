@@ -1,37 +1,45 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:a2ui_core/a2ui_core.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:fl_select/fl_select.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:genui/genui.dart';
 import 'package:json_schema_builder/json_schema_builder.dart';
 
 import 'schema/select_entry_schema.dart';
 
-/// Catalog items exposing fl_select widgets to GenUI/A2UI agents.
+/// Catalog components exposing fl_select widgets to A2UI agents.
 abstract final class FlSelectCatalogItems {
-  /// All fl_select catalog items.
-  static List<CatalogItem> get all => [select];
+  /// All fl_select catalog components.
+  static List<ComponentImplementation> get all => [select];
 
-  /// The catalog as a whole, ready to be merged into a surface controller:
+  /// The catalog as a whole. To use the components next to the basic ones,
+  /// add [all] to the basic catalog instead:
   ///
   /// ```dart
-  /// SurfaceController(
-  ///   catalogs: [BasicCatalogItems.asCatalog().copyWith(newItems: FlSelectCatalogItems.all)],
+  /// MessageProcessor<ComponentImplementation>(
+  ///   catalogs: [
+  ///     v0_9.basicCatalog().copyWith(
+  ///       components: [...v0_9.BasicComponents.all, ...FlSelectCatalogItems.all],
+  ///     ),
+  ///   ],
   /// )
   /// ```
-  static Catalog asCatalog() => Catalog(all, catalogId: 'fl_select');
+  static CatalogImplementation asCatalog() =>
+      CatalogImplementation(id: 'fl_select', components: all);
 
   /// A selection component backed by [SelectView].
   ///
   /// The agent supplies an entry tree (`SelectEntryCodec` JSON format) and a
   /// delegate type; user selections are written back to the data model as a
   /// `Map<String, List<String>>` (same shape as `toQueryMap`).
-  static CatalogItem get select => _buildItem();
+  static ComponentImplementation get select => _buildItem();
 
-  /// Builds the selection catalog item.
-  static CatalogItem _buildItem() => CatalogItem(
+  /// Builds the selection catalog component.
+  static ComponentImplementation _buildItem() => ComponentImplementation(
     name: 'Select',
-    dataSchema: S.object(
+    schema: S.object(
       description:
           'A selection component with categories, options, sliders and '
           'range pickers. Use it whenever the user should pick one or more '
@@ -85,25 +93,12 @@ abstract final class FlSelectCatalogItems {
       },
       required: const ['delegate', 'entries'],
     ),
-    isImplicitlyFlexible: true,
-    exampleData: [
-      () =>
-          '{"delegate":"sideNav","selectionMode":"multiple","entries":['
-          '{"type":"category","id":"price","name":"Price","children":['
-          '{"type":"any","name":"Any"},'
-          '{"type":"range","id":"0-100","name":"\$0 - \$100","min":0,"max":100},'
-          '{"type":"range","id":"100-300","name":"\$100 - \$300","min":100,"max":300},'
-          '{"type":"custom","name":"Custom","min":0,"max":1000}]},'
-          '{"type":"category","id":"amenities","name":"Amenities","children":['
-          '{"type":"text","id":"wifi","name":"Wi-Fi"},'
-          '{"type":"text","id":"parking","name":"Parking"},'
-          '{"type":"text","id":"pool","name":"Pool"}]}]}',
-    ],
     // Selections always land at `<id>.value`; that binding is the catalog's
     // documented contract, so the payload cannot retarget it.
-    widgetBuilder: (itemContext) => _SelectWidget(
-      itemContext: itemContext,
-      dataPath: '${itemContext.id}.value',
+    builder: (context, node, props, buildChild) => _SelectWidget(
+      node: node,
+      data: {for (final key in props.keys) key: props.value(key)},
+      dataPath: '${node.componentId}.value',
     ),
   );
 
@@ -150,9 +145,19 @@ When the user needs to pick values from a structured option set, render a `Selec
 }
 
 class _SelectWidget extends StatefulWidget {
-  const _SelectWidget({required this.itemContext, required this.dataPath});
+  const _SelectWidget({
+    required this.node,
+    required this.data,
+    required this.dataPath,
+  });
 
-  final CatalogItemContext itemContext;
+  final ComponentNode<ComponentImplementation> node;
+
+  /// The agent-supplied payload, as the node's resolved properties.
+  final Map<String, Object?> data;
+
+  /// The data model path the selection is written to, relative to the node's
+  /// data context.
   final String dataPath;
 
   @override
@@ -160,11 +165,10 @@ class _SelectWidget extends StatefulWidget {
 }
 
 class _SelectWidgetState extends State<_SelectWidget> {
-  CatalogItemContext get itemContext => widget.itemContext;
   String get dataPath => widget.dataPath;
 
-  /// The delegate built for [_delegateKey]. GenUI hands the builder a fresh
-  /// context on every surface update, and a new delegate object makes
+  /// The delegate built for [_delegateKey]. The surface hands the builder a
+  /// fresh payload on every update, and a new delegate object makes
   /// `SelectView` drop its search text and selection, so the delegate is only
   /// rebuilt when the payload actually changes.
   SelectDelegate? _delegate;
@@ -172,14 +176,12 @@ class _SelectWidgetState extends State<_SelectWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final data = (itemContext.data is JsonMap
-        ? itemContext.data as JsonMap
-        : const <String, Object?>{});
+    final data = widget.data;
 
     final entriesJson = data['entries'];
     if (entriesJson is! List || entriesJson.isEmpty) {
       return _SchemaError(
-        '${itemContext.type} requires a non-empty "entries" array.',
+        '${widget.node.type} requires a non-empty "entries" array.',
       );
     }
 
@@ -224,7 +226,7 @@ class _SelectWidgetState extends State<_SelectWidget> {
     };
     if (!isCategoryData && (flatKey == null || flatKey.isEmpty)) {
       return _SchemaError(
-        '${itemContext.type} with flat (non-category) entries requires a '
+        '${widget.node.type} with flat (non-category) entries requires a '
         '"flatKey" so selections can be written back.',
       );
     }
@@ -270,12 +272,28 @@ class _SelectWidgetState extends State<_SelectWidget> {
             // Write the selection back so the agent (and other widgets) can
             // react to it. Category trees yield Map<String, List<String>> via
             // `toQueryMap`; flat selections yield their ids under `flatKey`.
-            itemContext.dataContext.update(
-              DataPath(dataPath),
-              selected.isEmpty
-                  ? <String, List<String>>{}
-                  : _encodeSelection(selected, flatKey),
-            );
+            try {
+              widget.node.context?.dataContext.set(
+                dataPath,
+                selected.isEmpty
+                    ? <String, List<String>>{}
+                    : _encodeSelection(selected, flatKey),
+              );
+            } on A2uiDataError catch (error) {
+              // The component id is not a valid JSON Pointer segment, or the
+              // node's data context points into a primitive value.
+              final surface = A2uiSurface.of(context);
+              unawaited(
+                surface.dispatchError(
+                  A2uiRendererError(
+                    code: error.code,
+                    surfaceId: surface.id,
+                    message: error.message,
+                    path: error.path,
+                  ),
+                ),
+              );
+            }
           },
         );
       },
@@ -284,7 +302,7 @@ class _SelectWidgetState extends State<_SelectWidget> {
 
   /// A value-equality key for [data], or null when it is not JSON-encodable
   /// (the delegate is then rebuilt every time).
-  static String? _payloadKey(JsonMap data) {
+  static String? _payloadKey(Map<String, Object?> data) {
     try {
       return jsonEncode(data);
     } on JsonUnsupportedObjectError {
@@ -355,7 +373,7 @@ class _SelectWidgetState extends State<_SelectWidget> {
   }
 
   SelectDelegate _buildDelegate(
-    JsonMap data,
+    Map<String, Object?> data,
     Set<SelectEntry> entries,
     bool isCategoryData,
     double sideBarWidth,

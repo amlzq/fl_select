@@ -1,10 +1,12 @@
 [![codecov](https://codecov.io/gh/amlzq/fl_select/graph/badge.svg?token=CTUREA7AHU)](https://codecov.io/gh/amlzq/fl_select)
 
-[GenUI SDK](https://pub.dev/packages/genui) (A2UI) integration for
-[fl_select](https://pub.dev/packages/fl_select): exposes fl_select
-components as `CatalogItem`s so conversational AI agents can render real,
-interactive selection UIs inside chat surfaces — and receive the user's
-selections back as structured query data.
+A2UI integration for [fl_select](https://pub.dev/packages/fl_select),
+built on the A2UI Dart SDKs [a2ui_core](https://pub.dev/packages/a2ui_core)
+and [a2ui_flutter](https://pub.dev/packages/a2ui_flutter): exposes fl_select
+components as catalog components (`ComponentImplementation`s) so
+conversational AI agents can render real, interactive selection UIs inside
+chat surfaces — and receive the user's selections back as structured query
+data.
 
 ```
 agent ──JSON payload──▶ Select (fl_select UI) ──selection──▶ Map<String, List<String>>
@@ -12,8 +14,8 @@ agent ──JSON payload──▶ Select (fl_select UI) ──selection──▶
 
 ## How it works
 
-1. You register `FlSelectCatalogItems.asCatalog()` (or `.all`) with your
-   GenUI `SurfaceController` alongside the basic catalog.
+1. You register `FlSelectCatalogItems.asCatalog()` (or `.all`, added to the
+   basic catalog) with your A2UI `MessageProcessor`.
 2. Your agent's system prompt includes
    `FlSelectCatalogItems.systemPromptFragment`, which teaches it the
    `Select` vocabulary.
@@ -34,11 +36,15 @@ agent ──JSON payload──▶ Select (fl_select UI) ──selection──▶
    `cascading`). Leave `isScrollable` out and `tabNav` scrolls on its own
    when its category names do not fit the width.
 4. The user interacts with a real fl_select component; selections are written
-   back to the GenUI data model at `<id>.value` as a
+   back to the surface's data model at `<id>.value` as a
    `Map<String, List<String>>` (same shape as fl_select's `toQueryMap`),
    ready for the next agent turn or your query layer.
 
-Invalid agent payloads render an inline error card instead of crashing.
+The `MessageProcessor` rejects a payload that does not match the `Select`
+schema (a wrong type, an unknown `delegate` token, empty `entries`, or a
+property the schema does not declare) and reports it on
+`processor.model.onError`. Other invalid agent payloads render an inline
+error card instead of crashing.
 
 ## Agent Skills
 
@@ -58,16 +64,21 @@ dart run skills@ get --package fl_select_genui
 ## Usage
 
 ```dart
+import 'package:a2ui_core/a2ui_core.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:a2ui_flutter/v0_9/basic_catalog.dart' as v0_9;
 import 'package:fl_select_genui/fl_select_genui.dart';
-import 'package:genui/genui.dart';
 
-final controller = SurfaceController(
+final processor = MessageProcessor<ComponentImplementation>(
   catalogs: [
-    BasicCatalogItems.asCatalog().copyWith(
-      newItems: FlSelectCatalogItems.all,
+    v0_9.basicCatalog().copyWith(
+      components: [...v0_9.BasicComponents.all, ...FlSelectCatalogItems.all],
     ),
   ],
 );
+
+// Pass the agent's A2UI messages to processor.processMessages(...) and render
+// each surface it creates with A2uiSurface(surface: surface).
 
 // System prompt:
 FlSelectCatalogItems.systemPromptFragment;

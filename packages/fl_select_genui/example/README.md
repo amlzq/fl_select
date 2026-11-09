@@ -1,6 +1,6 @@
 # fl_select_genui example
 
-An example app showing the end-to-end GenUI (A2UI) flow of `fl_select_genui`:
+An example app showing the end-to-end A2UI flow of `fl_select_genui`:
 
 1. **Agent payload** — a JSON payload as a conversational AI agent would
    produce it for a chat surface.
