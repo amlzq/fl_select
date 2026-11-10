@@ -21,7 +21,7 @@ agent ──Select payload (JSON)──▶ fl_select panel ──onChanged──
 
 ## Requirements
 
-Requires `fl_select: ^0.17.0`, `a2ui_core: ^0.5.0` and `a2ui_flutter: ^0.1.0`. The minimum SDK is Dart ^3.13.5 / Flutter 3.47, because fl_select renders through the standalone `material_ui` package — the host app should import `material_ui` rather than the SDK's Material library so the `MaterialApp` and the rendered select share one Material library. Payloads are unaffected by these versions.
+Requires `fl_select: ^0.17.0`, `a2ui_core: ^0.6.0` and `a2ui_flutter: ^0.2.0`. The minimum SDK is Dart ^3.13.5 / Flutter 3.47, because fl_select renders through the standalone `material_ui` package — the host app should import `material_ui` rather than the SDK's Material library so the `MaterialApp` and the rendered select share one Material library. Payloads are unaffected by these versions.
 
 ## Wiring it up
 

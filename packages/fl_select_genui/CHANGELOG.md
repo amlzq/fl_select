@@ -1,6 +1,6 @@
 ## Unreleased
 
-- **BREAKING** Move from `genui` to the A2UI Dart SDKs `a2ui_core` (`^0.5.0`) and `a2ui_flutter` (`^0.1.0`). Agents keep speaking A2UI v0.9.
+- **BREAKING** Move from `genui` to the A2UI Dart SDKs `a2ui_core` (`^0.6.0`) and `a2ui_flutter` (`^0.2.0`). Agents keep speaking A2UI v0.9.
 
 - **BREAKING** `FlSelectCatalogItems.select` is an `a2ui_flutter` `ComponentImplementation` instead of a genui `CatalogItem`, `all` returns `List<ComponentImplementation>`, and `asCatalog()` returns a `CatalogImplementation` with the id `fl_select`. Register them with a `MessageProcessor` and render surfaces with `A2uiSurface`, as the README shows. `dataSchema` and `widgetBuilder` are now `schema` and `builder`; `exampleData` and `isImplicitlyFlexible` are gone, since `ComponentImplementation` has neither.
 
