@@ -1,0 +1,36 @@
+name: Format and Analyze
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main ]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: '3.47.x'
+          cache: true
+
+      - name: Resolve workspace dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Check formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      # Infos (e.g. deprecated API demos in the playground) are allowed.
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos --no-pub
