@@ -49,7 +49,7 @@ class _FakeLlm implements LlmClient {
         ],
       },
     });
-    yield 'Sure, pick one.\n```json\n$create\n```\n```json\n$update\n```\n';
+    yield 'Sure, pick one.\n<a2ui-json>\n[$create, $update]\n</a2ui-json>\n';
   }
 }
 

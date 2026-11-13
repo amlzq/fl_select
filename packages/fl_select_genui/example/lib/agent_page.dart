@@ -1,17 +1,21 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:a2ui_agent/a2ui_agent.dart';
+import 'package:a2ui_core/a2ui_core.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:a2ui_flutter/v0_9/basic_catalog.dart' as v0_9;
 import 'package:fl_select_genui/fl_select_genui.dart';
-import 'package:genui/genui.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'llm_client.dart';
 
 /// A chat page where a real model decides when to render a `Select`.
 ///
-/// Flow: user text → model → A2UI JSON (fenced in the reply) →
-/// [A2uiTransportAdapter] parses it → [SurfaceController] renders the
-/// `Select` through the fl_select catalog → the user picks options → the page
-/// sends the data model back to the model as the next user turn.
+/// Flow: user text → model → A2UI JSON (in `<a2ui-json>` blocks of the reply)
+/// → an a2ui_agent response stream parses it → a [MessageProcessor] renders
+/// the `Select` through the fl_select catalog → the user picks options → the
+/// page sends the data model back to the model as the next user turn.
 class AgentPage extends StatefulWidget {
   const AgentPage({super.key, required this.client});
 
@@ -30,51 +34,118 @@ class _TextEntry extends _Entry {
 }
 
 class _SurfaceEntry extends _Entry {
-  _SurfaceEntry(this.surfaceId);
-  final String surfaceId;
+  _SurfaceEntry(this.surface);
+  final SurfaceModel<ComponentImplementation> surface;
 }
 
 class _AgentPageState extends State<AgentPage> {
-  late final Catalog _catalog = BasicCatalogItems.asNoAssetCatalog().copyWith(
-    newItems: FlSelectCatalogItems.all,
-  );
-  late final SurfaceController _controller = SurfaceController(
-    catalogs: [_catalog],
-  );
-  late final A2uiTransportAdapter _transport = A2uiTransportAdapter(
-    onSend: _onSend,
-  );
-  late final Conversation _conversation = Conversation(
-    controller: _controller,
-    transport: _transport,
-  );
-  late final String _systemPrompt = PromptBuilder.chat(
-    catalog: _catalog,
-    systemPromptFragments: [
-      PromptFragments.acknowledgeUser(),
-      'Prefer a `Select` component whenever the user must choose from '
-          'options. Keep the surface small: a Column with one short Text and '
-          'one Select. Never use a Row; stack everything in a Column so nothing '
-          'overflows a phone screen. Put all user-facing wording inside the surface\'s Text; '
-          'do not repeat it as plain text outside the surface.',
-      FlSelectCatalogItems.systemPromptFragment,
+  /// The basic catalog without its media components, plus the fl_select ones.
+  late final CatalogImplementation _catalog = v0_9.basicCatalog().copyWith(
+    components: [
+      for (final component in v0_9.BasicComponents.all)
+        if (!const {'Image', 'Video', 'AudioPlayer'}.contains(component.name))
+          component,
+      ...FlSelectCatalogItems.all,
     ],
-  ).systemPromptJoined();
+  );
+  late final MessageProcessor<ComponentImplementation> _processor =
+      MessageProcessor(
+        catalogs: [_catalog],
+        // A surface streams in over several messages, which the strict checks
+        // would reject.
+        validationConfig: ValidationConfig.relaxed,
+        reportErrorsOnly: true,
+      );
+  late final A2uiRequestProcessor _agent =
+      A2uiGenerator(
+        catalogs: [CatalogConfig(_catalog)],
+        inferenceFormatFactory: const DirectJsonFormatFactory(
+          // Each turn creates new surfaces and fills them in.
+          allowedMessages: ['createSurface', 'updateComponents'],
+          // Hand the renderer whole components, not half-streamed ones.
+          bufferIncompleteComponents: true,
+        ),
+      ).createProcessor(
+        A2uiRendererCapabilities.forCatalogIds([
+          _catalog.id,
+        ], version: A2uiProtocolVersion.v0_9),
+      );
+  late final String _systemPrompt = [
+    'Your responses should contain acknowledgment of the user message.',
+    'Prefer a `Select` component whenever the user must choose from '
+        'options. Keep the surface small: a Column with one short Text and '
+        'one Select. Never use a Row; stack everything in a Column so nothing '
+        'overflows a phone screen. Put all user-facing wording inside the surface\'s Text; '
+        'do not repeat it as plain text outside the surface.',
+    FlSelectCatalogItems.systemPromptFragment,
+    // genui's chat prompt kept every turn to surfaces of its own.
+    'IMPORTANT: DO NOT update or modify surfaces created in previous turns. '
+        'If the UI needs to change, you MUST create a NEW surface with a new '
+        'unique `surfaceId`. You may only use `updateComponents` to populate '
+        'the components of a freshly created surface.',
+    _agent.promptSnippet,
+  ].join('\n\n');
+  late final List<Subscription> _subscriptions;
 
   final _input = TextEditingController();
   final _scroll = ScrollController();
   final _entries = <_Entry>[];
   final _history = <LlmTurn>[];
+  final _waiting = ValueNotifier<bool>(false);
   _TextEntry? _assistantBubble;
   String? _error;
 
   @override
   void initState() {
     super.initState();
-    _conversation.events.listen((event) {
-      if (!mounted) return;
-      switch (event) {
-        case ConversationContentReceived(:final text):
+    _subscriptions = [
+      _processor.model.onSurfaceCreated.subscribe((surface) {
+        if (!mounted) return;
+        setState(() => _entries.add(_SurfaceEntry(surface)));
+        _scrollToEnd();
+      }),
+      // Messages the renderer rejects, and errors its surfaces meet.
+      _processor.model.onError.subscribe(
+        (error) => debugPrint('${error.code}: ${error.message}'),
+      ),
+    ];
+  }
+
+  @override
+  void dispose() {
+    for (final subscription in _subscriptions) {
+      subscription.unsubscribe();
+    }
+    _processor.dispose();
+    _waiting.dispose();
+    _input.dispose();
+    _scroll.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onSend(String text) async {
+    _history.add((role: 'user', content: text));
+    _assistantBubble = null;
+    final reply = StringBuffer();
+    // No renderer state: each reply is checked on its own, as a chat turn.
+    final ContinuingResponseStream parts = _agent.openContinuingStream();
+    await for (final chunk in widget.client.stream(
+      systemPrompt: _systemPrompt,
+      history: _history,
+    )) {
+      reply.write(chunk);
+      _deliver(parts.feed(chunk));
+    }
+    _deliver(parts.close());
+    _history.add((role: 'assistant', content: reply.toString()));
+  }
+
+  /// Shows the text and renders the A2UI messages of a reply as they stream.
+  void _deliver(List<StreamPart> parts) {
+    if (!mounted) return;
+    for (final part in parts) {
+      switch (part) {
+        case TextPart(:final text):
           setState(() {
             final bubble = _assistantBubble ??= _TextEntry(
               fromUser: false,
@@ -83,38 +154,14 @@ class _AgentPageState extends State<AgentPage> {
             if (!_entries.contains(bubble)) _entries.add(bubble);
             bubble.text += text;
           });
-        case ConversationSurfaceAdded(:final surfaceId):
-          setState(() => _entries.add(_SurfaceEntry(surfaceId)));
-        case ConversationError(:final error):
-          setState(() => _error = '$error');
-        default:
+          _scrollToEnd();
+        case A2uiPart(:final a2ui):
+          _processor.processMessages(AgentToRendererMessagePayload(a2ui));
+        case ErrorPart(:final error):
+          // A block the stream rejected; the rest of the reply still renders.
+          debugPrint('$error');
       }
-      _scrollToEnd();
-    });
-  }
-
-  @override
-  void dispose() {
-    _conversation.dispose();
-    _transport.dispose();
-    _controller.dispose();
-    _input.dispose();
-    _scroll.dispose();
-    super.dispose();
-  }
-
-  Future<void> _onSend(ChatMessage message) async {
-    _history.add((role: 'user', content: message.text));
-    _assistantBubble = null;
-    final reply = StringBuffer();
-    await for (final chunk in widget.client.stream(
-      systemPrompt: _systemPrompt,
-      history: _history,
-    )) {
-      reply.write(chunk);
-      _transport.addChunk(chunk);
     }
-    _history.add((role: 'assistant', content: reply.toString()));
   }
 
   void _send(String text, {String? shown}) {
@@ -123,15 +170,28 @@ class _AgentPageState extends State<AgentPage> {
       _error = null;
       _entries.add(_TextEntry(fromUser: true, text: shown ?? text));
     });
-    _conversation.sendRequest(ChatMessage.user(text));
+    unawaited(_request(text));
     _scrollToEnd();
+  }
+
+  /// Runs one model turn for [text] and shows a failed request as the error.
+  Future<void> _request(String text) async {
+    _waiting.value = true;
+    try {
+      await _onSend(text);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _error = '$error');
+      _scrollToEnd();
+    } finally {
+      if (mounted) _waiting.value = false;
+    }
   }
 
   /// Reads everything the surface's `Select` wrote and sends it as the next
   /// user turn, so the model can react to the choice.
-  void _submitSelection(String surfaceId) {
-    final model = _controller.contextFor(surfaceId).dataModel;
-    final values = model.getValue<Object?>(DataPath.root);
+  void _submitSelection(SurfaceModel<ComponentImplementation> surface) {
+    final values = surface.dataModel.get('/');
     final json = const JsonEncoder.withIndent('  ').convert(values);
     _send(
       'My selection (JSON from the data model):\n$json',
@@ -200,9 +260,9 @@ class _AgentPageState extends State<AgentPage> {
               ],
             ),
           ),
-          ValueListenableBuilder<ConversationState>(
-            valueListenable: _conversation.state,
-            builder: (context, state, _) => state.isWaiting
+          ValueListenableBuilder<bool>(
+            valueListenable: _waiting,
+            builder: (context, waiting, _) => waiting
                 ? const LinearProgressIndicator()
                 : const SizedBox(height: 4),
           ),
@@ -264,13 +324,14 @@ class _AgentPageState extends State<AgentPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Surface(
-                  surfaceContext: _controller.contextFor(entry.surfaceId),
+                A2uiSurface(
+                  key: ObjectKey(entry.surface),
+                  surface: entry.surface,
                 ),
                 Align(
                   alignment: Alignment.centerRight,
                   child: FilledButton(
-                    onPressed: () => _submitSelection(entry.surfaceId),
+                    onPressed: () => _submitSelection(entry.surface),
                     child: const Text('Send selection'),
                   ),
                 ),

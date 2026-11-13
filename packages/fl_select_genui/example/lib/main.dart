@@ -1,7 +1,8 @@
 import 'dart:convert';
 
+import 'package:a2ui_core/a2ui_core.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
 import 'package:fl_select_genui/fl_select_genui.dart';
-import 'package:genui/genui.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'agent_page.dart';
@@ -64,12 +65,55 @@ class FlSelectGenuiExample extends StatefulWidget {
 }
 
 class _FlSelectGenuiExampleState extends State<FlSelectGenuiExample> {
-  final DataModel _model = InMemoryDataModel();
-  late final DataContext _dataContext = DataContext(_model, DataPath('root'));
+  /// Renders the payload as an app renders an agent's surface: as the root
+  /// component of a surface on the fl_select catalog.
+  final MessageProcessor<ComponentImplementation> _processor = MessageProcessor(
+    catalogs: [FlSelectCatalogItems.asCatalog()],
+    onError: (error) => debugPrint('${error.code}: ${error.message}'),
+  );
+  late final SurfaceModel<ComponentImplementation> _surface;
+
+  /// The selection the Select writes to `<id>.value` relative to its data
+  /// context, the surface root here. JSON Pointer separates segments with
+  /// "/", so "root.value" is one key.
+  late final DataSubscription<Object?> _selection;
+
+  @override
+  void initState() {
+    super.initState();
+    _processor.processMessages([
+      {
+        'version': 'v0.9',
+        'createSurface': {
+          'surfaceId': 'example-surface',
+          'catalogId': 'fl_select',
+        },
+      },
+      {
+        'version': 'v0.9',
+        'updateComponents': {
+          'surfaceId': 'example-surface',
+          'components': [
+            {
+              'id': 'root',
+              'component': 'Select',
+              ...jsonDecode(agentPayload) as Map<String, Object?>,
+            },
+          ],
+        },
+      },
+    ]);
+    _surface = _processor.model.getSurface('example-surface')!;
+    _selection = _surface.dataModel.subscribe<Object?>(
+      '/root.value',
+      (_) => setState(() {}),
+    );
+  }
 
   @override
   void dispose() {
-    _model.dispose();
+    _selection.unsubscribe();
+    _processor.dispose();
     super.dispose();
   }
 
@@ -128,44 +172,19 @@ class _FlSelectGenuiExampleState extends State<FlSelectGenuiExample> {
             ),
             _Section(
               title: '2. Rendered Select',
-              child: Builder(
-                builder: (buildContext) {
-                  final item = FlSelectCatalogItems.select;
-                  return item.widgetBuilder(
-                    CatalogItemContext(
-                      data: jsonDecode(agentPayload) as JsonMap,
-                      id: 'example',
-                      type: item.name,
-                      buildChild: (_, [_]) => const SizedBox.shrink(),
-                      dispatchEvent: (_) {},
-                      buildContext: buildContext,
-                      dataContext: _dataContext,
-                      getComponent: (_) => null,
-                      getCatalogItem: (_) => null,
-                      surfaceId: 'example-surface',
-                      reportError: (error, _) => debugPrint('$error'),
-                    ),
-                  );
-                },
-              ),
+              child: A2uiSurface(surface: _surface),
             ),
             _Section(
               title: '3. Selection written back to the data model',
-              child: ValueListenableBuilder(
-                // Subscribe through the same DataContext the Select writes to;
-                // DataPath separates segments with "/", not ".".
-                valueListenable: _dataContext.subscribe<dynamic>(
-                  DataPath('example.value'),
-                ),
-                builder: (context, value, _) => SelectableText(
-                  value == null
-                      ? '(nothing selected yet — tap an option above)'
-                      : const JsonEncoder.withIndent('  ').convert(value),
-                  style: const TextStyle(
-                    fontFamily: 'monospace',
-                    fontSize: 12,
-                    height: 1.4,
-                  ),
+              child: SelectableText(
+                _selection.value == null
+                    ? '(nothing selected yet — tap an option above)'
+                    : const JsonEncoder.withIndent('  ')
+                          .convert(_selection.value),
+                style: const TextStyle(
+                  fontFamily: 'monospace',
+                  fontSize: 12,
+                  height: 1.4,
                 ),
               ),
             ),

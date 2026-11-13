@@ -1,41 +1,74 @@
-import 'dart:convert';
-
+import 'package:a2ui_core/a2ui_core.dart';
+import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:a2ui_flutter/v0_9/basic_catalog.dart' as v0_9;
 import 'package:fl_select/fl_select.dart';
 import 'package:fl_select_genui/src/catalog/fl_select_catalog.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:genui/genui.dart';
+import 'package:json_schema_builder/json_schema_builder.dart';
 
-/// Pumps the `Select` catalog widget with [data] as the agent-supplied payload
-/// and returns the DataContext so tests can inspect write-backs.
-Future<DataContext> pumpSelect(
+/// What [pumpSelect] rendered: the surface's data model, which the `Select`
+/// writes its selection to, and the errors the processor reported.
+typedef SelectHarness = ({DataModel dataModel, List<A2uiRendererError> errors});
+
+/// Renders [components] on a v0.9 surface of [catalog], with the processor
+/// checks that tests of a component use.
+Future<SelectHarness> pumpSurface(
   WidgetTester tester,
-  Map<String, Object?> data, {
-  String id = 'select1',
+  List<Map<String, Object?>> components, {
+  CatalogImplementation? catalog,
 }) async {
-  final item = FlSelectCatalogItems.select;
-  final model = InMemoryDataModel();
-  final context = DataContext(model, DataPath('root'));
-  await tester.pumpWidget(const MaterialApp(home: Placeholder()));
-  final itemContext = CatalogItemContext(
-    data: data,
-    id: id,
-    type: item.name,
-    buildChild: (_, [_]) => const SizedBox.shrink(),
-    dispatchEvent: (_) {},
-    buildContext: tester.element(find.byType(Placeholder)),
-    dataContext: context,
-    getComponent: (_) => null,
-    getCatalogItem: (_) => null,
-    surfaceId: 'test-surface',
-    reportError: (_, _) {},
+  final catalogImpl = catalog ?? FlSelectCatalogItems.asCatalog();
+  final processor = MessageProcessor<ComponentImplementation>(
+    catalogs: [catalogImpl],
+    validationConfig: ValidationConfig.strict,
+    reportErrorsOnly: true,
   );
+  addTearDown(processor.dispose);
+  final errors = <A2uiRendererError>[];
+  processor.model.onError.subscribe(errors.add);
+  processor.processMessages([
+    {
+      'version': 'v0.9',
+      'createSurface': {'surfaceId': 's', 'catalogId': catalogImpl.id},
+    },
+    {
+      'version': 'v0.9',
+      'updateComponents': {'surfaceId': 's', 'components': components},
+    },
+  ]);
+  final surface = processor.model.getSurface('s')!;
 
   await tester.pumpWidget(
-    MaterialApp(home: Scaffold(body: item.widgetBuilder(itemContext))),
+    MaterialApp(
+      home: Scaffold(body: A2uiSurface(surface: surface)),
+    ),
   );
   await tester.pumpAndSettle();
-  return context;
+  return (dataModel: surface.dataModel, errors: errors);
+}
+
+/// Pumps the `Select` catalog component, as the surface root, with [data] as
+/// the agent-supplied payload.
+Future<SelectHarness> pumpSelect(
+  WidgetTester tester,
+  Map<String, Object?> data,
+) => pumpSurface(tester, [
+  {'id': 'root', 'component': 'Select', ...data},
+]);
+
+/// The selection the root `Select` wrote back to the data model.
+Map<dynamic, dynamic> selectionOf(SelectHarness harness) =>
+    harness.dataModel.get('/root.value') as Map<dynamic, dynamic>;
+
+/// Checks that the processor rejected the payload because its [property] does
+/// not match the `Select` schema, so nothing rendered.
+void expectRejected(SelectHarness harness, String property) {
+  expect(find.byType(SelectView), findsNothing);
+  expect(find.byIcon(Icons.warning_amber_rounded), findsNothing);
+  expect(harness.errors, hasLength(1));
+  expect(harness.errors.single.code, 'VALIDATION_FAILED');
+  expect(harness.errors.single.path, startsWith('/components/0/$property'));
 }
 
 /// The delegate the catalog wired into the [SelectView] on screen.
@@ -85,35 +118,88 @@ final _flatDelegates = <String, Matcher>{
 };
 
 void main() {
-  test('schema + exampleData + catalog merge', () {
+  test('schema + catalog merge', () {
     final item = FlSelectCatalogItems.select;
     expect(item.name, 'Select');
-    expect(item.dataSchema.required, containsAll(['delegate', 'entries']));
+    expect(
+      (item.schema as ObjectSchema).required,
+      containsAll(['delegate', 'entries']),
+    );
 
-    for (final example in item.exampleData) {
-      final json = jsonDecode(example()) as Map<String, dynamic>;
-      final entries = SelectEntryCodec.fromJson(json['entries'] as List);
-      expect(entries.first, isA<SelectCategoryEntry>());
-    }
+    final merged = CatalogImplementation(
+      id: 'base',
+      components: const [],
+    ).derive(catalogId: 'base', addComponents: FlSelectCatalogItems.all);
+    expect(merged.components.length, 1);
+    expect(merged.components.keys, contains('Select'));
 
-    final merged = const Catalog(
-      <CatalogItem>[],
-      catalogId: 'base',
-    ).copyWith(newItems: FlSelectCatalogItems.all);
-    expect(merged.items.length, 1);
-    expect(merged.items.map((item) => item.name), contains('Select'));
+    final catalog = FlSelectCatalogItems.asCatalog();
+    expect(catalog.id, 'fl_select');
+    expect(catalog.components.keys, ['Select']);
   });
 
   testWidgets('renders entries authored by an agent', (tester) async {
-    await pumpSelect(tester, {'delegate': 'sideNav', 'entries': _entries});
+    final harness = await pumpSelect(tester, {
+      'delegate': 'sideNav',
+      'entries': _entries,
+    });
 
+    expect(harness.errors, isEmpty);
     expect(find.text('More'), findsWidgets);
     expect(find.text('A 1'), findsOneWidget);
     expect(find.text('A 2'), findsOneWidget);
   });
 
+  testWidgets('renders a payload with every entry type', (tester) async {
+    // The payload genui's `exampleData` carried for this component.
+    final harness = await pumpSelect(tester, {
+      'delegate': 'sideNav',
+      'selectionMode': 'multiple',
+      'entries': [
+        {
+          'type': 'category',
+          'id': 'price',
+          'name': 'Price',
+          'children': [
+            {'type': 'any', 'name': 'Any'},
+            {
+              'type': 'range',
+              'id': '0-100',
+              'name': r'$0 - $100',
+              'min': 0,
+              'max': 100,
+            },
+            {
+              'type': 'range',
+              'id': '100-300',
+              'name': r'$100 - $300',
+              'min': 100,
+              'max': 300,
+            },
+            {'type': 'custom', 'name': 'Custom', 'min': 0, 'max': 1000},
+          ],
+        },
+        {
+          'type': 'category',
+          'id': 'amenities',
+          'name': 'Amenities',
+          'children': [
+            {'type': 'text', 'id': 'wifi', 'name': 'Wi-Fi'},
+            {'type': 'text', 'id': 'parking', 'name': 'Parking'},
+            {'type': 'text', 'id': 'pool', 'name': 'Pool'},
+          ],
+        },
+      ],
+    });
+
+    expect(harness.errors, isEmpty);
+    expect(tester.takeException(), isNull);
+    expect(find.byType(SelectView), findsOneWidget);
+    expect(find.byIcon(Icons.warning_amber_rounded), findsNothing);
+  });
+
   testWidgets('writes the selection back to the data model', (tester) async {
-    final context = await pumpSelect(tester, {
+    final harness = await pumpSelect(tester, {
       'delegate': 'sideNav',
       'selectionMode': 'single',
       'entries': _entries,
@@ -122,14 +208,59 @@ void main() {
     await tester.tap(find.text('A 2'));
     await tester.pumpAndSettle();
 
-    final value = context.getValue<dynamic>(
-      DataPath('select1.value'),
-    ) as Map<dynamic, dynamic>;
-    expect(value['more'], ['a2']);
+    expect(selectionOf(harness)['more'], ['a2']);
+  });
+
+  testWidgets('writes the selection back under its own component id', (
+    tester,
+  ) async {
+    // Inside a container, as an agent lays out a surface, the selection lands
+    // at `<id>.value` of the Select itself, not of the surface root.
+    final catalog = v0_9.basicCatalog().copyWith(
+      components: [v0_9.BasicComponents.column, ...FlSelectCatalogItems.all],
+    );
+    final harness = await pumpSurface(tester, catalog: catalog, [
+      {
+        'id': 'root',
+        'component': 'Column',
+        'children': ['select1', 'bad~id'],
+      },
+      {
+        'id': 'select1',
+        'component': 'Select',
+        'delegate': 'list',
+        'selectionMode': 'single',
+        'flatKey': 'sort',
+        'entries': _flatEntries,
+      },
+      {
+        'id': 'bad~id',
+        'component': 'Select',
+        'delegate': 'wrap',
+        'flatKey': 'size',
+        'entries': [
+          {'type': 'text', 'id': 'small', 'name': 'Small'},
+        ],
+      },
+    ]);
+    expect(harness.errors, isEmpty);
+
+    await tester.tap(find.text('Recent'));
+    await tester.pumpAndSettle();
+    expect(harness.dataModel.get('/select1.value'), {
+      'sort': ['recent'],
+    });
+
+    // An id that is not a valid JSON Pointer segment cannot be written to;
+    // the failure is reported instead of thrown.
+    await tester.tap(find.text('Small'));
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
+    expect(harness.errors.single.code, 'DATA_ERROR');
   });
 
   testWidgets('flat entries write back under flatKey', (tester) async {
-    final context = await pumpSelect(tester, {
+    final harness = await pumpSelect(tester, {
       'delegate': 'list',
       'selectionMode': 'single',
       'flatKey': 'sort',
@@ -141,24 +272,19 @@ void main() {
     await tester.tap(find.text('Recent'));
     await tester.pumpAndSettle();
 
-    final value = context.getValue<dynamic>(
-      DataPath('select1.value'),
-    ) as Map<dynamic, dynamic>;
-    expect(value['sort'], ['recent']);
+    expect(selectionOf(harness)['sort'], ['recent']);
   });
 
   testWidgets('flat multiple selection accumulates under flatKey and clears', (
     tester,
   ) async {
-    final context = await pumpSelect(tester, {
+    final harness = await pumpSelect(tester, {
       'delegate': 'list',
       'selectionMode': 'multiple',
       'flatKey': 'sort',
       'entries': _flatEntries,
     });
-    Map<dynamic, dynamic> value() =>
-        context.getValue<dynamic>(DataPath('select1.value'))
-            as Map<dynamic, dynamic>;
+    Map<dynamic, dynamic> value() => selectionOf(harness);
 
     await tester.tap(find.text('Recent'));
     await tester.pumpAndSettle();
@@ -184,19 +310,22 @@ void main() {
     expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
   });
 
-  testWidgets('shows an error card instead of crashing on bad entries', (
-    tester,
-  ) async {
-    await pumpSelect(tester, {'delegate': 'list', 'entries': <Object?>[]});
-    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+  testWidgets('rejects entries that do not match the schema', (tester) async {
+    // The processor checks the payload against the component schema before it
+    // renders, so these never reach the error card.
+    var harness = await pumpSelect(tester, {
+      'delegate': 'list',
+      'entries': <Object?>[],
+    });
+    expectRejected(harness, 'entries');
 
-    await pumpSelect(tester, {
+    harness = await pumpSelect(tester, {
       'delegate': 'sideNav',
       'entries': [
         {'type': 'nonsense'},
       ],
     });
-    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+    expectRejected(harness, 'entries/0/type');
   });
 
   testWidgets('duplicate sibling ids show an error card', (tester) async {
@@ -248,9 +377,7 @@ void main() {
   testWidgets('delegate tokens map to the expected delegate', (tester) async {
     // Driven by the schema enum, so a newly documented token cannot ship
     // without an expected delegate (and a stale table entry cannot linger).
-    final tokens = FlSelectCatalogItems
-        .select
-        .dataSchema
+    final tokens = (FlSelectCatalogItems.select.schema as ObjectSchema)
         .properties!['delegate']!
         .enumValues!
         .cast<String>();
@@ -331,8 +458,15 @@ void main() {
   testWidgets('a bad defaultLayout shows the schema error card', (
     tester,
   ) async {
+    // Not an object at all: the processor rejects it against the schema.
+    final harness = await pumpSelect(tester, {
+      'delegate': 'tabNav',
+      'defaultLayout': 'chip',
+      'entries': _entries,
+    });
+    expectRejected(harness, 'defaultLayout');
+
     for (final bad in <Object?>[
-      'chip',
       {'kind': 'bogus'},
       {'x': 1},
     ]) {
@@ -390,7 +524,7 @@ void main() {
   testWidgets('malformed crossAxisCount falls back instead of throwing', (
     tester,
   ) async {
-    for (final bad in <Object?>['4', 0, -2, double.nan, null, 4.0]) {
+    for (final bad in <Object?>[0, -2, 4.0]) {
       await pumpSelect(tester, {
         'delegate': 'grid',
         'crossAxisCount': bad,
@@ -401,73 +535,91 @@ void main() {
       final delegate = delegateOf(tester) as GridSelectDelegate;
       expect(delegate.crossAxisCount, bad == 4.0 ? 4 : 3, reason: '$bad');
     }
+
+    // Not an integer: the processor rejects it against the schema.
+    for (final bad in <Object?>['4', double.nan, null]) {
+      final harness = await pumpSelect(tester, {
+        'delegate': 'grid',
+        'crossAxisCount': bad,
+        'flatKey': 'sort',
+        'entries': _flatEntries,
+      });
+      expect(tester.takeException(), isNull, reason: 'crossAxisCount=$bad');
+      expectRejected(harness, 'crossAxisCount');
+    }
   });
 
-  testWidgets('non-string flatKey shows an error card', (tester) async {
-    await pumpSelect(tester, {
+  testWidgets('non-string flatKey is rejected', (tester) async {
+    final harness = await pumpSelect(tester, {
       'delegate': 'list',
       'flatKey': 5,
       'entries': _flatEntries,
     });
 
     expect(tester.takeException(), isNull);
-    expect(find.byIcon(Icons.warning_amber_rounded), findsOneWidget);
+    expectRejected(harness, 'flatKey');
   });
 
-  testWidgets('unknown delegate tokens fall back to the default', (
-    tester,
-  ) async {
+  testWidgets('unknown delegate tokens are rejected', (tester) async {
     for (final token in ['flatten', 'chips', 'nonsense']) {
-      await pumpSelect(tester, {'delegate': token, 'entries': _entries});
+      final harness = await pumpSelect(tester, {
+        'delegate': token,
+        'entries': _entries,
+      });
       expect(tester.takeException(), isNull, reason: token);
-      expect(
-        delegateOf(tester),
-        isA<ExpandableSelectDelegate>(),
-        reason: token,
-      );
+      expectRejected(harness, 'delegate');
     }
   });
 
-  testWidgets('non-string delegate falls back to the default', (tester) async {
-    await pumpSelect(tester, {'delegate': 7, 'entries': _entries});
+  testWidgets('non-string delegate is rejected', (tester) async {
+    final harness = await pumpSelect(tester, {
+      'delegate': 7,
+      'entries': _entries,
+    });
 
     expect(tester.takeException(), isNull);
-    expect(delegateOf(tester), isA<ExpandableSelectDelegate>());
+    expectRejected(harness, 'delegate');
   });
 
   testWidgets('selection and search survive a parent rebuild', (tester) async {
-    final item = FlSelectCatalogItems.select;
-    final context = DataContext(InMemoryDataModel(), DataPath('root'));
+    final processor = MessageProcessor<ComponentImplementation>(
+      catalogs: [FlSelectCatalogItems.asCatalog()],
+      validationConfig: ValidationConfig.strict,
+    );
+    addTearDown(processor.dispose);
+    processor.processMessages([
+      {
+        'version': 'v0.9',
+        'createSurface': {'surfaceId': 's', 'catalogId': 'fl_select'},
+      },
+      {
+        'version': 'v0.9',
+        'updateComponents': {
+          'surfaceId': 's',
+          'components': [
+            {
+              'id': 'root',
+              'component': 'Select',
+              'delegate': 'sideNav',
+              'search': true,
+              'entries': _entries,
+            },
+          ],
+        },
+      },
+    ]);
+    final surface = processor.model.getSurface('s')!;
     final rebuild = ValueNotifier<int>(0);
     addTearDown(rebuild.dispose);
 
-    await tester.pumpWidget(const MaterialApp(home: Placeholder()));
-    final buildContext = tester.element(find.byType(Placeholder));
-
-    // Each rebuild hands the builder a fresh, equal payload, as GenUI does
-    // when the surface re-renders.
-    Widget build() => item.widgetBuilder(
-      CatalogItemContext(
-        data: {'delegate': 'sideNav', 'search': true, 'entries': _entries},
-        id: 'select1',
-        type: item.name,
-        buildChild: (_, [_]) => const SizedBox.shrink(),
-        dispatchEvent: (_) {},
-        buildContext: buildContext,
-        dataContext: context,
-        getComponent: (_) => null,
-        getCatalogItem: (_) => null,
-        surfaceId: 'test-surface',
-        reportError: (_, _) {},
-      ),
-    );
-
+    // Each rebuild hands the builder a fresh, equal payload, as the surface
+    // does when it re-renders.
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
           body: ValueListenableBuilder<int>(
             valueListenable: rebuild,
-            builder: (_, _, _) => build(),
+            builder: (_, _, _) => A2uiSurface(surface: surface),
           ),
         ),
       ),
@@ -492,9 +644,7 @@ void main() {
     // A 1 must still count as selected: selecting A 2 adds to it.
     await tester.tap(find.text('A 2'));
     await tester.pumpAndSettle();
-    final value = context.getValue<dynamic>(
-      DataPath('select1.value'),
-    ) as Map<dynamic, dynamic>;
+    final value = surface.dataModel.get('/root.value') as Map<dynamic, dynamic>;
     expect(value['more'], unorderedEquals(['a1', 'a2']));
   });
 
