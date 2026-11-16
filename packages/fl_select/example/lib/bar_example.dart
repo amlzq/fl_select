@@ -71,6 +71,7 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                   },
                 ),
                 TabNavSelectDelegate(
+                  isScrollable: true,
                   defaultLayout: SelectGridLayout(
                     crossAxisCount: 3,
                     childAspectRatio: 3,
@@ -186,6 +187,7 @@ class _PopupSelectBarExampleState extends State<PopupSelectBarExample> {
                     },
                   ),
                   TabNavSelectDelegate(
+                    isScrollable: true,
                     defaultLayout: SelectGridLayout(
                       crossAxisCount: 3,
                       childAspectRatio: 3,

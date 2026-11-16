@@ -315,6 +315,7 @@ class SelectViewExamplePage extends StatelessWidget {
                     vertical: 10,
                   ),
                   delegate: TabNavSelectDelegate(
+                    isScrollable: true,
                     defaultLayout: SelectGridLayout(
                       crossAxisCount: 3,
                       childAspectRatio: 3,
