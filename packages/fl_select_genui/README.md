@@ -35,6 +35,11 @@ agent ──JSON payload──▶ Select (fl_select UI) ──selection──▶
    `sideNav` / `expandable`) and `isScrollable` (`tabNav` / `sideNav` /
    `cascading`). Leave `isScrollable` out and `tabNav` scrolls on its own
    when its category names do not fit the width.
+
+   Like the basic components, a `Select` also accepts A2UI's common `weight`
+   (its share of a `Row` / `Column` main axis) and `accessibility`
+   (`label` / `description` for screen readers) properties.
+
 4. The user interacts with a real fl_select component; selections are written
    back to the surface's data model at `<id>.value` as a
    `Map<String, List<String>>` (same shape as fl_select's `toQueryMap`),

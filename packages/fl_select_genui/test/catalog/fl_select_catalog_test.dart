@@ -259,6 +259,49 @@ void main() {
     expect(harness.errors.single.code, 'DATA_ERROR');
   });
 
+  testWidgets('accepts the common weight and accessibility properties', (
+    tester,
+  ) async {
+    // A2UI gives every component `weight` (a Row/Column child's flex share)
+    // and `accessibility` (the semantics of its subtree). The strict checks
+    // reject properties the schema does not declare, so the Select declares
+    // them and the framework applies them.
+    final catalog = v0_9.basicCatalog().copyWith(
+      components: [v0_9.BasicComponents.column, ...FlSelectCatalogItems.all],
+    );
+    // Disposed in the body: a handle still active when the body returns
+    // fails the test, even when a tear-down would dispose it later.
+    final semantics = tester.ensureSemantics();
+    try {
+      final harness = await pumpSurface(tester, catalog: catalog, [
+        {
+          'id': 'root',
+          'component': 'Column',
+          'children': ['select1'],
+        },
+        {
+          'id': 'select1',
+          'component': 'Select',
+          'delegate': 'list',
+          'flatKey': 'sort',
+          'weight': 2,
+          'accessibility': {'label': 'Sort results'},
+          'entries': _flatEntries,
+        },
+      ]);
+
+      expect(harness.errors, isEmpty);
+      expect(find.byType(SelectView), findsOneWidget);
+      expect(
+        tester.widgetList<Flexible>(find.byType(Flexible)).map((f) => f.flex),
+        contains(200),
+      );
+      expect(find.bySemanticsLabel('Sort results'), findsOneWidget);
+    } finally {
+      semantics.dispose();
+    }
+  });
+
   testWidgets('flat entries write back under flatKey', (tester) async {
     final harness = await pumpSelect(tester, {
       'delegate': 'list',

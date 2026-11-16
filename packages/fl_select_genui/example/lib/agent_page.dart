@@ -4,11 +4,22 @@ import 'dart:convert';
 import 'package:a2ui_agent/a2ui_agent.dart';
 import 'package:a2ui_core/a2ui_core.dart';
 import 'package:a2ui_flutter/a2ui_flutter.dart';
+import 'package:a2ui_flutter/basic_catalog.dart';
 import 'package:a2ui_flutter/v0_9/basic_catalog.dart' as v0_9;
 import 'package:fl_select_genui/fl_select_genui.dart';
+import 'package:flutter_markdown_plus/flutter_markdown_plus.dart';
 import 'package:material_ui/material_ui.dart';
 
 import 'llm_client.dart';
+
+/// Renders one basic `Text` body as Markdown, as genui's basic catalog did.
+Widget _buildMarkdown(BuildContext context, String markdown, TextStyle style) =>
+    MarkdownBody(
+      data: markdown,
+      // The surface's text style, not a Material theme's: the app renders
+      // through material_ui, which flutter_markdown_plus does not see.
+      styleSheet: MarkdownStyleSheet(p: style),
+    );
 
 /// A chat page where a real model decides when to render a `Select`.
 ///
@@ -104,10 +115,12 @@ class _AgentPageState extends State<AgentPage> {
         setState(() => _entries.add(_SurfaceEntry(surface)));
         _scrollToEnd();
       }),
-      // Messages the renderer rejects, and errors its surfaces meet.
-      _processor.model.onError.subscribe(
-        (error) => debugPrint('${error.code}: ${error.message}'),
-      ),
+      // Messages the renderer rejects, and errors its surfaces meet. A reply
+      // that, say, reuses a surface id is rejected here; show why.
+      _processor.model.onError.subscribe((error) {
+        if (!mounted) return;
+        setState(() => _error = '${error.code}: ${error.message}');
+      }),
     ];
   }
 
@@ -159,7 +172,7 @@ class _AgentPageState extends State<AgentPage> {
           _processor.processMessages(AgentToRendererMessagePayload(a2ui));
         case ErrorPart(:final error):
           // A block the stream rejected; the rest of the reply still renders.
-          debugPrint('$error');
+          setState(() => _error = '$error');
       }
     }
   }
@@ -253,6 +266,7 @@ class _AgentPageState extends State<AgentPage> {
                 if (_error != null)
                   Text(
                     _error!,
+                    key: const Key('agent-error'),
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.error,
                     ),
@@ -301,6 +315,10 @@ class _AgentPageState extends State<AgentPage> {
   Widget _buildEntry(_Entry entry) {
     switch (entry) {
       case _TextEntry():
+        final String text = entry.text.trim().replaceAll(
+          RegExp(r'\n\s*\n+'),
+          '\n\n',
+        );
         return Align(
           alignment: entry.fromUser
               ? Alignment.centerRight
@@ -311,9 +329,15 @@ class _AgentPageState extends State<AgentPage> {
                 : null,
             child: Padding(
               padding: const EdgeInsets.all(10),
-              child: Text(
-                entry.text.trim().replaceAll(RegExp(r'\n\s*\n+'), '\n\n'),
-              ),
+              // A model's reply is Markdown; the user's own text is literal.
+              child: entry.fromUser
+                  ? Text(text)
+                  : MarkdownBody(
+                      data: text,
+                      styleSheet: MarkdownStyleSheet(
+                        p: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                    ),
             ),
           ),
         );
@@ -324,9 +348,12 @@ class _AgentPageState extends State<AgentPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                A2uiSurface(
-                  key: ObjectKey(entry.surface),
-                  surface: entry.surface,
+                A2uiMarkdown(
+                  builder: _buildMarkdown,
+                  child: A2uiSurface(
+                    key: ObjectKey(entry.surface),
+                    surface: entry.surface,
+                  ),
                 ),
                 Align(
                   alignment: Alignment.centerRight,

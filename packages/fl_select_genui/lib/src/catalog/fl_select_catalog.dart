@@ -89,6 +89,16 @@ abstract final class FlSelectCatalogItems {
               'back, e.g. "sort". Required when top-level entries are not '
               'categories; ignored for category trees.',
         ),
+        // A2UI properties the framework gives every component. The parent
+        // Row/Column reads `weight`, and NodeView turns `accessibility` into
+        // semantics, so a Select declares them like the basic components do.
+        'weight': S.number(
+          description:
+              'The relative weight of this Select within a Row or Column, '
+              'similar to CSS flex-grow. Only set when it is a direct child '
+              'of a Row or Column.',
+        ),
+        'accessibility': CommonSchemas.accessibilityAttributes,
         'entries': SelectEntrySchema.tree(),
       },
       required: const ['delegate', 'entries'],
@@ -97,7 +107,12 @@ abstract final class FlSelectCatalogItems {
     // documented contract, so the payload cannot retarget it.
     builder: (context, node, props, buildChild) => _SelectWidget(
       node: node,
-      data: {for (final key in props.keys) key: props.value(key)},
+      // The framework reads `weight` and `accessibility` itself. Leaving them
+      // out keeps the delegate from rebuilding when their values resolve.
+      data: {
+        for (final key in props.keys)
+          if (key != 'weight' && key != 'accessibility') key: props.value(key),
+      },
       dataPath: '${node.componentId}.value',
     ),
   );

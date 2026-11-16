@@ -4,7 +4,11 @@
 
 - **BREAKING** `FlSelectCatalogItems.select` is an `a2ui_flutter` `ComponentImplementation` instead of a genui `CatalogItem`, `all` returns `List<ComponentImplementation>`, and `asCatalog()` returns a `CatalogImplementation` with the id `fl_select`. Register them with a `MessageProcessor` and render surfaces with `A2uiSurface`, as the README shows. `dataSchema` and `widgetBuilder` are now `schema` and `builder`; `exampleData` and `isImplicitlyFlexible` are gone, since `ComponentImplementation` has neither.
 
-- **BREAKING** The `MessageProcessor` checks every `Select` payload against its schema before rendering it. A payload with a wrong type, an unknown `delegate` token, empty `entries`, or a property the schema does not declare (such as `weight` or `accessibility`) is rejected with a `VALIDATION_FAILED` error instead of rendering a fallback or the error card. Payloads that match the schema but are still invalid render the error card as before.
+- **BREAKING** The `MessageProcessor` checks every `Select` payload against its schema before rendering it. A payload with a wrong type, an unknown `delegate` token, empty `entries`, or a property the schema does not declare (such as `foo`) is rejected with a `VALIDATION_FAILED` error instead of rendering a fallback or the error card. Payloads that match the schema but are still invalid render the error card as before.
+
+- **IMPROVEMENT** `Select` accepts A2UI's common `weight` and `accessibility` properties, like the basic catalog's components: a Row/Column parent gives the Select its `weight` share of the main axis, and `accessibility` (`label`, `description`) becomes the semantics of its subtree.
+
+- **IMPROVEMENT** The example app renders Markdown: its Agent chat page wraps surfaces in `A2uiMarkdown` (with `flutter_markdown_plus`) and shows assistant replies as Markdown. Renderer errors, such as a reused surface id, now appear in the chat instead of only in the log.
 
 - **IMPROVEMENT** The example app renders through `MessageProcessor` and `A2uiSurface`, and its Agent chat page prompts the model through `a2ui_agent`, which asks for `<a2ui-json>` blocks instead of fenced JSON.
 
