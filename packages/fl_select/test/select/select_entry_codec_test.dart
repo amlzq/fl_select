@@ -296,6 +296,87 @@ void main() {
         throwsFormatException, // grid without crossAxisCount
       );
     });
+
+    test('reports a wrong-typed layout field as a format error', () {
+      // A layout object is schemaless at the field level, so a payload can put
+      // a string where a number belongs. That used to escape as a TypeError,
+      // slipping past callers that handle the codec's FormatException.
+      SelectLayout? layoutFor(Map<String, dynamic> layout) {
+        final entries = SelectEntryCodec.fromJson([
+          {
+            'type': 'category',
+            'id': 'c',
+            'name': 'C',
+            'layout': layout,
+            'children': [
+              {'type': 'text', 'id': 'a', 'name': 'A'},
+            ],
+          },
+        ]);
+        return (entries.first as SelectCategoryEntry).layout;
+      }
+
+      expect(
+        () => layoutFor({'kind': 'chip', 'spacing': '8'}),
+        throwsFormatException,
+      );
+      expect(
+        () => layoutFor({'kind': 'grid', 'crossAxisCount': '2'}),
+        throwsFormatException,
+      );
+      expect(
+        () => layoutFor({
+          'kind': 'grid',
+          'crossAxisCount': 2,
+          'childAspectRatio': '3',
+        }),
+        throwsFormatException,
+      );
+      expect(
+        () => layoutFor({'kind': 'list', 'toText': 5}),
+        throwsFormatException,
+      );
+      expect(
+        () => layoutFor({'kind': 'cascading', 'isScrollable': 'true'}),
+        throwsFormatException,
+      );
+    });
+
+    test('rejects grid values the grid widget cannot render', () {
+      SelectLayout? layoutFor(Map<String, dynamic> layout) {
+        final entries = SelectEntryCodec.fromJson([
+          {
+            'type': 'category',
+            'id': 'c',
+            'name': 'C',
+            'layout': layout,
+            'children': [
+              {'type': 'text', 'id': 'a', 'name': 'A'},
+            ],
+          },
+        ]);
+        return (entries.first as SelectCategoryEntry).layout;
+      }
+
+      expect(
+        () => layoutFor({'kind': 'grid', 'crossAxisCount': 0}),
+        throwsFormatException,
+      );
+      expect(
+        () => layoutFor({
+          'kind': 'grid',
+          'crossAxisCount': 2,
+          'childAspectRatio': 0,
+        }),
+        throwsFormatException,
+      );
+
+      // A usable count is kept, including one sent as a double.
+      expect(
+        layoutFor({'kind': 'grid', 'crossAxisCount': 4.0}),
+        isA<SelectGridLayout>().having((l) => l.crossAxisCount, 'cols', 4),
+      );
+    });
   });
 
   group('SelectEntryCodec.toJson', () {

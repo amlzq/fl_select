@@ -1,8 +1,10 @@
-## Next
+## Unreleased
 
 - **FEATURE** add `PopupSelectBarTheme.of` and `PopupSelectButtonTheme.of`, which return an empty theme when none is registered on the ambient `Theme`.
 
 - **BUGFIX** `PopupSelectBarTheme.lerp` and `PopupSelectButtonTheme.lerp` now switch `overlayStyle` (and, for the bar, `indicator` and `unselectedIndicator`) at the midpoint instead of always keeping the starting value.
+
+- **BUGFIX** `SelectEntryCodec` reports a wrong-typed `layout` field (such as `{"kind": "chip", "spacing": "8"}`) as a `FormatException` like every other malformed payload, instead of letting a `TypeError` escape, and it rejects a `crossAxisCount` below 1 or a non-positive `childAspectRatio`, which the grid widget would have asserted on.
 
 ## 0.17.0
 

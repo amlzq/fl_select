@@ -217,30 +217,76 @@ abstract final class SelectEntryCodec {
     }
     final map = Map<String, dynamic>.from(node);
     return switch (map['kind']) {
-      'list' => SelectListLayout(toText: map['toText'] as String? ?? '-'),
-      'grid' => SelectGridLayout(
-        crossAxisCount:
-            (map['crossAxisCount'] as num?)?.toInt() ??
-            (throw const FormatException(
-              'grid layout requires "crossAxisCount"',
-            )),
-        mainAxisSpacing: (map['mainAxisSpacing'] as num?)?.toDouble() ?? 0,
-        crossAxisSpacing: (map['crossAxisSpacing'] as num?)?.toDouble() ?? 0,
-        childAspectRatio: (map['childAspectRatio'] as num?)?.toDouble() ?? 1,
-        toText: map['toText'] as String? ?? '-',
-      ),
+      'list' => SelectListLayout(toText: _layoutText(map) ?? '-'),
+      'grid' => _decodeGridLayout(map),
       'chip' => SelectWrapLayout(
-        spacing: (map['spacing'] as num?)?.toDouble() ?? 12,
-        runSpacing: (map['runSpacing'] as num?)?.toDouble() ?? 12,
+        spacing: _layoutNumber(map, 'spacing')?.toDouble() ?? 12,
+        runSpacing: _layoutNumber(map, 'runSpacing')?.toDouble() ?? 12,
       ),
       'counter' => const SelectCounterLayout(),
-      'range' => SelectRangeLayout(toText: map['toText'] as String? ?? '-'),
+      'range' => SelectRangeLayout(toText: _layoutText(map) ?? '-'),
       'cascading' => SelectCascadingLayout(
-        isScrollable: map['isScrollable'] == true,
+        isScrollable: _layoutFlag(map, 'isScrollable'),
       ),
       null => throw const FormatException('layout is missing "kind"'),
       final v => throw FormatException('unknown layout kind: $v'),
     };
+  }
+
+  /// Decodes a `"grid"` layout, rejecting the values the grid widget would
+  /// assert on: a missing column count or a non-positive one, and a
+  /// non-positive [SelectGridLayout.childAspectRatio] (which would make the
+  /// tile extent unbounded).
+  static SelectGridLayout _decodeGridLayout(Map<String, dynamic> map) {
+    final crossAxisCount = _layoutNumber(map, 'crossAxisCount')?.toInt();
+    if (crossAxisCount == null) {
+      throw const FormatException('grid layout requires "crossAxisCount"');
+    }
+    if (crossAxisCount < 1) {
+      throw FormatException(
+        'grid layout "crossAxisCount" must be at least 1, got: $crossAxisCount',
+      );
+    }
+    final childAspectRatio = _layoutNumber(map, 'childAspectRatio')?.toDouble();
+    if (childAspectRatio != null && childAspectRatio <= 0) {
+      throw FormatException(
+        'grid layout "childAspectRatio" must be positive, '
+        'got: $childAspectRatio',
+      );
+    }
+    return SelectGridLayout(
+      crossAxisCount: crossAxisCount,
+      mainAxisSpacing: _layoutNumber(map, 'mainAxisSpacing')?.toDouble() ?? 0,
+      crossAxisSpacing: _layoutNumber(map, 'crossAxisSpacing')?.toDouble() ?? 0,
+      childAspectRatio: childAspectRatio ?? 1,
+      toText: _layoutText(map) ?? '-',
+    );
+  }
+
+  /// Reads a numeric layout field, reporting a wrong type as a
+  /// [FormatException] like every other malformed payload.
+  ///
+  /// A `layout` object is schemaless at the field level, so `"spacing": "8"`
+  /// used to escape as a `TypeError`, slipping past callers that handle the
+  /// codec's documented [FormatException].
+  static num? _layoutNumber(Map<String, dynamic> map, String key) {
+    final value = map[key];
+    if (value is num?) return value;
+    throw FormatException('layout "$key" must be a number, got: $value');
+  }
+
+  /// Reads the `toText` layout field with the same type safety.
+  static String? _layoutText(Map<String, dynamic> map) {
+    final value = map['toText'];
+    if (value is String?) return value;
+    throw FormatException('layout "toText" must be a string, got: $value');
+  }
+
+  /// Reads a boolean layout field with the same type safety.
+  static bool _layoutFlag(Map<String, dynamic> map, String key) {
+    final value = map[key];
+    if (value is bool?) return value ?? false;
+    throw FormatException('layout "$key" must be a boolean, got: $value');
   }
 
   static String _requiredId(Map<String, dynamic> node) {
