@@ -12,6 +12,8 @@
 
 - **IMPROVEMENT** The example app renders through `MessageProcessor` and `A2uiSurface`, and its Agent chat page prompts the model through `a2ui_agent`, which asks for `<a2ui-json>` blocks instead of fenced JSON.
 
+- **BUGFIX** The agent-facing documentation (`SelectEntrySchema.tree()` and `systemPromptFragment`) states that top-level `entries` are either all `category` nodes or all leaves, never both, and that actions such as "Show more" belong in their own component. Models were appending entries like `showmore` to a category tree — a shape `Select` has always rejected — so the surface showed the `Invalid entries` card instead of the panel.
+
 ## 0.8.0
 
 - **BREAKING** Remove the `flatten` and `chips` delegate tokens; use `wrap` or `sideNav` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#delegate-token-routing)).

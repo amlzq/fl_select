@@ -175,5 +175,14 @@ void main() {
     test('points agents at flatKey for flat entry lists', () {
       expect(_tree().description, contains('flatKey'));
     });
+
+    test('rules out mixing categories with leaves at the top level', () {
+      // fl_select only renders a category tree whose top level is all
+      // categories, so a leaf beside a category hits the error card. The
+      // agent has to be told, or it appends options to a category list.
+      final description = _tree().description!;
+      expect(description, contains('`category`'));
+      expect(description, contains('Never mix'));
+    });
   });
 }

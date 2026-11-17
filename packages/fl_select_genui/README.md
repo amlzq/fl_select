@@ -108,3 +108,8 @@ Node `type`s: `category` (group, optional `selectionMode` / `layout` and
 `any` (reset sentinel), `custom` (user-typed range). See `SelectEntrySchema`
 for the generated JSON Schema and `FlSelectCatalogItems.systemPromptFragment`
 for the agent-facing documentation.
+
+The top level is either all `category` nodes or a flat list of leaves — never
+both. A non-category entry beside a category is invalid (a category tree
+needs every top-level entry to be a category, which is how fl_select renders
+its navigation) and renders the error card.

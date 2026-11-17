@@ -151,6 +151,11 @@ When the user needs to pick values from a structured option set, render a `Selec
   - Siblings — the top-level entries, one node's `children`, and a `header`/
     `footer` row — must carry distinct `id`s; a duplicate sibling id is
     rejected with the error card.
+  - The top level is either all `category` nodes or all leaves, never both:
+    a non-category entry beside a category is rejected with the error card.
+    `entries` are selectable options only — for an action such as "Show
+    more", use a separate component (e.g. the basic `Button`), and for extra
+    chips inside a category use its `header`/`footer`.
 - User selections are returned as `Map<String, List<String>>`
   (e.g. `{"price": ["0-100"], "amenities": ["wifi", "pool"]}`); a selected
   category without leaf picks maps to its own id.

@@ -715,6 +715,13 @@ void main() {
     }
   });
 
+  test('the agent instructions rule out mixing categories with leaves', () {
+    // The error card above is the fallback; the agent has to be told the rule
+    // up front, or it appends an option (e.g. a "Show more" pseudo-option) to
+    // a category list.
+    expect(FlSelectCatalogItems.systemPromptFragment, contains('never both'));
+  });
+
   testWidgets('search flag toggles the search field', (tester) async {
     await pumpSelect(tester, {
       'delegate': 'sideNav',

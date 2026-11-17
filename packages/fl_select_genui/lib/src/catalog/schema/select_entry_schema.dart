@@ -95,9 +95,11 @@ abstract final class SelectEntrySchema {
   /// Schema for a list of root entry nodes (the `entries` payload).
   static Schema tree() => S.list(
     description:
-        'Root select entries: usually categories; a flat list of '
-        'text/range leaves (no categories) is also valid — pair it with '
-        'the payload-level `flatKey` so selections can be written back.',
+        'Root select entries. Either every root entry is a `category` (a '
+        'category tree) or none is (a flat list of text/range/any/custom '
+        'leaves, paired with the payload-level `flatKey`). Never mix the two: '
+        'a non-category entry beside a category is invalid and renders the '
+        'error card.',
     minItems: 1,
     items: node(),
   );
