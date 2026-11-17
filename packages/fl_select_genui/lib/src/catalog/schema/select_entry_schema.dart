@@ -46,9 +46,9 @@ abstract final class SelectEntrySchema {
         description:
             'category only: the shape its children render in — '
             '{"kind": "list"|"grid"|"chip"|"counter"|"range"|"cascading", '
-            '...}. Grid also needs crossAxisCount; "cascading" renders one '
-            'column per level (no depth limit) so nested children drill down, '
-            'and takes an optional isScrollable.',
+            '...}. Grid takes a crossAxisCount (3 columns when omitted); '
+            '"cascading" renders one column per level (no depth limit) so '
+            'nested children drill down, and takes an optional isScrollable.',
         additionalProperties: true,
       ),
       'header': S.object(

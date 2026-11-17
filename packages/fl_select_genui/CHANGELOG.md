@@ -14,7 +14,9 @@
 
 - **BUGFIX** The agent-facing documentation (`SelectEntrySchema.tree()` and `systemPromptFragment`) states that top-level `entries` are either all `category` nodes or all leaves, never both, and that actions such as "Show more" belong in their own component. Models were appending entries like `showmore` to a category tree — a shape `Select` has always rejected — so the surface showed the `Invalid entries` card instead of the panel.
 
-- **BUGFIX** A grid layout an agent leaves unshaped (`{"kind": "grid", "crossAxisCount": 2}`) renders the catalog's compact tiles — 3:1, 10px apart — instead of `fl_select`'s square, touching defaults, which are meant for icon grids. A payload that sets `childAspectRatio`, `mainAxisSpacing` or `crossAxisSpacing` keeps them. Agent panels were rendering an amenities list as a block of squares.
+- **BUGFIX** A grid layout an agent leaves unshaped (`{"kind": "grid", "crossAxisCount": 2}`) renders the catalog's compact tiles — 3:1, 10px apart — instead of `fl_select`'s square, touching defaults, which are meant for icon grids. A payload that sets `childAspectRatio`, `mainAxisSpacing` or `crossAxisSpacing` keeps them. The same shape goes to the grid `tabNav` falls back to when a category has no layout of its own, and a grid `layout` whose `crossAxisCount` is missing or unusable falls back to 3 columns, as the `grid` delegate already did, instead of showing the error card or asserting. Agent panels were rendering an amenities list as a block of squares.
+
+- **IMPROVEMENT** An unshaped chip cloud (a `sideNav`/`wrap` panel or a category without a layout) uses the 12px chip gap of `{"kind": "chip"}` and of a category's `header`/`footer` chip row, instead of 8px, so chips look the same wherever they appear.
 
 ## 0.8.0
 

@@ -30,12 +30,14 @@ agent ──JSON payload──▶ Select (fl_select UI) ──selection──▶
    level and drills into nested children.
 
    A `grid` the agent leaves unshaped — `{"kind": "grid", "crossAxisCount": 2}`
-  — gets the catalog's compact tiles (3:1, 10px apart) rather than
-  `fl_select`'s square, touching defaults, which are meant for icon grids. Set
-  `childAspectRatio` / `mainAxisSpacing` / `crossAxisSpacing` in the layout to
-  keep a different shape.
+   — gets the catalog's compact tiles (3:1, 10px apart) rather than
+   `fl_select`'s square, touching defaults, which are meant for icon grids;
+   `tabNav` falls back to the same shape when a category has no layout of its
+   own, and a missing or unusable `crossAxisCount` becomes 3 columns. Set
+   `childAspectRatio` / `mainAxisSpacing` / `crossAxisSpacing` in the layout to
+   keep a different shape.
 
-  Optional top-level fields tune the whole panel: `selectionMode`
+   Optional top-level fields tune the whole panel: `selectionMode`
    (`single` / `multiple`), `search` (boolean), `defaultLayout` (a layout
    object used by categories without their own `layout`, for `tabNav` /
    `sideNav` / `expandable`) and `isScrollable` (`tabNav` / `sideNav` /

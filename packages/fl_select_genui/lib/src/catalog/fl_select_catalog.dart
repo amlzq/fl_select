@@ -208,7 +208,7 @@ class _SelectWidgetState extends State<_SelectWidget> {
     Set<SelectEntry> entries;
     try {
       entries = SelectEntryCodec.fromJson(
-        _withCompactGrids(entriesJson.cast<Object?>()),
+        _fillGridDefaults(entriesJson.cast<Object?>()),
       );
     } on FormatException catch (e) {
       return _SchemaError('Invalid entries: ${e.message}');
@@ -452,7 +452,10 @@ class _SelectWidgetState extends State<_SelectWidget> {
             SideNavSelectDelegate(
               defaultLayout:
                   defaultLayout ??
-                  const SelectWrapLayout(spacing: 8, runSpacing: 8),
+                  const SelectWrapLayout(
+                    spacing: _chipSpacing,
+                    runSpacing: _chipSpacing,
+                  ),
               isScrollable: isScrollable ?? true,
               sideBarTheme: SelectSideBarTheme(width: sideBarWidth),
               searchEnabled: searchEnabled,
@@ -463,8 +466,8 @@ class _SelectWidgetState extends State<_SelectWidget> {
       'wrap' =>
         ({required searchEnabled, required selectionMode, required entries}) =>
             WrapSelectDelegate(
-              spacing: 8,
-              runSpacing: 8,
+              spacing: _chipSpacing,
+              runSpacing: _chipSpacing,
               searchEnabled: searchEnabled,
               selectionMode: selectionMode,
               entries: entries,
@@ -481,11 +484,13 @@ class _SelectWidgetState extends State<_SelectWidget> {
               entries: entries,
             ),
 
-      // TabNav — category tabs on top.
+      // TabNav — category tabs on top. A category without a layout falls back
+      // to a grid, whose defaults are square and touching tiles, so supply the
+      // compact shape unless the payload named a default layout itself.
       'tabNav' when isCategoryData =>
         ({required searchEnabled, required selectionMode, required entries}) =>
             TabNavSelectDelegate(
-              defaultLayout: defaultLayout,
+              defaultLayout: defaultLayout ?? _compactGrid(crossAxisCount),
               isScrollable: isScrollable ?? tabsScroll,
               searchEnabled: searchEnabled,
               selectionMode: selectionMode,
@@ -532,7 +537,9 @@ class _SelectWidgetState extends State<_SelectWidget> {
         'type': 'category',
         'id': '_defaultLayout',
         'name': '_defaultLayout',
-        'layout': raw is Map<String, Object?> ? _withCompactGrid(raw) : raw,
+        'layout': raw is Map<String, Object?>
+            ? _fillGridLayoutDefaults(raw)
+            : raw,
         'children': [
           {'type': 'text', 'id': '_', 'name': '_'},
         ],
@@ -558,6 +565,11 @@ class _SelectWidgetState extends State<_SelectWidget> {
   static const double _gridTileSpacing = 10;
   static const double _gridTileAspectRatio = 3;
 
+  /// Chip gap, kept equal to what the entry codec gives `{"kind": "chip"}` and
+  /// what a category's `header`/`footer` chip row uses, so an unshaped chip
+  /// cloud and an explicit one look the same.
+  static const double _chipSpacing = 12;
+
   static SelectGridLayout _compactGrid(int crossAxisCount) => SelectGridLayout(
     crossAxisCount: crossAxisCount,
     childAspectRatio: _gridTileAspectRatio,
@@ -567,36 +579,45 @@ class _SelectWidgetState extends State<_SelectWidget> {
 
   /// Returns an `entries` array with [_compactGrid]'s tile shape filled into
   /// every grid layout it carries, nested categories included.
-  static List<Object?> _withCompactGrids(List<Object?> payload) => [
-    for (final node in payload) _withCompactGridsIn(node),
+  static List<Object?> _fillGridDefaults(List<Object?> payload) => [
+    for (final node in payload) _fillGridDefaultsIn(node),
   ];
 
-  static Object? _withCompactGridsIn(Object? node) {
+  static Object? _fillGridDefaultsIn(Object? node) {
     if (node is List) {
-      return [for (final child in node) _withCompactGridsIn(child)];
+      return [for (final child in node) _fillGridDefaultsIn(child)];
     }
     if (node is! Map<String, Object?>) return node;
     final copy = <String, Object?>{
       for (final entry in node.entries)
-        entry.key: _withCompactGridsIn(entry.value),
+        entry.key: _fillGridDefaultsIn(entry.value),
     };
     final layout = copy['layout'];
     if (layout is Map<String, Object?>) {
-      copy['layout'] = _withCompactGrid(layout);
+      copy['layout'] = _fillGridLayoutDefaults(layout);
     }
     return copy;
   }
 
-  /// [layout] with [_compactGrid]'s shape filled in when it is a grid. Every
-  /// other shape, and every key the payload already sets, is left alone.
-  static Map<String, Object?> _withCompactGrid(Map<String, Object?> layout) {
+  /// [layout] with [_compactGrid]'s shape filled in when it is a grid, and its
+  /// column count normalized the way the delegate path does.
+  ///
+  /// Every other layout kind, and every key the payload already sets, is left
+  /// alone — apart from a `crossAxisCount` the grid widget would assert on
+  /// (`0`, a negative number) or the codec would throw on (a string, `null`),
+  /// which [_crossAxisCountOf] repairs.
+  static Map<String, Object?> _fillGridLayoutDefaults(
+    Map<String, Object?> layout,
+  ) {
     if (layout['kind'] != 'grid') return layout;
-    return {
+    final filled = <String, Object?>{
       'mainAxisSpacing': _gridTileSpacing,
       'crossAxisSpacing': _gridTileSpacing,
       'childAspectRatio': _gridTileAspectRatio,
       ...layout,
     };
+    filled['crossAxisCount'] = _crossAxisCountOf(filled['crossAxisCount']);
+    return filled;
   }
 
   static Map<String, List<String>> _encodeSelection(

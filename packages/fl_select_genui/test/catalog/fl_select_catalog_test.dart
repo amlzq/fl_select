@@ -479,13 +479,27 @@ void main() {
       isA<SelectWrapLayout>(),
     );
 
-    // Omitted: tabNav keeps its default, sideNav keeps scrolling.
+    // Omitted: tabNav's own fallback is a square, touching grid, so the
+    // catalog supplies the compact one; sideNav keeps scrolling.
     await pumpSelect(tester, {'delegate': 'tabNav', 'entries': _entries});
     tabNav = delegateOf(tester) as TabNavSelectDelegate;
     expect(tabNav.isScrollable, isFalse);
-    expect(tabNav.defaultLayout, isNull);
+    expect(
+      tabNav.defaultLayout,
+      isA<SelectGridLayout>()
+          .having((l) => l.crossAxisCount, 'cols', 3)
+          .having((l) => l.childAspectRatio, 'aspect ratio', 3)
+          .having((l) => l.mainAxisSpacing, 'row spacing', 10),
+    );
     await pumpSelect(tester, {'delegate': 'sideNav', 'entries': _entries});
-    expect((delegateOf(tester) as SideNavSelectDelegate).isScrollable, isTrue);
+    final sideNav = delegateOf(tester) as SideNavSelectDelegate;
+    expect(sideNav.isScrollable, isTrue);
+    // Chips default to touching; use the gap of `{"kind": "chip"}` and of a
+    // header/footer chip row so every chip cloud in a panel looks the same.
+    expect(
+      sideNav.defaultLayout,
+      const SelectWrapLayout(spacing: 12, runSpacing: 12),
+    );
 
     await pumpSelect(tester, {
       'delegate': 'cascading',
@@ -625,6 +639,40 @@ void main() {
     expect(tiles.childAspectRatio, 1);
     expect(tiles.mainAxisSpacing, 0);
     expect(tiles.crossAxisSpacing, 0);
+  });
+
+  testWidgets('a category grid repairs an unusable crossAxisCount', (
+    tester,
+  ) async {
+    // A layout object is schemaless at the field level, so `0` used to reach
+    // SliverGridDelegateWithFixedCrossAxisCount and assert during build.
+    for (final layout in [
+      {'kind': 'grid', 'crossAxisCount': 0},
+      {'kind': 'grid'},
+      {'kind': 'grid', 'crossAxisCount': '2'},
+    ]) {
+      await pumpSelect(tester, {
+        'delegate': 'sideNav',
+        'entries': [
+          {
+            'type': 'category',
+            'id': 'amenities',
+            'name': 'Amenities',
+            'layout': layout,
+            'children': [
+              {'type': 'text', 'id': 'wifi', 'name': 'Free Wi-Fi'},
+            ],
+          },
+        ],
+      });
+
+      expect(tester.takeException(), isNull);
+      final grid = tester.widget<GridView>(find.byType(GridView));
+      final tiles =
+          grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
+      expect(tiles.crossAxisCount, 3, reason: 'layout: $layout');
+      expect(tiles.childAspectRatio, 3, reason: 'layout: $layout');
+    }
   });
 
   testWidgets('flat grids and default grid layouts are compact too', (
@@ -846,7 +894,8 @@ void main() {
     });
     expect(find.byType(GridView), findsOneWidget);
 
-    // A malformed layout shows the error card instead of crashing.
+    // A grid without a column count falls back to three instead of showing
+    // the error card, like the `grid` delegate does.
     await pumpSelect(tester, {
       'delegate': 'tabNav',
       'entries': [
@@ -855,6 +904,23 @@ void main() {
           'id': 'c',
           'name': 'C',
           'layout': {'kind': 'grid'},
+          'children': [
+            {'type': 'text', 'id': 'a', 'name': 'A'},
+          ],
+        },
+      ],
+    });
+    expect(find.byType(GridView), findsOneWidget);
+
+    // An unknown layout kind still shows the error card instead of crashing.
+    await pumpSelect(tester, {
+      'delegate': 'tabNav',
+      'entries': [
+        {
+          'type': 'category',
+          'id': 'c',
+          'name': 'C',
+          'layout': {'kind': 'bogus'},
           'children': [
             {'type': 'text', 'id': 'a', 'name': 'A'},
           ],
