@@ -207,7 +207,9 @@ class _SelectWidgetState extends State<_SelectWidget> {
 
     Set<SelectEntry> entries;
     try {
-      entries = SelectEntryCodec.fromJson(entriesJson);
+      entries = SelectEntryCodec.fromJson(
+        _withCompactGrids(entriesJson.cast<Object?>()),
+      );
     } on FormatException catch (e) {
       return _SchemaError('Invalid entries: ${e.message}');
     } on UnsupportedError catch (e) {
@@ -421,10 +423,11 @@ class _SelectWidgetState extends State<_SelectWidget> {
     // and vice versa.
     final _DelegateFactory create = switch (delegateName) {
       // Grid — flat grid; category data renders as tabNav with a grid layout.
+      // Tiles default to square and touching, so use the compact shape.
       'grid' when isCategoryData =>
         ({required searchEnabled, required selectionMode, required entries}) =>
             TabNavSelectDelegate(
-              defaultLayout: SelectGridLayout(crossAxisCount: crossAxisCount),
+              defaultLayout: _compactGrid(crossAxisCount),
               searchEnabled: searchEnabled,
               selectionMode: selectionMode,
               entries: entries,
@@ -433,6 +436,9 @@ class _SelectWidgetState extends State<_SelectWidget> {
         ({required searchEnabled, required selectionMode, required entries}) =>
             GridSelectDelegate(
               crossAxisCount: crossAxisCount,
+              childAspectRatio: _gridTileAspectRatio,
+              mainAxisSpacing: _gridTileSpacing,
+              crossAxisSpacing: _gridTileSpacing,
               searchEnabled: searchEnabled,
               selectionMode: selectionMode,
               entries: entries,
@@ -526,7 +532,7 @@ class _SelectWidgetState extends State<_SelectWidget> {
         'type': 'category',
         'id': '_defaultLayout',
         'name': '_defaultLayout',
-        'layout': raw,
+        'layout': raw is Map<String, Object?> ? _withCompactGrid(raw) : raw,
         'children': [
           {'type': 'text', 'id': '_', 'name': '_'},
         ],
@@ -540,6 +546,57 @@ class _SelectWidgetState extends State<_SelectWidget> {
   static int _crossAxisCountOf(Object? raw) {
     if (raw is num && raw.isFinite && raw >= 1) return raw.toInt();
     return 3;
+  }
+
+  /// The tile shape the catalog gives a grid the agent did not shape itself.
+  ///
+  /// fl_select's grid defaults are square, touching tiles — the shape an icon
+  /// grid wants, not an option panel in a narrow side-nav pane. Agents ask for
+  /// `{"kind": "grid", "crossAxisCount": n}` and leave the rest to the library,
+  /// so the catalog fills in the compact, spaced tiles the package's own
+  /// examples pair with a grid. Keys the payload sets are kept.
+  static const double _gridTileSpacing = 10;
+  static const double _gridTileAspectRatio = 3;
+
+  static SelectGridLayout _compactGrid(int crossAxisCount) => SelectGridLayout(
+    crossAxisCount: crossAxisCount,
+    childAspectRatio: _gridTileAspectRatio,
+    mainAxisSpacing: _gridTileSpacing,
+    crossAxisSpacing: _gridTileSpacing,
+  );
+
+  /// Returns an `entries` array with [_compactGrid]'s tile shape filled into
+  /// every grid layout it carries, nested categories included.
+  static List<Object?> _withCompactGrids(List<Object?> payload) => [
+    for (final node in payload) _withCompactGridsIn(node),
+  ];
+
+  static Object? _withCompactGridsIn(Object? node) {
+    if (node is List) {
+      return [for (final child in node) _withCompactGridsIn(child)];
+    }
+    if (node is! Map<String, Object?>) return node;
+    final copy = <String, Object?>{
+      for (final entry in node.entries)
+        entry.key: _withCompactGridsIn(entry.value),
+    };
+    final layout = copy['layout'];
+    if (layout is Map<String, Object?>) {
+      copy['layout'] = _withCompactGrid(layout);
+    }
+    return copy;
+  }
+
+  /// [layout] with [_compactGrid]'s shape filled in when it is a grid. Every
+  /// other shape, and every key the payload already sets, is left alone.
+  static Map<String, Object?> _withCompactGrid(Map<String, Object?> layout) {
+    if (layout['kind'] != 'grid') return layout;
+    return {
+      'mainAxisSpacing': _gridTileSpacing,
+      'crossAxisSpacing': _gridTileSpacing,
+      'childAspectRatio': _gridTileAspectRatio,
+      ...layout,
+    };
   }
 
   static Map<String, List<String>> _encodeSelection(

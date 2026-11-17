@@ -564,6 +564,98 @@ void main() {
     expect(scrolls(delegateOf(tester) as TabNavSelectDelegate), isFalse);
   });
 
+  testWidgets('grids get compact, spaced tiles instead of square slabs', (
+    tester,
+  ) async {
+    // fl_select's grid defaults are square, touching tiles: an agent payload
+    // that only picks a column count would render an option list as a block of
+    // squares, so the catalog fills in the compact shape its examples use.
+    await pumpSelect(tester, {
+      'delegate': 'sideNav',
+      'entries': [
+        {
+          'type': 'category',
+          'id': 'amenities',
+          'name': 'Amenities',
+          'layout': {'kind': 'grid', 'crossAxisCount': 2},
+          'children': [
+            {'type': 'text', 'id': 'wifi', 'name': 'Free Wi-Fi'},
+            {'type': 'text', 'id': 'pool', 'name': 'Pool'},
+          ],
+        },
+      ],
+    });
+
+    final grid = tester.widget<GridView>(find.byType(GridView));
+    final tiles =
+        grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
+    expect(tiles.crossAxisCount, 2);
+    expect(tiles.childAspectRatio, 3);
+    expect(tiles.mainAxisSpacing, 10);
+    expect(tiles.crossAxisSpacing, 10);
+  });
+
+  testWidgets('a grid keeps the tile shape the payload sets itself', (
+    tester,
+  ) async {
+    await pumpSelect(tester, {
+      'delegate': 'sideNav',
+      'entries': [
+        {
+          'type': 'category',
+          'id': 'amenities',
+          'name': 'Amenities',
+          'layout': {
+            'kind': 'grid',
+            'crossAxisCount': 2,
+            'childAspectRatio': 1.0,
+            'mainAxisSpacing': 0.0,
+            'crossAxisSpacing': 0.0,
+          },
+          'children': [
+            {'type': 'text', 'id': 'wifi', 'name': 'Free Wi-Fi'},
+          ],
+        },
+      ],
+    });
+
+    final grid = tester.widget<GridView>(find.byType(GridView));
+    final tiles =
+        grid.gridDelegate as SliverGridDelegateWithFixedCrossAxisCount;
+    expect(tiles.childAspectRatio, 1);
+    expect(tiles.mainAxisSpacing, 0);
+    expect(tiles.crossAxisSpacing, 0);
+  });
+
+  testWidgets('flat grids and default grid layouts are compact too', (
+    tester,
+  ) async {
+    await pumpSelect(tester, {
+      'delegate': 'grid',
+      'crossAxisCount': 2,
+      'flatKey': 'sort',
+      'entries': _flatEntries,
+    });
+    final flat = delegateOf(tester) as GridSelectDelegate;
+    expect(flat.childAspectRatio, 3);
+    expect(flat.mainAxisSpacing, 10);
+    expect(flat.crossAxisSpacing, 10);
+
+    await pumpSelect(tester, {
+      'delegate': 'tabNav',
+      'defaultLayout': {'kind': 'grid', 'crossAxisCount': 2},
+      'entries': _entries,
+    });
+    final tabNav = delegateOf(tester) as TabNavSelectDelegate;
+    expect(
+      tabNav.defaultLayout,
+      isA<SelectGridLayout>()
+          .having((l) => l.childAspectRatio, 'aspect ratio', 3)
+          .having((l) => l.mainAxisSpacing, 'row spacing', 10)
+          .having((l) => l.crossAxisSpacing, 'column spacing', 10),
+    );
+  });
+
   testWidgets('malformed crossAxisCount falls back instead of throwing', (
     tester,
   ) async {

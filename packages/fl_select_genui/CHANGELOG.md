@@ -14,6 +14,8 @@
 
 - **BUGFIX** The agent-facing documentation (`SelectEntrySchema.tree()` and `systemPromptFragment`) states that top-level `entries` are either all `category` nodes or all leaves, never both, and that actions such as "Show more" belong in their own component. Models were appending entries like `showmore` to a category tree — a shape `Select` has always rejected — so the surface showed the `Invalid entries` card instead of the panel.
 
+- **BUGFIX** A grid layout an agent leaves unshaped (`{"kind": "grid", "crossAxisCount": 2}`) renders the catalog's compact tiles — 3:1, 10px apart — instead of `fl_select`'s square, touching defaults, which are meant for icon grids. A payload that sets `childAspectRatio`, `mainAxisSpacing` or `crossAxisSpacing` keeps them. Agent panels were rendering an amenities list as a block of squares.
+
 ## 0.8.0
 
 - **BREAKING** Remove the `flatten` and `chips` delegate tokens; use `wrap` or `sideNav` instead ([Migration guide](https://github.com/amlzq/fl_select/blob/main/packages/fl_select_genui/MIGRATION.md#delegate-token-routing)).
