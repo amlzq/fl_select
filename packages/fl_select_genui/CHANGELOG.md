@@ -1,22 +1,22 @@
-## Unreleased
+## 0.9.0
 
-- **BREAKING** Move from `genui` to the A2UI Dart SDKs `a2ui_core` (`^0.6.0`) and `a2ui_flutter` (`^0.2.0`). Agents keep speaking A2UI v0.9.
+- **BREAKING** Move from `genui` to the A2UI Dart SDKs `a2ui_core` and `a2ui_flutter`, while agents keep speaking A2UI v0.9.
 
-- **BREAKING** `FlSelectCatalogItems.select` is an `a2ui_flutter` `ComponentImplementation` instead of a genui `CatalogItem`, `all` returns `List<ComponentImplementation>`, and `asCatalog()` returns a `CatalogImplementation` with the id `fl_select`. Register them with a `MessageProcessor` and render surfaces with `A2uiSurface`, as the README shows. `dataSchema` and `widgetBuilder` are now `schema` and `builder`; `exampleData` and `isImplicitlyFlexible` are gone, since `ComponentImplementation` has neither.
+- **BREAKING** `FlSelectCatalogItems.select` is now an `a2ui_flutter` `ComponentImplementation`, registered with a `MessageProcessor` and rendered by `A2uiSurface`.
 
-- **BREAKING** The `MessageProcessor` checks every `Select` payload against its schema before rendering it. A payload with a wrong type, an unknown `delegate` token, empty `entries`, or a property the schema does not declare (such as `foo`) is rejected with a `VALIDATION_FAILED` error instead of rendering a fallback or the error card. Payloads that match the schema but are still invalid render the error card as before.
+- **BREAKING** The `MessageProcessor` validates every `Select` payload against its schema and rejects invalid ones with a `VALIDATION_FAILED` error.
 
-- **IMPROVEMENT** `Select` accepts A2UI's common `weight` and `accessibility` properties, like the basic catalog's components: a Row/Column parent gives the Select its `weight` share of the main axis, and `accessibility` (`label`, `description`) becomes the semantics of its subtree.
+- **IMPROVEMENT** `Select` accepts A2UI's common `weight` and `accessibility` properties.
 
-- **IMPROVEMENT** The example app renders Markdown: its Agent chat page wraps surfaces in `A2uiMarkdown` (with `flutter_markdown_plus`) and shows assistant replies as Markdown. Renderer errors, such as a reused surface id, now appear in the chat instead of only in the log.
+- **IMPROVEMENT** The example app renders Markdown and shows renderer errors in the chat.
 
-- **IMPROVEMENT** The example app renders through `MessageProcessor` and `A2uiSurface`, and its Agent chat page prompts the model through `a2ui_agent`, which asks for `<a2ui-json>` blocks instead of fenced JSON.
+- **IMPROVEMENT** The example app renders through `MessageProcessor` and `A2uiSurface`, and prompts models through `a2ui_agent`.
 
-- **BUGFIX** The agent-facing documentation (`SelectEntrySchema.tree()` and `systemPromptFragment`) states that top-level `entries` are either all `category` nodes or all leaves, never both, and that actions such as "Show more" belong in their own component. Models were appending entries like `showmore` to a category tree — a shape `Select` has always rejected — so the surface showed the `Invalid entries` card instead of the panel.
+- **IMPROVEMENT** An unshaped chip cloud uses the same 12px gap as `{"kind": "chip"}`.
 
-- **BUGFIX** A grid layout an agent leaves unshaped (`{"kind": "grid", "crossAxisCount": 2}`) renders the catalog's compact tiles — 3:1, 10px apart — instead of `fl_select`'s square, touching defaults, which are meant for icon grids. A payload that sets `childAspectRatio`, `mainAxisSpacing` or `crossAxisSpacing` keeps them. The same shape goes to the grid `tabNav` falls back to when a category has no layout of its own, and a grid `layout` whose `crossAxisCount` is missing or unusable falls back to 3 columns, as the `grid` delegate already did, instead of showing the error card or asserting. Agent panels were rendering an amenities list as a block of squares.
+- **BUGFIX** The agent-facing documentation states that top-level `entries` are either all categories or all leaves.
 
-- **IMPROVEMENT** An unshaped chip cloud (a `sideNav`/`wrap` panel or a category without a layout) uses the 12px chip gap of `{"kind": "chip"}` and of a category's `header`/`footer` chip row, instead of 8px, so chips look the same wherever they appear.
+- **BUGFIX** A grid the payload does not shape further gets compact 3:1 tiles with 10px gaps, and a missing or unusable `crossAxisCount` falls back to 3 columns.
 
 ## 0.8.0
 
